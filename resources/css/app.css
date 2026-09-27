@@ -1,9 +1,49 @@
 @import 'tailwindcss';
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  --color-civic-navy: #0B2D4D;
+  --color-council-green: #0B8F62;
+  --color-deep-green: #075D46;
+  --color-sky-tint: #EAF4F8;
+  --color-page: #F6F8FA;
+  --color-ink: #17212B;
+  --color-muted: #607080;
+  --color-border: #D9E2E8;
+  --color-critical: #B42318;
+  --color-warning: #B7791F;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 }
+:root { font-family: var(--font-sans); color: var(--color-ink); background: var(--color-page); font-size: 16px; line-height: 1.6; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--color-council-green); outline-offset: 3px; }
+.container { width: min(100% - 32px, 1248px); margin-inline: auto; }
+.skip-link { position: absolute; left: 16px; top: -80px; padding: 8px 16px; z-index: 10; background: white; }
+.skip-link:focus { top: 8px; }
+.utility-bar { background: var(--color-civic-navy); color: white; font-size: .875rem; padding: 6px 0; }
+.utility-bar .container { display: flex; justify-content: space-between; gap: 16px; }
+.site-header { background: white; border-bottom: 1px solid var(--color-border); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 96px; }
+.identity { display: flex; align-items: center; gap: 12px; color: var(--color-civic-navy); text-decoration: none; font-weight: 700; line-height: 1.2; }
+.identity-mark { display: grid; place-items: center; background: var(--color-civic-navy); color: white; width: 52px; height: 52px; font-size: .75rem; letter-spacing: .03em; }
+.site-tools { display: flex; align-items: center; gap: 16px; font-size: .875rem; color: var(--color-muted); }
+.site-tools label { display: flex; flex-direction: column; }
+.site-tools input, .site-tools select { border: 1px solid var(--color-border); border-radius: 6px; min-height: 36px; padding: 4px 8px; background: var(--color-page); color: var(--color-muted); }
+.navigation { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; font-size: .9rem; }
+.navigation a { color: var(--color-deep-green); font-weight: 700; text-decoration-thickness: 2px; text-underline-offset: 8px; }
+.nav-future { color: var(--color-muted); }
+.menu-toggle { display: none; min-height: 44px; border: 1px solid var(--color-border); background: white; color: var(--color-civic-navy); padding: 8px 16px; font: inherit; }
+.intro { background: var(--color-sky-tint); padding: 64px 0; border-bottom: 1px solid var(--color-border); }
+.eyebrow { color: var(--color-deep-green); font-weight: 700; margin: 0 0 8px; }
+h1, h2 { color: var(--color-civic-navy); line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); max-width: 16ch; margin: 0 0 16px; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.lead { font-size: 1.25rem; margin: 0; }
+.home-content { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; padding-block: 64px 80px; }
+.home-content aside { border-left: 4px solid var(--color-council-green); padding-left: 24px; }
+.site-footer { background: var(--color-deep-green); color: white; padding: 48px 0; }
+.site-footer p { margin: 8px 0 24px; }
+@media (max-width: 1180px) { .site-tools { display: none; } }
+@media (max-width: 900px) { .header-inner { flex-wrap: wrap; min-height: 80px; padding-block: 12px; } .menu-toggle { display: block; } .site-tools { display: flex; flex-basis: 100%; order: 4; flex-wrap: wrap; } .navigation { display: none; flex-basis: 100%; flex-direction: column; align-items: stretch; gap: 0; } .navigation.open { display: flex; } .navigation > * { min-height: 44px; display: flex; align-items: center; border-top: 1px solid var(--color-border); } }
+@media (max-width: 640px) { .utility-bar span { display: none; } .intro { padding: 48px 0; } .home-content { grid-template-columns: 1fr; gap: 24px; padding-block: 48px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }

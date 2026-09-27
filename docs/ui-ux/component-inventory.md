@@ -1,0 +1,3 @@
+# Theme 1 component inventory
+
+`PublicLayout` supplies skip link, utility bar, identity, primary navigation, mobile menu, disabled search/language controls, main landmark and footer. The menu exposes its state through `aria-expanded` and supports keyboard activation. `Home` is the only route page and contains one H1. Design tokens are in `resources/css/app.css`: civic navy, council green, deep green, sky tint, page/surface, ink, muted, border and critical/warning. The identity mark is text until an approved council logo is supplied. Future destinations are visibly noninteractive until their actual routes exist.
