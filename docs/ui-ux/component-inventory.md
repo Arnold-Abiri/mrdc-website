@@ -4,6 +4,6 @@
 
 `Home` composes `Hero`, `QuickAccess`, `NewsAndEvents` and `FeatureCallouts` from `resources/js/Components/public/HomeSections.tsx`. News and event previews have empty and populated states; cards support missing images and long titles. Development fixture arrays and types live in `resources/js/fixtures/home.ts` and must be replaced by approved CMS data in a later stage.
 
-`public/images/hero-development.webp` and the three `feature-*-development.webp` cards are generated **development images**, not verified photographs of Mutoko or council activity. Visible captions identify this status. Replace all four with approved local photography before production. No official crest, contact details, events, statistics or news have been fabricated.
+The three `feature-*-development.webp` cards and `public/images/hero-clean.webp` are generated **development images**, not verified photographs of Mutoko or council activity. Visible captions identify this status. Replace all four with approved local photography before production. No official crest, contact details, events, statistics or news have been fabricated.
 
 Theme tokens and responsive styles are centralized in `resources/css/app.css`. Screenshots from the Stage 1 review are in `artifacts/theme-1/`.

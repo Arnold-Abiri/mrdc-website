@@ -10,4 +10,15 @@ describe('public navigation', () => {
         fireEvent.click(menu);
         expect(screen.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
     });
+
+    it('renders the official council logo and contact utility details', () => {
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        const logo = screen.getByAltText('Mutoko Rural District Council Crest');
+        expect(logo).toBeInTheDocument();
+        expect(logo).toHaveAttribute('src', '/images/logo.png');
+        expect(screen.getByText('Mutoko, Mashonaland East, Zimbabwe')).toBeInTheDocument();
+        expect(screen.getByText('+263 71 234 5678')).toBeInTheDocument();
+        expect(screen.getByText('info@mutokordc.gov.zw')).toBeInTheDocument();
+    });
 });
+
