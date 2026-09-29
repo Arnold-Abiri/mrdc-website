@@ -1,6 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Hero, NewsAndEvents, QuickAccess, ValuePillars } from './HomeSections';
+import {
+    AboutSection,
+    CtaBanner,
+    DevelopmentSection,
+    FeatureCallouts,
+    Hero,
+    KeyServicesSection,
+    NewsAndEvents,
+    QuickAccess,
+    TourismSection,
+    ValuePillars,
+} from './HomeSections';
 
 describe('homepage sections', () => {
     it('renders hero with welcome statement and key stats', () => {
@@ -43,6 +54,58 @@ describe('homepage sections', () => {
         expect(screen.getByText('Opportunities for a better tomorrow')).toBeInTheDocument();
     });
 
+    it('renders the about us section with core pillars and welcome image', () => {
+        render(<AboutSection />);
+        expect(screen.getByText('A Vibrant and Prosperous Mutoko')).toBeInTheDocument();
+        expect(screen.getByText('Service Delivery')).toBeInTheDocument();
+        expect(screen.getByText('Transparency')).toBeInTheDocument();
+        expect(screen.getByText('Sustainable Growth')).toBeInTheDocument();
+        expect(screen.getByText('Community Focus')).toBeInTheDocument();
+        expect(screen.getByAltText('Welcome to Mutoko road entrance')).toBeInTheDocument();
+    });
+
+    it('renders key services cards', () => {
+        render(<KeyServicesSection />);
+        expect(screen.getByText('Key Services')).toBeInTheDocument();
+        expect(screen.getByText('Water Supply')).toBeInTheDocument();
+        expect(screen.getByText('Roads & Infrastructure')).toBeInTheDocument();
+        expect(screen.getByText('Health & Sanitation')).toBeInTheDocument();
+        expect(screen.getByText('Environmental Management')).toBeInTheDocument();
+    });
+
+    it('renders development banner section with headline and metrics', () => {
+        render(<DevelopmentSection />);
+        expect(screen.getByText('Building a Better Mutoko')).toBeInTheDocument();
+        expect(screen.getByText('Explore Development')).toBeInTheDocument();
+        expect(screen.getByText('50+')).toBeInTheDocument();
+        expect(screen.getByText('Ongoing and planned')).toBeInTheDocument();
+    });
+
+    it('renders tourism section with featured destinations', () => {
+        render(<TourismSection />);
+        expect(screen.getByText('Discover Mutoko')).toBeInTheDocument();
+        expect(screen.getByText('Nyamurora Mountains')).toBeInTheDocument();
+        expect(screen.getByText('Natural Attraction')).toBeInTheDocument();
+        expect(screen.getByText('Cultural Heritage')).toBeInTheDocument();
+        expect(screen.getByText('Scenic Landscapes')).toBeInTheDocument();
+        expect(screen.getByText('Community Experiences')).toBeInTheDocument();
+    });
+
+    it('preserves the discover more mutoko at a glance section', () => {
+        render(<FeatureCallouts />);
+        expect(screen.getByText('Discover more')).toBeInTheDocument();
+        expect(screen.getByText('Mutoko at a glance')).toBeInTheDocument();
+        expect(screen.getByText('Invest in Mutoko')).toBeInTheDocument();
+        expect(screen.getByText('Explore Our Tourism')).toBeInTheDocument();
+        expect(screen.getByText('Engage With Us')).toBeInTheDocument();
+    });
+
+    it('renders the partner CTA banner', () => {
+        render(<CtaBanner />);
+        expect(screen.getByText('Partner with Us for a Better Mutoko')).toBeInTheDocument();
+        expect(screen.getByText('Get in Touch')).toBeInTheDocument();
+    });
+
     it('explains when no approved news or events exist', () => {
         render(<NewsAndEvents news={[]} events={[]} />);
         expect(screen.getByText('No news published yet')).toBeInTheDocument();
@@ -65,4 +128,5 @@ describe('homepage sections', () => {
         expect(screen.getByText('Fixture event')).toBeInTheDocument();
     });
 });
+
 
