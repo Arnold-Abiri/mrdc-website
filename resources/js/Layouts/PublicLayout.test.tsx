@@ -11,9 +11,9 @@ describe('public navigation', () => {
         expect(screen.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
     });
 
-    it('renders the official council logo and contact utility details', () => {
+    it('renders provisional branding and contact utility details', () => {
         render(<PublicLayout><h1>Content</h1></PublicLayout>);
-        const logo = screen.getByAltText('Mutoko Rural District Council Crest');
+        const logo = screen.getByAltText('Development branding mark for Mutoko Rural District Council');
         expect(logo).toBeInTheDocument();
         expect(logo).toHaveAttribute('src', '/images/logo.png');
         expect(screen.getByText('Mutoko, Mashonaland East, Zimbabwe')).toBeInTheDocument();

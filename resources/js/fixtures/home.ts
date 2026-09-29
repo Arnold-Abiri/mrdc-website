@@ -1,3 +1,4 @@
+// DEVELOPMENT DEMO DATA — UNVERIFIED. Replace only after council content approval; see docs/content/DEVELOPMENT-CONTENT-POLICY.md.
 export type NewsPreview = {
     title: string;
     date: string;
@@ -43,21 +44,21 @@ export const newsPreviews: NewsPreview[] = [
         date: '02 Nov 2024',
         summary: 'Mutoko RDC has launched a new water supply project to improve access to clean and safe water in rural communities.',
         image: '/images/home/news-water.webp',
-        href: '#news-water',
+        href: '/coming-soon?topic=news',
     },
     {
         title: 'Community Engagement Meetings Continue',
         date: '28 Oct 2024',
         summary: 'Council holds community engagement meetings across all 12 wards to discuss development priorities.',
         image: '/images/home/news-community.webp',
-        href: '#news-community',
+        href: '/coming-soon?topic=news',
     },
     {
         title: 'Road Rehabilitation Works Progress Well',
         date: '15 Oct 2024',
         summary: 'Major road rehabilitation works are ongoing to improve connectivity and support local economic development.',
         image: '/images/home/news-roads.webp',
-        href: '#news-roads',
+        href: '/coming-soon?topic=news',
     },
 ];
 
@@ -68,15 +69,15 @@ export const eventPreviews: EventPreview[] = [
         title: 'Ward Community Meeting',
         location: 'Ward 5 - Chivhu River',
         time: '10:00 AM - 1:00 PM',
-        href: '#event-1',
+        href: '/coming-soon?topic=events',
     },
     {
         day: '28',
         month: 'Nov',
-        title: 'Budget Consultation Meeting',
+        title: 'Community Information Session',
         location: 'Council Chambers',
         time: '09:00 AM - 12:00 PM',
-        href: '#event-2',
+        href: '/coming-soon?topic=events',
     },
     {
         day: '05',
@@ -84,7 +85,7 @@ export const eventPreviews: EventPreview[] = [
         title: 'Clean Up Campaign',
         location: 'Mutoko Town',
         time: '08:00 AM - 12:00 PM',
-        href: '#event-3',
+        href: '/coming-soon?topic=events',
     },
 ];
 
@@ -95,7 +96,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Provision and maintenance of clean and safe water systems.',
         image: '/images/home/service-water.webp',
         icon: 'water',
-        href: '#service-water',
+        href: '/coming-soon?topic=water',
     },
     {
         id: 'roads',
@@ -103,7 +104,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Construction and maintenance of rural roads and infrastructure.',
         image: '/images/home/service-roads.webp',
         icon: 'roads',
-        href: '#service-roads',
+        href: '/coming-soon?topic=roads',
     },
     {
         id: 'health',
@@ -111,7 +112,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Support for health facilities and improved sanitation services.',
         image: '/images/home/service-health.webp',
         icon: 'health',
-        href: '#service-health',
+        href: '/coming-soon?topic=health',
     },
     {
         id: 'environment',
@@ -119,7 +120,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Conservation of natural resources and a cleaner environment.',
         image: '/images/home/service-environment.webp',
         icon: 'environment',
-        href: '#service-environment',
+        href: '/coming-soon?topic=environment',
     },
 ];
 
@@ -128,25 +129,25 @@ export const tourismDestinations: TourismPreview[] = [
         title: 'Nyamurora Mountains',
         tag: 'Natural Attraction',
         image: '/images/home/tourism-nyamurora.webp',
-        href: '#tourism-nyamurora',
+        href: '/coming-soon?topic=tourism',
     },
     {
         title: 'Cultural Heritage',
         tag: 'Rich Traditions',
         image: '/images/home/tourism-cultural.webp',
-        href: '#tourism-cultural',
+        href: '/coming-soon?topic=tourism',
     },
     {
         title: 'Scenic Landscapes',
         tag: 'Breathtaking Views',
         image: '/images/home/tourism-scenic.webp',
-        href: '#tourism-scenic',
+        href: '/coming-soon?topic=tourism',
     },
     {
         title: 'Community Experiences',
         tag: 'Local Culture',
         image: '/images/home/tourism-community.webp',
-        href: '#tourism-community',
+        href: '/coming-soon?topic=tourism',
     },
 ];
 

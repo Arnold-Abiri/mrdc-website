@@ -5,6 +5,15 @@ use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
 
+Route::get('/coming-soon', function () {
+    $topics = ['council', 'media', 'engagement', 'search', 'tenders', 'vacancies', 'news', 'events', 'services', 'projects', 'tourism', 'contact', 'privacy', 'terms', 'accessibility', 'water', 'roads', 'health', 'environment', 'development', 'community'];
+    $topic = request()->query('topic');
+
+    return Inertia::render('ComingSoon', [
+        'topic' => is_string($topic) && in_array($topic, $topics, true) ? ucfirst($topic) : 'This section',
+    ]);
+})->name('coming-soon');
+
 Route::get('/sitemap.xml', function () {
     $url = htmlspecialchars(route('home'), ENT_XML1, 'UTF-8');
 

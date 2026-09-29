@@ -18,7 +18,7 @@ export default function Home() {
     return (
         <PublicLayout>
             <Head title="Mutoko Rural District Council">
-                <meta name="description" content="Official website of Mutoko Rural District Council. People. Development. Sustainable Communities." />
+                <meta name="description" content="Development preview of the Mutoko Rural District Council website." />
             </Head>
             <Hero />
             <QuickAccess />

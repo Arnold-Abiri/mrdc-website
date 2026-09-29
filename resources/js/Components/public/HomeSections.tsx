@@ -45,14 +45,14 @@ const services = [
         title: 'Tenders',
         description: 'Business opportunities',
         theme: 'amber',
-        href: '#tenders',
+        href: '/coming-soon?topic=tenders',
     },
     {
         icon: 'vacancies',
         title: 'Vacancies',
         description: 'Join our team',
         theme: 'red',
-        href: '#vacancies',
+        href: '/coming-soon?topic=vacancies',
     },
 ] as const;
 
@@ -198,6 +198,7 @@ export function Hero() {
 export function QuickAccess() {
     return (
         <section className="quick-access container" id="quick-access" aria-label="Quick Access Services">
+            <h2 className="sr-only">Quick access services</h2>
             <div className="quick-grid">
                 {services.map(service => (
                     <a className="quick-card" key={service.title} href={service.href}>
@@ -314,7 +315,7 @@ export function AboutSection() {
                         Mutoko Rural District Council is committed to effective service delivery, sustainable development and inclusive growth for all our communities.
                     </p>
                     <div>
-                        <a href="#council" className="btn-section-primary">
+                        <a href="/coming-soon?topic=council" className="btn-section-primary">
                             <span>Learn More</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -442,7 +443,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             </div>
                             <h2 className="section-title">News and Updates</h2>
                         </div>
-                        <a href="#news" className="header-viewall-link">
+                        <a href="/coming-soon?topic=news" className="header-viewall-link">
                             View All News <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -469,7 +470,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             </div>
                             <h2 className="section-title">Events Calendar</h2>
                         </div>
-                        <a href="#events" className="header-viewall-link">
+                        <a href="/coming-soon?topic=events" className="header-viewall-link">
                             View All Events <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -527,7 +528,7 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                         </div>
                         <h2 id="services-heading" className="section-title">Key Services</h2>
                     </div>
-                    <a href="#services-all" className="header-viewall-link">
+                    <a href="/coming-soon?topic=services" className="header-viewall-link">
                         View All Services <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -586,7 +587,7 @@ export function DevelopmentSection() {
                         We are implementing strategic projects and initiatives to promote economic growth, improve infrastructure and create opportunities for all our communities.
                     </p>
                     <div>
-                        <a href="#projects" className="btn-section-primary">
+                        <a href="/coming-soon?topic=projects" className="btn-section-primary">
                             <span>Explore Development</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -650,7 +651,7 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
                         </div>
                         <h2 id="tourism-heading" className="section-title">Discover Mutoko</h2>
                     </div>
-                    <a href="#tourism-all" className="header-viewall-link">
+                    <a href="/coming-soon?topic=tourism" className="header-viewall-link">
                         Explore Tourism <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -693,7 +694,7 @@ export function CtaBanner() {
                     </p>
                 </div>
                 <div className="cta-action-side">
-                    <a href="#contact" className="btn-cta-green">
+                    <a href="/coming-soon?topic=contact" className="btn-cta-green">
                         <span>Get in Touch</span>
                         <span aria-hidden="true">→</span>
                     </a>

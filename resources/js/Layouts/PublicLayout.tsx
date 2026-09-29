@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
-const navigation = ['Home', 'About', 'Council', 'Services', 'Development', 'Tourism', 'Media', 'Engagement'];
+const navigation = [
+    { label: 'Home', href: '/' },
+    { label: 'About', href: '/#about' },
+    { label: 'Council', href: '/coming-soon?topic=council' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Development', href: '/#development' },
+    { label: 'Tourism', href: '/#tourism' },
+    { label: 'Media', href: '/coming-soon?topic=media' },
+    { label: 'Engagement', href: '/coming-soon?topic=engagement' },
+];
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
     const [open, setOpen] = useState(false);
@@ -25,6 +34,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
             {/* Top Utility Bar */}
             <div className="utility-bar">
+                <p className="development-notice">Development preview — displayed council information and imagery are unverified.</p>
                 <div className="container utility-inner">
                     <div className="utility-location">
                         <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -35,20 +45,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div className="utility-actions">
-                        <a href="tel:+263712345678" className="utility-link">
+                        <span className="utility-link">
                             <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                             </svg>
                             <span>+263 71 234 5678</span>
-                        </a>
+                        </span>
 
-                        <a href="mailto:info@mutokordc.gov.zw" className="utility-link">
+                        <span className="utility-link">
                             <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <rect width="20" height="16" x="2" y="4" rx="2" />
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                             </svg>
                             <span>info@mutokordc.gov.zw</span>
-                        </a>
+                        </span>
 
                         <div className="utility-language-badge">
                             <span>English</span>
@@ -57,22 +67,22 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             </svg>
                         </div>
 
-                        <div className="utility-socials" aria-label="Social media links">
-                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-pill social-fb" aria-label="Facebook">
+                        <div className="utility-socials" aria-label="Social media previews">
+                            <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                                 </svg>
-                            </a>
-                            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="social-pill social-x" aria-label="X (Twitter)">
+                            </span>
+                            <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true">
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                                 </svg>
-                            </a>
-                            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-pill social-yt" aria-label="YouTube">
+                            </span>
+                            <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                 </svg>
-                            </a>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -85,7 +95,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         <img
                             src="/images/logo.png"
                             srcSet="/images/logo@2x.png 2x"
-                            alt="Mutoko Rural District Council Crest"
+                            alt="Development branding mark for Mutoko Rural District Council"
                             className="identity-logo-img"
                             width="40"
                             height="40"
@@ -111,18 +121,18 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
                     <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label="Primary navigation">
                         {navigation.map(item =>
-                            item === 'Home' ? (
-                                <a key={item} aria-current="page" href="/" className="nav-item nav-item-active">
-                                    <span>{item}</span>
+                            item.label === 'Home' ? (
+                                <a key={item.label} aria-current="page" href="/" className="nav-item nav-item-active">
+                                    <span>{item.label}</span>
                                     <span className="nav-active-indicator" aria-hidden="true" />
                                 </a>
                             ) : (
-                                <a key={item} href={`#${item.toLowerCase()}`} className="nav-item">
-                                    {item}
+                                <a key={item.label} href={item.href} className="nav-item">
+                                    {item.label}
                                 </a>
                             )
                         )}
-                        <a href="#search" className="header-search-pill" aria-label="Search council website">
+                        <a href="/coming-soon?topic=search" className="header-search-pill" aria-label="Search coming soon">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <circle cx="11" cy="11" r="8" />
                                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -145,7 +155,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 </div>
             </header>
 
-            <main id="main">{children}</main>
+            <main id="main" tabIndex={-1}>{children}</main>
 
             {/* Modern Clean Footer Matching Mockup */}
             <footer className="site-footer">
@@ -170,22 +180,22 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         <p className="footer-about-text">
                             Working with our communities to deliver quality services, promote local development and build a better Mutoko.
                         </p>
-                        <div className="footer-social-row" aria-label="Follow Mutoko Council">
-                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-pill social-fb" aria-label="Facebook">
+                        <div className="footer-social-row" aria-label="Social media previews">
+                            <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                                 </svg>
-                            </a>
-                            <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="social-pill social-x" aria-label="X (Twitter)">
+                            </span>
+                            <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true">
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                                 </svg>
-                            </a>
-                            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-pill social-yt" aria-label="YouTube">
+                            </span>
+                            <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                                 </svg>
-                            </a>
+                            </span>
                         </div>
                     </div>
 
@@ -193,24 +203,24 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         <h3 className="footer-heading">Quick Links</h3>
                         <ul className="footer-link-list">
                             <li><a href="/">Home</a></li>
-                            <li><a href="#about">About</a></li>
-                            <li><a href="#services">Our Services</a></li>
-                            <li><a href="#development">Development</a></li>
-                            <li><a href="#tourism">Tourism</a></li>
-                            <li><a href="#media">Media</a></li>
-                            <li><a href="#contact">Contact Us</a></li>
+                            <li><a href="/#about">About</a></li>
+                            <li><a href="/#services">Our Services</a></li>
+                            <li><a href="/#development">Development</a></li>
+                            <li><a href="/#tourism">Tourism</a></li>
+                            <li><a href="/coming-soon?topic=media">Media</a></li>
+                            <li><a href="/coming-soon?topic=contact">Contact Us</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-col-nav">
                         <h3 className="footer-heading">Our Services</h3>
                         <ul className="footer-link-list">
-                            <li><a href="#services-water">Water Supply</a></li>
-                            <li><a href="#services-roads">Roads &amp; Infrastructure</a></li>
-                            <li><a href="#services-health">Health &amp; Sanitation</a></li>
-                            <li><a href="#services-environment">Environmental Management</a></li>
-                            <li><a href="#services-development">Development Planning</a></li>
-                            <li><a href="#services-community">Community Services</a></li>
+                            <li><a href="/coming-soon?topic=water">Water Supply</a></li>
+                            <li><a href="/coming-soon?topic=roads">Roads &amp; Infrastructure</a></li>
+                            <li><a href="/coming-soon?topic=health">Health &amp; Sanitation</a></li>
+                            <li><a href="/coming-soon?topic=environment">Environmental Management</a></li>
+                            <li><a href="/coming-soon?topic=development">Development Planning</a></li>
+                            <li><a href="/coming-soon?topic=community">Community Services</a></li>
                         </ul>
                     </div>
 
@@ -229,20 +239,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 </div>
                             </div>
 
-                            <a href="tel:+263712345678" className="footer-contact-item footer-contact-link">
+                            <span className="footer-contact-item footer-contact-link">
                                 <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                                 </svg>
                                 <span>+263 71 234 5678</span>
-                            </a>
+                            </span>
 
-                            <a href="mailto:info@mutokordc.gov.zw" className="footer-contact-item footer-contact-link">
+                            <span className="footer-contact-item footer-contact-link">
                                 <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                     <rect width="20" height="16" x="2" y="4" rx="2" />
                                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                                 </svg>
                                 <span>info@mutokordc.gov.zw</span>
-                            </a>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -251,12 +261,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 <div className="footer-bottom-bar">
                     <div className="container footer-bottom-inner">
                         <span className="footer-copyright">
-                            © {new Date().getFullYear()} Mutoko Rural District Council. All Rights Reserved.
+                            Development preview — content pending council approval.
                         </span>
                         <div className="footer-legal-links">
-                            <a href="#privacy">Privacy Policy</a>
+                            <a href="/coming-soon?topic=privacy">Privacy Policy</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
-                            <a href="#terms">Terms of Use</a>
+                            <a href="/coming-soon?topic=terms">Terms of Use</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
                             <a href="/sitemap.xml">Site Map</a>
                         </div>
@@ -264,7 +274,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 </div>
 
                 {/* Bottom African Pattern Banner */}
-                <div className="bottom-pattern-banner" aria-hidden="true" />
+                <div className="bottom-pattern-banner" style={{ backgroundImage: 'url(/images/bottom-pattern.png)' }} aria-hidden="true" />
             </footer>
         </>
     );

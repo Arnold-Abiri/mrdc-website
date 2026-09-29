@@ -112,7 +112,6 @@ a:focus-visible, button:focus-visible {
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 6px;
-  cursor: pointer;
   user-select: none;
   min-height: 28px;
 }
@@ -132,7 +131,7 @@ a:focus-visible, button:focus-visible {
   text-decoration: none;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
-.social-pill:hover {
+a.social-pill:hover {
   transform: translateY(-1px);
   opacity: 0.9;
 }
@@ -207,7 +206,7 @@ a:focus-visible, button:focus-visible {
   letter-spacing: -0.01em;
 }
 .identity-tagline {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-size: 0.62rem;
   font-weight: 600;
   margin-top: 1px;
@@ -219,8 +218,8 @@ a:focus-visible, button:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-civic-navy);
@@ -261,7 +260,7 @@ a:focus-visible, button:focus-visible {
   transition: color 0.15s ease;
 }
 .nav-item:hover, .nav-item-active {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-weight: 700;
 }
 .nav-active-indicator { display: none; }
@@ -271,7 +270,7 @@ a:focus-visible, button:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--color-council-green);
+  background: var(--color-deep-green);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.92rem;
@@ -393,7 +392,7 @@ a:focus-visible, button:focus-visible {
   text-align: center;
 }
 .btn-hero-primary {
-  background: var(--color-council-green);
+  background: var(--color-deep-green);
   color: #FFFFFF;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -491,7 +490,7 @@ a:focus-visible, button:focus-visible {
 }
 .quick-card:hover, .quick-card:focus-visible {
   transform: translateY(-3px);
-  border-color: var(--color-council-green);
+  border-color: var(--color-deep-green);
   box-shadow: 0 12px 26px rgba(11, 45, 77, 0.12);
 }
 .quick-card-top {
@@ -526,7 +525,7 @@ a:focus-visible, button:focus-visible {
   transition: color 0.15s ease, transform 0.15s ease;
 }
 .quick-card:hover .quick-chevron {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   transform: translateX(2px);
 }
 .quick-card-title {
@@ -618,11 +617,11 @@ h3 { margin: 0; }
 .section-eyebrow-pill .eyebrow-bar {
   width: 20px;
   height: 3px;
-  background-color: var(--color-council-green);
+  background-color: var(--color-deep-green);
   border-radius: 2px;
 }
 .section-eyebrow-pill .eyebrow-text {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-weight: 800;
   font-size: 0.76rem;
   letter-spacing: 0.12em;
@@ -661,14 +660,14 @@ h3 { margin: 0; }
   transition: color 0.15s ease, transform 0.15s ease;
 }
 .header-viewall-link:hover {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   transform: translateX(2px);
 }
 .btn-section-primary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--color-council-green);
+  background: var(--color-deep-green);
   color: #FFFFFF;
   padding: 12px 24px;
   border-radius: 9999px;
@@ -865,7 +864,7 @@ h3 { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-weight: 700;
   font-size: 0.84rem;
   text-decoration: none;
@@ -941,12 +940,12 @@ h3 { margin: 0; }
   margin: 0;
 }
 .event-time {
-  color: #94A3B8;
+  color: var(--color-muted);
   font-size: 0.74rem;
   margin: 2px 0 0;
 }
 .event-link {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-weight: 700;
   font-size: 0.76rem;
   text-decoration: none;
@@ -1003,7 +1002,7 @@ h3 { margin: 0; }
 }
 .service-card:hover {
   transform: translateY(-4px);
-  border-color: var(--color-council-green);
+  border-color: var(--color-deep-green);
   box-shadow: 0 10px 24px rgba(11, 45, 77, 0.08);
 }
 .service-image-wrapper {
@@ -1063,7 +1062,7 @@ h3 { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-weight: 700;
   font-size: 0.84rem;
   text-decoration: none;
@@ -1285,7 +1284,7 @@ h3 { margin: 0; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--color-council-green);
+  background: var(--color-deep-green);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.92rem;
@@ -1399,7 +1398,7 @@ h3 { margin: 0; }
   line-height: 1.1;
 }
 .footer-brand-tagline {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   font-size: 0.65rem;
   font-weight: 600;
   display: block;
@@ -1438,7 +1437,7 @@ h3 { margin: 0; }
   transition: color 0.15s ease;
 }
 .footer-link-list a:hover {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
 }
 .footer-contact-list {
   display: flex;
@@ -1460,12 +1459,12 @@ h3 { margin: 0; }
 .footer-contact-icon {
   width: 16px;
   height: 16px;
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
   flex-shrink: 0;
   margin-top: 2px;
 }
 .footer-contact-link:hover {
-  color: var(--color-council-green);
+  color: var(--color-deep-green);
 }
 
 .footer-bottom-bar {
@@ -1635,7 +1634,7 @@ h3 { margin: 0; }
     font-size: 0.9rem;
   }
   .nav-item-active {
-    color: var(--color-council-green);
+    color: var(--color-deep-green);
     font-weight: 700;
   }
   .nav-active-indicator {
@@ -1645,7 +1644,7 @@ h3 { margin: 0; }
     left: 0;
     right: 0;
     height: 3px;
-    background-color: var(--color-council-green);
+    background-color: var(--color-deep-green);
     border-radius: 3px 3px 0 0;
   }
   .header-search-pill {
@@ -1770,4 +1769,21 @@ h3 { margin: 0; }
     transition-duration: .01ms !important;
   }
 }
-
+.development-notice {
+  margin: 0;
+  padding: 5px 16px;
+  text-align: center;
+  background: #fff3cd;
+  color: #594000;
+  font-size: .8rem;
+  font-weight: 700;
+}
+.coming-soon {
+  min-height: 55vh;
+  padding-block: 80px;
+  max-width: 760px;
+}
+.coming-soon a {
+  color: var(--color-deep-green);
+  text-decoration: underline;
+}

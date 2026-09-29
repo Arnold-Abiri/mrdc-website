@@ -1,58 +1,21 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mutoko Rural District Council Website
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Stage 1 production foundation for a civic website and future content administration portal. The current public pages use provisional demonstration content; they are not approved council publications.
 
-## About Laravel
+## Architecture and stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+One Laravel 13 application owns routes, authentication, authorization and persistence. React 19 and TypeScript render public pages through Inertia 3. Filament 5 provides the interim admin panel. MySQL 8 is the target database, Redis supports cache, sessions and queues, Tailwind 4 supplies styling, and Vite 8 builds the frontend. No separate Node backend is deployed.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Local setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Use PHP 8.4+, Composer, Node 24+, MySQL 8 and Redis. Run `composer install`, `npm ci`, copy `.env.example` to `.env`, set local database and Redis credentials, then run `php artisan key:generate`. For local HTTP, set `APP_ENV=local`, `APP_DEBUG=true` and `SESSION_SECURE_COOKIE=false`. Run `php artisan migrate`, `npm run build`, and `php artisan serve`. Use `npm run dev` while editing frontend code. Never commit `.env`.
 
-## Learning Laravel
+The default seeder creates no users. Admin access requires an explicitly provisioned user with the interim `is_admin` grant. Do not use this interim flag as final RBAC.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Verification
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Run `php artisan test --compact`, `./vendor/bin/phpstan analyse --no-progress`, `./vendor/bin/pint --test`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build` and `npm run e2e`. Use a disposable MySQL database for `php artisan migrate:fresh --seed` and explicitly set MySQL environment variables for backend tests. Playwright needs Chromium; `PLAYWRIGHT_CHROMIUM_EXECUTABLE` can point to an installed executable.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Stage 1 status and documentation
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Stage 1 includes a responsive Theme 1 shell, Inertia homepage, interim Filament admin boundary and verification tooling. Organisation, final RBAC and CMS business modules belong to later stages. The [development content policy](docs/content/DEVELOPMENT-CONTENT-POLICY.md) inventories provisional data and defines the production replacement gate. See `docs/architecture/` for architecture, development, security and deployment guidance, and `docs/ui-ux/` for the Theme 1 standard and component inventory.
