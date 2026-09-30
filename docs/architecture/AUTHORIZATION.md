@@ -1,0 +1,9 @@
+# Authorization
+
+Spatie Permission 7 stores `User → Role → Permission`. Permission names use `resource.action`. The deterministic seeder creates 15 Stage 2 permissions and four roles: System Administrator, Website Administrator, Department Content Owner and Auditor. Future module permissions belong to their own stages.
+
+The System Administrator role has the complete Stage 2 permission set through explicit role-permission rows. There is no Gate `before` override. The seeder restores this set on rerun, and the Filament Role policy denies editing that role. Role permission changes are handled by `RoleManager`, audited, and clear the package permission cache. Only an active System Administrator can assign roles or edit role permissions. Other resource policies check both permission and applicable data scope.
+
+`UserManager` serializes administrator status and role changes by locking the System Administrator role row in a transaction. It refuses self-disable, self-removal of the critical role, and removal or disablement of the last active System Administrator. The shared role-row lock prevents two concurrent supported service operations from each removing a different administrator. Direct database changes and package calls outside these services bypass these protections and must not be used for administrative mutations. User, role, department and audit deletion are disabled in the panel.
+
+The legacy `is_admin` column remains for upgrade traceability, but panel access does not read it. The forward migration creates the System Administrator role and grants it with global scope to every existing `is_admin = true` user. Review the Stage 1 admin roster before deployment; deploy the migrated application under maintenance so schema, grants and code switch atomically from the public's perspective. Reconcile the grants after migration, then seed to ensure the canonical role set. A new user with only `is_admin = true` has no access.

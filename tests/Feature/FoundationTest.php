@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\SecuritySeeder;
 use Filament\Auth\Pages\Login;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Inertia\Testing\AssertableInertia as Assert;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class FoundationTest extends TestCase
@@ -45,7 +48,9 @@ class FoundationTest extends TestCase
     public function test_explicit_admin_grant_allows_panel_access(): void
     {
         $user = User::factory()->create();
-        $user->forceFill(['is_admin' => true])->save();
+        $this->seed(SecuritySeeder::class);
+        $user->assignRole('System Administrator');
+        DB::table('user_role_scopes')->insert(['user_id' => $user->id, 'role_id' => Role::findByName('System Administrator')->id, 'scope_type' => 'global', 'created_at' => now(), 'updated_at' => now()]);
         $this->actingAs($user)->get('/admin')->assertOk();
     }
 
@@ -64,7 +69,9 @@ class FoundationTest extends TestCase
     public function test_failed_filament_logins_are_rate_limited(): void
     {
         $user = User::factory()->create(['password' => 'correct-password']);
-        $user->forceFill(['is_admin' => true])->save();
+        $this->seed(SecuritySeeder::class);
+        $user->assignRole('System Administrator');
+        DB::table('user_role_scopes')->insert(['user_id' => $user->id, 'role_id' => Role::findByName('System Administrator')->id, 'scope_type' => 'global', 'created_at' => now(), 'updated_at' => now()]);
         $key = 'livewire-rate-limiter:'.sha1(Login::class.'|authenticate|127.0.0.1');
         RateLimiter::clear($key);
 
@@ -87,7 +94,9 @@ class FoundationTest extends TestCase
     public function test_successful_filament_login_regenerates_session(): void
     {
         $user = User::factory()->create(['password' => 'correct-password']);
-        $user->forceFill(['is_admin' => true])->save();
+        $this->seed(SecuritySeeder::class);
+        $user->assignRole('System Administrator');
+        DB::table('user_role_scopes')->insert(['user_id' => $user->id, 'role_id' => Role::findByName('System Administrator')->id, 'scope_type' => 'global', 'created_at' => now(), 'updated_at' => now()]);
         $this->get('/admin/login');
         $previousSessionId = session()->getId();
 
@@ -103,7 +112,9 @@ class FoundationTest extends TestCase
     public function test_logout_removes_admin_access_and_invalidates_session(): void
     {
         $user = User::factory()->create();
-        $user->forceFill(['is_admin' => true])->save();
+        $this->seed(SecuritySeeder::class);
+        $user->assignRole('System Administrator');
+        DB::table('user_role_scopes')->insert(['user_id' => $user->id, 'role_id' => Role::findByName('System Administrator')->id, 'scope_type' => 'global', 'created_at' => now(), 'updated_at' => now()]);
         $this->actingAs($user)->get('/admin')->assertOk();
         $previousSessionId = session()->getId();
 

@@ -1,0 +1,3 @@
+# Organisation foundation
+
+`departments` stores unique name/code, optional description and sort order, and an `active`/`inactive` lifecycle. `users.department_id` is nullable and references a department. There is no hierarchy or membership pivot because the current SRS does not require one. Department creation, update and status changes go through `DepartmentManager` with policy checks, validation, transactions and audit events. Deletion is disabled to preserve later references. Deactivation is blocked while active users or scoped role grants still reference the department. The department row is locked during deactivation and assignment so those checks remain consistent under concurrent service calls.

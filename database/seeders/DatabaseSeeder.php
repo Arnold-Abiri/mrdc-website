@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Production-safe default: no accounts or representative content.
+        $this->call(SecuritySeeder::class);
     }
 }
