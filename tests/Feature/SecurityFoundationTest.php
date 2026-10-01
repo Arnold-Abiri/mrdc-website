@@ -216,7 +216,7 @@ class SecurityFoundationTest extends TestCase
         $this->seed(SecuritySeeder::class);
         $this->seed(SecuritySeeder::class);
         $this->assertDatabaseCount('roles', 4);
-        $this->assertDatabaseCount('permissions', 15);
+        $this->assertDatabaseCount('permissions', count(SecuritySeeder::PERMISSIONS));
         $this->assertDatabaseCount('users', 0);
     }
 

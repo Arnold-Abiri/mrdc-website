@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Page;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,3 +20,11 @@ Route::get('/sitemap.xml', function () {
 
     return response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>'.$url.'</loc></url></urlset>', 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
 })->name('sitemap');
+
+Route::get('/pages/{slug}', function (string $slug) {
+    $page = Page::query()->public()->where('slug', $slug)->firstOrFail();
+
+    return Inertia::render('CmsPage', [
+        'page' => [...$page->only(['slug', 'title', 'summary', 'blocks', 'seo_title', 'meta_description']), 'is_review_content' => $page->verification_status !== 'publishable'],
+    ]);
+})->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('pages.show');

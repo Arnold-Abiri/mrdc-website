@@ -9,7 +9,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 class SecuritySeeder extends Seeder
 {
-    public const PERMISSIONS = ['admin.access', 'users.view', 'users.create', 'users.update', 'users.disable', 'users.assign_roles', 'roles.view', 'roles.create', 'roles.update', 'roles.assign_permissions', 'departments.view', 'departments.create', 'departments.update', 'departments.disable', 'audit.view'];
+    public const PERMISSIONS = ['admin.access', 'users.view', 'users.create', 'users.update', 'users.disable', 'users.assign_roles', 'roles.view', 'roles.create', 'roles.update', 'roles.assign_permissions', 'departments.view', 'departments.create', 'departments.update', 'departments.disable', 'audit.view', 'pages.view', 'pages.create', 'pages.update', 'pages.publish', 'pages.verify'];
 
     public function run(): void
     {
