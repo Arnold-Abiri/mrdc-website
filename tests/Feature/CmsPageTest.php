@@ -79,6 +79,21 @@ class CmsPageTest extends TestCase
         $manager->create($admin, [...$this->content('unsafe'), 'blocks' => [['type' => 'cta', 'text' => 'Visit', 'url' => '//evil.example']]]);
     }
 
+    public function test_search_only_returns_published_pages_and_escapes_wildcards(): void
+    {
+        $admin = $this->administrator();
+        $manager = app(PageManager::class);
+        $published = $manager->create($admin, $this->content('public-water'));
+        $manager->update($admin, $published, [...$this->content('public-water'), 'title' => 'Water services']);
+        $manager->setStatus($admin, $published, 'published');
+        $manager->create($admin, [...$this->content('private-water'), 'title' => 'Water draft']);
+
+        $this->get('/search?q=Water')->assertOk()->assertSee('Water services')->assertDontSee('Water draft');
+        $this->get('/search?q=%25')->assertOk()->assertDontSee('Water services');
+        $this->get('/search?q='.str_repeat('a', 101))->assertUnprocessable();
+        $this->get('/search?q%5B%5D=Water')->assertUnprocessable();
+    }
+
     public function test_ordinary_staff_cannot_publish(): void
     {
         $admin = $this->administrator();

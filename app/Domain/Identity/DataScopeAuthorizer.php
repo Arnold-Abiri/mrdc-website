@@ -34,7 +34,7 @@ class DataScopeAuthorizer
         return false;
     }
 
-    public function apply(Builder $query, User $actor, string $permission, string $departmentColumn = 'department_id', string $ownerColumn = 'user_id'): Builder
+    public function apply(Builder $query, User $actor, string $permission, string $departmentColumn = 'department_id', ?string $ownerColumn = 'user_id'): Builder
     {
         if ($actor->status !== 'active' || ! $actor->can($permission)) {
             return $query->whereRaw('1 = 0');
@@ -45,7 +45,7 @@ class DataScopeAuthorizer
             return $query;
         }
         $departments = $scopes->where('scope_type', ScopeType::Department->value)->pluck('department_id')->all();
-        $own = $scopes->contains('scope_type', ScopeType::Own->value);
+        $own = $ownerColumn !== null && $scopes->contains('scope_type', ScopeType::Own->value);
 
         return $query->where(function (Builder $q) use ($departments, $own, $actor, $departmentColumn, $ownerColumn): void {
             if ($departments !== []) {

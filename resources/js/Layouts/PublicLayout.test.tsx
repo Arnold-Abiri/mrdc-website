@@ -17,8 +17,8 @@ describe('public navigation', () => {
         expect(logo).toBeInTheDocument();
         expect(logo).toHaveAttribute('src', '/images/logo.png');
         expect(screen.getByText('Mutoko, Mashonaland East, Zimbabwe')).toBeInTheDocument();
-        expect(screen.getAllByText('+263 71 234 5678').length).toBeGreaterThanOrEqual(1);
-        expect(screen.getAllByText('info@mutokordc.gov.zw').length).toBeGreaterThanOrEqual(1);
+        expect(screen.queryByText('+263 71 234 5678')).not.toBeInTheDocument();
+        expect(screen.queryByText('info@mutokordc.gov.zw')).not.toBeInTheDocument();
     });
 });
 

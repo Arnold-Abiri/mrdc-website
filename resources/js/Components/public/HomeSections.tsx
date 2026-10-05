@@ -31,14 +31,14 @@ const services = [
         title: 'Development',
         description: 'Projects & investment opportunities',
         theme: 'cyan',
-        href: '#development',
+        href: '/coming-soon?topic=development',
     },
     {
         icon: 'tourism',
         title: 'Tourism',
         description: "Explore Mutoko's natural beauty",
         theme: 'green',
-        href: '#tourism',
+        href: '/coming-soon?topic=tourism',
     },
     {
         icon: 'tenders',
@@ -140,56 +140,6 @@ export function Hero() {
                     </div>
                 </div>
 
-                {/* Floating Glassmorphism Quick Stats Card */}
-                <div className="hero-stats-card" aria-label="Mutoko District key figures">
-                    <div className="stats-row">
-                        <div className="stats-icon-badge badge-gold" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                            </svg>
-                        </div>
-                        <div className="stats-text">
-                            <strong className="stats-number">12</strong>
-                            <span className="stats-label">Wards</span>
-                        </div>
-                    </div>
-
-                    <div className="stats-row">
-                        <div className="stats-icon-badge badge-green" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M4 19h16v2H4zM6 10h3v7H6zm5-5h3v12h-3zm5 8h3v4h-3z" />
-                            </svg>
-                        </div>
-                        <div className="stats-text">
-                            <strong className="stats-number">50+</strong>
-                            <span className="stats-label">Community Projects</span>
-                        </div>
-                    </div>
-
-                    <div className="stats-row">
-                        <div className="stats-icon-badge badge-leaf" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2s2-2 3-3c-4 0-7 2-8 4-1 2-1 4-1 4s2-2 5-2c0 0-2 2-3 4 3 0 6-2 7-4z" />
-                            </svg>
-                        </div>
-                        <div className="stats-text">
-                            <strong className="stats-number">3</strong>
-                            <span className="stats-label">Growth Points</span>
-                        </div>
-                    </div>
-
-                    <div className="stats-row">
-                        <div className="stats-icon-badge badge-pin" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
-                            </svg>
-                        </div>
-                        <div className="stats-text">
-                            <strong className="stats-number">1</strong>
-                            <span className="stats-label">Shared Vision</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
     );
@@ -443,7 +393,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             </div>
                             <h2 className="section-title">News and Updates</h2>
                         </div>
-                        <a href="/coming-soon?topic=news" className="header-viewall-link">
+                        <a href="/news" className="header-viewall-link">
                             View All News <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -561,6 +511,22 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
     );
 }
 
+
+export type ManagedHomepageService = { slug: string; name: string; summary: string | null };
+export type ManagedHomepageDocument = { slug: string; title: string; description: string | null };
+export type ManagedHomepageDepartment = { id: number; public_name: string; public_summary: string | null };
+export type ManagedHomepageNotice = { slug: string; title: string; summary: string | null };
+
+export function ManagedHomepageContent({ services, documents, departments, notices }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[] }) {
+    return <section id="services" className="container coming-soon" aria-label="Approved council information">
+        <h2>Approved council information</h2>
+        <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={`/services/${item.slug}`}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
+        <section aria-labelledby="managed-departments-heading"><h3 id="managed-departments-heading">Departments</h3>{departments.length ? <ul>{departments.map(item => <li key={item.id}><a href={`/departments/${item.id}`}>{item.public_name}</a>{item.public_summary && <p>{item.public_summary}</p>}</li>)}</ul> : <p>No approved department information is available yet.</p>}</section>
+        <section aria-labelledby="managed-documents-heading"><h3 id="managed-documents-heading">Documents</h3>{documents.length ? <ul>{documents.map(item => <li key={item.slug}><a href={`/documents/${item.slug}`}>{item.title}</a>{item.description && <p>{item.description}</p>}</li>)}</ul> : <p>No approved documents are available yet.</p>}</section>
+        <section aria-labelledby="managed-notices-heading"><h3 id="managed-notices-heading">Notices</h3>{notices.length ? <ul>{notices.map(item => <li key={item.slug}><a href={`/notices/${item.slug}`}>{item.title}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved notices are available yet.</p>}</section>
+    </section>;
+}
+
 export function DevelopmentSection() {
     return (
         <section className="dev-banner-section" id="development" aria-labelledby="dev-heading">
@@ -594,46 +560,6 @@ export function DevelopmentSection() {
                     </div>
                 </div>
 
-                <div className="dev-stats-grid">
-                    <div className="dev-stat-card">
-                        <div className="dev-stat-icon badge-gold" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M4 19h16v2H4zM6 10h3v7H6zm5-5h3v12h-3zm5 8h3v4h-3z" />
-                            </svg>
-                        </div>
-                        <div className="dev-stat-text">
-                            <strong className="dev-stat-number">50+</strong>
-                            <span className="dev-stat-title">Community Projects</span>
-                            <span className="dev-stat-subtitle">Ongoing and planned</span>
-                        </div>
-                    </div>
-
-                    <div className="dev-stat-card">
-                        <div className="dev-stat-icon badge-blue" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                            </svg>
-                        </div>
-                        <div className="dev-stat-text">
-                            <strong className="dev-stat-number">12</strong>
-                            <span className="dev-stat-title">Wards</span>
-                            <span className="dev-stat-subtitle">Across the district</span>
-                        </div>
-                    </div>
-
-                    <div className="dev-stat-card">
-                        <div className="dev-stat-icon badge-leaf" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2s2-2 3-3c-4 0-7 2-8 4-1 2-1 4-1 4s2-2 5-2c0 0-2 2-3 4 3 0 6-2 7-4z" />
-                            </svg>
-                        </div>
-                        <div className="dev-stat-text">
-                            <strong className="dev-stat-number">3</strong>
-                            <span className="dev-stat-title">Growth Points</span>
-                            <span className="dev-stat-subtitle">Driving local development</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
     );
@@ -694,7 +620,7 @@ export function CtaBanner() {
                     </p>
                 </div>
                 <div className="cta-action-side">
-                    <a href="/coming-soon?topic=contact" className="btn-cta-green">
+                    <a href="/contact" className="btn-cta-green">
                         <span>Get in Touch</span>
                         <span aria-hidden="true">→</span>
                     </a>

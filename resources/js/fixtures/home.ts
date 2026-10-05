@@ -38,56 +38,9 @@ export type AboutPillar = {
     icon: 'gear' | 'shield' | 'leaf' | 'users';
 };
 
-export const newsPreviews: NewsPreview[] = [
-    {
-        title: 'Council Launches New Water Supply Project',
-        date: '02 Nov 2024',
-        summary: 'Mutoko RDC has launched a new water supply project to improve access to clean and safe water in rural communities.',
-        image: '/images/home/news-water.webp',
-        href: '/coming-soon?topic=news',
-    },
-    {
-        title: 'Community Engagement Meetings Continue',
-        date: '28 Oct 2024',
-        summary: 'Council holds community engagement meetings across all 12 wards to discuss development priorities.',
-        image: '/images/home/news-community.webp',
-        href: '/coming-soon?topic=news',
-    },
-    {
-        title: 'Road Rehabilitation Works Progress Well',
-        date: '15 Oct 2024',
-        summary: 'Major road rehabilitation works are ongoing to improve connectivity and support local economic development.',
-        image: '/images/home/news-roads.webp',
-        href: '/coming-soon?topic=news',
-    },
-];
+export const newsPreviews: NewsPreview[] = [];
 
-export const eventPreviews: EventPreview[] = [
-    {
-        day: '25',
-        month: 'Nov',
-        title: 'Ward Community Meeting',
-        location: 'Ward 5 - Chivhu River',
-        time: '10:00 AM - 1:00 PM',
-        href: '/coming-soon?topic=events',
-    },
-    {
-        day: '28',
-        month: 'Nov',
-        title: 'Community Information Session',
-        location: 'Council Chambers',
-        time: '09:00 AM - 12:00 PM',
-        href: '/coming-soon?topic=events',
-    },
-    {
-        day: '05',
-        month: 'Dec',
-        title: 'Clean Up Campaign',
-        location: 'Mutoko Town',
-        time: '08:00 AM - 12:00 PM',
-        href: '/coming-soon?topic=events',
-    },
-];
+export const eventPreviews: EventPreview[] = [];
 
 export const keyServices: ServicePreview[] = [
     {

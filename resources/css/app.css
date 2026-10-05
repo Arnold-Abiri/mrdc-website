@@ -1609,8 +1609,8 @@ h3 { margin: 0; }
   }
 }
 
-/* Desktop (>= 1024px) */
-@media (min-width: 1024px) {
+/* Wide desktop navigation (>= 1280px) */
+@media (min-width: 1280px) {
   .menu-toggle { display: none; }
   .header-inner { min-height: 62px; }
   .header-bottom-curve { height: 20px; }

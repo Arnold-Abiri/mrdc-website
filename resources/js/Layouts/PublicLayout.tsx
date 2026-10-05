@@ -4,12 +4,15 @@ import type { ReactNode } from 'react';
 const navigation = [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/#about' },
-    { label: 'Council', href: '/coming-soon?topic=council' },
-    { label: 'Services', href: '/#services' },
-    { label: 'Development', href: '/#development' },
-    { label: 'Tourism', href: '/#tourism' },
-    { label: 'Media', href: '/coming-soon?topic=media' },
-    { label: 'Engagement', href: '/coming-soon?topic=engagement' },
+    { label: 'Council', href: '/departments' },
+    { label: 'Officials', href: '/officials' },
+    { label: 'Wards', href: '/wards' },
+    { label: 'Services', href: '/services' },
+    { label: 'Documents', href: '/documents' },
+    { label: 'News', href: '/news' },
+    { label: 'Notices', href: '/notices' },
+    { label: 'Search', href: '/search' },
+    { label: 'Contact', href: '/contact' },
 ];
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
@@ -45,20 +48,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div className="utility-actions">
-                        <span className="utility-link">
-                            <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                            </svg>
-                            <span>+263 71 234 5678</span>
-                        </span>
-
-                        <span className="utility-link">
-                            <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <rect width="20" height="16" x="2" y="4" rx="2" />
-                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                            </svg>
-                            <span>info@mutokordc.gov.zw</span>
-                        </span>
 
                         <div className="utility-language-badge">
                             <span>English</span>
@@ -132,13 +121,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 </a>
                             )
                         )}
-                        <a href="/coming-soon?topic=search" className="header-search-pill" aria-label="Search coming soon">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <circle cx="11" cy="11" r="8" />
-                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                            </svg>
-                            <span>Search</span>
-                        </a>
                     </nav>
                 </div>
 
@@ -205,8 +187,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <li><a href="/">Home</a></li>
                             <li><a href="/#about">About</a></li>
                             <li><a href="/#services">Our Services</a></li>
-                            <li><a href="/#development">Development</a></li>
-                            <li><a href="/#tourism">Tourism</a></li>
+                            <li><a href="/coming-soon?topic=development">Development</a></li>
+                            <li><a href="/coming-soon?topic=tourism">Tourism</a></li>
                             <li><a href="/coming-soon?topic=media">Media</a></li>
                             <li><a href="/coming-soon?topic=contact">Contact Us</a></li>
                         </ul>
@@ -239,20 +221,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 </div>
                             </div>
 
-                            <span className="footer-contact-item footer-contact-link">
-                                <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                                </svg>
-                                <span>+263 71 234 5678</span>
-                            </span>
-
-                            <span className="footer-contact-item footer-contact-link">
-                                <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                                </svg>
-                                <span>info@mutokordc.gov.zw</span>
-                            </span>
                         </div>
                     </div>
                 </div>

@@ -33,6 +33,16 @@ class DepartmentPolicy
         return app(DataScopeAuthorizer::class)->allows($actor, 'departments.disable', $department->id, null);
     }
 
+    public function publish(User $actor, Department $department): bool
+    {
+        return app(DataScopeAuthorizer::class)->allows($actor, 'departments.publish', $department->id, null);
+    }
+
+    public function verify(User $actor, Department $department): bool
+    {
+        return app(DataScopeAuthorizer::class)->allows($actor, 'departments.verify', $department->id, null);
+    }
+
     public function delete(User $actor, Department $department): bool
     {
         return false;

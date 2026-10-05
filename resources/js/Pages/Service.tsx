@@ -1,0 +1,5 @@
+import PublicLayout from '../Layouts/PublicLayout';
+type ServiceContent = { slug: string; name: string; summary: string | null; description: string | null; requirements: string[] | null; steps: string[] | null; fees_information: string | null; seo_title: string | null; meta_description: string | null };
+export default function Service({ service, department }: { service: ServiceContent; department: string | null }) {
+    return <PublicLayout><div className="container coming-soon"><h1>{service.name}</h1>{service.summary && <p>{service.summary}</p>}{service.description && <p>{service.description}</p>}{department && <p>Responsible department: {department}</p>}{service.requirements?.length ? <section><h2>Requirements</h2><ul>{service.requirements.map((item, index) => <li key={index}>{item}</li>)}</ul></section> : null}{service.steps?.length ? <section><h2>Steps</h2><ol>{service.steps.map((item, index) => <li key={index}>{item}</li>)}</ol></section> : null}{service.fees_information && <section><h2>Fees</h2><p>{service.fees_information}</p></section>}</div></PublicLayout>;
+}

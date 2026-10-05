@@ -7,6 +7,7 @@ import {
     FeatureCallouts,
     Hero,
     KeyServicesSection,
+    ManagedHomepageContent,
     NewsAndEvents,
     QuickAccess,
     TourismSection,
@@ -18,14 +19,7 @@ describe('homepage sections', () => {
         render(<Hero />);
         expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Mutoko Rural District Council');
         expect(screen.getByText('People. Development. Sustainable Communities.')).toBeInTheDocument();
-        expect(screen.getByText('12')).toBeInTheDocument();
-        expect(screen.getByText('Wards')).toBeInTheDocument();
-        expect(screen.getByText('50+')).toBeInTheDocument();
-        expect(screen.getByText('Community Projects')).toBeInTheDocument();
-        expect(screen.getByText('3')).toBeInTheDocument();
-        expect(screen.getByText('Growth Points')).toBeInTheDocument();
-        expect(screen.getByText('1')).toBeInTheDocument();
-        expect(screen.getByText('Shared Vision')).toBeInTheDocument();
+        expect(screen.queryByText('50+')).not.toBeInTheDocument();
     });
 
     it('renders the 6 quick access cards with correct titles and descriptions', () => {
@@ -73,12 +67,19 @@ describe('homepage sections', () => {
         expect(screen.getByText('Environmental Management')).toBeInTheDocument();
     });
 
+    it('shows empty states when no approved homepage CMS records exist', () => {
+        render(<ManagedHomepageContent services={[]} documents={[]} departments={[]} notices={[]} />);
+        expect(screen.getByText('No approved services are available yet.')).toBeInTheDocument();
+        expect(screen.getByText('No approved documents are available yet.')).toBeInTheDocument();
+        expect(screen.getByText('No approved department information is available yet.')).toBeInTheDocument();
+        expect(screen.getByText('No approved notices are available yet.')).toBeInTheDocument();
+    });
+
     it('renders development banner section with headline and metrics', () => {
         render(<DevelopmentSection />);
         expect(screen.getByText('Building a Better Mutoko')).toBeInTheDocument();
         expect(screen.getByText('Explore Development')).toBeInTheDocument();
-        expect(screen.getByText('50+')).toBeInTheDocument();
-        expect(screen.getByText('Ongoing and planned')).toBeInTheDocument();
+        expect(screen.queryByText('50+')).not.toBeInTheDocument();
     });
 
     it('renders tourism section with featured destinations', () => {
