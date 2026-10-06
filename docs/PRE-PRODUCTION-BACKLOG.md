@@ -1,4 +1,33 @@
-# Pre-Production Backlog — Stage 3 deferred work
+# Pre-Production Backlog — Final Reconciliation (Stage 8, 6 October 2026)
+
+| ID | Item | Final Status | Owner | Production Blocking? |
+|---|---|---|---|---|
+| PP-01 | Interface strings into `localization.ts` | CLOSED — Stage 6 audited all 30 public pages; ~90 keys; council content intentionally untranslated | Build | No |
+| PP-02 | Shona wording (interface + validation) | COUNCIL DEPENDENCY (see PP-18) | Council | Acceptance-gated (fallback works) |
+| PP-03 | Admin Playwright login instability | SUPERSEDED — owner updated the spec (199cd25); Stage 7 added 3 passing authenticated journeys; backend authorization suites green | Build | No |
+| PP-04 | Remaining admin E2E workflows | ACCEPTED RISK — representative browser coverage (contact/document/media/department/enquiry/Stage 7 admin journeys) + full backend lifecycle coverage | Build/QA | No |
+| PP-05 | Exhaustive attack matrix | SUPERSEDED by Stage 8 release review (representative IDOR/XSS/CSRF/mass-assignment/upload/rate-limit/authz evidence, 0 Critical/High) | Build | No |
+| PP-06 | Production content verification | COUNCIL DEPENDENCY | Council | Yes (content gate) |
+| PP-07 | Mail credentials, worker supervision, failed-job alerting | HOSTING DEPENDENCY — config + runbook + supervisor docs done; live creds pending | Ops/Stage 8 | Yes (ops gate) |
+| PP-08 | Hosting/HTTPS/DNS/TLS/secrets on host | HOSTING DEPENDENCY — documented, unverified without a host | Ops/Stage 8 | Yes (ops gate) |
+| PP-09 | Pen-test + TLS header review | ACCEPTED RISK — Stage 8 release review completed; residual exotic permutations noted | Build | No |
+| PP-10 | Stage 4 seed drafts review | COUNCIL DEPENDENCY | Council | Yes (content gate) |
+| PP-11 | Shona for citizen-service sections | COUNCIL DEPENDENCY (see PP-18) | Council | Acceptance-gated |
+| PP-12 | Real-reference rule for open tenders/vacancies | COUNCIL DEPENDENCY (standing rule) | Council | Yes (content gate) |
+| PP-13 | Governance/financial content supply | COUNCIL DEPENDENCY | Council | Yes (content gate) |
+| PP-14 | Billing/payment integration | COUNCIL DEPENDENCY | Council/Ops | Yes if required |
+| PP-15 | M&E dashboard | CLOSED — built in Stage 7 | Build | No |
+| PP-16 | Project/tourism/award content | COUNCIL DEPENDENCY | Council | Yes (content gate) |
+| PP-17 | Complaint ops readiness | HOSTING DEPENDENCY (staffing/SLA/monitoring) | Ops | Yes (ops gate) |
+| PP-18 | Shona approvals | COUNCIL DEPENDENCY | Council | Acceptance-gated |
+| PP-19 | Ndebele approvals | COUNCIL DEPENDENCY | Council | Acceptance-gated |
+| PP-20 | Screen-reader pass | STAGE 9-adjacent QA — structural checks automated (15 pass); manual NVDA/VoiceOver outstanding | QA | Acceptance-gated |
+| PP-21 | Indexation review | HOSTING DEPENDENCY (post-content) | Ops | Yes (ops gate) |
+| PP-22 | Uptime polling + alert recipients/SMTP | HOSTING DEPENDENCY | Ops/Stage 8 | Yes (ops gate) |
+| PP-23 | Prune scheduling + log aggregation | HOSTING DEPENDENCY — scheduler wired; cron + aggregation pending host | Ops/Stage 8 | Yes (ops gate) |
+| PP-24 | Privacy wording approval | COUNCIL DEPENDENCY | Council | Yes (legal gate) |
+
+## Original item detail (historical record)
 
 Stage 3 verdict: **GO — READY FOR STAGE 4 DEVELOPMENT** (development-progression
 decision, 6 October 2026). This is NOT a production-release clearance.
