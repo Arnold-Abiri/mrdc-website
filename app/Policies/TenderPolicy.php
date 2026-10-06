@@ -38,6 +38,11 @@ class TenderPolicy
         return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.verify', $tender->department_id, $tender->created_by);
     }
 
+    public function award(User $actor, Tender $tender): bool
+    {
+        return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.award', $tender->department_id, $tender->created_by);
+    }
+
     public function delete(User $actor, Tender $tender): bool
     {
         return false;

@@ -37,6 +37,8 @@ class VacancyResource extends Resource
         return $schema->components([
             TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
             TextInput::make('grade')->maxLength(60),
+            TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
+            Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
             Textarea::make('description')->required()->maxLength(50000)->helperText('Plain text only; HTML is not rendered.'),
             Textarea::make('responsibilities')->maxLength(20000), Textarea::make('requirements')->maxLength(20000),
             DatePicker::make('opens_at'), DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site. Expired vacancies must not be republished as open.'),

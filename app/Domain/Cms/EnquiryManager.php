@@ -6,6 +6,8 @@ use App\Domain\Identity\AuditWriter;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Models\Department;
 use App\Models\Enquiry;
+use App\Models\InvestmentOpportunity;
+use App\Models\Service;
 use App\Models\User;
 use App\Notifications\EnquiryWorkflowNotification;
 use Illuminate\Support\Collection;
@@ -26,26 +28,61 @@ class EnquiryManager
         'closed' => ['in_progress'],
     ];
 
+    public const CITIZEN_CATEGORIES = ['general', 'services', 'feedback', 'complaint', 'investment_enquiry', 'service_enquiry', 'other'];
+
+    public const CONTEXT_TYPES = ['service', 'investment'];
+
     public function submit(array $input): Enquiry
     {
         $data = Validator::make($input, [
             'name' => ['required', 'string', 'max:160'],
             'email' => ['required', 'email', 'max:254'],
             'phone' => ['nullable', 'string', 'max:40'],
-            'category' => ['required', Rule::in(['general', 'services', 'feedback', 'other'])],
+            'organisation' => ['nullable', 'string', 'max:255'],
+            'category' => ['required', Rule::in(self::CITIZEN_CATEGORIES)],
             'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('status', 'active')],
+            'context_type' => ['nullable', Rule::in(self::CONTEXT_TYPES)],
+            'context_reference' => ['nullable', 'string', 'max:160'],
+            'consent_given' => ['sometimes', 'boolean'],
             'subject' => ['required', 'string', 'max:200'],
             'message' => ['required', 'string', 'min:10', 'max:5000'],
             'website' => ['nullable', 'size:0'],
         ])->validate();
         unset($data['website']);
+        $data['context_type'] = $this->resolveContext($data['context_type'] ?? null, $data['context_reference'] ?? null, $data['category']);
+        if ($data['context_type'] === null) {
+            $data['context_reference'] = null;
+        }
         $enquiry = new Enquiry($data);
         $enquiry->public_id = (string) Str::uuid();
         $enquiry->status = 'new';
         $enquiry->submitted_at = now();
         $enquiry->save();
+        $this->notifyStaff($this->staffForDepartment($enquiry->department_id), $enquiry, 'New citizen submission');
 
         return $enquiry;
+    }
+
+    /**
+     * Resolve citizen context against published records only. Unknown or
+     * unpublished references are dropped instead of trusted.
+     */
+    private function resolveContext(?string $type, ?string $reference, string $category): ?string
+    {
+        if ($type === null || $reference === null) {
+            return null;
+        }
+        $expected = $category === 'investment_enquiry' ? 'investment' : ($category === 'service_enquiry' ? 'service' : null);
+        if ($expected !== null && $type !== $expected) {
+            return null;
+        }
+        $exists = match ($type) {
+            'service' => Service::query()->public()->where('slug', $reference)->exists(),
+            'investment' => InvestmentOpportunity::query()->public()->where('slug', $reference)->exists(),
+            default => false,
+        };
+
+        return $exists ? $type : null;
     }
 
     public function setStatus(User $actor, Enquiry $enquiry, string $status): Enquiry

@@ -20,8 +20,9 @@ type HomeEditorial = { slug: string; title: string; summary: string | null; publ
 type HomeStatistic = { label: string; value: string; unit: string | null; icon: string | null };
 type HomeTender = { slug: string; reference: string; title: string; display_status: string };
 type HomeInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
+type HomeProject = { slug: string; title: string; project_status: string; summary: string | null };
 
-export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[] }) {
+export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides, projects }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[]; projects: HomeProject[] }) {
     return (
         <PublicLayout>
             <Head title="Mutoko Rural District Council">
@@ -32,7 +33,7 @@ export default function Home({ services, documents, departments, news, notices, 
             <ValuePillars />
             <AboutSection />
             <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ?? '', href: `/news/${item.slug}` }))} events={[]} />
-            <ManagedHomepageContent services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} />
+            <ManagedHomepageContent services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} projects={projects} />
 
 
 

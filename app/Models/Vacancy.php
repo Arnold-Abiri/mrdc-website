@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Vacancy extends Model
 {
-    protected $fillable = ['slug', 'title', 'grade', 'description', 'responsibilities', 'requirements', 'opens_at', 'closes_at', 'application_instructions', 'document_id', 'department_id', 'display_order'];
+    protected $fillable = ['slug', 'title', 'grade', 'description', 'responsibilities', 'requirements', 'opens_at', 'closes_at', 'application_instructions', 'document_id', 'department_id', 'display_order', 'reference', 'employment_type'];
 
     protected function casts(): array
     {

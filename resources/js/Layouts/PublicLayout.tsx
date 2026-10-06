@@ -17,6 +17,8 @@ const navigation = [
     { label: 'Vacancies', href: '/vacancies' },
     { label: 'Investment', href: '/investment' },
     { label: 'Meetings', href: '/meetings' },
+    { label: 'Projects', href: '/projects' },
+    { label: 'Tourism', href: '/tourism' },
     { label: 'Transparency', href: '/transparency' },
     { label: 'Rates', href: '/rates' },
     { label: 'Search', href: '/search' },

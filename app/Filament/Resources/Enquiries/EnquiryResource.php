@@ -33,6 +33,8 @@ class EnquiryResource extends Resource
             TextEntry::make('email'),
             TextEntry::make('phone'),
             TextEntry::make('category'),
+            TextEntry::make('organisation')->visible(fn (Enquiry $record): bool => $record->organisation !== null),
+            TextEntry::make('context')->label('Origin')->state(fn (Enquiry $record): ?string => $record->context_type ? $record->context_type.':'.$record->context_reference : null)->visible(fn (Enquiry $record): bool => $record->context_type !== null),
             TextEntry::make('department_name')->label('Department')->state(fn (Enquiry $record): ?string => $record->department instanceof Department ? $record->department->name : null),
             TextEntry::make('assignee_name')->label('Assigned to')->state(fn (Enquiry $record): ?string => $record->assignee instanceof User ? $record->assignee->name : null),
             TextEntry::make('subject'),
@@ -48,6 +50,7 @@ class EnquiryResource extends Resource
             TextColumn::make('subject')->searchable(),
             TextColumn::make('department.name')->label('Department'),
             TextColumn::make('category'),
+            TextColumn::make('context_type')->label('Origin')->toggleable(),
             TextColumn::make('status')->badge(),
             TextColumn::make('submitted_at')->dateTime()->sortable(),
         ])->defaultSort('submitted_at', 'desc')->recordUrl(fn (Enquiry $record): string => static::getUrl('view', ['record' => $record]));

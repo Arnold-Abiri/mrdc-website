@@ -111,6 +111,8 @@ class VacancyManager
         return Validator::make($input, [
             'slug' => ['required', 'string', 'max:160', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('vacancies', 'slug')->ignore($vacancy?->id)],
             'title' => ['required', 'string', 'max:255'], 'grade' => ['nullable', 'string', 'max:60'],
+            'reference' => ['nullable', 'string', 'max:60', Rule::unique('vacancies', 'reference')->ignore($vacancy?->id)],
+            'employment_type' => ['nullable', Rule::in(['full_time', 'part_time', 'contract', 'temporary', 'internship'])],
             'description' => ['required', 'string', 'max:50000'],
             'responsibilities' => ['nullable', 'string', 'max:20000'], 'requirements' => ['nullable', 'string', 'max:20000'],
             'opens_at' => ['nullable', 'date'], 'closes_at' => ['nullable', 'date', 'after_or_equal:opens_at'],

@@ -30,6 +30,23 @@ const english = {
     year: 'Year', department: 'Department', keyword: 'Keyword', filter: 'Filter', clearFilters: 'Clear filters',
     noDocuments: 'No documents match the selected filters.', referenceYear: 'Reporting year', downloadCount: 'downloads', downloadFile: 'Download file',
     urgentNotice: 'Important notice', version: 'Version',
+    projects: 'Projects and programmes', projectsDesc: 'Council projects and development programmes across Mutoko district.',
+    noProjects: 'No projects are published at this time.', projectStatus: 'Status', projectType: 'Type',
+    planned: 'Planned', ongoing: 'Ongoing', onHold: 'On hold', programme: 'Programme', project: 'Project',
+    location: 'Location', timeline: 'Timeline', startsAt: 'Start', expectedCompletion: 'Expected completion', completedAt: 'Completed',
+    progress: 'Progress', projectUpdates: 'Project updates', noProjectUpdates: 'No public updates have been published for this project yet.',
+    relatedDocuments: 'Related documents', askAboutService: 'Ask about this service', enquireInvestment: 'Enquire about this opportunity',
+    feedbackPage: 'Feedback and complaints', feedbackDesc: 'Send the council your feedback or lodge a complaint. Complaints are private and never published.',
+    complaint: 'Complaint', investmentEnquiryLabel: 'Investment enquiry', serviceEnquiryLabel: 'Service enquiry',
+    organisation: 'Organisation (optional)', consent: 'Privacy acknowledgement', consentText: 'I understand my submission will be handled privately by council staff.',
+    submitFeedback: 'Submit feedback', feedbackReceived: 'Thank you. Your reference number is', selectDepartment: 'Department (optional)',
+    tourismDesc: 'Discover Mutoko district — its heritage, landscapes, and visitor opportunities.',
+    tourismPending: 'Council-approved tourism information is being prepared for publication.',
+    investment: 'Investment',
+    award: 'Award', awardedTo: 'Awarded to', awardedAt: 'Award date', awardAmount: 'Award amount', awardRemarks: 'Award remarks',
+    reference: 'Reference', employmentType: 'Employment type',
+    fullTime: 'Full time', partTime: 'Part time', contract: 'Contract', temporary: 'Temporary', internship: 'Internship',
+    aboutContext: 'About', viewDetails: 'View details',
 } as const;
 
 type Key = keyof typeof english;

@@ -54,6 +54,13 @@ const services = [
         theme: 'red',
         href: '/vacancies',
     },
+    {
+        icon: 'services',
+        title: 'Feedback',
+        description: 'Complaints, feedback & service requests',
+        theme: 'emerald',
+        href: '/feedback',
+    },
 ] as const;
 
 function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
@@ -564,8 +571,9 @@ export type ManagedHomepageOfficial = { slug: string; name: string; title: strin
 export type ManagedHomepageStatistic = { label: string; value: string; unit: string | null; icon: string | null };
 export type ManagedHomepageTender = { slug: string; reference: string; title: string; display_status: string };
 export type ManagedHomepageInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
+export type ManagedHomepageProject = { slug: string; title: string; project_status: string; summary: string | null };
 
-export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [] }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[] }) {
+export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
     return <section id="services" className="container coming-soon" aria-label="Approved council information">
         <h2>Approved council information</h2>
         <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={`/services/${item.slug}`}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
@@ -578,6 +586,7 @@ export function ManagedHomepageContent({ services, documents, departments, notic
         <section aria-labelledby="managed-statistics-heading"><h3 id="managed-statistics-heading">Our district</h3>{statistics.length ? <ul>{statistics.map(item => <li key={item.label}><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong> — {item.label}</li>)}</ul> : <p>District statistics are being verified for publication.</p>}</section>
         <section aria-labelledby="managed-tenders-heading"><h3 id="managed-tenders-heading">Tenders</h3>{tenders.length ? <ul>{tenders.map(item => <li key={item.slug}><a href={`/tenders/${item.slug}`}>{item.title}</a> — {item.reference} ({item.display_status})</li>)}</ul> : <p>No tenders are published at this time.</p>}<a href="/tenders">View all tenders</a></section>
         <section aria-labelledby="managed-investment-heading"><h3 id="managed-investment-heading">Invest in Mutoko</h3>{investment.length ? <ul>{investment.map(item => <li key={item.slug}><a href={`/investment/${item.slug}`}>{item.title}</a>{item.sector ? ` — ${item.sector}` : ''}</li>)}</ul> : <p>Investment opportunities are being prepared for publication.</p>}<a href="/investment">Explore investment</a></section>
+        <section aria-labelledby="managed-projects-heading"><h3 id="managed-projects-heading">Projects and programmes</h3>{projects.length ? <ul>{projects.map(item => <li key={item.slug}><a href={`/projects/${item.slug}`}>{item.title}</a> — {item.project_status}</li>)}</ul> : <p>Project profiles are being prepared for publication.</p>}<a href="/projects">View all projects</a></section>
     </section>;
 }
 

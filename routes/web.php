@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PublicEnquiryController;
 use App\Models\CouncilMeeting;
+use App\Models\CouncilProject;
 use App\Models\Department;
 use App\Models\DistrictStatistic;
 use App\Models\Document;
@@ -35,6 +37,7 @@ Route::get('/', function () {
         'statistics' => DistrictStatistic::query()->public()->orderBy('display_order')->get(['label', 'value', 'unit', 'icon']),
         'tenders' => Tender::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'reference', 'title'])->map(fn (Tender $tender): array => [...$tender->only(['slug', 'reference', 'title']), 'display_status' => $tender->displayStatus()]),
         'investment' => InvestmentOpportunity::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'title', 'sector', 'summary']),
+        'projects' => CouncilProject::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'title', 'project_status', 'summary']),
         'slides' => HomepageSlide::query()->public()->orderBy('display_order')->get(['headline', 'supporting_text', 'cta_label', 'cta_url'])->map(function (HomepageSlide $slide): array {
             $media = $slide->media_id ? Media::query()->where('id', $slide->media_id)->where('status', 'active')->first() : null;
 
@@ -52,6 +55,9 @@ Route::post('/locale', function (Request $request) {
 
 Route::get('/contact', [PublicEnquiryController::class, 'create'])->name('contact.create');
 Route::post('/contact', [PublicEnquiryController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
+
+Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
+Route::post('/feedback', [FeedbackController::class, 'store'])->middleware('throttle:5,1')->name('feedback.store');
 
 Route::get('/search', function (Request $request) {
     $rawQuery = $request->query('q', '');
@@ -157,8 +163,16 @@ Route::get('/search', function (Request $request) {
         'type' => 'Meeting', 'title' => $meeting->title, 'summary' => $meeting->summary,
         'url' => route('meetings.show', $meeting->id), 'is_review_content' => false,
     ]);
+    $projects = $query === '' ? collect() : CouncilProject::query()->public()->where(function ($builder) use ($query): void {
+        $escaped = addcslashes($query, '%_\\');
+        $builder->where('title', 'like', '%'.$escaped.'%')->orWhere('summary', 'like', '%'.$escaped.'%')->orWhere('description', 'like', '%'.$escaped.'%');
+    })->orderBy('display_order')->orderBy('title')->limit(20)->get(['slug', 'title', 'summary']);
+    $projectResults = $projects->map(fn (CouncilProject $project): array => [
+        'type' => 'Project', 'title' => $project->title, 'summary' => $project->summary,
+        'url' => route('projects.show', $project->slug), 'is_review_content' => false,
+    ]);
 
-    return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->take(20)->values()]);
+    return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->concat($projectResults)->take(20)->values()]);
 })->name('search');
 
 Route::get('/coming-soon', function () {
@@ -237,7 +251,7 @@ Route::get('/services/{slug}', function (string $slug) {
 
     $department = $service->department;
 
-    return Inertia::render('Service', ['service' => $service->only(['slug', 'name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'seo_title', 'meta_description']), 'department' => $department instanceof Department ? $department->name : null]);
+    return Inertia::render('Service', ['service' => $service->only(['slug', 'name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'seo_title', 'meta_description']), 'department' => $department instanceof Department ? $department->name : null, 'documents' => $service->department_id ? Document::query()->public()->where('department_id', $service->department_id)->orderByDesc('published_at')->limit(10)->get(['slug', 'title', 'category']) : []]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
 
 Route::get('/departments', function () {
@@ -303,7 +317,7 @@ Route::get('/tenders/{slug}', function (string $slug) {
     $tender = Tender::query()->public()->with(['document', 'department'])->where('slug', $slug)->firstOrFail();
     $document = $tender->document;
 
-    return Inertia::render('Tender', ['tender' => [...$tender->only(['slug', 'reference', 'title', 'category', 'description', 'opens_at', 'closes_at', 'contact_instructions']), 'display_status' => $tender->displayStatus(), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null], 'department' => $tender->department instanceof Department ? $tender->department->name : null]);
+    return Inertia::render('Tender', ['tender' => [...$tender->only(['slug', 'reference', 'title', 'category', 'description', 'opens_at', 'closes_at', 'contact_instructions', 'award_status', 'awarded_to', 'awarded_at', 'award_amount', 'award_reference', 'award_remarks']), 'display_status' => $tender->displayStatus(), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null], 'department' => $tender->department instanceof Department ? $tender->department->name : null]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('tenders.show');
 
 Route::get('/vacancies', function () {
@@ -313,7 +327,7 @@ Route::get('/vacancies/{slug}', function (string $slug) {
     $vacancy = Vacancy::query()->public()->with(['document', 'department'])->where('slug', $slug)->firstOrFail();
     $document = $vacancy->document;
 
-    return Inertia::render('Vacancy', ['vacancy' => [...$vacancy->only(['slug', 'title', 'grade', 'description', 'responsibilities', 'requirements', 'opens_at', 'closes_at', 'application_instructions']), 'is_open' => $vacancy->isOpen(), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null], 'department' => $vacancy->department instanceof Department ? $vacancy->department->name : null]);
+    return Inertia::render('Vacancy', ['vacancy' => [...$vacancy->only(['slug', 'title', 'grade', 'reference', 'employment_type', 'description', 'responsibilities', 'requirements', 'opens_at', 'closes_at', 'application_instructions']), 'is_open' => $vacancy->isOpen(), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null], 'department' => $vacancy->department instanceof Department ? $vacancy->department->name : null]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('vacancies.show');
 
 Route::get('/investment', function () {
@@ -359,6 +373,38 @@ Route::get('/rates', function () {
     return Inertia::render('Rates', ['page' => $page ? $page->only(['slug', 'title', 'summary', 'blocks']) : null, 'schedules' => $schedules]);
 })->name('rates.index');
 
+Route::get('/projects', function (Request $request) {
+    $status = $request->query('status');
+    $type = $request->query('type');
+    $departmentId = $request->query('department');
+    $wardId = $request->query('ward');
+    abort_unless($status === null || in_array($status, ['planned', 'ongoing', 'completed', 'on_hold', 'cancelled'], true), 422);
+    abort_unless($type === null || in_array($type, ['project', 'programme'], true), 422);
+
+    $projects = CouncilProject::query()->public()
+        ->when($status, fn ($query) => $query->where('project_status', $status))
+        ->when($type, fn ($query) => $query->where('project_type', $type))
+        ->when($departmentId, fn ($query) => $query->where('department_id', (int) $departmentId))
+        ->when($wardId, fn ($query) => $query->whereHas('wards', fn ($wards) => $wards->where('wards.id', (int) $wardId)))
+        ->orderBy('display_order')->orderBy('title')
+        ->get(['slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent']);
+
+    return Inertia::render('Projects', ['projects' => $projects, 'filters' => ['status' => $status, 'type' => $type, 'department' => $departmentId, 'ward' => $wardId]]);
+})->name('projects.index');
+Route::get('/projects/{slug}', function (string $slug) {
+    $project = CouncilProject::query()->public()->with(['department', 'wards', 'featuredMedia', 'documents' => fn ($query) => $query->public(), 'updates' => fn ($query) => $query->public()->orderByDesc('update_date')])->where('slug', $slug)->firstOrFail();
+    $department = $project->department;
+
+    return Inertia::render('Project', ['project' => [...$project->only(['slug', 'title', 'project_type', 'location', 'summary', 'description', 'starts_at', 'expected_completed_at', 'completed_at', 'project_status', 'progress_percent', 'contact_instructions']), 'image_url' => $project->featured_media_id ? route('managed-media.show', $project->featured_media_id) : null], 'department' => $department instanceof Department ? $department->name : null, 'wards' => $project->wards->map(fn (Ward $ward) => $ward->only(['slug', 'name'])), 'documents' => $project->documents->map(fn (Document $document) => $document->only(['slug', 'title'])), 'updates' => $project->updates->map(fn ($update) => $update->only(['update_date', 'title', 'summary', 'progress_percent']))]);
+})->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('projects.show');
+
+Route::get('/tourism', function () {
+    $page = Page::query()->public()->where('slug', 'tourism-mutoko')->first();
+    $opportunities = InvestmentOpportunity::query()->public()->orderBy('display_order')->orderBy('title')->get(['slug', 'title', 'sector', 'summary']);
+
+    return Inertia::render('Tourism', ['page' => $page ? $page->only(['slug', 'title', 'summary', 'blocks']) : null, 'opportunities' => $opportunities]);
+})->name('tourism.index');
+
 Route::redirect('/about', '/pages/about-mutoko')->name('about');
 Route::redirect('/downloads', '/documents')->name('downloads');
 
@@ -367,7 +413,8 @@ Route::get('/managed-media/{media}', function (Media $media) {
     $isPublishedOfficialPhoto = Official::query()->public()->where('photo_media_id', $media->id)->exists();
     $isPublishedEditorialImage = EditorialItem::query()->public()->where('featured_media_id', $media->id)->exists();
     $isPublishedSlideImage = HomepageSlide::query()->public()->where('media_id', $media->id)->exists();
-    abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage, 404);
+    $isPublishedProjectImage = CouncilProject::query()->public()->where('featured_media_id', $media->id)->exists();
+    abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage || $isPublishedProjectImage, 404);
     abort_unless(Storage::disk(config('cms.media_disk'))->exists($media->storage_path), 404);
 
     return Storage::disk(config('cms.media_disk'))->response($media->storage_path, 'image', [

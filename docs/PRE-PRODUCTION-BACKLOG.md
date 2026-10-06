@@ -38,3 +38,10 @@ No known authorization bypass (backend department-scope tests pass; see PP-03 fo
 | PP-13 | Content | Council supply/approval: budgets, audited statements, by-laws, policies, minutes, agendas, meeting schedules, rates figures, organogram chart, ward GIS/boundary data, leadership names and photos | High | Yes | Pre-production (council) |
 | PP-14 | Integration | Account-specific rate checking if required (external billing system/API); online payment only via approved integration | Medium | Yes | Pre-production (council/ops) |
 | PP-15 | Analytics | M&E dashboard consuming `document_downloads` aggregates | Low | No | Later stage |
+
+## Stage 5 additions (6 October 2026)
+
+| ID | Area | Item | Severity | Production Blocking | Target |
+|---|---|---|---|---|---|
+| PP-16 | Content | Council supply/approval: project profiles, progress figures, tourism wording, award publications | High | Yes | Pre-production (council) |
+| PP-17 | Operations | Complaint handling readiness: staff routing coverage, response SLAs, notification monitoring | Medium | Yes | Pre-production (ops) |

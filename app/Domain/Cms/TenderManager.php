@@ -115,6 +115,61 @@ class TenderManager
         });
     }
 
+    public function recordAward(User $actor, Tender $tender, array $input): Tender
+    {
+        Gate::forUser($actor)->authorize('award', $tender);
+        $data = Validator::make($input, [
+            'award_status' => ['required', Rule::in(['none', 'pending', 'awarded'])],
+            'awarded_to' => ['nullable', 'string', 'max:255'],
+            'awarded_at' => ['nullable', 'date'],
+            'award_amount' => ['nullable', 'numeric', 'min:0', 'max:9999999999.99'],
+            'award_reference' => ['nullable', 'string', 'max:60'],
+            'award_document_id' => ['nullable', 'integer', Rule::exists('documents', 'id')],
+            'award_remarks' => ['nullable', 'string', 'max:5000'],
+        ])->validate();
+        if (($data['award_status'] ?? 'none') === 'awarded') {
+            abort_unless(! empty($data['awarded_to']) && ! empty($data['awarded_at']), 422, 'An awarded tender requires the contractor and award date.');
+        }
+
+        return DB::transaction(function () use ($actor, $tender, $data): Tender {
+            $tender = Tender::query()->lockForUpdate()->findOrFail($tender->id);
+            Gate::forUser($actor)->authorize('award', $tender);
+            if (! empty($data['award_document_id'])) {
+                $document = Document::query()->findOrFail($data['award_document_id']);
+                Gate::forUser($actor)->authorize('view', $document);
+            }
+            $tender->fill($data);
+            if (($tender->award_status ?? 'none') === 'awarded') {
+                $tender->lifecycle_status = 'awarded';
+            }
+            $tender->updated_by = $actor->id;
+            $tender->save();
+            app(AuditWriter::class)->record($actor, 'tender.award_recorded', $tender, ['reference' => $tender->reference, 'award_status' => $tender->award_status]);
+
+            return $tender;
+        });
+    }
+
+    /**
+     * @return array{total: int, open: int, closed: int, awarded: int, cancelled: int, overdue_close: int, published: int, drafts: int}
+     */
+    public function complianceSummary(): array
+    {
+        $all = Tender::query()->get(['lifecycle_status', 'closes_at', 'status', 'award_status']);
+        $open = $all->filter(fn (Tender $tender): bool => $tender->isOpen())->count();
+
+        return [
+            'total' => $all->count(),
+            'open' => $open,
+            'closed' => $all->where('lifecycle_status', 'closed')->count(),
+            'awarded' => $all->where('award_status', 'awarded')->count(),
+            'cancelled' => $all->where('lifecycle_status', 'cancelled')->count(),
+            'overdue_close' => $all->filter(fn (Tender $tender): bool => $tender->closes_at !== null && now()->gt($tender->closes_at) && ! in_array($tender->lifecycle_status, ['closed', 'awarded', 'cancelled'], true))->count(),
+            'published' => $all->where('status', 'published')->count(),
+            'drafts' => $all->where('status', 'draft')->count(),
+        ];
+    }
+
     private function authorizeRelations(User $actor, array $data): void
     {
         if (! empty($data['document_id'])) {

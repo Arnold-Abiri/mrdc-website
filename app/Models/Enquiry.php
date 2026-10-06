@@ -12,11 +12,11 @@ class Enquiry extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'email', 'phone', 'category', 'department_id', 'subject', 'message'];
+    protected $fillable = ['name', 'email', 'phone', 'category', 'department_id', 'subject', 'message', 'context_type', 'context_reference', 'organisation', 'consent_given'];
 
     protected function casts(): array
     {
-        return ['submitted_at' => 'datetime'];
+        return ['submitted_at' => 'datetime', 'consent_given' => 'boolean'];
     }
 
     public function department(): BelongsTo

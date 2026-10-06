@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tender extends Model
 {
-    protected $fillable = ['reference', 'slug', 'title', 'category', 'description', 'opens_at', 'closes_at', 'lifecycle_status', 'contact_instructions', 'document_id', 'department_id', 'display_order'];
+    protected $fillable = ['reference', 'slug', 'title', 'category', 'description', 'opens_at', 'closes_at', 'lifecycle_status', 'contact_instructions', 'document_id', 'department_id', 'display_order', 'award_status', 'awarded_to', 'awarded_at', 'award_amount', 'award_reference', 'award_document_id', 'award_remarks'];
 
     protected function casts(): array
     {
-        return ['opens_at' => 'date', 'closes_at' => 'datetime', 'published_at' => 'datetime', 'verified_at' => 'datetime'];
+        return ['opens_at' => 'date', 'closes_at' => 'datetime', 'published_at' => 'datetime', 'verified_at' => 'datetime', 'awarded_at' => 'date', 'award_amount' => 'decimal:2'];
     }
 
     public function document(): BelongsTo
