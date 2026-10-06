@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(SecuritySeeder::class);
         $this->call(Stage4MutokoContentSeeder::class);
+        $this->call(Stage4bGovernanceSeeder::class);
     }
 }

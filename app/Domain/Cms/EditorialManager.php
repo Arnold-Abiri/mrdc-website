@@ -127,7 +127,9 @@ class EditorialManager
             'body' => ['required', 'string', 'max:50000'], 'category' => ['nullable', 'string', 'max:60'],
             'featured_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('status', 'active')->where('mime_type', 'like', 'image/%'))],
             'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('status', 'active')],
-            'expires_at' => ['nullable', 'date', 'after_or_equal:today'], 'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
+            'expires_at' => ['nullable', 'date', 'after_or_equal:today'], 'is_urgent' => ['required', 'boolean'],
+            'seo_title' => ['nullable', 'string', 'max:255'], 'meta_description' => ['nullable', 'string', 'max:320'],
+            'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
             'documents' => ['nullable', 'array', 'max:20'], 'documents.*' => ['integer', 'distinct', Rule::exists('documents', 'id')],
         ])->validate();
     }

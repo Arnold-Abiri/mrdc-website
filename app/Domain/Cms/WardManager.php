@@ -92,7 +92,7 @@ class WardManager
         return Validator::make($input, [
             'slug' => ['required', 'string', 'max:120', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('wards', 'slug')->ignore($ward?->id)],
             'name' => ['required', 'string', 'max:255'], 'description' => ['nullable', 'string', 'max:5000'],
-            'boundaries_description' => ['nullable', 'string', 'max:5000'], 'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
+            'boundaries_description' => ['nullable', 'string', 'max:5000'], 'map_url' => ['nullable', 'string', 'max:2048'], 'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
         ])->validate();
     }
 }

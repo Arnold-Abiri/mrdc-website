@@ -35,7 +35,7 @@ class DocumentResource extends Resource
             TextInput::make('title')->required()->maxLength(255),
             TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
             Textarea::make('description')->maxLength(5000),
-            Select::make('category')->options(array_combine(['policy', 'report', 'plan', 'budget', 'form', 'notice', 'minutes', 'publication', 'other'], ['Policy', 'Report', 'Plan', 'Budget', 'Form', 'Notice', 'Minutes', 'Publication', 'Other']))->required(),
+            Select::make('category')->options(collect(Document::CATEGORIES)->mapWithKeys(fn (string $category): array => [$category => ucwords(str_replace('_', ' ', $category))])->all())->required(),
             Select::make('media_id')->relationship('media', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'application/pdf'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable()->required(),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Select::make('visibility')->options(['public' => 'Public', 'private' => 'Private'])->required()->default('public'),
@@ -51,6 +51,7 @@ class DocumentResource extends Resource
             TextColumn::make('published_at')->dateTime(),
         ])->recordActions([
             EditAction::make(),
+            Action::make('replace')->label('Replace file')->authorize(fn (Document $record): bool => Gate::allows('update', $record))->schema([Select::make('media_id')->label('Replacement PDF')->relationship('media', 'title')->searchable()->required()->helperText('The previous file is preserved as a version; the replacement returns the document to draft for review.')])->action(fn (Document $record, array $data) => app(DocumentManager::class)->replace(auth()->user(), $record, (int) $data['media_id'])),
             Action::make('verify')->authorize(fn (Document $record): bool => Gate::allows('verify', $record))->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'unpublished')),

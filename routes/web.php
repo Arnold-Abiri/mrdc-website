@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\PublicEnquiryController;
+use App\Models\CouncilMeeting;
 use App\Models\Department;
 use App\Models\DistrictStatistic;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\HomepageSlide;
 use App\Models\InvestmentOpportunity;
 use App\Models\Media;
 use App\Models\Official;
@@ -15,6 +17,7 @@ use App\Models\Tender;
 use App\Models\Vacancy;
 use App\Models\Ward;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -32,6 +35,11 @@ Route::get('/', function () {
         'statistics' => DistrictStatistic::query()->public()->orderBy('display_order')->get(['label', 'value', 'unit', 'icon']),
         'tenders' => Tender::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'reference', 'title'])->map(fn (Tender $tender): array => [...$tender->only(['slug', 'reference', 'title']), 'display_status' => $tender->displayStatus()]),
         'investment' => InvestmentOpportunity::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'title', 'sector', 'summary']),
+        'slides' => HomepageSlide::query()->public()->orderBy('display_order')->get(['headline', 'supporting_text', 'cta_label', 'cta_url'])->map(function (HomepageSlide $slide): array {
+            $media = $slide->media_id ? Media::query()->where('id', $slide->media_id)->where('status', 'active')->first() : null;
+
+            return [...$slide->only(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? route('managed-media.show', $media->id) : null];
+        }),
     ]);
 })->name('home');
 
@@ -141,8 +149,16 @@ Route::get('/search', function (Request $request) {
         'type' => 'Investment', 'title' => $opportunity->title, 'summary' => $opportunity->summary,
         'url' => route('investment.show', $opportunity->slug), 'is_review_content' => false,
     ]);
+    $meetings = $query === '' ? collect() : CouncilMeeting::query()->public()->where(function ($builder) use ($query): void {
+        $escaped = addcslashes($query, '%_\\');
+        $builder->where('title', 'like', '%'.$escaped.'%')->orWhere('summary', 'like', '%'.$escaped.'%')->orWhere('venue', 'like', '%'.$escaped.'%');
+    })->orderBy('scheduled_date')->limit(20)->get(['id', 'title', 'summary']);
+    $meetingResults = $meetings->map(fn (CouncilMeeting $meeting): array => [
+        'type' => 'Meeting', 'title' => $meeting->title, 'summary' => $meeting->summary,
+        'url' => route('meetings.show', $meeting->id), 'is_review_content' => false,
+    ]);
 
-    return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->take(20)->values()]);
+    return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->take(20)->values()]);
 })->name('search');
 
 Route::get('/coming-soon', function () {
@@ -168,16 +184,33 @@ Route::get('/pages/{slug}', function (string $slug) {
     ]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('pages.show');
 
-Route::get('/documents', function () {
-    $documents = Document::query()->public()->orderByDesc('published_at')->get(['slug', 'title', 'description', 'category', 'published_at']);
+Route::get('/documents', function (Request $request) {
+    $category = $request->query('category');
+    $year = $request->query('year');
+    $departmentId = $request->query('department');
+    $keyword = trim((string) $request->query('q', ''));
+    abort_unless($category === null || in_array($category, Document::CATEGORIES, true), 422);
+    abort_unless($year === null || (is_numeric($year) && (int) $year >= 1990 && (int) $year <= (int) now()->format('Y') + 1), 422);
 
-    return Inertia::render('Documents', ['documents' => $documents]);
+    $documents = Document::query()->public()
+        ->when($category, fn ($query) => $query->where('category', $category))
+        ->when($year, fn ($query) => $query->whereYear('reference_date', (int) $year))
+        ->when($departmentId, fn ($query) => $query->where('department_id', (int) $departmentId))
+        ->when($keyword !== '', function ($query) use ($keyword): void {
+            $escaped = addcslashes($keyword, '%_\\');
+            $query->where(fn ($builder) => $builder->where('title', 'like', '%'.$escaped.'%')->orWhere('description', 'like', '%'.$escaped.'%'));
+        })
+        ->orderByDesc('published_at')
+        ->get(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count']);
+    $years = Document::query()->public()->whereNotNull('reference_date')->orderByDesc('reference_date')->pluck('reference_date')->map(fn ($date): int => (int) substr((string) $date, 0, 4))->unique()->values();
+
+    return Inertia::render('Documents', ['documents' => $documents, 'categories' => Document::CATEGORIES, 'years' => $years, 'filters' => ['category' => $category, 'year' => $year, 'department' => $departmentId, 'q' => $keyword]]);
 })->name('documents.index');
 
 Route::get('/documents/{slug}', function (string $slug) {
     $document = Document::query()->public()->where('slug', $slug)->firstOrFail();
 
-    return Inertia::render('Document', ['document' => $document->only(['slug', 'title', 'description', 'category', 'published_at', 'reference_date'])]);
+    return Inertia::render('Document', ['document' => [...$document->only(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'current_version']), 'reference_year' => $document->referenceYear()]]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('documents.show');
 
 Route::get('/documents/{slug}/download', function (string $slug) {
@@ -185,6 +218,8 @@ Route::get('/documents/{slug}/download', function (string $slug) {
     $media = $document->media;
     abort_unless($media instanceof Media, 404);
     abort_unless(Storage::disk(config('cms.media_disk'))->exists($media->storage_path), 404);
+    $document->increment('download_count');
+    DB::table('document_downloads')->insert(['document_id' => $document->id, 'version_number' => $document->current_version, 'downloaded_at' => now()]);
 
     return Storage::disk(config('cms.media_disk'))->download(
         $media->storage_path,
@@ -213,8 +248,15 @@ Route::get('/departments', function () {
 
 Route::get('/departments/{department}', function (Department $department) {
     abort_unless($department->status === 'active' && $department->public_status === 'published' && $department->public_verification_status === 'publishable' && $department->public_published_at && now()->gte($department->public_published_at), 404);
+    $head = Official::query()->public()->where('department_id', $department->id)->where('is_department_head', true)->orderBy('display_order')->first(['slug', 'name', 'title']);
+    $officials = Official::query()->public()->where('department_id', $department->id)->where('is_department_head', false)->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'title']);
+    $services = Service::query()->public()->where('department_id', $department->id)->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'summary']);
+    $contacts = PublicContact::query()->public()->where('department_id', $department->id)->orderBy('display_order')->get(['office', 'type', 'value']);
+    $documents = Document::query()->public()->where('department_id', $department->id)->orderByDesc('published_at')->limit(10)->get(['slug', 'title', 'category']);
+    $news = EditorialItem::query()->public()->where('type', 'news')->where('department_id', $department->id)->orderByDesc('published_at')->limit(5)->get(['slug', 'title']);
+    $notices = EditorialItem::query()->public()->where('type', 'notice')->where('department_id', $department->id)->orderByDesc('published_at')->limit(5)->get(['slug', 'title']);
 
-    return Inertia::render('PublicDepartment', ['department' => $department->only(['public_name', 'public_summary', 'public_description', 'responsibilities'])]);
+    return Inertia::render('PublicDepartment', ['department' => $department->only(['public_name', 'public_summary', 'public_description', 'responsibilities']), 'head' => $head, 'officials' => $officials, 'services' => $services, 'contacts' => $contacts, 'documents' => $documents, 'news' => $news, 'notices' => $notices]);
 })->whereNumber('department')->name('departments.public.show');
 
 Route::get('/news', function () {
@@ -284,6 +326,39 @@ Route::get('/investment/{slug}', function (string $slug) {
     return Inertia::render('InvestmentDetail', ['opportunity' => [...$opportunity->only(['slug', 'title', 'sector', 'summary', 'description', 'location', 'opportunity_status']), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null]]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('investment.show');
 
+Route::get('/meetings', function () {
+    return Inertia::render('Meetings', ['meetings' => CouncilMeeting::query()->public()->orderBy('scheduled_date')->orderBy('display_order')->get(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status'])]);
+})->name('meetings.index');
+Route::get('/meetings/{meeting}', function (CouncilMeeting $meeting) {
+    abort_unless($meeting->status === 'published' && $meeting->verification_status === 'publishable' && $meeting->published_at && now()->gte($meeting->published_at), 404);
+    $meeting->load(['agenda', 'minutes']);
+    $agenda = $meeting->agenda;
+    $minutes = $meeting->minutes;
+
+    return Inertia::render('Meeting', ['meeting' => [...$meeting->only(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status', 'summary']), 'agenda' => $agenda instanceof Document && $agenda->status === 'published' && $agenda->visibility === 'public' ? $agenda->only(['slug', 'title']) : null, 'minutes' => $minutes instanceof Document && $minutes->status === 'published' && $minutes->visibility === 'public' ? $minutes->only(['slug', 'title']) : null]]);
+})->whereNumber('meeting')->name('meetings.show');
+
+Route::get('/transparency', function (Request $request) {
+    $category = $request->query('category');
+    $year = $request->query('year');
+    abort_unless($category === null || in_array($category, Document::FINANCIAL_CATEGORIES, true), 422);
+    abort_unless($year === null || (is_numeric($year) && (int) $year >= 1990 && (int) $year <= (int) now()->format('Y') + 1), 422);
+    $documents = Document::query()->public()->whereIn('category', Document::FINANCIAL_CATEGORIES)
+        ->when($category, fn ($query) => $query->where('category', $category))
+        ->when($year, fn ($query) => $query->whereYear('reference_date', (int) $year))
+        ->orderByDesc('published_at')->get(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count']);
+    $years = Document::query()->public()->whereIn('category', Document::FINANCIAL_CATEGORIES)->whereNotNull('reference_date')->orderByDesc('reference_date')->pluck('reference_date')->map(fn ($date): int => (int) substr((string) $date, 0, 4))->unique()->values();
+
+    return Inertia::render('Transparency', ['documents' => $documents, 'categories' => Document::FINANCIAL_CATEGORIES, 'years' => $years, 'filters' => ['category' => $category, 'year' => $year]]);
+})->name('transparency.index');
+
+Route::get('/rates', function () {
+    $page = Page::query()->public()->where('slug', 'rates-information')->first();
+    $schedules = Document::query()->public()->whereIn('category', ['bylaw', 'report', 'plan'])->orderByDesc('published_at')->limit(10)->get(['slug', 'title', 'category', 'reference_date']);
+
+    return Inertia::render('Rates', ['page' => $page ? $page->only(['slug', 'title', 'summary', 'blocks']) : null, 'schedules' => $schedules]);
+})->name('rates.index');
+
 Route::redirect('/about', '/pages/about-mutoko')->name('about');
 Route::redirect('/downloads', '/documents')->name('downloads');
 
@@ -291,7 +366,8 @@ Route::get('/managed-media/{media}', function (Media $media) {
     abort_unless($media->status === 'active' && str_starts_with($media->mime_type, 'image/'), 404);
     $isPublishedOfficialPhoto = Official::query()->public()->where('photo_media_id', $media->id)->exists();
     $isPublishedEditorialImage = EditorialItem::query()->public()->where('featured_media_id', $media->id)->exists();
-    abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage, 404);
+    $isPublishedSlideImage = HomepageSlide::query()->public()->where('media_id', $media->id)->exists();
+    abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage, 404);
     abort_unless(Storage::disk(config('cms.media_disk'))->exists($media->storage_path), 404);
 
     return Storage::disk(config('cms.media_disk'))->response($media->storage_path, 'image', [

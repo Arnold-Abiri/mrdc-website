@@ -7,6 +7,7 @@ import {
     NewsAndEvents,
     QuickAccess,
     ValuePillars,
+    type HeroSlide,
 } from '../Components/public/HomeSections';
 import PublicLayout from '../Layouts/PublicLayout';
 
@@ -20,13 +21,13 @@ type HomeStatistic = { label: string; value: string; unit: string | null; icon: 
 type HomeTender = { slug: string; reference: string; title: string; display_status: string };
 type HomeInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
 
-export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[] }) {
+export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[] }) {
     return (
         <PublicLayout>
             <Head title="Mutoko Rural District Council">
                 <meta name="description" content="Development preview of the Mutoko Rural District Council website." />
             </Head>
-                <Hero />
+                <Hero slides={slides} />
                 <QuickAccess />
             <ValuePillars />
             <AboutSection />

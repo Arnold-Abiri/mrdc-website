@@ -42,6 +42,8 @@ class EditorialItemResource extends Resource
             Select::make('featured_media_id')->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable(),
             Select::make('documents')->multiple()->relationship('documents', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'published'), auth()->user(), 'documents.view', 'department_id', 'created_by'))->searchable(),
             DatePicker::make('expires_at')->visible(fn (callable $get): bool => $get('type') === 'notice')->helperText('Expired notices are excluded from public pages and search.'),
+            Select::make('is_urgent')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Urgent notices appear in the public alert banner until they expire or are unpublished.'),
+            TextInput::make('seo_title')->maxLength(255), TextInput::make('meta_description')->maxLength(320),
             TextInput::make('display_order')->numeric()->default(0)->required(),
         ]);
     }

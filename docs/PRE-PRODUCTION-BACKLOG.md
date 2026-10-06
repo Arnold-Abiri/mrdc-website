@@ -30,3 +30,11 @@ No known authorization bypass (backend department-scope tests pass; see PP-03 fo
 | PP-10 | Content | Council review and publish decision for all Stage 4 seed drafts (about page, 9 services, 3 investment prospects); seeded statistics values re-confirmed | High | Yes | Pre-production (council) |
 | PP-11 | Localization | Shona wording for new citizen-service sections (tenders, vacancies, investment, statistics, about) | Medium | Yes | Pre-production (council) |
 | PP-12 | Content | No tender or vacancy may be shown as open without a real council reference, document, and closing date | High | Yes | Pre-production (council) |
+
+## Stage 4B additions (6 October 2026)
+
+| ID | Area | Item | Severity | Production Blocking | Target |
+|---|---|---|---|---|---|
+| PP-13 | Content | Council supply/approval: budgets, audited statements, by-laws, policies, minutes, agendas, meeting schedules, rates figures, organogram chart, ward GIS/boundary data, leadership names and photos | High | Yes | Pre-production (council) |
+| PP-14 | Integration | Account-specific rate checking if required (external billing system/API); online payment only via approved integration | Medium | Yes | Pre-production (council/ops) |
+| PP-15 | Analytics | M&E dashboard consuming `document_downloads` aggregates | Low | No | Later stage |

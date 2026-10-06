@@ -36,6 +36,7 @@ class OfficialResource extends Resource
             TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true), Textarea::make('biography')->maxLength(10000),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Select::make('photo_media_id')->relationship('photo', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable(),
+            Select::make('is_department_head')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Mark the head of the department. Shown on the public department page.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),
         ]);
     }

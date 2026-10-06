@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ward extends Model
 {
-    protected $fillable = ['slug', 'name', 'description', 'boundaries_description', 'display_order'];
+    protected $fillable = ['slug', 'name', 'description', 'boundaries_description', 'map_url', 'display_order'];
 
     protected function casts(): array
     {

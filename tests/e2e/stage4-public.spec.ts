@@ -25,3 +25,10 @@ test('search covers the citizen service directory', async ({ page }) => {
     await page.goto('/search?q=council');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
+
+test('governance and transparency sections render honest empty states', async ({ page }) => {
+    for (const path of ['/meetings', '/transparency', '/rates', '/documents?category=budget&year=2026']) {
+        await page.goto(path);
+        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    }
+});

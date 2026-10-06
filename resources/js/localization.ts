@@ -19,6 +19,17 @@ const english = {
     enquiryHelp: 'Use this form for a general enquiry. Do not include sensitive personal information.', contactDetails: 'Council contact details',
     name: 'Name', email: 'Email', phoneOptional: 'Phone (optional)', category: 'Category', general: 'General', feedback: 'Feedback', other: 'Other',
     subject: 'Subject', message: 'Message', website: 'Website', sendEnquiry: 'Send enquiry',
+    meetings: 'Council meetings', meetingSchedule: 'Full council meeting schedule', meetingScheduleDesc: 'Scheduled council meetings with published agendas and minutes.',
+    noMeetings: 'No meetings are published at this time.', meetingType: 'Meeting type', scheduledDate: 'Date', time: 'Time', venue: 'Venue', meetingStatus: 'Status',
+    agenda: 'Agenda', minutes: 'Minutes', agendaPending: 'The agenda has not been published yet.', minutesPending: 'Minutes have not been published yet.',
+    scheduled: 'Scheduled', completed: 'Completed', postponed: 'Postponed', cancelled: 'Cancelled',
+    fullCouncil: 'Full council', committee: 'Committee', special: 'Special', publicHearing: 'Public hearing',
+    transparency: 'Financial transparency', financialTransparencyDesc: 'Approved council budgets, audited statements, financial reports, procurement plans, and the awarded tenders register.',
+    noFinancialDocs: 'No financial publications are available yet.', rates: 'Rates', ratesDesc: 'Council-approved rate categories, billing periods, and payment guidance.',
+    ratesPagePending: 'The approved rates schedule is being prepared for publication.', rateSchedules: 'Rate schedules and guidance',
+    year: 'Year', department: 'Department', keyword: 'Keyword', filter: 'Filter', clearFilters: 'Clear filters',
+    noDocuments: 'No documents match the selected filters.', referenceYear: 'Reporting year', downloadCount: 'downloads', downloadFile: 'Download file',
+    urgentNotice: 'Important notice', version: 'Version',
 } as const;
 
 type Key = keyof typeof english;

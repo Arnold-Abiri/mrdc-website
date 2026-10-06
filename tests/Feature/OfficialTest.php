@@ -35,7 +35,7 @@ class OfficialTest extends TestCase
         $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/pWQAAAAASUVORK5CYII=', true);
         $media = app(MediaManager::class)->upload($admin, UploadedFile::fake()->createWithContent('official.png', $png ?: ''), ['title' => 'Development fixture portrait', 'alt_text' => 'Test fixture']);
         $manager = app(OfficialManager::class);
-        $official = $manager->create($admin, ['name' => 'Test official', 'title' => 'Test title', 'slug' => 'test-official-photo', 'photo_media_id' => $media->id, 'display_order' => 0]);
+        $official = $manager->create($admin, ['name' => 'Test official', 'title' => 'Test title', 'slug' => 'test-official-photo', 'photo_media_id' => $media->id, 'is_department_head' => false, 'display_order' => 0]);
         $this->get('/managed-media/'.$media->id)->assertNotFound();
         $manager->setVerification($admin, $official, 'publishable');
         $manager->setStatus($admin, $official, 'published');
@@ -46,7 +46,7 @@ class OfficialTest extends TestCase
     {
         $admin = $this->administrator();
         $manager = app(OfficialManager::class);
-        $official = $manager->create($admin, ['name' => 'Development fixture official', 'title' => 'Test title', 'slug' => 'fixture-official', 'biography' => 'Isolated fixture only.', 'display_order' => 0]);
+        $official = $manager->create($admin, ['name' => 'Development fixture official', 'title' => 'Test title', 'slug' => 'fixture-official', 'biography' => 'Isolated fixture only.', 'is_department_head' => false, 'display_order' => 0]);
         $this->get('/officials')->assertDontSee('Development fixture official');
         $this->get('/')->assertDontSee('Development fixture official');
         $this->get('/officials/fixture-official')->assertNotFound();
@@ -56,7 +56,7 @@ class OfficialTest extends TestCase
         $this->get('/')->assertSee('Development fixture official');
         $this->get('/officials/fixture-official')->assertOk()->assertSee('Isolated fixture only.');
         $this->get('/search?q=fixture')->assertSee('Development fixture official');
-        $manager->update($admin, $official, ['name' => 'Edited fixture', 'title' => 'Edited title', 'slug' => 'fixture-official', 'biography' => 'Changed.', 'display_order' => 1]);
+        $manager->update($admin, $official, ['name' => 'Edited fixture', 'title' => 'Edited title', 'slug' => 'fixture-official', 'biography' => 'Changed.', 'is_department_head' => false, 'display_order' => 1]);
         $this->get('/officials/fixture-official')->assertNotFound();
         $this->get('/')->assertDontSee('Edited fixture');
         $this->assertSame('demo', $official->fresh()->verification_status);

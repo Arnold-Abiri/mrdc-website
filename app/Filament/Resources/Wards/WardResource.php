@@ -30,7 +30,7 @@ class WardResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([TextInput::make('name')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(120)->unique(ignoreRecord: true), Textarea::make('description')->maxLength(5000), Textarea::make('boundaries_description')->maxLength(5000), TextInput::make('display_order')->numeric()->default(0)->required()]);
+        return $schema->components([TextInput::make('name')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(120)->unique(ignoreRecord: true), Textarea::make('description')->maxLength(5000), Textarea::make('boundaries_description')->maxLength(5000)->helperText('Authoritative boundaries have not been supplied as GIS data; do not invent them.'), TextInput::make('map_url')->maxLength(2048)->helperText('Optional council-supplied map link. Leave empty until GIS data is approved.'), TextInput::make('display_order')->numeric()->default(0)->required()]);
     }
 
     public static function table(Table $table): Table

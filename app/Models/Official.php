@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Official extends Model
 {
-    protected $fillable = ['name', 'title', 'slug', 'biography', 'photo_media_id', 'department_id', 'display_order'];
+    protected $fillable = ['name', 'title', 'slug', 'biography', 'photo_media_id', 'department_id', 'is_department_head', 'display_order'];
 
     protected function casts(): array
     {

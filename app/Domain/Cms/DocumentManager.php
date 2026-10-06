@@ -97,6 +97,37 @@ class DocumentManager
         });
     }
 
+    public function replace(User $actor, Document $document, int $mediaId): Document
+    {
+        Gate::forUser($actor)->authorize('update', $document);
+        abort_unless(app(DataScopeAuthorizer::class)->allows($actor, 'documents.update', $document->department_id, $document->created_by), 403);
+        $this->authorizeMedia($actor, $mediaId);
+
+        return DB::transaction(function () use ($actor, $document, $mediaId): Document {
+            $document = Document::query()->lockForUpdate()->findOrFail($document->id);
+            Gate::forUser($actor)->authorize('update', $document);
+            abort_if($document->media_id === $mediaId, 422);
+            $document->versions()->create([
+                'version_number' => $document->current_version,
+                'media_id' => $document->media_id,
+                'replaced_by' => $actor->id,
+                'replaced_at' => now(),
+            ]);
+            $document->media_id = $mediaId;
+            $document->current_version = $document->current_version + 1;
+            $document->status = 'draft';
+            $document->published_at = null;
+            $document->verification_status = 'demo';
+            $document->verified_by = null;
+            $document->verified_at = null;
+            $document->updated_by = $actor->id;
+            $document->save();
+            app(AuditWriter::class)->record($actor, 'documents.replaced', $document, ['slug' => $document->slug, 'version' => $document->current_version]);
+
+            return $document;
+        });
+    }
+
     private function authorizeMedia(User $actor, int $mediaId): void
     {
         $media = Media::query()->findOrFail($mediaId);
@@ -110,7 +141,7 @@ class DocumentManager
             'slug' => ['required', 'string', 'max:160', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('documents', 'slug')->ignore($document?->id)],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'category' => ['required', Rule::in(['policy', 'report', 'plan', 'budget', 'form', 'notice', 'minutes', 'publication', 'other'])],
+            'category' => ['required', Rule::in(Document::CATEGORIES)],
             'media_id' => ['required', 'integer', Rule::exists('media', 'id')->where('status', 'active')->where('mime_type', 'application/pdf')],
             'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('status', 'active')],
             'visibility' => ['required', Rule::in(['public', 'private'])],

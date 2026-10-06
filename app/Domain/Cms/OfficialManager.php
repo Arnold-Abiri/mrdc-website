@@ -113,6 +113,7 @@ class OfficialManager
             'biography' => ['nullable', 'string', 'max:10000'],
             'photo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('status', 'active')->where('mime_type', 'like', 'image/%'))],
             'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('status', 'active')],
+            'is_department_head' => ['required', 'boolean'],
             'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
         ])->validate();
     }

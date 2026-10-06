@@ -13,12 +13,18 @@ const navigation = [
     { label: 'Documents', href: '/documents' },
     { label: 'News', href: '/news' },
     { label: 'Notices', href: '/notices' },
+    { label: 'Tenders', href: '/tenders' },
+    { label: 'Vacancies', href: '/vacancies' },
+    { label: 'Investment', href: '/investment' },
+    { label: 'Meetings', href: '/meetings' },
+    { label: 'Transparency', href: '/transparency' },
+    { label: 'Rates', href: '/rates' },
     { label: 'Search', href: '/search' },
     { label: 'Contact', href: '/contact' },
 ];
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
-    const { locale: rawLocale, localeCsrfToken } = usePage().props as { locale?: string; localeCsrfToken?: string };
+    const { locale: rawLocale, localeCsrfToken, urgent_alerts: urgentAlerts } = usePage().props as { locale?: string; localeCsrfToken?: string; urgent_alerts?: { slug: string; title: string }[] };
     const locale = normalizeLocale(rawLocale);
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const [open, setOpen] = useState(false);
@@ -41,6 +47,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <a className="skip-link" href="#main">{t('skip')}</a>
+            {urgentAlerts && urgentAlerts.length > 0 && <div className="urgent-alert" role="alert"><p><strong>{t('urgentNotice')}: </strong>{urgentAlerts.map((alert, index) => <span key={alert.slug}>{index > 0 && ' — '}<a href={`/notices/${alert.slug}`}>{alert.title}</a></span>)}</p></div>}
 
             {/* Top Utility Bar */}
             <div className="utility-bar">
@@ -197,10 +204,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <li><a href="/">{t('home')}</a></li>
                             <li><a href="/#about">{t('about')}</a></li>
                             <li><a href="/#services">{t('ourServices')}</a></li>
-                            <li><a href="/coming-soon?topic=development">{t('development')}</a></li>
+                            <li><a href="/investment">{t('development')}</a></li>
                             <li><a href="/coming-soon?topic=tourism">{t('tourism')}</a></li>
                             <li><a href="/coming-soon?topic=media">{t('media')}</a></li>
-                            <li><a href="/coming-soon?topic=contact">{t('contactUs')}</a></li>
+                            <li><a href="/contact">{t('contactUs')}</a></li>
                         </ul>
                     </div>
 

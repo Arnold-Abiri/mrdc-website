@@ -98,7 +98,11 @@ function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
     }
 }
 
-export function Hero() {
+export type HeroSlide = { headline: string; supporting_text: string | null; cta_label: string | null; cta_url: string | null; image_url: string | null };
+
+export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
+    const [active, ...rest] = slides;
+    if (!active) {
     return (
         <section className="hero" aria-labelledby="hero-title">
             <img
@@ -138,6 +142,44 @@ export function Hero() {
                             <span>About Council</span>
                         </a>
                     </div>
+                </div>
+
+            </div>
+        </section>
+    );
+    }
+    return (
+        <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel">
+            <img
+                className="hero-image"
+                src={active.image_url ?? '/images/hero-clean.webp'}
+                width="1983"
+                height="793"
+                fetchPriority="high"
+                alt={active.headline}
+            />
+            <div className="hero-shade" />
+
+            <div className="container hero-container">
+                <div className="hero-content">
+                    <div className="hero-eyebrow-pill">
+                        <span className="eyebrow-bar" aria-hidden="true" />
+                        <span className="eyebrow-text">WELCOME TO</span>
+                    </div>
+
+                    <h1 id="hero-title" className="hero-heading">
+                        <span className="hero-heading-white">{active.headline}</span>
+                    </h1>
+
+                    {active.supporting_text && <p className="hero-description">{active.supporting_text}</p>}
+
+                    <div className="hero-actions">
+                        {active.cta_label && active.cta_url ? <a className="btn-hero-primary" href={active.cta_url}><span>{active.cta_label}</span><span aria-hidden="true">→</span></a> : <a className="btn-hero-primary" href="#services"><span>Our Services</span><span aria-hidden="true">→</span></a>}
+                        <a className="btn-hero-outline" href="#about">
+                            <span>About Council</span>
+                        </a>
+                    </div>
+                    {rest.length > 0 && <ul className="hero-slides" aria-label="More highlights">{rest.map(slide => <li key={slide.headline}>{slide.cta_url ? <a href={slide.cta_url}>{slide.headline}</a> : <span>{slide.headline}</span>}</li>)}</ul>}
                 </div>
 
             </div>

@@ -28,7 +28,7 @@ class EditorialTest extends TestCase
 
     private function payload(string $type = 'notice'): array
     {
-        return ['type' => $type, 'slug' => 'development-item', 'title' => 'Development review notice', 'summary' => 'Testing only', 'body' => '<script>alert(1)</script> plain text content', 'category' => 'development', 'display_order' => 0];
+        return ['type' => $type, 'slug' => 'development-item', 'title' => 'Development review notice', 'summary' => 'Testing only', 'body' => '<script>alert(1)</script> plain text content', 'category' => 'development', 'is_urgent' => false, 'display_order' => 0];
     }
 
     public function test_draft_notice_stays_private_and_expired_notice_is_excluded(): void
