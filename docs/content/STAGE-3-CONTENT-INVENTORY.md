@@ -28,3 +28,11 @@ Services, Department public profiles, News, Notices and the Document Centre are 
 
 
 The current schema also includes standalone official and ward resources and managed public contacts. Their public pages remain empty until council content owners provide source material and approve it. Workflow implementation does not constitute content verification.
+
+## Homepage managed-resource integration (5 October 2026)
+
+The homepage now displays up to four approved managed contacts, up to three approved official profiles, and a count and link for approved ward profiles. It displays clear empty states when these sources have no eligible records. No contact value, official identity, or ward fact was seeded for this change. Council source material and approval remain outstanding.
+
+## Localization and QA data (6 October 2026)
+
+English remains the only populated interface language. Shona can be selected, but missing approved interface strings fall back to English. No council-authored Shona translations were generated or published. All names, contact addresses, ward text, departmental text, images and PDF content used in the new browser tests are explicitly QA fixtures in a disposable MySQL database; the suite cleans its managed uploads and reconstructs that database after execution. Council content approval remains an external production gate.

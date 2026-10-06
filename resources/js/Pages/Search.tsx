@@ -1,23 +1,25 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
+import { usePublicTranslation } from '../usePublicTranslation';
 
 type Result = { type: string; title: string; summary: string | null; url: string; is_review_content: boolean };
 
 export default function Search({ query, results }: { query: string; results: Result[] }) {
+    const t = usePublicTranslation();
     return <PublicLayout>
-        <Head title="Search" />
+        <Head title={t('search')} />
         <div className="container coming-soon">
-            <h1>Search</h1>
+            <h1>{t('search')}</h1>
             <form action="/search" method="get" role="search">
-                <label htmlFor="site-search">Search council pages</label>
+                <label htmlFor="site-search">{t('searchCouncilPages')}</label>
                 <input id="site-search" name="q" type="search" defaultValue={query} maxLength={100} />
-                <button type="submit">Search</button>
+                <button type="submit">{t('search')}</button>
             </form>
-            {query && <p>{results.length ? `${results.length} result(s)` : 'No approved results found.'}</p>}
+            {query && <p>{results.length ? `${results.length} ${t('results')}` : t('noApprovedResults')}</p>}
             <ul>{results.map(result => <li key={result.url}>
                 <small>{result.type}</small> <a href={result.url}>{result.title}</a>
                 {result.summary && <p>{result.summary}</p>}
-                {result.is_review_content && <small>Development review content</small>}
+                {result.is_review_content && <small>{t('reviewContent')}</small>}
             </li>)}</ul>
         </div>
     </PublicLayout>;

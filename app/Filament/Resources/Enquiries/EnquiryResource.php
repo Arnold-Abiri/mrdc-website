@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Enquiries;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Resources\Enquiries\Pages\ListEnquiries;
 use App\Filament\Resources\Enquiries\Pages\ViewEnquiry;
+use App\Models\Department;
 use App\Models\Enquiry;
+use App\Models\User;
 use BackedEnum;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -31,8 +33,8 @@ class EnquiryResource extends Resource
             TextEntry::make('email'),
             TextEntry::make('phone'),
             TextEntry::make('category'),
-            TextEntry::make('department.name')->label('Department'),
-            TextEntry::make('assignee.name')->label('Assigned to'),
+            TextEntry::make('department_name')->label('Department')->state(fn (Enquiry $record): ?string => $record->department instanceof Department ? $record->department->name : null),
+            TextEntry::make('assignee_name')->label('Assigned to')->state(fn (Enquiry $record): ?string => $record->assignee instanceof User ? $record->assignee->name : null),
             TextEntry::make('subject'),
             TextEntry::make('message')->columnSpanFull(),
             TextEntry::make('notes')->label('Internal notes')->state(fn (Enquiry $record): string => $record->notes()->with('author')->oldest()->get()->map(fn ($note): string => $note->created_at->format('Y-m-d H:i').' · '.$note->author?->name.': '.$note->body)->implode("\n\n"))->columnSpanFull(),

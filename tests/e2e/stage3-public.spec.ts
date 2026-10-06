@@ -15,3 +15,19 @@ for (const width of [390, 1280]) {
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     });
 }
+
+test('public locale selection persists and updates document language', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await page.getByLabel('Language').selectOption('sn');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'sn');
+    await page.goto('/contact');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'sn');
+    await page.getByLabel('Language').selectOption('en');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+});
+
+test('state-changing locale request rejects a missing CSRF token', async ({ request }) => {
+    const response = await request.post('/locale', { data: { locale: 'sn' }, maxRedirects: 0 });
+    expect(response.status()).toBe(419);
+});

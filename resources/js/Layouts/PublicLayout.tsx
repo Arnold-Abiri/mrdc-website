@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { usePage } from '@inertiajs/react';
+import { normalizeLocale, translate } from '../localization';
 import type { ReactNode } from 'react';
 
 const navigation = [
@@ -16,7 +18,12 @@ const navigation = [
 ];
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
+    const { locale: rawLocale, localeCsrfToken } = usePage().props as { locale?: string; localeCsrfToken?: string };
+    const locale = normalizeLocale(rawLocale);
+    const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const [open, setOpen] = useState(false);
+
+    useEffect(() => { document.documentElement.lang = locale; }, [locale]);
     const menuButton = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
@@ -33,11 +40,11 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
     return (
         <>
-            <a className="skip-link" href="#main">Skip to main content</a>
+            <a className="skip-link" href="#main">{t('skip')}</a>
 
             {/* Top Utility Bar */}
             <div className="utility-bar">
-                <p className="development-notice">Development preview — displayed council information and imagery are unverified.</p>
+                <p className="development-notice">{t('developmentNotice')}</p>
                 <div className="container utility-inner">
                     <div className="utility-location">
                         <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -49,14 +56,17 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
                     <div className="utility-actions">
 
-                        <div className="utility-language-badge">
-                            <span>English</span>
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
+                        <form action="/locale" method="post" className="utility-language-badge">
+                            <input type="hidden" name="_token" value={localeCsrfToken ?? ''} />
+                            <label htmlFor="public-locale" className="sr-only">{t('language')}</label>
+                            <select id="public-locale" name="locale" value={locale} onChange={event => event.currentTarget.form?.requestSubmit()}>
+                                <option value="en">{t('english')}</option>
+                                <option value="sn">{t('shona')}</option>
+                            </select>
+                            <noscript><button type="submit">{t('setLanguage')}</button></noscript>
+                        </form>
 
-                        <div className="utility-socials" aria-label="Social media previews">
+                        <div className="utility-socials" aria-label={t('socialPreviews')}>
                             <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
@@ -80,19 +90,19 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             {/* Site Header */}
             <header className="site-header">
                 <div className="container header-inner">
-                    <a className="identity" href="/" aria-label="Mutoko Rural District Council home">
+                    <a className="identity" href="/" aria-label={t('councilHome')}>
                         <img
                             src="/images/logo.png"
                             srcSet="/images/logo@2x.png 2x"
-                            alt="Development branding mark for Mutoko Rural District Council"
+                            alt={t('brandingAlt')}
                             className="identity-logo-img"
                             width="40"
                             height="40"
                         />
                         <span className="identity-text">
                             <span className="identity-title">Mutoko</span>
-                            <span className="identity-subtitle">Rural District Council</span>
-                            <small className="identity-tagline">Service Delivery for Sustainable Communities</small>
+                            <span className="identity-subtitle">{t('councilName')}</span>
+                            <small className="identity-tagline">{t('tagline')}</small>
                         </span>
                     </a>
 
@@ -104,20 +114,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         aria-controls="primary-navigation"
                         onClick={() => setOpen(!open)}
                     >
-                        {open ? 'Close menu' : 'Menu'}
+                        {open ? t('closeMenu') : t('menu')}
                         <span className="menu-lines" aria-hidden="true">☰</span>
                     </button>
 
-                    <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label="Primary navigation">
+                    <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label={t('primaryNavigation')}>
                         {navigation.map(item =>
                             item.label === 'Home' ? (
-                                <a key={item.label} aria-current="page" href="/" className="nav-item nav-item-active">
-                                    <span>{item.label}</span>
+                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} aria-current="page" href="/" className="nav-item nav-item-active">
+                                    <span>{t(item.label.toLowerCase() as Parameters<typeof translate>[1])}</span>
                                     <span className="nav-active-indicator" aria-hidden="true" />
                                 </a>
                             ) : (
-                                <a key={item.label} href={item.href} className="nav-item">
-                                    {item.label}
+                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} href={item.href} className="nav-item">
+                                    {t(item.label.toLowerCase() as Parameters<typeof translate>[1])}
                                 </a>
                             )
                         )}
@@ -155,14 +165,14 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             />
                             <div className="footer-brand-text">
                                 <strong className="footer-brand-title">Mutoko</strong>
-                                <strong className="footer-brand-subtitle">Rural District Council</strong>
-                                <small className="footer-brand-tagline">Service Delivery for Sustainable Communities</small>
+                                <strong className="footer-brand-subtitle">{t('councilName')}</strong>
+                                <small className="footer-brand-tagline">{t('tagline')}</small>
                             </div>
                         </div>
                         <p className="footer-about-text">
-                            Working with our communities to deliver quality services, promote local development and build a better Mutoko.
+                            {t('footerAbout')}
                         </p>
-                        <div className="footer-social-row" aria-label="Social media previews">
+                        <div className="footer-social-row" aria-label={t('socialPreviews')}>
                             <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
@@ -182,32 +192,32 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div className="footer-col-nav">
-                        <h3 className="footer-heading">Quick Links</h3>
+                        <h3 className="footer-heading">{t('quickLinks')}</h3>
                         <ul className="footer-link-list">
-                            <li><a href="/">Home</a></li>
-                            <li><a href="/#about">About</a></li>
-                            <li><a href="/#services">Our Services</a></li>
-                            <li><a href="/coming-soon?topic=development">Development</a></li>
-                            <li><a href="/coming-soon?topic=tourism">Tourism</a></li>
-                            <li><a href="/coming-soon?topic=media">Media</a></li>
-                            <li><a href="/coming-soon?topic=contact">Contact Us</a></li>
+                            <li><a href="/">{t('home')}</a></li>
+                            <li><a href="/#about">{t('about')}</a></li>
+                            <li><a href="/#services">{t('ourServices')}</a></li>
+                            <li><a href="/coming-soon?topic=development">{t('development')}</a></li>
+                            <li><a href="/coming-soon?topic=tourism">{t('tourism')}</a></li>
+                            <li><a href="/coming-soon?topic=media">{t('media')}</a></li>
+                            <li><a href="/coming-soon?topic=contact">{t('contactUs')}</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-col-nav">
-                        <h3 className="footer-heading">Our Services</h3>
+                        <h3 className="footer-heading">{t('ourServices')}</h3>
                         <ul className="footer-link-list">
-                            <li><a href="/coming-soon?topic=water">Water Supply</a></li>
-                            <li><a href="/coming-soon?topic=roads">Roads &amp; Infrastructure</a></li>
-                            <li><a href="/coming-soon?topic=health">Health &amp; Sanitation</a></li>
-                            <li><a href="/coming-soon?topic=environment">Environmental Management</a></li>
-                            <li><a href="/coming-soon?topic=development">Development Planning</a></li>
-                            <li><a href="/coming-soon?topic=community">Community Services</a></li>
+                            <li><a href="/coming-soon?topic=water">{t('waterSupply')}</a></li>
+                            <li><a href="/coming-soon?topic=roads">{t('roadsInfrastructure')}</a></li>
+                            <li><a href="/coming-soon?topic=health">{t('healthSanitation')}</a></li>
+                            <li><a href="/coming-soon?topic=environment">{t('environmentalManagement')}</a></li>
+                            <li><a href="/coming-soon?topic=development">{t('developmentPlanning')}</a></li>
+                            <li><a href="/coming-soon?topic=community">{t('communityServices')}</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-col-contact">
-                        <h3 className="footer-heading">Contact Us</h3>
+                        <h3 className="footer-heading">{t('contactUs')}</h3>
                         <div className="footer-contact-list">
                             <div className="footer-contact-item">
                                 <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -229,14 +239,14 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 <div className="footer-bottom-bar">
                     <div className="container footer-bottom-inner">
                         <span className="footer-copyright">
-                            Development preview — content pending council approval.
+                            {t('previewCopyright')}
                         </span>
                         <div className="footer-legal-links">
-                            <a href="/coming-soon?topic=privacy">Privacy Policy</a>
+                            <a href="/coming-soon?topic=privacy">{t('privacyPolicy')}</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
-                            <a href="/coming-soon?topic=terms">Terms of Use</a>
+                            <a href="/coming-soon?topic=terms">{t('termsOfUse')}</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
-                            <a href="/sitemap.xml">Site Map</a>
+                            <a href="/sitemap.xml">{t('siteMap')}</a>
                         </div>
                     </div>
                 </div>

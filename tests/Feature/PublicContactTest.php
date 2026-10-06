@@ -32,11 +32,14 @@ class PublicContactTest extends TestCase
         $manager = app(PublicContactManager::class);
         $contact = $manager->create($admin, ['office' => 'Test office', 'type' => 'email', 'value' => 'approved@example.test', 'display_order' => 0]);
         $this->get('/contact')->assertDontSee('approved@example.test');
+        $this->get('/')->assertDontSee('approved@example.test');
         $manager->setVerification($admin, $contact, 'publishable');
         $manager->setStatus($admin, $contact, 'published');
         $this->get('/contact')->assertSee('approved@example.test');
+        $this->get('/')->assertSee('approved@example.test');
         $manager->update($admin, $contact, ['office' => 'Test office', 'type' => 'email', 'value' => 'updated@example.test', 'display_order' => 0]);
         $this->get('/contact')->assertDontSee('approved@example.test')->assertDontSee('updated@example.test');
+        $this->get('/')->assertDontSee('approved@example.test')->assertDontSee('updated@example.test');
         $audit = DB::table('audit_events')->where('subject_id', (string) $contact->id)->get()->pluck('metadata')->implode(' ');
         $this->assertStringNotContainsString('approved@example.test', $audit);
         $this->assertStringNotContainsString('updated@example.test', $audit);

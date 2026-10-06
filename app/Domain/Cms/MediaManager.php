@@ -38,6 +38,11 @@ class MediaManager
         if (! is_string($mime) || ! isset(self::TYPES[$mime])) {
             throw ValidationException::withMessages(['file' => 'Only JPEG, PNG, WebP and PDF files are accepted.']);
         }
+        $extension = strtolower($file->getClientOriginalExtension());
+        $allowedExtensions = $mime === 'image/jpeg' ? ['jpg', 'jpeg'] : [self::TYPES[$mime]];
+        if (! in_array($extension, $allowedExtensions, true)) {
+            throw ValidationException::withMessages(['file' => 'The file extension does not match its content.']);
+        }
         $dimensions = str_starts_with($mime, 'image/') ? @getimagesize($file->getRealPath()) : false;
         if (str_starts_with($mime, 'image/') && $dimensions === false) {
             throw ValidationException::withMessages(['file' => 'The image could not be decoded.']);

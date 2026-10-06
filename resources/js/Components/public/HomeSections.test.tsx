@@ -73,6 +73,9 @@ describe('homepage sections', () => {
         expect(screen.getByText('No approved documents are available yet.')).toBeInTheDocument();
         expect(screen.getByText('No approved department information is available yet.')).toBeInTheDocument();
         expect(screen.getByText('No approved notices are available yet.')).toBeInTheDocument();
+        expect(screen.getByText('No approved leadership profiles are available yet.')).toBeInTheDocument();
+        expect(screen.getByText('No approved ward profiles are available yet.')).toBeInTheDocument();
+        expect(screen.getByText('No approved contact details are available yet.')).toBeInTheDocument();
     });
 
     it('renders development banner section with headline and metrics', () => {

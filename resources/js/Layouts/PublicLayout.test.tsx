@@ -1,5 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@inertiajs/react', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@inertiajs/react')>()),
+    usePage: () => ({ props: { locale: 'en', localeCsrfToken: 'test-token' } }),
+}));
 import PublicLayout from './PublicLayout';
 
 describe('public navigation', () => {

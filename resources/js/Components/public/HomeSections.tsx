@@ -215,7 +215,7 @@ export function ValuePillars() {
             </div>
 
             {/* Decorative bottom pattern banner */}
-            <div className="bottom-pattern-banner" aria-hidden="true" />
+            <div className="bottom-pattern-banner" style={{ backgroundImage: 'url(/images/bottom-pattern.png)' }} aria-hidden="true" />
         </section>
     );
 }
@@ -517,13 +517,19 @@ export type ManagedHomepageDocument = { slug: string; title: string; description
 export type ManagedHomepageDepartment = { id: number; public_name: string; public_summary: string | null };
 export type ManagedHomepageNotice = { slug: string; title: string; summary: string | null };
 
-export function ManagedHomepageContent({ services, documents, departments, notices }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[] }) {
+export type ManagedHomepageContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
+export type ManagedHomepageOfficial = { slug: string; name: string; title: string };
+
+export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0 }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number }) {
     return <section id="services" className="container coming-soon" aria-label="Approved council information">
         <h2>Approved council information</h2>
         <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={`/services/${item.slug}`}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
         <section aria-labelledby="managed-departments-heading"><h3 id="managed-departments-heading">Departments</h3>{departments.length ? <ul>{departments.map(item => <li key={item.id}><a href={`/departments/${item.id}`}>{item.public_name}</a>{item.public_summary && <p>{item.public_summary}</p>}</li>)}</ul> : <p>No approved department information is available yet.</p>}</section>
         <section aria-labelledby="managed-documents-heading"><h3 id="managed-documents-heading">Documents</h3>{documents.length ? <ul>{documents.map(item => <li key={item.slug}><a href={`/documents/${item.slug}`}>{item.title}</a>{item.description && <p>{item.description}</p>}</li>)}</ul> : <p>No approved documents are available yet.</p>}</section>
         <section aria-labelledby="managed-notices-heading"><h3 id="managed-notices-heading">Notices</h3>{notices.length ? <ul>{notices.map(item => <li key={item.slug}><a href={`/notices/${item.slug}`}>{item.title}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved notices are available yet.</p>}</section>
+        <section aria-labelledby="managed-officials-heading"><h3 id="managed-officials-heading">Council leadership</h3>{officials.length ? <ul>{officials.map(item => <li key={item.slug}><a href={`/officials/${item.slug}`}>{item.name}</a> — {item.title}</li>)}</ul> : <p>No approved leadership profiles are available yet.</p>}<a href="/officials">View council officials</a></section>
+        <section aria-labelledby="managed-wards-heading"><h3 id="managed-wards-heading">Wards</h3><p>{wardCount ? `${wardCount} approved ward ${wardCount === 1 ? 'profile' : 'profiles'} available.` : 'No approved ward profiles are available yet.'}</p><a href="/wards">View ward directory</a></section>
+        <section aria-labelledby="managed-contacts-heading"><h3 id="managed-contacts-heading">Council contacts</h3>{contacts.length ? <ul>{contacts.map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>No approved contact details are available yet.</p>}<a href="/contact">Contact the council</a></section>
     </section>;
 }
 

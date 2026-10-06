@@ -7,6 +7,7 @@ use App\Models\EditorialItem;
 use App\Models\Media;
 use App\Models\Official;
 use App\Models\Page;
+use App\Models\PublicContact;
 use App\Models\Service;
 use App\Models\Ward;
 use Illuminate\Http\Request;
@@ -21,8 +22,18 @@ Route::get('/', function () {
         'news' => EditorialItem::query()->public()->where('type', 'news')->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
         'notices' => EditorialItem::query()->public()->where('type', 'notice')->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
         'departments' => Department::query()->where('status', 'active')->where('public_status', 'published')->where('public_verification_status', 'publishable')->whereNotNull('public_published_at')->where('public_published_at', '<=', now())->orderBy('public_display_order')->get(['id', 'public_name', 'public_summary']),
+        'contacts' => PublicContact::query()->public()->orderBy('display_order')->limit(4)->get(['office', 'type', 'value']),
+        'officials' => Official::query()->public()->orderBy('display_order')->orderBy('name')->limit(3)->get(['slug', 'name', 'title']),
+        'ward_count' => Ward::query()->public()->count(),
     ]);
 })->name('home');
+
+Route::post('/locale', function (Request $request) {
+    $data = $request->validate(['locale' => ['required', 'in:en,sn']]);
+    $request->session()->put('public_locale', $data['locale']);
+
+    return back();
+})->name('locale.update');
 
 Route::get('/contact', [PublicEnquiryController::class, 'create'])->name('contact.create');
 Route::post('/contact', [PublicEnquiryController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');

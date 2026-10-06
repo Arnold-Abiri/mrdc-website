@@ -13,6 +13,7 @@ use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Inertia::share('locale', fn (): string => app()->getLocale());
+        Inertia::share('localeCsrfToken', fn (): string => csrf_token());
         Gate::policy(Role::class, RolePolicy::class);
         ResetPasswordNotification::createUrlUsing(fn (User $user, string $token): string => Filament::getPanel('admin')->getResetPasswordUrl($token, $user));
         Event::listen(Login::class, function (Login $event): void {
