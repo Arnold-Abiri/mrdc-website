@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Pages;
 
 use App\Domain\Cms\PageManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Pages\Pages\CreatePage;
 use App\Filament\Resources\Pages\Pages\EditPage;
 use App\Filament\Resources\Pages\Pages\ListPages;
@@ -43,7 +44,7 @@ class PageResource extends Resource
             ])->defaultItems(1)->required(),
             TextInput::make('seo_title')->maxLength(255),
             Textarea::make('meta_description')->maxLength(320),
-        ]);
+            TranslationFields::make(Page::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

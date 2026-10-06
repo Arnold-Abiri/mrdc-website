@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Tenders;
 
 use App\Domain\Cms\TenderManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Tenders\Pages\CreateTender;
 use App\Filament\Resources\Tenders\Pages\EditTender;
 use App\Filament\Resources\Tenders\Pages\ListTenders;
@@ -46,7 +47,7 @@ class TenderResource extends Resource
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Published tender document.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-        ]);
+            TranslationFields::make(Tender::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

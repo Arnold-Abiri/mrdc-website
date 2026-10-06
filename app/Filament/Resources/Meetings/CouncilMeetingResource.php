@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Meetings;
 
 use App\Domain\Cms\CouncilMeetingManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Meetings\Pages\CreateCouncilMeeting;
 use App\Filament\Resources\Meetings\Pages\EditCouncilMeeting;
 use App\Filament\Resources\Meetings\Pages\ListCouncilMeetings;
@@ -46,7 +47,7 @@ class CouncilMeetingResource extends Resource
             Select::make('minutes_document_id')->relationship('minutes', 'title')->searchable()->helperText('Published minutes only; drafts stay private.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-        ]);
+            TranslationFields::make(CouncilMeeting::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

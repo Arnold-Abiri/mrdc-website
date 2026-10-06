@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Pages\Pages;
 
 use App\Domain\Cms\PageManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Pages\PageResource;
 use App\Models\Page;
 use App\Models\PageRevision;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditPage extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = PageResource::class;
 
     protected function getHeaderActions(): array

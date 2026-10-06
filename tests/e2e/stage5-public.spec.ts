@@ -1,21 +1,21 @@
 import { expect, test } from '@playwright/test';
 
 test('journey 1: projects filter and project detail render', async ({ page }) => {
-    await page.goto('/projects');
+    await page.goto('/en/projects');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await page.goto('/projects?status=ongoing');
+    await page.goto('/en/projects?status=ongoing');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
 test('journey 2: investment opportunity links to an enquiry form', async ({ page }) => {
-    await page.goto('/investment');
+    await page.goto('/en/investment');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await page.goto('/contact?context=investment:no-such-opportunity');
+    await page.goto('/en/contact?context=investment:no-such-opportunity');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
 test('journey 3: feedback submits and shows a reference', async ({ page }) => {
-    await page.goto('/feedback');
+    await page.goto('/en/feedback');
     await page.locator('#feedback-name').fill('QA Citizen');
     await page.locator('#feedback-email').fill('citizen@example.test');
     await page.locator('#feedback-subject').fill('QA smoke complaint');
@@ -27,10 +27,10 @@ test('journey 3: feedback submits and shows a reference', async ({ page }) => {
 });
 
 test('journey 4: tender and vacancy sections render award and closing states', async ({ page }) => {
-    await page.goto('/tenders');
+    await page.goto('/en/tenders');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await page.goto('/vacancies');
+    await page.goto('/en/vacancies');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await page.goto('/tourism');
+    await page.goto('/en/tourism');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });

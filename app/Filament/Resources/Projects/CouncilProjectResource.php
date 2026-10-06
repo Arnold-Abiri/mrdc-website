@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects;
 
 use App\Domain\Cms\CouncilProjectManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Projects\Pages\CreateCouncilProject;
 use App\Filament\Resources\Projects\Pages\EditCouncilProject;
 use App\Filament\Resources\Projects\Pages\ListCouncilProjects;
@@ -49,7 +50,7 @@ class CouncilProjectResource extends Resource
             Select::make('documents')->multiple()->relationship('documents', 'title')->searchable(),
             Textarea::make('contact_instructions')->maxLength(5000),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-        ]);
+            TranslationFields::make(CouncilProject::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

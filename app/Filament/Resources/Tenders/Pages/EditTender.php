@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Tenders\Pages;
 
 use App\Domain\Cms\TenderManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Tenders\TenderResource;
 use App\Models\Tender;
 use Filament\Resources\Pages\EditRecord;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditTender extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = TenderResource::class;
 
     protected function handleRecordUpdate(Model $record, array $data): Model

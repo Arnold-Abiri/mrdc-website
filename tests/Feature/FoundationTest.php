@@ -21,7 +21,7 @@ class FoundationTest extends TestCase
 
     public function test_homepage_is_an_inertia_page(): void
     {
-        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Home', false));
+        $this->get('/en')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Home', false));
     }
 
     public function test_health_endpoint_responds(): void
@@ -56,8 +56,8 @@ class FoundationTest extends TestCase
 
     public function test_coming_soon_route_uses_only_approved_topic_names(): void
     {
-        $this->get('/coming-soon?topic=tenders')->assertOk()->assertInertia(fn (Assert $page) => $page->component('ComingSoon', false)->where('topic', 'Tenders'));
-        $this->get('/coming-soon?topic=unapproved')->assertOk()->assertInertia(fn (Assert $page) => $page->where('topic', 'This section'));
+        $this->get('/en/coming-soon?topic=tenders')->assertOk()->assertInertia(fn (Assert $page) => $page->component('ComingSoon', false)->where('topic', 'Tenders'));
+        $this->get('/en/coming-soon?topic=unapproved')->assertOk()->assertInertia(fn (Assert $page) => $page->where('topic', 'This section'));
     }
 
     public function test_default_seeder_creates_no_users(): void
@@ -135,6 +135,6 @@ class FoundationTest extends TestCase
 
     public function test_public_response_has_security_headers(): void
     {
-        $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')->assertHeader('X-Frame-Options', 'SAMEORIGIN')->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+        $this->get('/en')->assertHeader('X-Content-Type-Options', 'nosniff')->assertHeader('X-Frame-Options', 'SAMEORIGIN')->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     }
 }

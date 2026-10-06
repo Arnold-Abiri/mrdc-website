@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Services;
 
 use App\Domain\Cms\ServiceManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
@@ -39,7 +40,7 @@ class ServiceResource extends Resource
             Repeater::make('steps')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),
             Textarea::make('fees_information')->maxLength(5000)->helperText('Enter only verified fee information.'),
             TextInput::make('display_order')->numeric()->default(0)->required(), TextInput::make('seo_title')->maxLength(255), Textarea::make('meta_description')->maxLength(320),
-        ]);
+            TranslationFields::make(Service::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

@@ -41,28 +41,28 @@ function scopedEnquiryUser(Department $department): User
 }
 
 test('visitor can submit an enquiry without controlling staff fields or reading it back', function (): void {
-    $this->post('/contact', [...enquiryPayload(), 'status' => 'resolved', 'assigned_to' => 1])
-        ->assertRedirect('/contact?submitted=1');
+    $this->post('/en/contact', [...enquiryPayload(), 'status' => 'resolved', 'assigned_to' => 1])
+        ->assertRedirect('/en/contact?submitted=1');
     $enquiry = Enquiry::query()->sole();
     expect($enquiry->status)->toBe('new')->and($enquiry->assigned_to)->toBeNull()
         ->and($enquiry->public_id)->not->toBeEmpty();
-    $this->get('/contact/'.$enquiry->public_id)->assertNotFound();
-    $this->get('/enquiries')->assertNotFound();
+    $this->get('/en/contact/'.$enquiry->public_id)->assertNotFound();
+    $this->get('/en/enquiries')->assertNotFound();
     $this->get('/admin/enquiries')->assertRedirect();
 });
 
 test('invalid and bot submissions are rejected', function (): void {
-    $this->post('/contact', [...enquiryPayload(), 'website' => 'spam.example'])->assertSessionHasErrors('website');
-    $this->post('/contact', [...enquiryPayload(), 'email' => 'invalid'])->assertSessionHasErrors('email');
-    $this->post('/contact', [...enquiryPayload(), 'message' => '<script>'])->assertSessionHasErrors('message');
+    $this->post('/en/contact', [...enquiryPayload(), 'website' => 'spam.example'])->assertSessionHasErrors('website');
+    $this->post('/en/contact', [...enquiryPayload(), 'email' => 'invalid'])->assertSessionHasErrors('email');
+    $this->post('/en/contact', [...enquiryPayload(), 'message' => '<script>'])->assertSessionHasErrors('message');
     expect(Enquiry::query()->count())->toBe(0);
 });
 
 test('enquiry endpoint is throttled', function (): void {
     for ($attempt = 0; $attempt < 5; $attempt++) {
-        $this->post('/contact', enquiryPayload())->assertRedirect();
+        $this->post('/en/contact', enquiryPayload())->assertRedirect();
     }
-    $this->post('/contact', enquiryPayload())->assertStatus(429);
+    $this->post('/en/contact', enquiryPayload())->assertStatus(429);
 });
 
 test('department scope applies to enquiry lists, direct records and administrative updates', function (): void {
@@ -148,7 +148,7 @@ test('internal notes are scoped and excluded from public responses', function ()
     $manager->addNote($actor, $enquiry, 'Internal follow-up only');
     expect($enquiry->notes()->sole()->body)->toBe('Internal follow-up only');
     expect(fn () => $manager->addNote($actor, $other, 'Should fail'))->toThrow(AuthorizationException::class);
-    $this->get('/contact')->assertDontSee('Internal follow-up only');
+    $this->get('/en/contact')->assertDontSee('Internal follow-up only');
 });
 
 test('global enquiry administrator can route and reassign across departments without leaking private notes', function (): void {

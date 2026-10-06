@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
+import AccessibilitySettings from '../Components/public/AccessibilitySettings';
 import { normalizeLocale, translate } from '../localization';
 import type { ReactNode } from 'react';
 
@@ -29,6 +30,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     const { locale: rawLocale, localeCsrfToken, urgent_alerts: urgentAlerts } = usePage().props as { locale?: string; localeCsrfToken?: string; urgent_alerts?: { slug: string; title: string }[] };
     const locale = normalizeLocale(rawLocale);
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const [open, setOpen] = useState(false);
 
     useEffect(() => { document.documentElement.lang = locale; }, [locale]);
@@ -49,7 +51,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <a className="skip-link" href="#main">{t('skip')}</a>
-            {urgentAlerts && urgentAlerts.length > 0 && <div className="urgent-alert" role="alert"><p><strong>{t('urgentNotice')}: </strong>{urgentAlerts.map((alert, index) => <span key={alert.slug}>{index > 0 && ' — '}<a href={`/notices/${alert.slug}`}>{alert.title}</a></span>)}</p></div>}
+            {urgentAlerts && urgentAlerts.length > 0 && <div className="urgent-alert" role="alert"><p><strong>{t('urgentNotice')}: </strong>{urgentAlerts.map((alert, index) => <span key={alert.slug}>{index > 0 && ' — '}<a href={L(`/notices/${alert.slug}`)}>{alert.title}</a></span>)}</p></div>}
 
             {/* Top Utility Bar */}
             <div className="utility-bar">
@@ -64,6 +66,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div className="utility-actions">
+                        <AccessibilitySettings />
 
                         <form action="/locale" method="post" className="utility-language-badge">
                             <input type="hidden" name="_token" value={localeCsrfToken ?? ''} />
@@ -71,6 +74,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <select id="public-locale" name="locale" value={locale} onChange={event => event.currentTarget.form?.requestSubmit()}>
                                 <option value="en">{t('english')}</option>
                                 <option value="sn">{t('shona')}</option>
+                                <option value="nd">{t('ndebele')}</option>
                             </select>
                             <noscript><button type="submit">{t('setLanguage')}</button></noscript>
                         </form>
@@ -99,7 +103,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             {/* Site Header */}
             <header className="site-header">
                 <div className="container header-inner">
-                    <a className="identity" href="/" aria-label={t('councilHome')}>
+                    <a className="identity" href={L("/")} aria-label={t('councilHome')}>
                         <img
                             src="/images/logo.png"
                             srcSet="/images/logo@2x.png 2x"
@@ -130,12 +134,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label={t('primaryNavigation')}>
                         {navigation.map(item =>
                             item.label === 'Home' ? (
-                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} aria-current="page" href="/" className="nav-item nav-item-active">
+                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} aria-current="page" href={L("/")} className="nav-item nav-item-active">
                                     <span>{t(item.label.toLowerCase() as Parameters<typeof translate>[1])}</span>
                                     <span className="nav-active-indicator" aria-hidden="true" />
                                 </a>
                             ) : (
-                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} href={item.href} className="nav-item">
+                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} href={L(item.href)} className="nav-item">
                                     {t(item.label.toLowerCase() as Parameters<typeof translate>[1])}
                                 </a>
                             )
@@ -203,25 +207,25 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <div className="footer-col-nav">
                         <h3 className="footer-heading">{t('quickLinks')}</h3>
                         <ul className="footer-link-list">
-                            <li><a href="/">{t('home')}</a></li>
-                            <li><a href="/#about">{t('about')}</a></li>
-                            <li><a href="/#services">{t('ourServices')}</a></li>
-                            <li><a href="/investment">{t('development')}</a></li>
-                            <li><a href="/coming-soon?topic=tourism">{t('tourism')}</a></li>
-                            <li><a href="/coming-soon?topic=media">{t('media')}</a></li>
-                            <li><a href="/contact">{t('contactUs')}</a></li>
+                            <li><a href={L("/")}>{t('home')}</a></li>
+                            <li><a href={L("/#about")}>{t('about')}</a></li>
+                            <li><a href={L("/#services")}>{t('ourServices')}</a></li>
+                            <li><a href={L("/investment")}>{t('development')}</a></li>
+                            <li><a href={L("/coming-soon?topic=tourism")}>{t('tourism')}</a></li>
+                            <li><a href={L("/coming-soon?topic=media")}>{t('media')}</a></li>
+                            <li><a href={L("/contact")}>{t('contactUs')}</a></li>
                         </ul>
                     </div>
 
                     <div className="footer-col-nav">
                         <h3 className="footer-heading">{t('ourServices')}</h3>
                         <ul className="footer-link-list">
-                            <li><a href="/coming-soon?topic=water">{t('waterSupply')}</a></li>
-                            <li><a href="/coming-soon?topic=roads">{t('roadsInfrastructure')}</a></li>
-                            <li><a href="/coming-soon?topic=health">{t('healthSanitation')}</a></li>
-                            <li><a href="/coming-soon?topic=environment">{t('environmentalManagement')}</a></li>
-                            <li><a href="/coming-soon?topic=development">{t('developmentPlanning')}</a></li>
-                            <li><a href="/coming-soon?topic=community">{t('communityServices')}</a></li>
+                            <li><a href={L("/coming-soon?topic=water")}>{t('waterSupply')}</a></li>
+                            <li><a href={L("/coming-soon?topic=roads")}>{t('roadsInfrastructure')}</a></li>
+                            <li><a href={L("/coming-soon?topic=health")}>{t('healthSanitation')}</a></li>
+                            <li><a href={L("/coming-soon?topic=environment")}>{t('environmentalManagement')}</a></li>
+                            <li><a href={L("/coming-soon?topic=development")}>{t('developmentPlanning')}</a></li>
+                            <li><a href={L("/coming-soon?topic=community")}>{t('communityServices')}</a></li>
                         </ul>
                     </div>
 
@@ -251,9 +255,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             {t('previewCopyright')}
                         </span>
                         <div className="footer-legal-links">
-                            <a href="/coming-soon?topic=privacy">{t('privacyPolicy')}</a>
+                            <a href={L("/coming-soon?topic=privacy")}>{t('privacyPolicy')}</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
-                            <a href="/coming-soon?topic=terms">{t('termsOfUse')}</a>
+                            <a href={L("/coming-soon?topic=terms")}>{t('termsOfUse')}</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
                             <a href="/sitemap.xml">{t('siteMap')}</a>
                         </div>

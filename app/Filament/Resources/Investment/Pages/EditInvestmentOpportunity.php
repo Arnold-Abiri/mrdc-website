@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Investment\Pages;
 
 use App\Domain\Cms\InvestmentManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Investment\InvestmentOpportunityResource;
 use App\Models\InvestmentOpportunity;
 use Filament\Resources\Pages\EditRecord;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditInvestmentOpportunity extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = InvestmentOpportunityResource::class;
 
     protected function handleRecordUpdate(Model $record, array $data): Model

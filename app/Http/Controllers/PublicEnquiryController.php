@@ -27,7 +27,7 @@ class PublicEnquiryController extends Controller
     {
         $manager->submit($request->all());
 
-        return redirect()->route('contact.create', ['submitted' => '1']);
+        return redirect()->route('contact.create', ['locale' => app()->getLocale(), 'submitted' => '1']);
     }
 
     /**

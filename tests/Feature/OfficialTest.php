@@ -36,10 +36,10 @@ class OfficialTest extends TestCase
         $media = app(MediaManager::class)->upload($admin, UploadedFile::fake()->createWithContent('official.png', $png ?: ''), ['title' => 'Development fixture portrait', 'alt_text' => 'Test fixture']);
         $manager = app(OfficialManager::class);
         $official = $manager->create($admin, ['name' => 'Test official', 'title' => 'Test title', 'slug' => 'test-official-photo', 'photo_media_id' => $media->id, 'is_department_head' => false, 'display_order' => 0]);
-        $this->get('/managed-media/'.$media->id)->assertNotFound();
+        $this->get('/en/managed-media/'.$media->id)->assertNotFound();
         $manager->setVerification($admin, $official, 'publishable');
         $manager->setStatus($admin, $official, 'published');
-        $this->get('/managed-media/'.$media->id)->assertOk()->assertHeader('content-type', 'image/png')->assertHeader('x-content-type-options', 'nosniff');
+        $this->get('/en/managed-media/'.$media->id)->assertOk()->assertHeader('content-type', 'image/png')->assertHeader('x-content-type-options', 'nosniff');
     }
 
     public function test_official_records_are_not_derived_from_employees_and_require_approval(): void
@@ -47,18 +47,18 @@ class OfficialTest extends TestCase
         $admin = $this->administrator();
         $manager = app(OfficialManager::class);
         $official = $manager->create($admin, ['name' => 'Development fixture official', 'title' => 'Test title', 'slug' => 'fixture-official', 'biography' => 'Isolated fixture only.', 'is_department_head' => false, 'display_order' => 0]);
-        $this->get('/officials')->assertDontSee('Development fixture official');
-        $this->get('/')->assertDontSee('Development fixture official');
-        $this->get('/officials/fixture-official')->assertNotFound();
+        $this->get('/en/officials')->assertDontSee('Development fixture official');
+        $this->get('/en')->assertDontSee('Development fixture official');
+        $this->get('/en/officials/fixture-official')->assertNotFound();
         $manager->setVerification($admin, $official, 'publishable');
         $manager->setStatus($admin, $official, 'published');
-        $this->get('/officials')->assertSee('Development fixture official');
-        $this->get('/')->assertSee('Development fixture official');
-        $this->get('/officials/fixture-official')->assertOk()->assertSee('Isolated fixture only.');
-        $this->get('/search?q=fixture')->assertSee('Development fixture official');
+        $this->get('/en/officials')->assertSee('Development fixture official');
+        $this->get('/en')->assertSee('Development fixture official');
+        $this->get('/en/officials/fixture-official')->assertOk()->assertSee('Isolated fixture only.');
+        $this->get('/en/search?q=fixture')->assertSee('Development fixture official');
         $manager->update($admin, $official, ['name' => 'Edited fixture', 'title' => 'Edited title', 'slug' => 'fixture-official', 'biography' => 'Changed.', 'is_department_head' => false, 'display_order' => 1]);
-        $this->get('/officials/fixture-official')->assertNotFound();
-        $this->get('/')->assertDontSee('Edited fixture');
+        $this->get('/en/officials/fixture-official')->assertNotFound();
+        $this->get('/en')->assertDontSee('Edited fixture');
         $this->assertSame('demo', $official->fresh()->verification_status);
         $this->assertDatabaseHas('audit_events', ['action' => 'officials.updated', 'subject_id' => (string) $official->id]);
     }

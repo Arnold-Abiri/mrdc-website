@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Investment;
 
 use App\Domain\Cms\InvestmentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Investment\Pages\CreateInvestmentOpportunity;
 use App\Filament\Resources\Investment\Pages\EditInvestmentOpportunity;
 use App\Filament\Resources\Investment\Pages\ListInvestmentOpportunities;
@@ -43,7 +44,7 @@ class InvestmentOpportunityResource extends Resource
             Select::make('document_id')->relationship('document', 'title')->searchable(),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-        ]);
+            TranslationFields::make(InvestmentOpportunity::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

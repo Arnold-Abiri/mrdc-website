@@ -47,8 +47,8 @@ class DocumentMediaTest extends TestCase
         $media = app(MediaManager::class)->upload($admin, UploadedFile::fake()->createWithContent('test.pdf', "%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF"), ['title' => 'Development test file']);
         $manager = app(DocumentManager::class);
         $document = $manager->create($admin, ['slug' => 'development-test', 'title' => 'Development test document', 'category' => 'other', 'media_id' => $media->id, 'visibility' => 'public']);
-        $this->get('/documents/development-test')->assertNotFound();
-        $this->get('/documents/development-test/download')->assertNotFound();
+        $this->get('/en/documents/development-test')->assertNotFound();
+        $this->get('/en/documents/development-test/download')->assertNotFound();
         $this->expectException(HttpException::class);
         $manager->setStatus($admin, $document, 'published');
     }
@@ -62,10 +62,10 @@ class DocumentMediaTest extends TestCase
         $document = $manager->create($admin, ['slug' => 'development-test', 'title' => 'Development test document', 'category' => 'other', 'media_id' => $media->id, 'visibility' => 'public']);
         $manager->setVerification($admin, $document, 'publishable');
         $manager->setStatus($admin, $document, 'published');
-        $this->get('/documents/development-test')->assertOk();
-        $this->get('/documents/development-test/download')->assertOk()->assertHeader('content-type', 'application/pdf');
+        $this->get('/en/documents/development-test')->assertOk();
+        $this->get('/en/documents/development-test/download')->assertOk()->assertHeader('content-type', 'application/pdf');
         $manager->setStatus($admin, $document, 'unpublished');
-        $this->get('/documents/development-test/download')->assertNotFound();
+        $this->get('/en/documents/development-test/download')->assertNotFound();
         $this->assertDatabaseHas('audit_events', ['action' => 'documents.unpublished', 'subject_id' => (string) $document->id]);
     }
 
@@ -76,12 +76,12 @@ class DocumentMediaTest extends TestCase
         $media = app(MediaManager::class)->upload($admin, UploadedFile::fake()->createWithContent('guide.pdf', "%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF"), ['title' => 'Development guide']);
         $manager = app(DocumentManager::class);
         $document = $manager->create($admin, ['slug' => 'development-guide', 'title' => 'Development guide', 'description' => 'Unique public water reference', 'category' => 'publication', 'media_id' => $media->id, 'visibility' => 'public']);
-        $this->get('/search?q=Unique')->assertOk()->assertDontSee('Development guide');
+        $this->get('/en/search?q=Unique')->assertOk()->assertDontSee('Development guide');
         $manager->setVerification($admin, $document, 'publishable');
         $manager->setStatus($admin, $document, 'published');
-        $this->get('/search?q=Unique')->assertOk()->assertSee('Development guide')->assertSee('Document');
+        $this->get('/en/search?q=Unique')->assertOk()->assertSee('Development guide')->assertSee('Document');
         $manager->setStatus($admin, $document, 'unpublished');
-        $this->get('/search?q=Unique')->assertOk()->assertDontSee('Development guide');
+        $this->get('/en/search?q=Unique')->assertOk()->assertDontSee('Development guide');
     }
 
     public function test_ordinary_user_cannot_publish(): void

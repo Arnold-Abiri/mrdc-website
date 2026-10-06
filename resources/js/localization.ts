@@ -1,10 +1,10 @@
-export type PublicLocale = 'en' | 'sn';
+export type PublicLocale = 'en' | 'sn' | 'nd';
 
 const english = {
     home: 'Home', about: 'About', council: 'Council', officials: 'Officials', wards: 'Wards',
     services: 'Services', documents: 'Documents', news: 'News', notices: 'Notices',
     search: 'Search', contact: 'Contact', skip: 'Skip to main content',
-    language: 'Language', english: 'English', shona: 'Shona',
+    language: 'Language', english: 'English', shona: 'Shona', ndebele: 'Ndebele',
     developmentNotice: 'Development preview — displayed council information and imagery are unverified.',
     setLanguage: 'Set language', socialPreviews: 'Social media previews', councilHome: 'Mutoko Rural District Council home',
     brandingAlt: 'Development branding mark for Mutoko Rural District Council', councilName: 'Rural District Council',
@@ -47,16 +47,40 @@ const english = {
     reference: 'Reference', employmentType: 'Employment type',
     fullTime: 'Full time', partTime: 'Part time', contract: 'Contract', temporary: 'Temporary', internship: 'Internship',
     aboutContext: 'About', viewDetails: 'View details',
+    accessibility: 'Accessibility', fontSize: 'Font size', decreaseFontSize: 'Decrease font size',
+    resetFontSize: 'Reset font size', increaseFontSize: 'Increase font size',
+    highContrast: 'High contrast', previousSlide: 'Previous highlight', nextSlide: 'Next highlight',
+    formErrorsNotice: 'Please correct the following errors',
+    councilDocuments: 'Council documents', supportingDocument: 'Supporting document',
+    investInMutoko: 'Invest in Mutoko', makeInvestmentEnquiry: 'Make an investment enquiry',
+    councilOfficials: 'Council officials', councilDepartments: 'Council departments',
+    responsibilities: 'Responsibilities', headOfDepartment: 'Head of department',
+    departmentContacts: 'Department contacts', requirements: 'Requirements', steps: 'Steps', fees: 'Fees',
+    tendersProcurement: 'Tenders and procurement', tenders: 'Tenders', vacancies: 'Vacancies', howToApply: 'How to apply', tenderDocument: 'Tender document',
+    askAboutTender: 'Ask about this tender', vacancyAdvert: 'Vacancy advert', areaDescription: 'Area description',
+    returnHomepage: 'Return to the homepage', newsSection: 'News', noticesSection: 'Notices',
 } as const;
 
 type Key = keyof typeof english;
-// Add only council-approved Shona interface wording. Missing keys use English.
+// Add only council-approved Shona/Ndebele interface wording. Missing keys use English.
 const shona: Partial<Record<Key, string>> = {};
+const ndebele: Partial<Record<Key, string>> = {};
 
 export function translate(locale: PublicLocale, key: Key): string {
-    return (locale === 'sn' ? shona[key] : undefined) ?? english[key];
+    if (locale === 'sn') {
+        return shona[key] ?? english[key];
+    }
+    if (locale === 'nd') {
+        return ndebele[key] ?? english[key];
+    }
+
+    return english[key];
 }
 
 export function normalizeLocale(locale: unknown): PublicLocale {
-    return locale === 'sn' ? 'sn' : 'en';
+    if (locale === 'sn' || locale === 'nd') {
+        return locale;
+    }
+
+    return 'en';
 }

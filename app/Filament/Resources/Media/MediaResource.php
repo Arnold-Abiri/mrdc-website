@@ -45,6 +45,7 @@ class MediaResource extends Resource
         return $table->columns([
             TextColumn::make('title')->searchable(), TextColumn::make('mime_type'), TextColumn::make('size'),
             TextColumn::make('status')->badge(), TextColumn::make('created_at')->dateTime(),
+            TextColumn::make('alt_text')->label('Alt text')->state(fn (Media $record): string => str_starts_with($record->mime_type, 'image/') ? ($record->alt_text !== null && trim($record->alt_text) !== '' ? 'Provided' : 'Missing') : 'N/A')->badge()->color(fn (string $state): string => $state === 'Missing' ? 'danger' : ($state === 'Provided' ? 'success' : 'gray')),
         ])->recordActions([
             EditAction::make(),
             Action::make('archive')->authorize(fn (Media $record): bool => Gate::allows('update', $record))

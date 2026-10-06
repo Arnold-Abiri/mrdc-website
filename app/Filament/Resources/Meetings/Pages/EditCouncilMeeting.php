@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Meetings\Pages;
 
 use App\Domain\Cms\CouncilMeetingManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Meetings\CouncilMeetingResource;
 use App\Models\CouncilMeeting;
 use Filament\Resources\Pages\EditRecord;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditCouncilMeeting extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = CouncilMeetingResource::class;
 
     protected function handleRecordUpdate(Model $record, array $data): Model

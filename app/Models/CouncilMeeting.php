@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Domain\Content\HasTranslations;
+use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CouncilMeeting extends Model
+class CouncilMeeting extends Model implements TranslatableContent
 {
+    use HasTranslations;
+
+    public const TRANSLATABLE_FIELDS = ['title', 'summary', 'venue'];
+
     protected $fillable = ['title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status', 'summary', 'agenda_document_id', 'minutes_document_id', 'department_id', 'display_order'];
 
     protected function casts(): array

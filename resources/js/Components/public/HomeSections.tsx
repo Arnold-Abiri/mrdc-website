@@ -10,6 +10,8 @@ import {
     type ServicePreview,
     type TourismPreview,
 } from '../../fixtures/home';
+import { useState } from 'react';
+import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
 
 const services = [
     {
@@ -108,7 +110,11 @@ function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
 export type HeroSlide = { headline: string; supporting_text: string | null; cta_label: string | null; cta_url: string | null; image_url: string | null };
 
 export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
-    const [active, ...rest] = slides;
+    const locale = usePublicLocale();
+    const t = usePublicTranslation();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
+    const [index, setIndex] = useState(0);
+    const active = slides.length > 0 ? slides[index % slides.length] : undefined;
     if (!active) {
     return (
         <section className="hero" aria-labelledby="hero-title">
@@ -156,9 +162,10 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     );
     }
     return (
-        <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel">
+        <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel" aria-live="polite">
             <img
                 className="hero-image"
+                key={active.headline}
                 src={active.image_url ?? '/images/hero-clean.webp'}
                 width="1983"
                 height="793"
@@ -181,12 +188,16 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                     {active.supporting_text && <p className="hero-description">{active.supporting_text}</p>}
 
                     <div className="hero-actions">
-                        {active.cta_label && active.cta_url ? <a className="btn-hero-primary" href={active.cta_url}><span>{active.cta_label}</span><span aria-hidden="true">→</span></a> : <a className="btn-hero-primary" href="#services"><span>Our Services</span><span aria-hidden="true">→</span></a>}
+                        {active.cta_label && active.cta_url ? <a className="btn-hero-primary" href={L(active.cta_url ?? "")}><span>{active.cta_label}</span><span aria-hidden="true">→</span></a> : <a className="btn-hero-primary" href="#services"><span>Our Services</span><span aria-hidden="true">→</span></a>}
                         <a className="btn-hero-outline" href="#about">
                             <span>About Council</span>
                         </a>
                     </div>
-                    {rest.length > 0 && <ul className="hero-slides" aria-label="More highlights">{rest.map(slide => <li key={slide.headline}>{slide.cta_url ? <a href={slide.cta_url}>{slide.headline}</a> : <span>{slide.headline}</span>}</li>)}</ul>}
+                    {slides.length > 1 && <div className="hero-carousel-controls">
+                        <button type="button" className="hero-carousel-button" aria-label={t('previousSlide')} onClick={() => setIndex((index + slides.length - 1) % slides.length)}><span aria-hidden="true">‹</span></button>
+                        <p className="hero-carousel-status" role="status">{index + 1} / {slides.length}</p>
+                        <button type="button" className="hero-carousel-button" aria-label={t('nextSlide')} onClick={() => setIndex((index + 1) % slides.length)}><span aria-hidden="true">›</span></button>
+                    </div>}
                 </div>
 
             </div>
@@ -195,12 +206,14 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
 }
 
 export function QuickAccess() {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="quick-access container" id="quick-access" aria-label="Quick Access Services">
             <h2 className="sr-only">Quick access services</h2>
             <div className="quick-grid">
                 {services.map(service => (
-                    <a className="quick-card" key={service.title} href={service.href}>
+                    <a className="quick-card" key={service.title} href={L(service.href)}>
                         <div className="quick-card-top">
                             <span className={`quick-icon-badge badge-${service.theme}`}>
                                 <QuickIcon name={service.icon} />
@@ -299,6 +312,8 @@ function AboutIcon({ name }: { name: AboutPillar['icon'] }) {
 }
 
 export function AboutSection() {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="about-section" id="about" aria-labelledby="about-heading">
             <div className="container about-container">
@@ -314,7 +329,7 @@ export function AboutSection() {
                         Mutoko Rural District Council is committed to effective service delivery, sustainable development and inclusive growth for all our communities.
                     </p>
                     <div>
-                        <a href="/coming-soon?topic=council" className="btn-section-primary">
+                        <a href={L("/coming-soon?topic=council")} className="btn-section-primary">
                             <span>Learn More</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -376,6 +391,8 @@ function EmptyPreview({ type, title, description }: { type: 'news' | 'events'; t
 }
 
 function NewsCard({ item }: { item: NewsPreview }) {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <article className="news-card">
             <div className="news-image">
@@ -398,7 +415,7 @@ function NewsCard({ item }: { item: NewsPreview }) {
                 <h3 className="news-title">{item.title}</h3>
                 <p className="news-summary">{item.summary}</p>
                 {item.href && (
-                    <a href={item.href} className="news-readmore">
+                    <a href={L(item.href)} className="news-readmore">
                         <span>Read More</span>
                         <span aria-hidden="true">→</span>
                     </a>
@@ -409,6 +426,8 @@ function NewsCard({ item }: { item: NewsPreview }) {
 }
 
 function EventItem({ item }: { item: EventPreview }) {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <article className="event-item-card">
             <div className="event-badge">
@@ -420,7 +439,7 @@ function EventItem({ item }: { item: EventPreview }) {
                 <p className="event-location">{item.location}</p>
                 <p className="event-time">{item.time}</p>
                 {item.href && (
-                    <a href={item.href} className="event-link">
+                    <a href={L(item.href)} className="event-link">
                         Event details
                     </a>
                 )}
@@ -430,6 +449,8 @@ function EventItem({ item }: { item: EventPreview }) {
 }
 
 export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: { news?: NewsPreview[]; events?: EventPreview[] }) {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="updates-section" aria-label="News and events">
             <div className="container updates-grid">
@@ -442,7 +463,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             </div>
                             <h2 className="section-title">News and Updates</h2>
                         </div>
-                        <a href="/news" className="header-viewall-link">
+                        <a href={L("/news")} className="header-viewall-link">
                             View All News <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -469,7 +490,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             </div>
                             <h2 className="section-title">Events Calendar</h2>
                         </div>
-                        <a href="/coming-soon?topic=events" className="header-viewall-link">
+                        <a href={L("/coming-soon?topic=events")} className="header-viewall-link">
                             View All Events <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -516,6 +537,8 @@ function ServiceIcon({ name }: { name: ServicePreview['icon'] }) {
 }
 
 export function KeyServicesSection({ services = keyServices }: { services?: ServicePreview[] }) {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="key-services-section" id="services" aria-labelledby="services-heading">
             <div className="container">
@@ -527,7 +550,7 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                         </div>
                         <h2 id="services-heading" className="section-title">Key Services</h2>
                     </div>
-                    <a href="/coming-soon?topic=services" className="header-viewall-link">
+                    <a href={L("/coming-soon?topic=services")} className="header-viewall-link">
                         View All Services <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -547,7 +570,7 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                             <div className="service-card-body">
                                 <h3 className="service-card-title">{item.title}</h3>
                                 <p className="service-card-desc">{item.description}</p>
-                                <a href={item.href} className="service-card-link">
+                                <a href={L(item.href)} className="service-card-link">
                                     <span>Learn More</span>
                                     <span aria-hidden="true">→</span>
                                 </a>
@@ -574,23 +597,27 @@ export type ManagedHomepageInvestment = { slug: string; title: string; sector: s
 export type ManagedHomepageProject = { slug: string; title: string; project_status: string; summary: string | null };
 
 export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return <section id="services" className="container coming-soon" aria-label="Approved council information">
         <h2>Approved council information</h2>
-        <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={`/services/${item.slug}`}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
-        <section aria-labelledby="managed-departments-heading"><h3 id="managed-departments-heading">Departments</h3>{departments.length ? <ul>{departments.map(item => <li key={item.id}><a href={`/departments/${item.id}`}>{item.public_name}</a>{item.public_summary && <p>{item.public_summary}</p>}</li>)}</ul> : <p>No approved department information is available yet.</p>}</section>
-        <section aria-labelledby="managed-documents-heading"><h3 id="managed-documents-heading">Documents</h3>{documents.length ? <ul>{documents.map(item => <li key={item.slug}><a href={`/documents/${item.slug}`}>{item.title}</a>{item.description && <p>{item.description}</p>}</li>)}</ul> : <p>No approved documents are available yet.</p>}</section>
-        <section aria-labelledby="managed-notices-heading"><h3 id="managed-notices-heading">Notices</h3>{notices.length ? <ul>{notices.map(item => <li key={item.slug}><a href={`/notices/${item.slug}`}>{item.title}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved notices are available yet.</p>}</section>
-        <section aria-labelledby="managed-officials-heading"><h3 id="managed-officials-heading">Council leadership</h3>{officials.length ? <ul>{officials.map(item => <li key={item.slug}><a href={`/officials/${item.slug}`}>{item.name}</a> — {item.title}</li>)}</ul> : <p>No approved leadership profiles are available yet.</p>}<a href="/officials">View council officials</a></section>
-        <section aria-labelledby="managed-wards-heading"><h3 id="managed-wards-heading">Wards</h3><p>{wardCount ? `${wardCount} approved ward ${wardCount === 1 ? 'profile' : 'profiles'} available.` : 'No approved ward profiles are available yet.'}</p><a href="/wards">View ward directory</a></section>
-        <section aria-labelledby="managed-contacts-heading"><h3 id="managed-contacts-heading">Council contacts</h3>{contacts.length ? <ul>{contacts.map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>No approved contact details are available yet.</p>}<a href="/contact">Contact the council</a></section>
+        <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={L(`/services/${item.slug}`)}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
+        <section aria-labelledby="managed-departments-heading"><h3 id="managed-departments-heading">Departments</h3>{departments.length ? <ul>{departments.map(item => <li key={item.id}><a href={L(`/departments/${item.id}`)}>{item.public_name}</a>{item.public_summary && <p>{item.public_summary}</p>}</li>)}</ul> : <p>No approved department information is available yet.</p>}</section>
+        <section aria-labelledby="managed-documents-heading"><h3 id="managed-documents-heading">Documents</h3>{documents.length ? <ul>{documents.map(item => <li key={item.slug}><a href={L(`/documents/${item.slug}`)}>{item.title}</a>{item.description && <p>{item.description}</p>}</li>)}</ul> : <p>No approved documents are available yet.</p>}</section>
+        <section aria-labelledby="managed-notices-heading"><h3 id="managed-notices-heading">Notices</h3>{notices.length ? <ul>{notices.map(item => <li key={item.slug}><a href={L(`/notices/${item.slug}`)}>{item.title}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved notices are available yet.</p>}</section>
+        <section aria-labelledby="managed-officials-heading"><h3 id="managed-officials-heading">Council leadership</h3>{officials.length ? <ul>{officials.map(item => <li key={item.slug}><a href={L(`/officials/${item.slug}`)}>{item.name}</a> — {item.title}</li>)}</ul> : <p>No approved leadership profiles are available yet.</p>}<a href={L("/officials")}>View council officials</a></section>
+        <section aria-labelledby="managed-wards-heading"><h3 id="managed-wards-heading">Wards</h3><p>{wardCount ? `${wardCount} approved ward ${wardCount === 1 ? 'profile' : 'profiles'} available.` : 'No approved ward profiles are available yet.'}</p><a href={L("/wards")}>View ward directory</a></section>
+        <section aria-labelledby="managed-contacts-heading"><h3 id="managed-contacts-heading">Council contacts</h3>{contacts.length ? <ul>{contacts.map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>No approved contact details are available yet.</p>}<a href={L("/contact")}>Contact the council</a></section>
         <section aria-labelledby="managed-statistics-heading"><h3 id="managed-statistics-heading">Our district</h3>{statistics.length ? <ul>{statistics.map(item => <li key={item.label}><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong> — {item.label}</li>)}</ul> : <p>District statistics are being verified for publication.</p>}</section>
-        <section aria-labelledby="managed-tenders-heading"><h3 id="managed-tenders-heading">Tenders</h3>{tenders.length ? <ul>{tenders.map(item => <li key={item.slug}><a href={`/tenders/${item.slug}`}>{item.title}</a> — {item.reference} ({item.display_status})</li>)}</ul> : <p>No tenders are published at this time.</p>}<a href="/tenders">View all tenders</a></section>
-        <section aria-labelledby="managed-investment-heading"><h3 id="managed-investment-heading">Invest in Mutoko</h3>{investment.length ? <ul>{investment.map(item => <li key={item.slug}><a href={`/investment/${item.slug}`}>{item.title}</a>{item.sector ? ` — ${item.sector}` : ''}</li>)}</ul> : <p>Investment opportunities are being prepared for publication.</p>}<a href="/investment">Explore investment</a></section>
-        <section aria-labelledby="managed-projects-heading"><h3 id="managed-projects-heading">Projects and programmes</h3>{projects.length ? <ul>{projects.map(item => <li key={item.slug}><a href={`/projects/${item.slug}`}>{item.title}</a> — {item.project_status}</li>)}</ul> : <p>Project profiles are being prepared for publication.</p>}<a href="/projects">View all projects</a></section>
+        <section aria-labelledby="managed-tenders-heading"><h3 id="managed-tenders-heading">Tenders</h3>{tenders.length ? <ul>{tenders.map(item => <li key={item.slug}><a href={L(`/tenders/${item.slug}`)}>{item.title}</a> — {item.reference} ({item.display_status})</li>)}</ul> : <p>No tenders are published at this time.</p>}<a href={L("/tenders")}>View all tenders</a></section>
+        <section aria-labelledby="managed-investment-heading"><h3 id="managed-investment-heading">Invest in Mutoko</h3>{investment.length ? <ul>{investment.map(item => <li key={item.slug}><a href={L(`/investment/${item.slug}`)}>{item.title}</a>{item.sector ? ` — ${item.sector}` : ''}</li>)}</ul> : <p>Investment opportunities are being prepared for publication.</p>}<a href={L("/investment")}>Explore investment</a></section>
+        <section aria-labelledby="managed-projects-heading"><h3 id="managed-projects-heading">Projects and programmes</h3>{projects.length ? <ul>{projects.map(item => <li key={item.slug}><a href={L(`/projects/${item.slug}`)}>{item.title}</a> — {item.project_status}</li>)}</ul> : <p>Project profiles are being prepared for publication.</p>}<a href={L("/projects")}>View all projects</a></section>
     </section>;
 }
 
 export function DevelopmentSection() {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="dev-banner-section" id="development" aria-labelledby="dev-heading">
             <div className="dev-banner-bg">
@@ -616,7 +643,7 @@ export function DevelopmentSection() {
                         We are implementing strategic projects and initiatives to promote economic growth, improve infrastructure and create opportunities for all our communities.
                     </p>
                     <div>
-                        <a href="/coming-soon?topic=projects" className="btn-section-primary">
+                        <a href={L("/coming-soon?topic=projects")} className="btn-section-primary">
                             <span>Explore Development</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -629,6 +656,8 @@ export function DevelopmentSection() {
 }
 
 export function TourismSection({ destinations = tourismDestinations }: { destinations?: TourismPreview[] }) {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="tourism-section" id="tourism" aria-labelledby="tourism-heading">
             <div className="container">
@@ -640,7 +669,7 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
                         </div>
                         <h2 id="tourism-heading" className="section-title">Discover Mutoko</h2>
                     </div>
-                    <a href="/coming-soon?topic=tourism" className="header-viewall-link">
+                    <a href={L("/coming-soon?topic=tourism")} className="header-viewall-link">
                         Explore Tourism <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -650,7 +679,7 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
 
                 <div className="tourism-grid">
                     {destinations.map(item => (
-                        <a key={item.title} href={item.href} className="tourism-card">
+                        <a key={item.title} href={L(item.href)} className="tourism-card">
                             <img src={item.image} alt={item.title} loading="lazy" className="tourism-card-image" />
                             <div className="tourism-card-gradient" />
                             <div className="tourism-card-content">
@@ -671,6 +700,8 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
 }
 
 export function CtaBanner() {
+    const locale = usePublicLocale();
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="cta-banner-section" aria-labelledby="cta-heading">
             <div className="container cta-banner-container">
@@ -683,7 +714,7 @@ export function CtaBanner() {
                     </p>
                 </div>
                 <div className="cta-action-side">
-                    <a href="/contact" className="btn-cta-green">
+                    <a href={L("/contact")} className="btn-cta-green">
                         <span>Get in Touch</span>
                         <span aria-hidden="true">→</span>
                     </a>

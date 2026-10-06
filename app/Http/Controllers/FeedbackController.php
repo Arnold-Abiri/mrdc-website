@@ -25,6 +25,6 @@ class FeedbackController extends Controller
     {
         $enquiry = $manager->submit([...$request->all(), 'consent_given' => $request->boolean('consent_given')]);
 
-        return redirect()->route('feedback.create', ['submitted' => '1', 'reference' => substr($enquiry->public_id, 0, 8)]);
+        return redirect()->route('feedback.create', ['locale' => app()->getLocale(), 'submitted' => '1', 'reference' => substr($enquiry->public_id, 0, 8)]);
     }
 }

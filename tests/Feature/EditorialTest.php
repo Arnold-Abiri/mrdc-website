@@ -36,17 +36,17 @@ class EditorialTest extends TestCase
         $admin = $this->administrator();
         $manager = app(EditorialManager::class);
         $item = $manager->create($admin, $this->payload());
-        $this->get('/notices')->assertDontSee('Development review notice');
-        $this->get('/notices/development-item')->assertNotFound();
-        $this->get('/search?q=Development')->assertDontSee('Development review notice');
+        $this->get('/en/notices')->assertDontSee('Development review notice');
+        $this->get('/en/notices/development-item')->assertNotFound();
+        $this->get('/en/search?q=Development')->assertDontSee('Development review notice');
         $manager->setVerification($admin, $item, 'publishable');
         $manager->setStatus($admin, $item, 'published');
-        $this->get('/notices/development-item')->assertOk()->assertSee('\\u003Cscript\\u003Ealert(1)', false)->assertDontSee('<script>alert');
-        $this->get('/search?q=Development')->assertSee('Development review notice');
+        $this->get('/en/notices/development-item')->assertOk()->assertSee('\\u003Cscript\\u003Ealert(1)', false)->assertDontSee('<script>alert');
+        $this->get('/en/search?q=Development')->assertSee('Development review notice');
         $item->forceFill(['expires_at' => today()->subDay()])->save();
-        $this->get('/notices')->assertDontSee('Development review notice');
-        $this->get('/notices/development-item')->assertNotFound();
-        $this->get('/search?q=Development')->assertDontSee('Development review notice');
+        $this->get('/en/notices')->assertDontSee('Development review notice');
+        $this->get('/en/notices/development-item')->assertNotFound();
+        $this->get('/en/search?q=Development')->assertDontSee('Development review notice');
     }
 
     public function test_editing_published_news_returns_it_to_demo_draft_and_staff_cannot_publish(): void
@@ -59,7 +59,7 @@ class EditorialTest extends TestCase
         $manager->update($admin, $item, [...$this->payload('news'), 'title' => 'Changed editorial item']);
         $this->assertSame('draft', $item->fresh()->status);
         $this->assertSame('demo', $item->fresh()->verification_status);
-        $this->get('/news/development-item')->assertNotFound();
+        $this->get('/en/news/development-item')->assertNotFound();
         $this->expectException(AuthorizationException::class);
         $manager->setStatus(User::factory()->create(), $item->fresh(), 'published');
     }

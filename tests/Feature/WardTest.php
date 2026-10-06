@@ -30,18 +30,18 @@ class WardTest extends TestCase
         $admin = $this->administrator();
         $manager = app(WardManager::class);
         $ward = $manager->create($admin, ['slug' => 'development-fixture-ward', 'name' => 'Development fixture ward', 'description' => 'Test data only', 'boundaries_description' => 'No real boundary', 'display_order' => 1]);
-        $this->get('/wards')->assertDontSee('Development fixture ward');
-        $this->withHeaders(['X-Inertia' => 'true'])->get('/')->assertJsonPath('props.ward_count', 0);
-        $this->get('/wards/development-fixture-ward')->assertNotFound();
+        $this->get('/en/wards')->assertDontSee('Development fixture ward');
+        $this->withHeaders(['X-Inertia' => 'true'])->get('/en')->assertJsonPath('props.ward_count', 0);
+        $this->get('/en/wards/development-fixture-ward')->assertNotFound();
         $manager->setVerification($admin, $ward, 'publishable');
         $manager->setStatus($admin, $ward, 'published');
-        $this->get('/wards')->assertSee('Development fixture ward');
-        $this->withHeaders(['X-Inertia' => 'true'])->get('/')->assertJsonPath('props.ward_count', 1);
-        $this->get('/wards/development-fixture-ward')->assertOk()->assertSee('No real boundary');
-        $this->get('/search?q=fixture')->assertSee('Development fixture ward');
+        $this->get('/en/wards')->assertSee('Development fixture ward');
+        $this->withHeaders(['X-Inertia' => 'true'])->get('/en')->assertJsonPath('props.ward_count', 1);
+        $this->get('/en/wards/development-fixture-ward')->assertOk()->assertSee('No real boundary');
+        $this->get('/en/search?q=fixture')->assertSee('Development fixture ward');
         $manager->update($admin, $ward, ['slug' => 'development-fixture-ward', 'name' => 'Edited fixture', 'description' => 'Updated', 'boundaries_description' => 'Pending verification', 'display_order' => 1]);
-        $this->get('/wards/development-fixture-ward')->assertNotFound();
-        $this->withHeaders(['X-Inertia' => 'true'])->get('/')->assertJsonPath('props.ward_count', 0);
+        $this->get('/en/wards/development-fixture-ward')->assertNotFound();
+        $this->withHeaders(['X-Inertia' => 'true'])->get('/en')->assertJsonPath('props.ward_count', 0);
         $this->assertSame('demo', $ward->fresh()->verification_status);
         $this->assertDatabaseHas('audit_events', ['action' => 'wards.updated', 'subject_id' => (string) $ward->id]);
     }

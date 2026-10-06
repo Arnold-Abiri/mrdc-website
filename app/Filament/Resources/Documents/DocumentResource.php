@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Documents;
 
 use App\Domain\Cms\DocumentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Documents\Pages\CreateDocument;
 use App\Filament\Resources\Documents\Pages\EditDocument;
 use App\Filament\Resources\Documents\Pages\ListDocuments;
@@ -40,7 +41,7 @@ class DocumentResource extends Resource
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Select::make('visibility')->options(['public' => 'Public', 'private' => 'Private'])->required()->default('public'),
             DatePicker::make('reference_date'),
-        ]);
+            TranslationFields::make(Document::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

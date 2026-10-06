@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Editorial;
 
 use App\Domain\Cms\EditorialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Editorial\Pages\CreateEditorialItem;
 use App\Filament\Resources\Editorial\Pages\EditEditorialItem;
 use App\Filament\Resources\Editorial\Pages\ListEditorialItems;
@@ -45,7 +46,7 @@ class EditorialItemResource extends Resource
             Select::make('is_urgent')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Urgent notices appear in the public alert banner until they expire or are unpublished.'),
             TextInput::make('seo_title')->maxLength(255), TextInput::make('meta_description')->maxLength(320),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-        ]);
+            TranslationFields::make(EditorialItem::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table

@@ -63,20 +63,20 @@ class Stage3AdversarialTest extends TestCase
         $this->assertMatchesRegularExpression('/^cms\/\d{4}\/\d{2}\/[a-f0-9-]{36}\.png$/', $media->storage_path);
         $this->assertStringNotContainsString('php', $media->storage_path);
         $this->assertStringNotContainsString('/', $media->original_filename);
-        $this->get('/managed-media/'.$media->id)->assertNotFound();
+        $this->get('/en/managed-media/'.$media->id)->assertNotFound();
     }
 
     public function test_guest_cannot_enter_admin_or_read_private_resource_identifiers(): void
     {
-        $this->get('/')->assertHeader('Content-Security-Policy', "frame-ancestors 'self'");
+        $this->get('/en')->assertHeader('Content-Security-Policy', "frame-ancestors 'self'");
         $this->get('/admin/media')->assertRedirect('/admin/login');
-        $this->get('/managed-media/999999')->assertNotFound();
-        $this->get('/documents/private-draft')->assertNotFound();
-        $this->get('/pages/private-draft')->assertNotFound();
-        $this->get('/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E')->assertOk()->assertDontSee('<script>alert(1)</script>', false);
-        $this->get('/search?q='.str_repeat('a', 101))->assertStatus(422);
-        $this->get('/search?q=%25%5F')->assertOk();
-        $this->get('/search?q=%27%20OR%201%3D1--')->assertOk();
-        $this->get('/search?q=%FF')->assertOk();
+        $this->get('/en/managed-media/999999')->assertNotFound();
+        $this->get('/en/documents/private-draft')->assertNotFound();
+        $this->get('/en/pages/private-draft')->assertNotFound();
+        $this->get('/en/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E')->assertOk()->assertDontSee('<script>alert(1)</script>', false);
+        $this->get('/en/search?q='.str_repeat('a', 101))->assertStatus(422);
+        $this->get('/en/search?q=%25%5F')->assertOk();
+        $this->get('/en/search?q=%27%20OR%201%3D1--')->assertOk();
+        $this->get('/en/search?q=%FF')->assertOk();
     }
 }

@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+import { organizationSchema, SeoHead } from '../Seo';
 import {
     AboutSection,
     CtaBanner,
@@ -9,6 +10,7 @@ import {
     ValuePillars,
     type HeroSlide,
 } from '../Components/public/HomeSections';
+import { usePublicLocale } from '../usePublicTranslation';
 import PublicLayout from '../Layouts/PublicLayout';
 
 type HomeService = { slug: string; name: string; summary: string | null };
@@ -23,16 +25,18 @@ type HomeInvestment = { slug: string; title: string; sector: string | null; summ
 type HomeProject = { slug: string; title: string; project_status: string; summary: string | null };
 
 export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides, projects }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[]; projects: HomeProject[] }) {
+    const locale = usePublicLocale();
     return (
         <PublicLayout>
             <Head title="Mutoko Rural District Council">
                 <meta name="description" content="Development preview of the Mutoko Rural District Council website." />
             </Head>
+            <SeoHead title="Mutoko Rural District Council" description="Development preview of the Mutoko Rural District Council website." type="website" schema={organizationSchema()} />
                 <Hero slides={slides} />
                 <QuickAccess />
             <ValuePillars />
             <AboutSection />
-            <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ?? '', href: `/news/${item.slug}` }))} events={[]} />
+            <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ?? '', href: `/${locale}/news/${item.slug}` }))} events={[]} />
             <ManagedHomepageContent services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} projects={projects} />
 
 

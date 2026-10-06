@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Inertia::share('locale', fn (): string => app()->getLocale());
         Inertia::share('localeCsrfToken', fn (): string => csrf_token());
+        Inertia::share('errors', fn (): array => session('errors') ? session('errors')->getBag('default')->messages() : []);
         Inertia::share('urgent_alerts', fn (): array => EditorialItem::query()->public()->where('type', 'notice')->where('is_urgent', true)->orderByDesc('published_at')->limit(3)->get(['slug', 'title'])->toArray());
         Gate::policy(Role::class, RolePolicy::class);
         ResetPasswordNotification::createUrlUsing(fn (User $user, string $token): string => Filament::getPanel('admin')->getResetPasswordUrl($token, $user));

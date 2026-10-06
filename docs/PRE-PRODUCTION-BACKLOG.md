@@ -45,3 +45,12 @@ No known authorization bypass (backend department-scope tests pass; see PP-03 fo
 |---|---|---|---|---|---|
 | PP-16 | Content | Council supply/approval: project profiles, progress figures, tourism wording, award publications | High | Yes | Pre-production (council) |
 | PP-17 | Operations | Complaint handling readiness: staff routing coverage, response SLAs, notification monitoring | Medium | Yes | Pre-production (ops) |
+
+## Stage 6 additions (6 October 2026)
+
+| ID | Area | Item | Severity | Production Blocking | Target |
+|---|---|---|---|---|---|
+| PP-18 | Content | Council-approved Shona interface wording + content translations (review via Translation status page) | High | Yes | Pre-production (council) |
+| PP-19 | Content | Council-approved Ndebele interface wording + content translations | High | Yes | Pre-production (council) |
+| PP-20 | Accessibility | Full manual screen-reader pass (NVDA/VoiceOver) over homepage, services, documents, news, projects, feedback/contact | Medium | Yes | Pre-production (QA) |
+| PP-21 | SEO | Production indexation review (Search Console, canonical spot-checks, sitemap submission) after content approval | Medium | Yes | Pre-production (ops) |

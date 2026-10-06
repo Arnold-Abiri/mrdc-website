@@ -36,15 +36,15 @@ class ServiceTest extends TestCase
         $admin = $this->administrator();
         $manager = app(ServiceManager::class);
         $service = $manager->create($admin, $this->payload());
-        $this->get('/services')->assertOk()->assertDontSee('Development test service');
-        $this->get('/services/development-test-service')->assertNotFound();
+        $this->get('/en/services')->assertOk()->assertDontSee('Development test service');
+        $this->get('/en/services/development-test-service')->assertNotFound();
         $manager->setVerification($admin, $service, 'publishable');
         $manager->setStatus($admin, $service, 'published');
-        $this->get('/services')->assertOk()->assertSee('Development test service');
-        $this->get('/services/development-test-service')->assertOk()->assertSee('Proof of identity');
-        $this->get('/search?q=Development')->assertOk()->assertSee('Development test service');
+        $this->get('/en/services')->assertOk()->assertSee('Development test service');
+        $this->get('/en/services/development-test-service')->assertOk()->assertSee('Proof of identity');
+        $this->get('/en/search?q=Development')->assertOk()->assertSee('Development test service');
         $manager->update($admin, $service, [...$this->payload(), 'name' => 'Updated service']);
-        $this->get('/services/development-test-service')->assertNotFound();
+        $this->get('/en/services/development-test-service')->assertNotFound();
         $this->assertDatabaseHas('audit_events', ['action' => 'services.updated', 'subject_id' => (string) $service->id]);
     }
 

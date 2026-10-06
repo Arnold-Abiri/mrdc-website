@@ -1,16 +1,21 @@
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicTranslation } from '../usePublicTranslation';
+import { usePage } from '@inertiajs/react';
+import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 
 type DepartmentOption = { id: number; name: string };
 
 export default function Feedback({ csrfToken, submitted, reference, departments }: { csrfToken: string; submitted: boolean; reference: string | null; departments: DepartmentOption[] }) {
     const t = usePublicTranslation();
+    const locale = usePublicLocale();
+    const { errors } = usePage().props as { errors?: Record<string, string> };
+    const formErrors = Object.entries(errors ?? {});
     return <PublicLayout>
         <div className="container coming-soon">
             <h1>{t('feedbackPage')}</h1>
             <p>{t('feedbackDesc')}</p>
             {submitted && <p role="status">{t('feedbackReceived')}: <strong>{reference}</strong></p>}
-            <form action="/feedback" method="post">
+            {formErrors.length > 0 && <div role="alert"><p>{t('formErrorsNotice')}:</p><ul>{formErrors.map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
+            <form action={`/${locale}/feedback`} method="post">
                 <input type="hidden" name="_token" value={csrfToken} />
                 <label htmlFor="feedback-name">{t('name')}</label><input id="feedback-name" name="name" required maxLength={160} />
                 <label htmlFor="feedback-email">{t('email')}</label><input id="feedback-email" name="email" type="email" required maxLength={254} />

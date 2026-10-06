@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Domain\Content\HasTranslations;
+use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Tender extends Model
+class Tender extends Model implements TranslatableContent
 {
+    use HasTranslations;
+
+    public const TRANSLATABLE_FIELDS = ['title', 'description', 'contact_instructions', 'award_remarks'];
+
     protected $fillable = ['reference', 'slug', 'title', 'category', 'description', 'opens_at', 'closes_at', 'lifecycle_status', 'contact_instructions', 'document_id', 'department_id', 'display_order', 'award_status', 'awarded_to', 'awarded_at', 'award_amount', 'award_reference', 'award_document_id', 'award_remarks'];
 
     protected function casts(): array

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Vacancies\Pages;
 
 use App\Domain\Cms\VacancyManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Vacancies\VacancyResource;
 use App\Models\Vacancy;
 use Filament\Resources\Pages\EditRecord;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditVacancy extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = VacancyResource::class;
 
     protected function handleRecordUpdate(Model $record, array $data): Model

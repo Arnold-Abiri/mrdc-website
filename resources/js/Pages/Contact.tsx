@@ -1,6 +1,6 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicTranslation } from '../usePublicTranslation';
+import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 
 type PublicContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
 
@@ -8,15 +8,19 @@ type EnquiryContext = { type: string; reference: string; title: string } | null;
 
 export default function Contact({ csrfToken, submitted, contacts, context = null }: { csrfToken: string; submitted: boolean; contacts: PublicContact[]; context?: EnquiryContext }) {
     const t = usePublicTranslation();
+    const locale = usePublicLocale();
+    const { errors } = usePage().props as { errors?: Record<string, string> };
+    const formErrors = Object.entries(errors ?? {});
     return <PublicLayout>
         <Head title={t('contact')} />
         <div className="container coming-soon">
             <h1>{t('contactCouncil')}</h1>
             {submitted && <p role="status">{t('enquiryReceived')}</p>}
+            {formErrors.length > 0 && <div role="alert"><p>{t('formErrorsNotice')}:</p><ul>{formErrors.map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
             <p>{t('enquiryHelp')}</p>
             {context && <p role="note">{t('aboutContext')}: <strong>{context.title}</strong></p>}
             {contacts.length > 0 && <section aria-labelledby="public-contacts-heading"><h2 id="public-contacts-heading">{t('contactDetails')}</h2><ul>{contacts.map((contact, index) => <li key={`${contact.office}-${contact.type}-${index}`}><strong>{contact.office}:</strong> {contact.type === 'email' ? <a href={`mailto:${contact.value}`}>{contact.value}</a> : contact.type === 'phone' ? <a href={`tel:${contact.value}`}>{contact.value}</a> : <span>{contact.value}</span>}</li>)}</ul></section>}
-            <form action="/contact" method="post">
+            <form action={`/${locale}/contact`} method="post">
                 <input type="hidden" name="_token" value={csrfToken} />
                 {context && <><input type="hidden" name="context_type" value={context.type} /><input type="hidden" name="context_reference" value={context.reference} /><input type="hidden" name="category" value={context.type === 'investment' ? 'investment_enquiry' : 'service_enquiry'} /></>}
                 <label htmlFor="contact-name">{t('name')}</label><input id="contact-name" name="name" required maxLength={160} />

@@ -38,13 +38,13 @@ class CmsPageTest extends TestCase
         $admin = $this->administrator();
         $manager = app(PageManager::class);
         $page = $manager->create($admin, $this->content());
-        $this->get('/pages/about-mutoko')->assertNotFound();
+        $this->get('/en/pages/about-mutoko')->assertNotFound();
         $manager->update($admin, $page, [...$this->content(), 'title' => 'Updated about Mutoko']);
         $this->assertSame(2, $page->revisions()->count());
         $manager->setStatus($admin, $page, 'published');
-        $this->get('/pages/about-mutoko')->assertOk()->assertSee('Updated about Mutoko');
+        $this->get('/en/pages/about-mutoko')->assertOk()->assertSee('Updated about Mutoko');
         $manager->setStatus($admin, $page, 'unpublished');
-        $this->get('/pages/about-mutoko')->assertNotFound();
+        $this->get('/en/pages/about-mutoko')->assertNotFound();
         $this->assertSame(4, $page->revisions()->count());
         $this->assertDatabaseHas('audit_events', ['action' => 'pages.unpublished', 'subject_id' => (string) $page->id]);
     }
@@ -61,7 +61,7 @@ class CmsPageTest extends TestCase
         $this->assertSame('draft', $page->status);
         $this->assertSame('demo', $page->verification_status);
         $this->assertNull($page->published_at);
-        $this->get('/pages/about-mutoko')->assertNotFound();
+        $this->get('/en/pages/about-mutoko')->assertNotFound();
     }
 
     public function test_duplicate_slugs_and_unsafe_links_are_rejected(): void
@@ -88,10 +88,10 @@ class CmsPageTest extends TestCase
         $manager->setStatus($admin, $published, 'published');
         $manager->create($admin, [...$this->content('private-water'), 'title' => 'Water draft']);
 
-        $this->get('/search?q=Water')->assertOk()->assertSee('Water services')->assertDontSee('Water draft');
-        $this->get('/search?q=%25')->assertOk()->assertDontSee('Water services');
-        $this->get('/search?q='.str_repeat('a', 101))->assertUnprocessable();
-        $this->get('/search?q%5B%5D=Water')->assertUnprocessable();
+        $this->get('/en/search?q=Water')->assertOk()->assertSee('Water services')->assertDontSee('Water draft');
+        $this->get('/en/search?q=%25')->assertOk()->assertDontSee('Water services');
+        $this->get('/en/search?q='.str_repeat('a', 101))->assertUnprocessable();
+        $this->get('/en/search?q%5B%5D=Water')->assertUnprocessable();
     }
 
     public function test_ordinary_staff_cannot_publish(): void
@@ -128,10 +128,10 @@ class CmsPageTest extends TestCase
         $this->assertSame('demo', $page->verification_status);
         $this->assertNull($page->published_at);
         $this->assertSame(5, $page->revisions()->count());
-        $this->get('/pages/restore-check')->assertNotFound();
+        $this->get('/en/pages/restore-check')->assertNotFound();
         $this->assertDatabaseHas('audit_events', ['actor_id' => $admin->id, 'action' => 'pages.restored', 'subject_id' => (string) $page->id]);
         $manager->setVerification($admin, $page, 'publishable');
         $manager->setStatus($admin, $page, 'published');
-        $this->get('/pages/restore-check')->assertOk()->assertSee('About Mutoko')->assertDontSee('Edited title');
+        $this->get('/en/pages/restore-check')->assertOk()->assertSee('About Mutoko')->assertDontSee('Edited title');
     }
 }

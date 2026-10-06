@@ -8,6 +8,13 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Mutoko Rural District Council">
     <link rel="canonical" href="{{ url()->current() }}">
+    @php($localeSegments = explode('/', trim((string) parse_url(url()->current(), PHP_URL_PATH), '/')))
+    @if (in_array($localeSegments[0] ?? '', ['en', 'sn', 'nd'], true))
+        @foreach (['en', 'sn', 'nd'] as $alternateLocale)
+            <link rel="alternate" hreflang="{{ $alternateLocale }}" href="{{ url($alternateLocale.'/'.implode('/', array_slice($localeSegments, 1))) }}">
+        @endforeach
+        <link rel="alternate" hreflang="x-default" href="{{ url('en/'.implode('/', array_slice($localeSegments, 1))) }}">
+    @endif
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
     @inertiaHead

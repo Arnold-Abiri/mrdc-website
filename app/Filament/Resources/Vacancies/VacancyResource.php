@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Vacancies;
 
 use App\Domain\Cms\VacancyManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Vacancies\Pages\CreateVacancy;
 use App\Filament\Resources\Vacancies\Pages\EditVacancy;
 use App\Filament\Resources\Vacancies\Pages\ListVacancies;
@@ -46,7 +47,7 @@ class VacancyResource extends Resource
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Downloadable vacancy advert.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-        ]);
+            TranslationFields::make(Vacancy::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table
