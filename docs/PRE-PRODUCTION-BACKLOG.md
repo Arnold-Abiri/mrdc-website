@@ -54,3 +54,11 @@ No known authorization bypass (backend department-scope tests pass; see PP-03 fo
 | PP-19 | Content | Council-approved Ndebele interface wording + content translations | High | Yes | Pre-production (council) |
 | PP-20 | Accessibility | Full manual screen-reader pass (NVDA/VoiceOver) over homepage, services, documents, news, projects, feedback/contact | Medium | Yes | Pre-production (QA) |
 | PP-21 | SEO | Production indexation review (Search Console, canonical spot-checks, sitemap submission) after content approval | Medium | Yes | Pre-production (ops) |
+
+## Stage 7 additions (6 October 2026)
+
+| ID | Area | Item | Severity | Production Blocking | Target |
+|---|---|---|---|---|---|
+| PP-22 | Ops | External uptime polling configuration against `/up` + production alert recipients/SMTP (`OPS_ALERT_RECIPIENTS`) | High | Yes | Stage 8 (ops) |
+| PP-23 | Ops | Schedule `analytics:prune` (retention default 365 days) and confirm hosted log aggregation | Medium | Yes | Stage 8 (ops) |
+| PP-24 | Content | Council/legal approval of `privacy-policy` draft wording | High | Yes | Pre-production (council) |

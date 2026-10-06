@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AuditExportController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\MonthlyMetricsExportController;
 use App\Http\Controllers\PublicEnquiryController;
+use App\Http\Middleware\RecordAnalytics;
 use App\Models\CouncilMeeting;
 use App\Models\CouncilProject;
 use App\Models\Department;
@@ -72,7 +75,7 @@ Route::post('/locale', function (Request $request) {
     return redirect($target === '/' ? '/'.$data['locale'] : $target);
 })->name('locale.update');
 
-Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->group(function () {
+Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAnalytics::class)->group(function () {
     Route::get('/contact', [PublicEnquiryController::class, 'create'])->name('contact.create');
     Route::post('/contact', [PublicEnquiryController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 
@@ -262,7 +265,7 @@ Route::get('/sitemap.xml', function () {
     return response($xml.'</urlset>', 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
 })->name('sitemap');
 
-Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->group(function () {
+Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAnalytics::class)->group(function () {
     Route::get('/pages/{slug}', function (string $locale, string $slug) {
         $page = Page::query()->with('translations')->public()->where('slug', $slug)->firstOrFail();
 
@@ -499,6 +502,11 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->group(function () {
     })->whereNumber('media')->name('managed-media.show');
 
 }); // end locale group
+
+Route::middleware('auth')->prefix('admin/reports')->group(function () {
+    Route::get('/audit-export', AuditExportController::class)->name('admin.audit-export');
+    Route::get('/monthly-export', MonthlyMetricsExportController::class)->name('admin.monthly-export');
+});
 
 Route::get('/{legacy}', function (Request $request, string $legacy) {
     $locale = session('public_locale', 'en');

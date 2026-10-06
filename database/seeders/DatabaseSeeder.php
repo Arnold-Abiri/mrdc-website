@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(Stage4MutokoContentSeeder::class);
         $this->call(Stage4bGovernanceSeeder::class);
         $this->call(Stage5TourismSeeder::class);
+        $this->call(Stage7PrivacySeeder::class);
     }
 }
