@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { expect, test } from '@playwright/test';
 
@@ -30,6 +30,11 @@ function resetDisposableDatabase(): void {
 test.beforeAll(() => {
     resetDisposableDatabase();
     artisan(`$user = App\\Models\\User::factory()->create(["email" => "${email}", "password" => "${password}"]); $role = Spatie\\Permission\\Models\\Role::findByName("System Administrator"); $user->assignRole($role); Illuminate\\Support\\Facades\\DB::table("user_role_scopes")->insert(["user_id" => $user->id, "role_id" => $role->id, "scope_type" => "global", "created_at" => now(), "updated_at" => now()]); $disabled = App\\Models\\User::factory()->create(["email" => "${disabledEmail}", "password" => "${password}"]); $disabled->forceFill(["status" => "disabled", "disabled_at" => now()])->save(); $disabled->assignRole($role); Illuminate\\Support\\Facades\\DB::table("user_role_scopes")->insert(["user_id" => $disabled->id, "role_id" => $role->id, "scope_type" => "global", "created_at" => now(), "updated_at" => now()]); $limitedRole = Spatie\\Permission\\Models\\Role::firstOrCreate(["name" => "QA limited panel", "guard_name" => "web"]); $limitedRole->givePermissionTo("admin.access"); $limited = App\\Models\\User::factory()->create(["email" => "${limitedEmail}", "password" => "${password}"]); $limited->assignRole($limitedRole); Illuminate\\Support\\Facades\\DB::table("user_role_scopes")->insert(["user_id" => $limited->id, "role_id" => $limitedRole->id, "scope_type" => "global", "created_at" => now(), "updated_at" => now()]); $readerRole = Spatie\\Permission\\Models\\Role::firstOrCreate(["name" => "QA page reader", "guard_name" => "web"]); $readerRole->givePermissionTo(["admin.access", "pages.view"]); $reader = App\\Models\\User::factory()->create(["email" => "${viewerEmail}", "password" => "${password}"]); $reader->assignRole($readerRole); Illuminate\\Support\\Facades\\DB::table("user_role_scopes")->insert(["user_id" => $reader->id, "role_id" => $readerRole->id, "scope_type" => "global", "created_at" => now(), "updated_at" => now()]);`);
+});
+
+test.beforeEach(() => {
+    const key = 'livewire-rate-limiter:' + createHash('sha1').update('Filament\\Auth\\Pages\\Login|authenticate|127.0.0.1').digest('hex');
+    artisan(`Illuminate\\Support\\Facades\\RateLimiter::clear("${key}");`);
 });
 
 test.afterAll(() => {
@@ -286,7 +291,10 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.getByLabel('Media').click();
     await page.getByRole('listbox').getByRole('textbox', { name: 'Search' }).fill(replacementTitle);
     await page.getByRole('option', { name: replacementTitle }).click();
-    await page.getByRole('button', { name: 'Save changes' }).click();
+    await Promise.all([
+        page.waitForResponse(response => response.url().includes('/livewire') && response.request().method() === 'POST'),
+        page.getByRole('button', { name: 'Save changes' }).click(),
+    ]);
     await page.reload();
     await expect(page.getByLabel('Media')).toContainText(replacementTitle);
     expect((await page.request.get(`/documents/${slug}/download`)).status()).toBe(404);
@@ -407,20 +415,21 @@ test('resident enquiry is routed, assigned, noted, and moved through staff workf
     await page.reload();
     await expect(page.getByText(secondStaffName)).toBeVisible();
     artisan(`$enquiry = App\\Models\\Enquiry::where("subject", "${subject}")->firstOrFail(); $audit = Illuminate\\Support\\Facades\\DB::table("audit_events")->where("action", "enquiries.assigned")->where("subject_id", (string) $enquiry->id)->orderByDesc("id")->first(); if (!$audit || !$audit->actor_id || !str_contains($audit->metadata, "from_user_id") || !str_contains($audit->metadata, "to_user_id") || $enquiry->status !== "new") throw new Exception("Reassignment audit or state missing");`);
-    await page.getByRole('button', { name: 'Assign staff' }).click();
-    await page.getByRole('dialog').getByRole('combobox', { name: /Staff member/ }).evaluate(element => {
-        const option = document.createElement('option');
-        option.value = '999999';
-        option.textContent = 'Invalid assignee';
-        element.append(option);
-        (element as HTMLSelectElement).value = '999999';
-        element.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-    const invalidAssigneeResponse = await Promise.all([
-        page.waitForResponse(response => response.url().includes('/livewire') && response.request().method() === 'POST'),
-        page.getByRole('dialog').getByRole('button', { name: 'Submit' }).click(),
-    ]).then(([response]) => response);
-    expect([404, 422]).toContain(invalidAssigneeResponse.status());
+    const invalidBody = reassignmentRequest.postDataJSON();
+    invalidBody.components[0].updates['mountedActions.0.data.user_id'] = '999999';
+    const invalidAssigneeResult = await page.evaluate(async ({ url, body }) => {
+        const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
+        const response = await fetch(url, {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Livewire': 'true' },
+            body: JSON.stringify(body),
+        });
+        const payload = await response.json();
+        const snapshot = JSON.parse(payload.components[0].snapshot);
+        return { status: response.status, errors: snapshot.memo.errors };
+    }, { url: reassignmentRequest.url(), body: invalidBody });
+    expect(invalidAssigneeResult.status).toBe(200);
+    expect(invalidAssigneeResult.errors['mountedActions.0.data.user_id']).toContain('The selected staff member is invalid.');
     await page.reload();
     await expect(page.getByText(secondStaffName)).toBeVisible();
     await page.getByRole('button', { name: 'Add internal note' }).click();
@@ -457,9 +466,10 @@ test('resident enquiry is routed, assigned, noted, and moved through staff workf
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Livewire': 'true' },
             body: JSON.stringify(body),
         });
-        return response.status;
+        return { status: response.status, body: (await response.text()).slice(0, 2000) };
     }, { url: reassignmentRequest.url(), body: reassignmentRequest.postDataJSON() });
-    expect([403, 404]).toContain(forbiddenAssignment);
+    console.log('FORBIDDEN ASSIGNMENT', forbiddenAssignment);
+    expect([403, 404]).toContain(forbiddenAssignment.status);
     expect([403, 404]).toContain((await page.goto(otherUrl!))?.status());
 });
 
@@ -502,7 +512,10 @@ test('administrator edits media metadata and archives a published image', async 
     expect(mediaId).toBeTruthy();
     await page.locator('[id="form.alt_text"]').fill('Updated public image description');
     await page.locator('[id="form.caption"]').fill('Updated council image caption');
-    await page.getByRole('button', { name: 'Save changes' }).click();
+    await Promise.all([
+        page.waitForResponse(response => response.url().includes('/livewire') && response.request().method() === 'POST'),
+        page.getByRole('button', { name: 'Save changes' }).click(),
+    ]);
     await page.reload();
     await expect(page.locator('[id="form.alt_text"]')).toHaveValue('Updated public image description');
     await expect(page.locator('[id="form.caption"]')).toHaveValue('Updated council image caption');

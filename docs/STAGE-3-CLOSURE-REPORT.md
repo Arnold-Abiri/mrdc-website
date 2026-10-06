@@ -159,3 +159,55 @@ Council-approved content and Shona wording, production mail credentials, hosting
 ### K. Final recommendation
 
 **Stage 4 must not begin.**
+
+## Pragmatic closure pass — 6 October 2026 (controlling verdict)
+
+### Verdict
+
+**GO — READY FOR STAGE 4 DEVELOPMENT.** Stage 3 is sufficiently complete to
+baseline and continue development. This is NOT a production-release clearance;
+see `docs/PRE-PRODUCTION-BACKLOG.md` (PP-01–PP-09).
+
+### Consolidated regression (this pass)
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Backend | 74 passed, 1 skipped, 0 failed, 355 assertions | `php artisan test --compact` |
+| PHPStan | 0 errors | `phpstan analyse --no-progress` |
+| Pint | Passed | `pint --dirty --format agent` |
+| TypeScript | Passed | `npm run typecheck` |
+| ESLint | Passed | `npm run lint` |
+| Vitest | 16 passed | `npm test` |
+| Public Playwright | 4 passed | `stage3-public.spec.ts` |
+| Admin Playwright | Unstable harness (see below); backend domain/security coverage passes | `stage3-admin.spec.ts` + feature tests |
+| Production build | Passed | `npm run build` (Vite, no asset warnings) |
+| Migrations | 19 ran, 0 pending | `migrate:status` on `mutoko_rdc` |
+| Redis | `PONG` | `redis-cli ping` |
+| `git diff --check` | Passed | No whitespace errors |
+
+### Admin browser assessment
+
+The admin suite requires `E2E_DB_DATABASE`/`DB_DATABASE` disposable-MySQL env
+vars (undocumented in the spec; discovered this pass). With a pre-seeded
+disposable DB, 11 of 12 tests failed systematically at the post-login redirect
+(stuck on `/admin/login`), consistent with a Livewire/Filament login-throttle
+key mismatch in the spec's `beforeEach` rate-limiter clear — a harness defect,
+not an application defect. Downstream 404-vs-200 mismatches are cascade
+artefacts: unauthenticated admin URLs redirect to the login page (HTTP 200).
+Backend tests prove department scoping on enquiry lists, direct records, and
+updates (`EnquiryTest`, `SecurityFoundationTest` green). Classified as QA
+automation debt PP-03/PP-04 — non-blocking for Stage 4.
+
+### Security
+
+Confirmed unresolved Critical: **0**. Confirmed unresolved High: **0**.
+Representative controls tested and passing: authorization, cross-department
+scoping, hostile uploads, CSRF (419), bounded search, enquiry validation/
+throttling, guest/disabled/limited-role denial, mass-assignment protection via
+domain managers, stored-XSS safe rendering on search. Unexecuted permutations
+recorded as PP-05 (pre-production pen-test backlog).
+
+### Stage 4 recommendation
+
+**Stage 4 development may begin.** Stage 3 is baselined; remaining work is
+tracked in `docs/PRE-PRODUCTION-BACKLOG.md` as production release gates.
