@@ -1,0 +1,6 @@
+import { Link } from '@inertiajs/react';
+import PublicLayout from '../Layouts/PublicLayout';
+type TenderDetail = { slug: string; reference: string; title: string; category: string | null; description: string; opens_at: string | null; closes_at: string | null; display_status: string; contact_instructions: string | null; document: { slug: string; title: string } | null };
+export default function Tender({ tender, department }: { tender: TenderDetail; department: string | null }) {
+    return <PublicLayout><div className="container coming-soon"><p><Link href="/tenders">Tenders</Link></p><h1>{tender.title}</h1><p>{tender.reference} — Status: {tender.display_status}</p>{tender.category && <p>Category: {tender.category}</p>}{tender.opens_at && <p>Opens: {tender.opens_at}</p>}{tender.closes_at && <p>Closes: {tender.closes_at}</p>}<p>{tender.description}</p>{department && <p>Responsible department: {department}</p>}{tender.contact_instructions && <section><h2>How to apply</h2><p>{tender.contact_instructions}</p></section>}{tender.document && <section><h2>Tender document</h2><p><Link href={`/documents/${tender.document.slug}`}>{tender.document.title}</Link></p></section>}{tender.display_status !== 'open' && <p>This tender is not open for submissions.</p>}<p><Link href="/contact">Ask about this tender</Link></p></div></PublicLayout>;
+}

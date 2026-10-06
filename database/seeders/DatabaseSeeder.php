@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(SecuritySeeder::class);
+        $this->call(Stage4MutokoContentSeeder::class);
     }
 }

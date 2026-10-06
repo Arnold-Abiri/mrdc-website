@@ -2,13 +2,17 @@
 
 use App\Http\Controllers\PublicEnquiryController;
 use App\Models\Department;
+use App\Models\DistrictStatistic;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\InvestmentOpportunity;
 use App\Models\Media;
 use App\Models\Official;
 use App\Models\Page;
 use App\Models\PublicContact;
 use App\Models\Service;
+use App\Models\Tender;
+use App\Models\Vacancy;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +29,9 @@ Route::get('/', function () {
         'contacts' => PublicContact::query()->public()->orderBy('display_order')->limit(4)->get(['office', 'type', 'value']),
         'officials' => Official::query()->public()->orderBy('display_order')->orderBy('name')->limit(3)->get(['slug', 'name', 'title']),
         'ward_count' => Ward::query()->public()->count(),
+        'statistics' => DistrictStatistic::query()->public()->orderBy('display_order')->get(['label', 'value', 'unit', 'icon']),
+        'tenders' => Tender::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'reference', 'title'])->map(fn (Tender $tender): array => [...$tender->only(['slug', 'reference', 'title']), 'display_status' => $tender->displayStatus()]),
+        'investment' => InvestmentOpportunity::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'title', 'sector', 'summary']),
     ]);
 })->name('home');
 
@@ -110,7 +117,32 @@ Route::get('/search', function (Request $request) {
         'url' => route('officials.show', $official->slug), 'is_review_content' => false,
     ]);
 
-    return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->take(20)->values()]);
+    $tenders = $query === '' ? collect() : Tender::query()->public()->where(function ($builder) use ($query): void {
+        $escaped = addcslashes($query, '%_\\');
+        $builder->where('reference', 'like', '%'.$escaped.'%')->orWhere('title', 'like', '%'.$escaped.'%')->orWhere('description', 'like', '%'.$escaped.'%');
+    })->orderBy('display_order')->orderBy('title')->limit(20)->get(['slug', 'title', 'description']);
+    $tenderResults = $tenders->map(fn (Tender $tender): array => [
+        'type' => 'Tender', 'title' => $tender->title, 'summary' => null,
+        'url' => route('tenders.show', $tender->slug), 'is_review_content' => false,
+    ]);
+    $vacancies = $query === '' ? collect() : Vacancy::query()->public()->where(function ($builder) use ($query): void {
+        $escaped = addcslashes($query, '%_\\');
+        $builder->where('title', 'like', '%'.$escaped.'%')->orWhere('description', 'like', '%'.$escaped.'%');
+    })->orderBy('display_order')->orderBy('title')->limit(20)->get(['slug', 'title', 'description']);
+    $vacancyResults = $vacancies->map(fn (Vacancy $vacancy): array => [
+        'type' => 'Vacancy', 'title' => $vacancy->title, 'summary' => null,
+        'url' => route('vacancies.show', $vacancy->slug), 'is_review_content' => false,
+    ]);
+    $investment = $query === '' ? collect() : InvestmentOpportunity::query()->public()->where(function ($builder) use ($query): void {
+        $escaped = addcslashes($query, '%_\\');
+        $builder->where('title', 'like', '%'.$escaped.'%')->orWhere('summary', 'like', '%'.$escaped.'%')->orWhere('description', 'like', '%'.$escaped.'%');
+    })->orderBy('display_order')->orderBy('title')->limit(20)->get(['slug', 'title', 'summary']);
+    $investmentResults = $investment->map(fn (InvestmentOpportunity $opportunity): array => [
+        'type' => 'Investment', 'title' => $opportunity->title, 'summary' => $opportunity->summary,
+        'url' => route('investment.show', $opportunity->slug), 'is_review_content' => false,
+    ]);
+
+    return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->take(20)->values()]);
 })->name('search');
 
 Route::get('/coming-soon', function () {
@@ -221,6 +253,39 @@ Route::get('/officials/{slug}', function (string $slug) {
 
     return Inertia::render('Official', ['official' => [...$official->only(['slug', 'name', 'title', 'biography']), 'department' => $official->department instanceof Department ? $official->department->name : null, 'photo_url' => $official->photo_media_id ? route('managed-media.show', $official->photo_media_id) : null]]);
 })->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('officials.show');
+
+Route::get('/tenders', function () {
+    return Inertia::render('Tenders', ['tenders' => Tender::query()->public()->orderBy('display_order')->orderBy('title')->get(['slug', 'reference', 'title', 'category', 'closes_at'])->map(fn (Tender $tender): array => [...$tender->only(['slug', 'reference', 'title', 'category', 'closes_at']), 'display_status' => $tender->displayStatus()])]);
+})->name('tenders.index');
+Route::get('/tenders/{slug}', function (string $slug) {
+    $tender = Tender::query()->public()->with(['document', 'department'])->where('slug', $slug)->firstOrFail();
+    $document = $tender->document;
+
+    return Inertia::render('Tender', ['tender' => [...$tender->only(['slug', 'reference', 'title', 'category', 'description', 'opens_at', 'closes_at', 'contact_instructions']), 'display_status' => $tender->displayStatus(), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null], 'department' => $tender->department instanceof Department ? $tender->department->name : null]);
+})->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('tenders.show');
+
+Route::get('/vacancies', function () {
+    return Inertia::render('Vacancies', ['vacancies' => Vacancy::query()->public()->orderBy('display_order')->orderBy('title')->get(['slug', 'title', 'grade', 'closes_at'])->map(fn (Vacancy $vacancy): array => [...$vacancy->only(['slug', 'title', 'grade', 'closes_at']), 'is_open' => $vacancy->isOpen()])]);
+})->name('vacancies.index');
+Route::get('/vacancies/{slug}', function (string $slug) {
+    $vacancy = Vacancy::query()->public()->with(['document', 'department'])->where('slug', $slug)->firstOrFail();
+    $document = $vacancy->document;
+
+    return Inertia::render('Vacancy', ['vacancy' => [...$vacancy->only(['slug', 'title', 'grade', 'description', 'responsibilities', 'requirements', 'opens_at', 'closes_at', 'application_instructions']), 'is_open' => $vacancy->isOpen(), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null], 'department' => $vacancy->department instanceof Department ? $vacancy->department->name : null]);
+})->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('vacancies.show');
+
+Route::get('/investment', function () {
+    return Inertia::render('Investment', ['opportunities' => InvestmentOpportunity::query()->public()->orderBy('display_order')->orderBy('title')->get(['slug', 'title', 'sector', 'summary', 'location', 'opportunity_status'])]);
+})->name('investment.index');
+Route::get('/investment/{slug}', function (string $slug) {
+    $opportunity = InvestmentOpportunity::query()->public()->with('document')->where('slug', $slug)->firstOrFail();
+    $document = $opportunity->document;
+
+    return Inertia::render('InvestmentDetail', ['opportunity' => [...$opportunity->only(['slug', 'title', 'sector', 'summary', 'description', 'location', 'opportunity_status']), 'document' => $document instanceof Document && $document->status === 'published' ? $document->only(['slug', 'title']) : null]]);
+})->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('investment.show');
+
+Route::redirect('/about', '/pages/about-mutoko')->name('about');
+Route::redirect('/downloads', '/documents')->name('downloads');
 
 Route::get('/managed-media/{media}', function (Media $media) {
     abort_unless($media->status === 'active' && str_starts_with($media->mime_type, 'image/'), 404);

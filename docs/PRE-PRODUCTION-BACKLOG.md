@@ -22,3 +22,11 @@ Every item below is the second kind unless stated otherwise.
 
 Confirmed unresolved Critical: **0**. Confirmed unresolved High: **0**.
 No known authorization bypass (backend department-scope tests pass; see PP-03 for the browser artefact explanation).
+
+## Stage 4 additions (6 October 2026)
+
+| ID | Area | Item | Severity | Production Blocking | Target |
+|---|---|---|---|---|---|
+| PP-10 | Content | Council review and publish decision for all Stage 4 seed drafts (about page, 9 services, 3 investment prospects); seeded statistics values re-confirmed | High | Yes | Pre-production (council) |
+| PP-11 | Localization | Shona wording for new citizen-service sections (tenders, vacancies, investment, statistics, about) | Medium | Yes | Pre-production (council) |
+| PP-12 | Content | No tender or vacancy may be shown as open without a real council reference, document, and closing date | High | Yes | Pre-production (council) |

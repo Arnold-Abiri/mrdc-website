@@ -31,7 +31,7 @@ const services = [
         title: 'Development',
         description: 'Projects & investment opportunities',
         theme: 'cyan',
-        href: '/coming-soon?topic=development',
+        href: '/investment',
     },
     {
         icon: 'tourism',
@@ -45,14 +45,14 @@ const services = [
         title: 'Tenders',
         description: 'Business opportunities',
         theme: 'amber',
-        href: '/coming-soon?topic=tenders',
+        href: '/tenders',
     },
     {
         icon: 'vacancies',
         title: 'Vacancies',
         description: 'Join our team',
         theme: 'red',
-        href: '/coming-soon?topic=vacancies',
+        href: '/vacancies',
     },
 ] as const;
 
@@ -519,8 +519,11 @@ export type ManagedHomepageNotice = { slug: string; title: string; summary: stri
 
 export type ManagedHomepageContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
 export type ManagedHomepageOfficial = { slug: string; name: string; title: string };
+export type ManagedHomepageStatistic = { label: string; value: string; unit: string | null; icon: string | null };
+export type ManagedHomepageTender = { slug: string; reference: string; title: string; display_status: string };
+export type ManagedHomepageInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
 
-export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0 }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number }) {
+export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [] }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[] }) {
     return <section id="services" className="container coming-soon" aria-label="Approved council information">
         <h2>Approved council information</h2>
         <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={`/services/${item.slug}`}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
@@ -530,6 +533,9 @@ export function ManagedHomepageContent({ services, documents, departments, notic
         <section aria-labelledby="managed-officials-heading"><h3 id="managed-officials-heading">Council leadership</h3>{officials.length ? <ul>{officials.map(item => <li key={item.slug}><a href={`/officials/${item.slug}`}>{item.name}</a> — {item.title}</li>)}</ul> : <p>No approved leadership profiles are available yet.</p>}<a href="/officials">View council officials</a></section>
         <section aria-labelledby="managed-wards-heading"><h3 id="managed-wards-heading">Wards</h3><p>{wardCount ? `${wardCount} approved ward ${wardCount === 1 ? 'profile' : 'profiles'} available.` : 'No approved ward profiles are available yet.'}</p><a href="/wards">View ward directory</a></section>
         <section aria-labelledby="managed-contacts-heading"><h3 id="managed-contacts-heading">Council contacts</h3>{contacts.length ? <ul>{contacts.map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>No approved contact details are available yet.</p>}<a href="/contact">Contact the council</a></section>
+        <section aria-labelledby="managed-statistics-heading"><h3 id="managed-statistics-heading">Our district</h3>{statistics.length ? <ul>{statistics.map(item => <li key={item.label}><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong> — {item.label}</li>)}</ul> : <p>District statistics are being verified for publication.</p>}</section>
+        <section aria-labelledby="managed-tenders-heading"><h3 id="managed-tenders-heading">Tenders</h3>{tenders.length ? <ul>{tenders.map(item => <li key={item.slug}><a href={`/tenders/${item.slug}`}>{item.title}</a> — {item.reference} ({item.display_status})</li>)}</ul> : <p>No tenders are published at this time.</p>}<a href="/tenders">View all tenders</a></section>
+        <section aria-labelledby="managed-investment-heading"><h3 id="managed-investment-heading">Invest in Mutoko</h3>{investment.length ? <ul>{investment.map(item => <li key={item.slug}><a href={`/investment/${item.slug}`}>{item.title}</a>{item.sector ? ` — ${item.sector}` : ''}</li>)}</ul> : <p>Investment opportunities are being prepared for publication.</p>}<a href="/investment">Explore investment</a></section>
     </section>;
 }
 
