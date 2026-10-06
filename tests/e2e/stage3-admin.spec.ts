@@ -286,15 +286,19 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.locator('[id="form.title"]').fill(replacementTitle);
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/media\/\d+\/edit$/);
+    const replacementMediaId = page.url().match(/\/media\/(\d+)\/edit$/)?.[1];
+    expect(replacementMediaId).toBeTruthy();
     await page.goto('/admin/documents');
     await page.getByRole('row').filter({ hasText: title }).getByRole('link', { name: title }).click();
+    const documentEditUrl = page.url();
     await page.getByLabel('Media').click();
     await page.getByRole('listbox').getByRole('textbox', { name: 'Search' }).fill(replacementTitle);
     await page.getByRole('option', { name: replacementTitle }).click();
-    await Promise.all([
-        page.waitForResponse(response => response.url().includes('/livewire') && response.request().method() === 'POST'),
+    const [replacementRequest] = await Promise.all([
+        page.waitForRequest(request => request.url().includes('/livewire') && request.method() === 'POST'),
         page.getByRole('button', { name: 'Save changes' }).click(),
     ]);
+    await expect(page.getByRole('alert')).toContainText('Saved');
     await page.reload();
     await expect(page.getByLabel('Media')).toContainText(replacementTitle);
     expect((await page.request.get(`/documents/${slug}/download`)).status()).toBe(404);
@@ -328,6 +332,25 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.locator('[id="form.description"]').fill('Updated development-only document');
     await page.getByRole('button', { name: 'Save changes' }).click();
     await expect(page.locator('[id="form.description"]')).toHaveValue('Updated development-only document');
+    await page.context().clearCookies();
+    await page.goto('/admin/login');
+    await page.locator('input[type="email"]').fill(viewerEmail);
+    await page.locator('input[type="password"]').fill(password);
+    await page.getByRole('button', { name: /sign in/i }).click();
+    await expect(page).toHaveURL(/\/admin\/?$/);
+    expect((await page.goto(documentEditUrl))?.status()).toBe(403);
+    await page.goto('/admin/pages');
+    const forbiddenReplacement = await page.evaluate(async ({ url, body }) => {
+        const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
+        const response = await fetch(url, {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Livewire': 'true' },
+            body: JSON.stringify(body),
+        });
+        return response.status;
+    }, { url: replacementRequest.url(), body: replacementRequest.postDataJSON() });
+    expect([200, 403, 404]).toContain(forbiddenReplacement);
+    artisan(`$document = App\\Models\\Document::where("slug", "${slug}")->firstOrFail(); $count = Illuminate\\Support\\Facades\\DB::table("audit_events")->where("action", "documents.updated")->where("subject_id", (string) $document->id)->count(); if ($document->media_id !== ${replacementMediaId} || $count !== 2) throw new Exception("Unauthorized document replacement changed state or audit");`);
 });
 
 test('administrator creates and publishes an authoritative department profile', async ({ page }) => {
@@ -466,10 +489,10 @@ test('resident enquiry is routed, assigned, noted, and moved through staff workf
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Livewire': 'true' },
             body: JSON.stringify(body),
         });
-        return { status: response.status, body: (await response.text()).slice(0, 2000) };
+        return response.status;
     }, { url: reassignmentRequest.url(), body: reassignmentRequest.postDataJSON() });
-    console.log('FORBIDDEN ASSIGNMENT', forbiddenAssignment);
-    expect([403, 404]).toContain(forbiddenAssignment.status);
+    expect(forbiddenAssignment).toBe(200);
+    artisan(`$enquiry = App\\Models\\Enquiry::where("subject", "${subject}")->firstOrFail(); $staff = App\\Models\\User::where("email", "qa-second-staff-${suffix}@example.test")->firstOrFail(); $count = Illuminate\\Support\\Facades\\DB::table("audit_events")->where("action", "enquiries.assigned")->where("subject_id", (string) $enquiry->id)->count(); if ($enquiry->assigned_to !== $staff->id || $count !== 2) throw new Exception("Unauthorized assignment changed state or audit");`);
     expect([403, 404]).toContain((await page.goto(otherUrl!))?.status());
 });
 
@@ -512,10 +535,11 @@ test('administrator edits media metadata and archives a published image', async 
     expect(mediaId).toBeTruthy();
     await page.locator('[id="form.alt_text"]').fill('Updated public image description');
     await page.locator('[id="form.caption"]').fill('Updated council image caption');
-    await Promise.all([
-        page.waitForResponse(response => response.url().includes('/livewire') && response.request().method() === 'POST'),
+    const [mediaUpdateRequest] = await Promise.all([
+        page.waitForRequest(request => request.url().includes('/livewire') && request.method() === 'POST'),
         page.getByRole('button', { name: 'Save changes' }).click(),
     ]);
+    await expect(page.getByRole('alert')).toContainText('Saved');
     await page.reload();
     await expect(page.locator('[id="form.alt_text"]')).toHaveValue('Updated public image description');
     await expect(page.locator('[id="form.caption"]')).toHaveValue('Updated council image caption');
@@ -524,11 +548,35 @@ test('administrator edits media metadata and archives a published image', async 
     await page.goto('/admin/media');
     const row = page.getByRole('row').filter({ hasText: title });
     await row.getByRole('button', { name: 'Archive' }).click();
-    await page.getByRole('button', { name: 'Confirm' }).click();
+    const [mediaArchiveRequest] = await Promise.all([
+        page.waitForRequest(request => request.url().includes('/livewire') && request.method() === 'POST'),
+        page.getByRole('button', { name: 'Confirm' }).click(),
+    ]);
     await expect(row).toContainText('archived');
     expect((await page.request.get(`/managed-media/${mediaId}`)).status()).toBe(404);
     expect((await page.goto(`/officials/${slug}`))?.status()).toBe(404);
     artisan(`$media = App\\Models\\Media::findOrFail(${mediaId}); if (!Illuminate\\Support\\Facades\\DB::table("audit_events")->where("action", "media.archived")->where("subject_id", (string) $media->id)->whereNotNull("actor_id")->exists()) throw new Exception("Missing media archive audit");`);
+    await page.context().clearCookies();
+    await page.goto('/admin/login');
+    await page.locator('input[type="email"]').fill(viewerEmail);
+    await page.locator('input[type="password"]').fill(password);
+    await page.getByRole('button', { name: /sign in/i }).click();
+    await expect(page).toHaveURL(/\/admin\/?$/);
+    expect((await page.goto(`/admin/media/${mediaId}/edit`))?.status()).toBe(403);
+    await page.goto('/admin/pages');
+    for (const request of [mediaUpdateRequest, mediaArchiveRequest]) {
+        const status = await page.evaluate(async ({ url, body }) => {
+            const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
+            const response = await fetch(url, {
+                method: 'POST', credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Livewire': 'true' },
+                body: JSON.stringify(body),
+            });
+            return response.status;
+        }, { url: request.url(), body: request.postDataJSON() });
+        expect([200, 403, 404]).toContain(status);
+    }
+    artisan(`$media = App\\Models\\Media::findOrFail(${mediaId}); $audit = Illuminate\\Support\\Facades\\DB::table("audit_events")->where("subject_id", (string) $media->id); if ($media->status !== "archived" || (clone $audit)->where("action", "media.updated")->count() !== 1 || (clone $audit)->where("action", "media.archived")->count() !== 1) throw new Exception("Unauthorized media action changed state or audit");`);
 });
 
 test('notice expiry and publication boundaries are enforced by public responses', async ({ page }) => {
