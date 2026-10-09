@@ -4,6 +4,6 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-    plugins: [laravel({ input: ['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.tsx'], refresh: true }), react(), tailwindcss()],
+    plugins: [laravel({ input: ['resources/css/app.css', 'resources/css/contact.css', 'resources/css/admin.css', 'resources/js/app.tsx'], refresh: true }), react(), tailwindcss()],
     test: { environment: 'jsdom', setupFiles: ['./resources/js/test-setup.ts'], include: ['resources/js/**/*.test.tsx'] },
 });
