@@ -7,7 +7,7 @@ const english = {
     language: 'Language', english: 'English', shona: 'Shona', ndebele: 'Ndebele',
     developmentNotice: 'Development preview — displayed council information and imagery are unverified.',
     setLanguage: 'Set language', socialPreviews: 'Social media previews', councilHome: 'Mutoko Rural District Council home',
-    brandingAlt: 'Development branding mark for Mutoko Rural District Council', councilName: 'Rural District Council',
+    brandingAlt: 'Mutoko Rural District Council crest', councilName: 'Rural District Council',
     tagline: 'Service Delivery for Sustainable Communities', closeMenu: 'Close menu', menu: 'Menu', primaryNavigation: 'Primary navigation',
     footerAbout: 'Working with our communities to deliver quality services, promote local development and build a better Mutoko.',
     quickLinks: 'Quick Links', ourServices: 'Our Services', development: 'Development', tourism: 'Tourism', media: 'Media', contactUs: 'Contact Us',

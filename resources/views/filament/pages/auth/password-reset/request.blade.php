@@ -117,7 +117,7 @@
             {{-- Official Emblem / Logo --}}
             <a href="{{ url('/') }}" class="flex flex-col items-center text-center group mb-6 focus:outline-none" title="Return to Mutoko RDC Website">
                 <img 
-                    src="{{ asset('images/logo.png') }}" 
+                    src="{{ asset('images/council-crest-light.webp') }}"
                     alt="Mutoko Rural District Council Crest" 
                     class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-200"
                 />

@@ -131,12 +131,11 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 <div className="container header-inner">
                     <a className="identity" href={L("/")} aria-label={t('councilHome')}>
                         <img
-                            src="/images/logo.png"
-                            srcSet="/images/logo@2x.png 2x"
+                            src="/images/council-crest-light.webp"
                             alt={t('brandingAlt')}
                             className="identity-logo-img"
-                            width="40"
-                            height="40"
+                            width="48"
+                            height="48"
                         />
                         <span className="identity-text">
                             <span className="identity-title">Mutoko</span>
@@ -219,13 +218,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <div className="footer-col-about">
                         <div className="footer-brand">
                             <img
-                                src="/images/logo.png"
-                                srcSet="/images/logo@2x.png 2x"
+                                src="/images/council-crest-light.webp"
                                 alt=""
                                 aria-hidden="true"
                                 className="footer-logo-img"
-                                width="44"
-                                height="44"
+                                width="52"
+                                height="52"
                             />
                             <div className="footer-brand-text">
                                 <strong className="footer-brand-title">Mutoko</strong>
