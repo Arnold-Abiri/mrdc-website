@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\HomepageSlide;
 use App\Models\Page;
 use Database\Seeders\Stage4MutokoContentSeeder;
 use Database\Seeders\StakeholderDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -55,6 +57,50 @@ class PreviewTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('CmsPage', false)
                 ->where('preview', true));
+    }
+
+    public function test_welcome_slide_is_public_and_draft_slide_image_requires_preview(): void
+    {
+        Storage::fake(config('cms.media_disk'));
+        $this->seed(StakeholderDemoSeeder::class);
+
+        $welcome = HomepageSlide::query()->where('headline', 'Mutoko Rural District Council')->firstOrFail();
+        $draft = HomepageSlide::query()->where('headline', 'Roads, Water and Growth Points')->firstOrFail();
+        $this->assertNotNull($welcome->media_id);
+        $this->assertNotNull($draft->media_id);
+        $welcomeImageUrl = route('managed-media.show', ['locale' => 'en', 'media' => $welcome->media_id]);
+        $draftImageUrl = route('managed-media.show', ['locale' => 'en', 'media' => $draft->media_id]);
+
+        $this->get('/en')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Home', false)
+            ->has('slides', 1)
+            ->where('slides.0.headline', 'Mutoko Rural District Council')
+            ->where('slides.0.supporting_text', 'Working with our communities to deliver quality services, promote local development and build a better Mutoko.')
+            ->where('slides.0.image_url', $welcomeImageUrl));
+        $this->get($welcomeImageUrl)->assertOk()->assertHeader('Content-Type', 'image/webp');
+        $this->get($draftImageUrl)->assertNotFound();
+
+        $previewUrl = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
+        $this->get($previewUrl)->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Home', false)
+            ->has('slides', 3)
+            ->where('slides.1.image_url', $draftImageUrl));
+        $this->get($draftImageUrl)->assertOk()->assertHeader('Content-Type', 'image/webp');
+    }
+
+    public function test_reseeding_does_not_replace_edited_slides(): void
+    {
+        Storage::fake(config('cms.media_disk'));
+        $this->seed(StakeholderDemoSeeder::class);
+
+        $slide = HomepageSlide::query()->where('headline', 'Mutoko Rural District Council')->firstOrFail();
+        $slide->headline = 'Updated council highlight';
+        $slide->save();
+
+        $this->seed(StakeholderDemoSeeder::class);
+
+        $this->assertSame(3, HomepageSlide::query()->count());
+        $this->assertSame('Updated council highlight', $slide->fresh()->headline);
     }
 
     public function test_public_homepage_stays_empty_while_preview_has_content(): void

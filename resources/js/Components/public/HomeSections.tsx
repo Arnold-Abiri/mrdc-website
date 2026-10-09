@@ -10,7 +10,7 @@ import {
     type ServicePreview,
     type TourismPreview,
 } from '../../fixtures/home';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
 
 const services = [
@@ -114,7 +114,21 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const [index, setIndex] = useState(0);
-    const active = slides.length > 0 ? slides[index % slides.length] : undefined;
+    const [isPaused, setIsPaused] = useState(false);
+    const currentIndex = slides.length > 0 ? index % slides.length : 0;
+    const active = slides[currentIndex];
+    const isCouncilWelcome = active?.headline === 'Mutoko Rural District Council';
+
+    useEffect(() => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setIsPaused(true);
+    }, []);
+
+    useEffect(() => {
+        if (slides.length < 2 || isPaused) return;
+
+        const timer = window.setInterval(() => setIndex(current => (current + 1) % slides.length), 7000);
+        return () => window.clearInterval(timer);
+    }, [slides.length, isPaused]);
     if (!active) {
     return (
         <section className="hero" aria-labelledby="hero-title">
@@ -162,15 +176,15 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     );
     }
     return (
-        <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel" aria-live="polite">
+        <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel" aria-live={isPaused ? 'polite' : 'off'}>
             <SafeImage
                 className="hero-image"
-                key={active.headline}
+                key={`${currentIndex}-${active.image_url}`}
                 src={active.image_url ?? '/images/hero-clean.webp'}
                 width="1983"
                 height="793"
                 eager
-                alt={active.headline}
+                alt={isCouncilWelcome ? 'Scenic Mutoko landscape showing rocky kopje mountains, green valley and Mutoko town center' : active.headline}
             />
             <div className="hero-shade" />
 
@@ -182,9 +196,10 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                     </div>
 
                     <h1 id="hero-title" className="hero-heading">
-                        <span className="hero-heading-white">{active.headline}</span>
+                        {isCouncilWelcome ? <><span className="hero-heading-white">Mutoko Rural</span>{' '}<span className="hero-heading-green">District Council</span></> : <span className="hero-heading-white">{active.headline}</span>}
                     </h1>
 
+                    {isCouncilWelcome && <p className="hero-statement">People. Development. Sustainable Communities.</p>}
                     {active.supporting_text && <p className="hero-description">{active.supporting_text}</p>}
 
                     <div className="hero-actions">
@@ -194,9 +209,10 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                         </a>
                     </div>
                     {slides.length > 1 && <div className="hero-carousel-controls">
-                        <button type="button" className="hero-carousel-button" aria-label={t('previousSlide')} onClick={() => setIndex((index + slides.length - 1) % slides.length)}><span aria-hidden="true">‹</span></button>
-                        <p className="hero-carousel-status" role="status">{index + 1} / {slides.length}</p>
-                        <button type="button" className="hero-carousel-button" aria-label={t('nextSlide')} onClick={() => setIndex((index + 1) % slides.length)}><span aria-hidden="true">›</span></button>
+                        <button type="button" className="hero-carousel-button" aria-label={t('previousSlide')} onClick={() => { setIsPaused(true); setIndex(current => (current + slides.length - 1) % slides.length); }}><span aria-hidden="true">‹</span></button>
+                        <p className="hero-carousel-status" aria-live={isPaused ? 'polite' : 'off'}>{currentIndex + 1} / {slides.length}</p>
+                        <button type="button" className="hero-carousel-button" aria-label={t('nextSlide')} onClick={() => { setIsPaused(true); setIndex(current => (current + 1) % slides.length); }}><span aria-hidden="true">›</span></button>
+                        <button type="button" className="hero-carousel-button" aria-label={isPaused ? t('resumeSlides') : t('pauseSlides')} aria-pressed={isPaused} onClick={() => setIsPaused(paused => !paused)}><span aria-hidden="true">{isPaused ? '▶' : 'Ⅱ'}</span></button>
                     </div>}
                 </div>
 

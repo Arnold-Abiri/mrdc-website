@@ -49,7 +49,7 @@ class PreviewController extends Controller
             'tenders' => Tender::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'reference', 'title'])->map(fn (Tender $tender): array => [...$tender->toLocalizedArray(['slug', 'reference', 'title']), 'display_status' => $tender->displayStatus()]),
             'investment' => InvestmentOpportunity::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'title', 'sector', 'summary']),
             'projects' => CouncilProject::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'title', 'project_status', 'summary']),
-            'slides' => HomepageSlide::query()->where('status', 'draft')->where('is_active', true)->orderBy('display_order')->get(['headline', 'supporting_text', 'cta_label', 'cta_url'])->map(function (HomepageSlide $slide): array {
+            'slides' => HomepageSlide::query()->whereIn('status', ['draft', 'published'])->where('is_active', true)->orderBy('display_order')->get(['headline', 'supporting_text', 'cta_label', 'cta_url', 'media_id'])->map(function (HomepageSlide $slide): array {
                 $media = $slide->media_id ? Media::query()->where('id', $slide->media_id)->where('status', 'active')->first() : null;
 
                 return [...$slide->only(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null];

@@ -239,13 +239,18 @@ class StakeholderDemoSeeder extends Seeder
         // A legacy first-slide headline from an earlier demo seed is retired.
         HomepageSlide::query()->where('headline', 'Quality Services for Every Ward')->where('status', 'draft')->delete();
 
+        // Keep edits made in the admin portal when the demo seeder is run again.
+        if (HomepageSlide::query()->exists()) {
+            return;
+        }
+
         $slides = [
             [
                 'source' => 'public/images/hero-clean.webp',
                 'path' => 'slides/demo-services.webp',
                 'alt' => 'Scenic Mutoko landscape showing rocky kopje mountains, green valley and Mutoko town center',
                 'headline' => 'Mutoko Rural District Council',
-                'supporting_text' => 'People. Development. Sustainable Communities. Working with our communities to deliver quality services, promote local development and build a better Mutoko.',
+                'supporting_text' => 'Working with our communities to deliver quality services, promote local development and build a better Mutoko.',
                 'cta_label' => 'Our Services',
                 'cta_url' => '/services',
             ],
@@ -291,19 +296,17 @@ class StakeholderDemoSeeder extends Seeder
             });
 
             HomepageSlide::unguarded(function () use ($slide, $media, $order) {
-                $record = HomepageSlide::query()->firstOrNew(['headline' => $slide['headline']]);
-                if (! $record->exists) {
-                    $record->fill(['status' => 'draft', 'is_active' => true, 'display_order' => $order]);
-                }
-                if ($record->status === 'draft') {
-                    $record->fill([
-                        'supporting_text' => $slide['supporting_text'],
-                        'cta_label' => $slide['cta_label'],
-                        'cta_url' => $slide['cta_url'],
-                        'media_id' => $media->id,
-                    ]);
-                    $record->save();
-                }
+                HomepageSlide::query()->create([
+                    'headline' => $slide['headline'],
+                    'supporting_text' => $slide['supporting_text'],
+                    'cta_label' => $slide['cta_label'],
+                    'cta_url' => $slide['cta_url'],
+                    'media_id' => $media->id,
+                    'display_order' => $order,
+                    'is_active' => true,
+                    'status' => $order === 0 ? 'published' : 'draft',
+                    'published_at' => $order === 0 ? now() : null,
+                ]);
             });
         }
     }

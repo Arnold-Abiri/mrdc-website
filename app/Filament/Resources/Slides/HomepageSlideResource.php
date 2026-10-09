@@ -25,7 +25,9 @@ class HomepageSlideResource extends Resource
     protected static ?string $model = HomepageSlide::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+
     protected static \UnitEnum|string|null $navigationGroup = 'Content';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Homepage slides';
@@ -37,9 +39,9 @@ class HomepageSlideResource extends Resource
             Textarea::make('supporting_text')->maxLength(1000),
             TextInput::make('cta_label')->maxLength(120),
             TextInput::make('cta_url')->maxLength(2048)->helperText('Internal path only, e.g. /services.'),
-            Select::make('media_id')->relationship('media', 'title')->searchable()->helperText('Active image; falls back to the default hero artwork.'),
+            Select::make('media_id')->relationship('media', 'title')->searchable()->helperText('Choose an active image. If none is selected, the default hero artwork is used.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),
-            Select::make('is_active')->options([1 => 'Active', 0 => 'Inactive'])->required(),
+            Select::make('is_active')->options([1 => 'Active', 0 => 'Inactive'])->required()->helperText('Only active, published slides appear on the public homepage. Saving an edit returns a slide to draft; publish it again after review.'),
         ]);
     }
 
@@ -47,8 +49,8 @@ class HomepageSlideResource extends Resource
     {
         return $table->columns([TextColumn::make('headline')->searchable(), TextColumn::make('status')->badge(), TextColumn::make('is_active')->badge(), TextColumn::make('display_order')])->recordActions([
             EditAction::make(),
-            Action::make('publish')->authorize(fn (HomepageSlide $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (HomepageSlide $record) => app(HomepageSlideManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (HomepageSlide $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (HomepageSlide $record) => app(HomepageSlideManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+            Action::make('publish')->authorize(fn (HomepageSlide $record): bool => Gate::allows('publish', $record))->visible(fn (HomepageSlide $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (HomepageSlide $record) => app(HomepageSlideManager::class)->setStatus(auth()->user(), $record, 'published')),
+            Action::make('unpublish')->authorize(fn (HomepageSlide $record): bool => Gate::allows('publish', $record))->visible(fn (HomepageSlide $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (HomepageSlide $record) => app(HomepageSlideManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
         ]);
     }
 
