@@ -1,7 +1,3 @@
-.contact-hero { background-image: linear-gradient(90deg, rgba(2, 30, 24, .84), rgba(2, 30, 24, .43) 58%, rgba(2, 30, 24, .18)), url('/images/hero-clean.webp'); padding-block: 36px 54px; }
-.contact-hero .about-page-breadcrumb { margin-bottom: 28px; }
-.contact-hero h1 { max-width: 660px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.3rem, 4.5vw, 4.2rem); font-weight: 700; letter-spacing: -.025em; }
-.contact-hero .about-page-hero-subtitle { max-width: 640px; }
 .contact-page { background: #f7f7f3; padding: 32px 0 60px; }
 .contact-columns { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); align-items: stretch; }
 .contact-panel { min-width: 0; background: #fff; border: 1px solid #eeeee8; border-radius: 12px; padding: clamp(24px, 3vw, 38px); box-shadow: 0 12px 35px rgba(23, 33, 43, .045); }
@@ -65,4 +61,4 @@
 .contact-link-grid a:hover, .contact-link-grid a:focus-visible, .contact-section-heading > a:hover { border-color: #b98d2a; background: #fffdf7; }
 @media (min-width: 760px) { .contact-columns { grid-template-columns: minmax(0, .92fr) minmax(0, 1fr); } .contact-form { grid-template-columns: repeat(2, minmax(0, 1fr)); } .contact-field-full, .contact-submit { grid-column: 1 / -1; } .contact-department-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .contact-link-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (min-width: 1100px) { .contact-columns { grid-template-columns: minmax(0, .92fr) minmax(0, 1fr); } .contact-department-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-@media (max-width: 500px) { .contact-link-grid, .contact-department-grid { grid-template-columns: 1fr; } .contact-page { padding-top: 18px; } .contact-hero { padding-block: 28px 42px; } .contact-form-heading-icon { display: none; } .contact-form-footer { padding: 16px; } .contact-submit { width: 100%; } }
+@media (max-width: 500px) { .contact-link-grid, .contact-department-grid { grid-template-columns: 1fr; } .contact-page { padding-top: 18px; } .contact-form-heading-icon { display: none; } .contact-form-footer { padding: 16px; } .contact-submit { width: 100%; } }
