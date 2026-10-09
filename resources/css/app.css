@@ -2064,7 +2064,8 @@ h3 { margin: 0; }
 
 /* Verified district statistics band */
 .managed-stats-band { padding-block: 28px; background: #fff; }
-.managed-stats-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); margin: 0; }
+.managed-stats-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 0; }
+@media (min-width: 560px) { .managed-stats-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 900px) { .managed-stats-grid { grid-template-columns: repeat(4, 1fr); } }
 .managed-stat {
   display: flex;
