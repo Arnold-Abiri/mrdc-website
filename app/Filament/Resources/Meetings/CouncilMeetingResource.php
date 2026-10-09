@@ -30,7 +30,9 @@ class CouncilMeetingResource extends Resource
     protected static ?string $model = CouncilMeeting::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
     protected static \UnitEnum|string|null $navigationGroup = 'Council';
+
     protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Council meetings';
@@ -57,7 +59,7 @@ class CouncilMeetingResource extends Resource
         return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('meeting_type')->badge(), TextColumn::make('scheduled_date')->date(), TextColumn::make('meeting_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('meeting_type')->options(['full_council' => 'Full council', 'committee' => 'Committee', 'special' => 'Special', 'public_hearing' => 'Public hearing']), SelectFilter::make('meeting_status')->options(['scheduled' => 'Scheduled', 'completed' => 'Completed', 'postponed' => 'Postponed', 'cancelled' => 'Cancelled'])])->recordActions([
             EditAction::make(),
             Action::make('verify')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('verify', $record))->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'published')),
+            Action::make('publish')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->disabled(fn (CouncilMeeting $record): bool => $record->verification_status !== 'publishable')->tooltip(fn (CouncilMeeting $record): ?string => $record->verification_status !== 'publishable' ? 'Verify this meeting before publishing it.' : null)->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'archived')),
         ]);
