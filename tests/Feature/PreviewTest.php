@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CouncilMeeting;
 use App\Models\Document;
 use App\Models\HomepageSlide;
 use App\Models\Page;
@@ -42,6 +43,7 @@ class PreviewTest extends TestCase
                 ->has('services', 9)
                 ->has('news', 3)
                 ->has('notices', 3)
+                ->has('meetings', 2)
                 ->has('slides', 3));
     }
 
@@ -132,6 +134,8 @@ class PreviewTest extends TestCase
         $home = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
         $this->get($home)->assertOk();
 
+        $meetingId = CouncilMeeting::query()->firstOrFail()->id;
+
         $this->get('/preview/en/services/education-services')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow');
         $this->get('/preview/en/news/demo-understanding-mrdc-role')->assertOk();
         $this->get('/preview/en/notices/how-service-updates-are-communicated')->assertOk();
@@ -139,6 +143,7 @@ class PreviewTest extends TestCase
         $this->get('/preview/en/wards/ward-01')->assertOk();
         $this->get('/preview/en/officials/demo-office-ceo')->assertOk();
         $this->get('/preview/en/investment/solar-energy-mutoko')->assertOk();
+        $this->get("/preview/en/meetings/{$meetingId}")->assertOk();
     }
 
     public function test_preview_download_serves_demo_guide_in_preview_session(): void

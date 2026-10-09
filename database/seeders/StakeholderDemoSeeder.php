@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CouncilMeeting;
 use App\Models\DistrictStatistic;
 use App\Models\Document;
 use App\Models\EditorialItem;
@@ -35,6 +36,7 @@ class StakeholderDemoSeeder extends Seeder
         $this->seedDocuments();
         $this->seedWards();
         $this->seedOfficials();
+        $this->seedMeetings();
         $this->seedSlides();
         $this->seedServices();
         $this->seedInvestment();
@@ -335,6 +337,43 @@ class StakeholderDemoSeeder extends Seeder
                     'published_at' => $order === 0 ? now() : null,
                 ]);
             });
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Draft meetings for the preview events panel (never published here).
+    // ------------------------------------------------------------------
+    private function seedMeetings(): void
+    {
+        $meetings = [
+            [
+                'title' => 'Ordinary Full Council Sitting',
+                'meeting_type' => 'full_council',
+                'scheduled_date' => now()->addDays(21)->toDateString(),
+                'scheduled_time' => '09:00',
+                'venue' => 'Council Chambers, Mutoko Centre',
+                'meeting_status' => 'scheduled',
+                'summary' => 'Quarterly sitting of full council to consider committee reports and resolutions.',
+            ],
+            [
+                'title' => 'Finance and Administration Committee',
+                'meeting_type' => 'committee',
+                'scheduled_date' => now()->addDays(14)->toDateString(),
+                'scheduled_time' => '10:00',
+                'venue' => 'Council Chambers, Mutoko Centre',
+                'meeting_status' => 'scheduled',
+                'summary' => 'Committee sitting on finance, administration and staffing matters.',
+            ],
+        ];
+        foreach ($meetings as $order => $meeting) {
+            $record = CouncilMeeting::query()->firstOrNew(['title' => $meeting['title']]);
+            if (! $record->exists) {
+                $record->fill(['status' => 'draft', 'verification_status' => 'demo', 'display_order' => $order]);
+            }
+            if ($record->verification_status === 'demo' && $record->status === 'draft') {
+                $record->fill($meeting);
+                $record->save();
+            }
         }
     }
 

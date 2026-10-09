@@ -117,7 +117,7 @@ describe('homepage sections', () => {
     it('explains when no approved news or events exist', () => {
         render(<NewsAndEvents news={[]} events={[]} />);
         expect(screen.getByText('No news published yet')).toBeInTheDocument();
-        expect(screen.getByText('No upcoming events published')).toBeInTheDocument();
+        expect(screen.getByText('No upcoming meetings scheduled')).toBeInTheDocument();
     });
 
     it('renders short and long titles without requiring images', () => {

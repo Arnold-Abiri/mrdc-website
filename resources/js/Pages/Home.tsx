@@ -25,7 +25,23 @@ type HomeTender = { slug: string; reference: string; title: string; display_stat
 type HomeInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
 type HomeProject = { slug: string; title: string; project_status: string; summary: string | null };
 
-export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides, projects, preview = false }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[]; projects: HomeProject[]; preview?: boolean }) {
+type HomeMeeting = { id: number; title: string; meeting_type: string; scheduled_date: string | null; scheduled_time: string | null; venue: string | null };
+
+function formatEventParts(scheduledDate: string | null): { day: string; month: string } {
+    if (!scheduledDate) {
+        return { day: '—', month: '' };
+    }
+    const parsed = new Date(scheduledDate);
+    if (Number.isNaN(parsed.getTime())) {
+        return { day: '—', month: '' };
+    }
+    return {
+        day: String(parsed.getDate()).padStart(2, '0'),
+        month: parsed.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase(),
+    };
+}
+
+export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides, projects, meetings = [], preview = false }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[]; projects: HomeProject[]; meetings?: HomeMeeting[]; preview?: boolean }) {
     const locale = usePublicLocale();
     return (
         <PublicLayout>
@@ -39,7 +55,20 @@ export default function Home({ services, documents, departments, news, notices, 
                 <QuickAccess />
             <ValuePillars />
             <AboutSection aboutHref={preview ? `/preview/${locale}/pages/about-mutoko` : undefined} />
-            <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ? new Date(item.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '', href: preview ? `/preview/${locale}/news/${item.slug}` : `/${locale}/news/${item.slug}` }))} events={[]} />
+            <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ? new Date(item.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '', href: preview ? `/preview/${locale}/news/${item.slug}` : `/${locale}/news/${item.slug}` }))} events={meetings.map(item => {
+                const parts = formatEventParts(item.scheduled_date);
+                const prettyDate = item.scheduled_date && !Number.isNaN(new Date(item.scheduled_date).getTime())
+                    ? new Date(item.scheduled_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                    : '';
+                return {
+                    day: parts.day,
+                    month: parts.month,
+                    title: item.title,
+                    location: item.venue ?? '',
+                    time: [prettyDate, item.scheduled_time].filter(Boolean).join(' · '),
+                    href: preview ? `/preview/${locale}/meetings/${item.id}` : `/meetings/${item.id}`,
+                };
+            })} />
             <ManagedHomepageContent preview={preview} services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} projects={projects} />
 
             <ExploreDirectory />

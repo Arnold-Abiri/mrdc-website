@@ -488,8 +488,6 @@ function NewsCard({ item }: { item: NewsPreview }) {
 }
 
 function EventItem({ item }: { item: EventPreview }) {
-    const locale = usePublicLocale();
-    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <article className="event-item-card">
             <div className="event-badge">
@@ -501,7 +499,7 @@ function EventItem({ item }: { item: EventPreview }) {
                 <p className="event-location">{item.location}</p>
                 <p className="event-time">{item.time}</p>
                 {item.href && (
-                    <a href={L(item.href)} className="event-link">
+                    <a href={item.href} className="event-link">
                         Event details
                     </a>
                 )}
@@ -560,7 +558,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                         {events.length ? (
                             events.map(item => <EventItem item={item} key={`${item.day}-${item.title}`} />)
                         ) : (
-                            <EmptyPreview type="events" title="No upcoming events published" description="Confirmed council events will appear here." />
+                            <EmptyPreview type="events" title="No upcoming meetings scheduled" description="Meeting dates, agendas and minutes are published here once confirmed." />
                         )}
                     </div>
                 </div>

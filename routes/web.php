@@ -106,7 +106,7 @@ Route::middleware(['signed', 'noindex'])->prefix('preview')->group(function () {
 Route::middleware(['noindex'])->prefix('preview')->group(function () {
     // Unlocked by visiting a valid signed preview URL (session flag set there).
     Route::get('/{locale}/pages/{slug}', [PreviewController::class, 'page'])->where(['locale' => 'en|sn|nd', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.page');
-    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
+    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment|meetings', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
 });
 
 Route::middleware('auth')->prefix('admin/reports')->group(function () {

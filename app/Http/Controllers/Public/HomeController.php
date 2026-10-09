@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\CouncilMeeting;
 use App\Models\CouncilProject;
 use App\Models\Department;
 use App\Models\DistrictStatistic;
@@ -49,6 +50,7 @@ class HomeController extends Controller
 
                 return [...$slide->only(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null];
             }),
+            'meetings' => CouncilMeeting::query()->with('translations')->public()->where('meeting_status', 'scheduled')->orderBy('scheduled_date')->orderBy('display_order')->limit(3)->get(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue']),
         ]);
     }
 }

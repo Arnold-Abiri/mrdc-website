@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\CouncilMeeting;
 use App\Models\CouncilProject;
 use App\Models\Department;
 use App\Models\DistrictStatistic;
@@ -54,6 +55,7 @@ class PreviewController extends Controller
 
                 return [...$slide->only(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null];
             }),
+            'meetings' => CouncilMeeting::query()->with('translations')->whereIn('status', ['draft', 'published'])->where('meeting_status', 'scheduled')->orderBy('scheduled_date')->orderBy('display_order')->limit(3)->get(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue']),
         ]);
     }
 
@@ -83,6 +85,7 @@ class PreviewController extends Controller
             'wards' => $this->previewWard($slug),
             'officials' => $this->previewOfficial($slug),
             'investment' => $this->previewInvestment($slug),
+            'meetings' => $this->previewMeeting($slug),
             default => abort(404),
         };
     }
@@ -154,6 +157,16 @@ class PreviewController extends Controller
         return Inertia::render('InvestmentDetail', [
             'preview' => true,
             'opportunity' => [...$opportunity->toLocalizedArray(['slug', 'title', 'sector', 'summary', 'description', 'location', 'opportunity_status']), 'document' => null, 'is_review_content' => true],
+        ]);
+    }
+
+    private function previewMeeting(string $slug): Response
+    {
+        $meeting = CouncilMeeting::query()->with('translations')->where('id', $slug)->firstOrFail();
+
+        return Inertia::render('Meeting', [
+            'preview' => true,
+            'meeting' => [...$meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status', 'summary']), 'agenda' => null, 'minutes' => null],
         ]);
     }
 }
