@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Cms\EnquiryManager;
+use App\Models\Department;
 use App\Models\InvestmentOpportunity;
 use App\Models\PublicContact;
 use App\Models\Service;
@@ -19,6 +20,7 @@ class PublicEnquiryController extends Controller
             'csrfToken' => csrf_token(),
             'submitted' => $request->query('submitted') === '1',
             'contacts' => PublicContact::query()->public()->orderBy('display_order')->get(['office', 'type', 'value']),
+            'departments' => Department::query()->where('status', 'active')->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'public_name']),
             'context' => $this->resolveContext($request->query('context')),
         ]);
     }
