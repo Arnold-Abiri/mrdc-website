@@ -1,0 +1,77 @@
+@import '../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../app/Filament';
+@source '../../resources/views';
+@source '../../vendor/filament/filament/resources/views';
+
+/* Group headings and connected item markers in the admin sidebar. */
+.fi-sidebar-nav-groups > .fi-sidebar-group[data-group-label]:not([data-group-label='']) {
+    .fi-sidebar-group-btn {
+        padding-block: 0.625rem;
+        border-radius: 0.625rem;
+    }
+
+    .fi-sidebar-group-label {
+        color: #334155;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+
+    .fi-sidebar-group-items {
+        position: relative;
+        margin-inline-start: 0.75rem;
+        padding-inline-start: 1.375rem;
+    }
+
+    .fi-sidebar-group-items::before {
+        content: '';
+        position: absolute;
+        inset-block: 1.25rem;
+        inset-inline-start: 0.5625rem;
+        width: 1px;
+        background: #cbd5e1;
+    }
+
+    .fi-sidebar-group-items > .fi-sidebar-item {
+        position: relative;
+    }
+
+    .fi-sidebar-group-items > .fi-sidebar-item::before {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        inset-inline-start: -1.0625rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        background: #94a3b8;
+    }
+
+    .fi-sidebar-group-items > .fi-sidebar-item.fi-active::before,
+    .fi-sidebar-group-items > .fi-sidebar-item:hover::before,
+    .fi-sidebar-group-items > .fi-sidebar-item:focus-within::before {
+        background: #0b8f62;
+    }
+}
+
+.dark .fi-sidebar-nav-groups > .fi-sidebar-group[data-group-label]:not([data-group-label='']) {
+    .fi-sidebar-group-label {
+        color: #e2e8f0;
+    }
+
+    .fi-sidebar-group-items::before {
+        background: #475569;
+    }
+
+    .fi-sidebar-group-items > .fi-sidebar-item::before {
+        background: #64748b;
+    }
+
+    .fi-sidebar-group-items > .fi-sidebar-item.fi-active::before,
+    .fi-sidebar-group-items > .fi-sidebar-item:hover::before,
+    .fi-sidebar-group-items > .fi-sidebar-item:focus-within::before {
+        background: #4ade80;
+    }
+}

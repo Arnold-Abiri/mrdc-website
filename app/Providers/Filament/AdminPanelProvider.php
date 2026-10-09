@@ -8,6 +8,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -36,13 +37,14 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#0B8F62'),
             ])
+            ->viteTheme('resources/css/admin.css')
             ->navigationGroups([
-                'Content',
-                'Council',
-                'Services & Development',
-                'Public Enquiries',
-                'Reports & Monitoring',
-                'Administration',
+                NavigationGroup::make('Content')->collapsible(),
+                NavigationGroup::make('Council')->collapsible(),
+                NavigationGroup::make('Services & Development')->collapsible(),
+                NavigationGroup::make('Public Enquiries')->collapsible(),
+                NavigationGroup::make('Reports & Monitoring')->collapsible(),
+                NavigationGroup::make('Administration')->collapsible(),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
