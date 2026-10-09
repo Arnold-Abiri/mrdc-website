@@ -4,6 +4,8 @@ export type NewsPreview = {
     date: string;
     summary: string;
     image?: string;
+    imageAlt?: string;
+    imageCaption?: string;
     href?: string;
 };
 
@@ -14,6 +16,8 @@ export type EventPreview = {
     time: string;
     location: string;
     href?: string;
+    hasAgenda?: boolean;
+    hasMinutes?: boolean;
 };
 
 export type ServicePreview = {

@@ -59,6 +59,12 @@ const english = {
     tendersProcurement: 'Tenders and procurement', tenders: 'Tenders', vacancies: 'Vacancies', howToApply: 'How to apply', tenderDocument: 'Tender document',
     askAboutTender: 'Ask about this tender', vacancyAdvert: 'Vacancy advert', areaDescription: 'Area description',
     returnHomepage: 'Return to the homepage', newsSection: 'News', noticesSection: 'Notices',
+    homeSearchPlaceholder: 'Search council services, by-laws, public notices, and tenders...',
+    reportIssueTitle: 'Report an Issue or Send Feedback',
+    reportIssueDesc: 'Report service delivery issues directly to council — roads, water supply, health, waste management or general enquiries.',
+    reportIssueBtn: 'Lodge Feedback / Complaint',
+    agendaAvailable: 'Agenda Available',
+    minutesAvailable: 'Minutes Available',
 } as const;
 
 type Key = keyof typeof english;

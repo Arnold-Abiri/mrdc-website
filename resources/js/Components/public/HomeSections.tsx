@@ -458,16 +458,15 @@ function NewsCard({ item }: { item: NewsPreview }) {
     return (
         <article className="news-card">
             <div className="news-image">
-                {item.image ? (
-                    <img src={item.image} alt={item.title} loading="lazy" width="480" height="270" onError={event => { event.currentTarget.style.display = 'none'; }} />
-                ) : null}
-                <span className="img-fallback img-fallback-icon" role="img" aria-label={`No image available for ${item.title}`} style={item.image ? { position: 'absolute', inset: 0 } : undefined}>
+                {item.image && <SafeImage src={item.image} alt={item.imageAlt ?? item.title} width="480" height="270" />}
+                {item.imageCaption?.startsWith('AI-generated') && <span className="news-image-label">Editorial illustration</span>}
+                {!item.image && <span className="img-fallback img-fallback-icon" role="img" aria-label={`No image available for ${item.title}`}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <rect x="3" y="3" width="18" height="18" rx="2" />
                         <circle cx="9" cy="9" r="2" />
                         <path d="m21 15-3.5-3.5a1.5 1.5 0 0 0-2 0L6 21" />
                     </svg>
-                </span>
+                </span>}
             </div>
             <div className="news-body">
                 <div className="news-date-meta">
@@ -493,6 +492,7 @@ function NewsCard({ item }: { item: NewsPreview }) {
 }
 
 function EventItem({ item }: { item: EventPreview }) {
+    const t = usePublicTranslation();
     return (
         <article className="event-item-card">
             <div className="event-badge">
@@ -503,6 +503,26 @@ function EventItem({ item }: { item: EventPreview }) {
                 <h3 className="event-title">{item.title}</h3>
                 <p className="event-location">{item.location}</p>
                 <p className="event-time">{item.time}</p>
+                {(item.hasAgenda || item.hasMinutes) && (
+                    <div className="event-doc-chips">
+                        {item.hasAgenda && (
+                            <span className="event-doc-chip chip-agenda">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                {t('agendaAvailable')}
+                            </span>
+                        )}
+                        {item.hasMinutes && (
+                            <span className="event-doc-chip chip-minutes">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                {t('minutesAvailable')}
+                            </span>
+                        )}
+                    </div>
+                )}
                 {item.href && (
                     <a href={item.href} className="event-link">
                         Event details
@@ -700,6 +720,23 @@ function StatIcon({ name }: { name: string | null }) {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10" />
                     <polyline points="12 6 12 12 14 14" />
+                </svg>
+            );
+        case 'projects':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
+            );
+        case 'tenders':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
                 </svg>
             );
         default:
@@ -1042,6 +1079,36 @@ export function CtaBanner() {
                         <span>Get in Touch</span>
                         <span aria-hidden="true">→</span>
                     </a>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export function CitizenFeedbackBanner() {
+    const locale = usePublicLocale();
+    const t = usePublicTranslation();
+    const L = (path: string) => `/${locale}${path}`;
+    return (
+        <section className="citizen-feedback-section" aria-labelledby="feedback-callout-heading">
+            <div className="container">
+                <div className="citizen-feedback-card">
+                    <div className="citizen-feedback-info">
+                        <div className="citizen-feedback-pill">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
+                            <span>Citizen Participation &amp; Social Accountability</span>
+                        </div>
+                        <h2 id="feedback-callout-heading">{t('reportIssueTitle')}</h2>
+                        <p>{t('reportIssueDesc')}</p>
+                    </div>
+                    <div>
+                        <a href={L('/feedback')} className="btn-feedback-action">
+                            <span>{t('reportIssueBtn')}</span>
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>

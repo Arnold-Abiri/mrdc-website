@@ -957,6 +957,17 @@ h3 { margin: 0; }
   object-fit: cover;
   transition: transform 0.3s ease;
 }
+.news-image-label {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 8px;
+  background: var(--color-civic-navy);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+}
 .news-image .img-fallback { width: 100%; height: 100%; justify-content: center; }
 .news-card:hover .news-image img {
   transform: scale(1.04);
@@ -2243,4 +2254,115 @@ h3 { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* -------------------------------------------------------------
+   Homepage Enhancements: Event Badges, Feedback Banner
+------------------------------------------------------------- */
+
+/* Event Agenda / Minutes Badges */
+.event-doc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.event-doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.chip-agenda {
+  background: rgba(11, 143, 98, 0.12);
+  color: var(--color-deep-green);
+}
+.chip-agenda:hover {
+  background: rgba(11, 143, 98, 0.22);
+}
+.chip-minutes {
+  background: rgba(2, 72, 130, 0.12);
+  color: #013C6C;
+}
+.chip-minutes:hover {
+  background: rgba(2, 72, 130, 0.22);
+}
+
+/* Citizen Engagement / Feedback Callout Section */
+.citizen-feedback-section {
+  background: #FFFFFF;
+  padding-block: 48px;
+  border-bottom: 1px solid var(--color-border);
+}
+.citizen-feedback-card {
+  background: linear-gradient(135deg, #F0FDF4 0%, #E6F4EA 100%);
+  border: 1.5px solid #BBF7D0;
+  border-radius: 16px;
+  padding: clamp(24px, 4vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+}
+@media (min-width: 768px) {
+  .citizen-feedback-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.citizen-feedback-info {
+  max-width: 680px;
+}
+.citizen-feedback-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(11, 143, 98, 0.15);
+  color: var(--color-deep-green);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  margin-bottom: 10px;
+}
+.citizen-feedback-card h2 {
+  color: var(--color-civic-navy);
+  font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+.citizen-feedback-card p {
+  color: #334155;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0;
+}
+.btn-feedback-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-deep-green);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 13px 26px;
+  border-radius: 9999px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(11, 143, 98, 0.3);
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-feedback-action:hover {
+  background: #0AA875;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(11, 143, 98, 0.4);
 }
