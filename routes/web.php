@@ -14,8 +14,8 @@ use App\Http\Controllers\Public\MediaController;
 use App\Http\Controllers\Public\MeetingController;
 use App\Http\Controllers\Public\OfficialController;
 use App\Http\Controllers\Public\PageController;
+use App\Http\Controllers\Public\PreviewController;
 use App\Http\Controllers\Public\ProjectController;
-use App\Http\Controllers\PublicEnquiryController;
 use App\Http\Controllers\Public\RatesController;
 use App\Http\Controllers\Public\SearchController;
 use App\Http\Controllers\Public\ServiceController;
@@ -26,6 +26,7 @@ use App\Http\Controllers\Public\TransparencyController;
 use App\Http\Controllers\Public\UtilityController;
 use App\Http\Controllers\Public\VacancyController;
 use App\Http\Controllers\Public\WardController;
+use App\Http\Controllers\PublicEnquiryController;
 use App\Http\Middleware\RecordAnalytics;
 use Illuminate\Support\Facades\Route;
 
@@ -97,6 +98,16 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
 
     Route::get('/managed-media/{media}', [MediaController::class, 'show'])->whereNumber('media')->name('managed-media.show');
 }); // end locale group
+
+// Stakeholder preview: signed URLs only, never linked publicly or in sitemap.
+Route::middleware(['signed', 'noindex'])->prefix('preview')->group(function () {
+    Route::get('/{locale}', [PreviewController::class, 'home'])->where(['locale' => 'en|sn|nd'])->name('preview.home');
+});
+Route::middleware(['noindex'])->prefix('preview')->group(function () {
+    // Unlocked by visiting a valid signed preview URL (session flag set there).
+    Route::get('/{locale}/pages/{slug}', [PreviewController::class, 'page'])->where(['locale' => 'en|sn|nd', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.page');
+    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
+});
 
 Route::middleware('auth')->prefix('admin/reports')->group(function () {
     Route::get('/audit-export', AuditExportController::class)->name('admin.audit-export');

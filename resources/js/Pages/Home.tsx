@@ -25,20 +25,22 @@ type HomeTender = { slug: string; reference: string; title: string; display_stat
 type HomeInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
 type HomeProject = { slug: string; title: string; project_status: string; summary: string | null };
 
-export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides, projects }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[]; projects: HomeProject[] }) {
+export default function Home({ services, documents, departments, news, notices, contacts, officials, ward_count, statistics, tenders, investment, slides, projects, preview = false }: { services: HomeService[]; documents: HomeDocument[]; departments: HomeDepartment[]; news: HomeEditorial[]; notices: HomeEditorial[]; contacts: HomeContact[]; officials: HomeOfficial[]; ward_count: number; statistics: HomeStatistic[]; tenders: HomeTender[]; investment: HomeInvestment[]; slides: HeroSlide[]; projects: HomeProject[]; preview?: boolean }) {
     const locale = usePublicLocale();
     return (
         <PublicLayout>
             <Head title="Mutoko Rural District Council">
                 <meta name="description" content="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." />
+                {preview && <meta name="robots" content="noindex, nofollow" />}
             </Head>
             <SeoHead title="Mutoko Rural District Council" description="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." type="website" schema={organizationSchema()} />
+                {preview && <div className="preview-banner" role="note"><p><strong>Stakeholder preview — demonstration content.</strong> Draft and sample records are shown for council review. Nothing here is published to the public website.</p></div>}
                 <Hero slides={slides} />
                 <QuickAccess />
             <ValuePillars />
-            <AboutSection />
-            <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ?? '', href: `/${locale}/news/${item.slug}` }))} events={[]} />
-            <ManagedHomepageContent services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} projects={projects} />
+            <AboutSection aboutHref={preview ? `/preview/${locale}/pages/about-mutoko` : undefined} />
+            <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ?? '', href: preview ? `/preview/${locale}/news/${item.slug}` : `/${locale}/news/${item.slug}` }))} events={[]} />
+            <ManagedHomepageContent preview={preview} services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} projects={projects} />
 
             <ExploreDirectory />
 

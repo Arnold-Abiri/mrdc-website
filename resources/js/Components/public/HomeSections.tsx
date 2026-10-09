@@ -311,7 +311,7 @@ function AboutIcon({ name }: { name: AboutPillar['icon'] }) {
     }
 }
 
-export function AboutSection() {
+export function AboutSection({ aboutHref }: { aboutHref?: string }) {
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
@@ -332,7 +332,7 @@ export function AboutSection() {
                         Our mission is to provide quality, sustainable services with our communities. Our vision is a vibrant and prosperous Mutoko by 2030.
                     </p>
                     <div>
-                        <a href={L("/departments")} className="btn-section-primary">
+                        <a href={aboutHref ?? L("/departments")} className="btn-section-primary">
                             <span>Learn More</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -394,8 +394,6 @@ function EmptyPreview({ type, title, description }: { type: 'news' | 'events'; t
 }
 
 function NewsCard({ item }: { item: NewsPreview }) {
-    const locale = usePublicLocale();
-    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <article className="news-card">
             <div className="news-image">
@@ -418,7 +416,7 @@ function NewsCard({ item }: { item: NewsPreview }) {
                 <h3 className="news-title">{item.title}</h3>
                 <p className="news-summary">{item.summary}</p>
                 {item.href && (
-                    <a href={L(item.href)} className="news-readmore">
+                    <a href={item.href} className="news-readmore">
                         <span>Read More</span>
                         <span aria-hidden="true">→</span>
                     </a>
@@ -599,9 +597,10 @@ export type ManagedHomepageTender = { slug: string; reference: string; title: st
 export type ManagedHomepageInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
 export type ManagedHomepageProject = { slug: string; title: string; project_status: string; summary: string | null };
 
-export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
+export function ManagedHomepageContent({ preview = false, services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { preview?: boolean; services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
+    const P = (type: string, slug: string | number) => preview ? `/preview/${locale}/${type}/${slug}` : L(`/${type}/${slug}`);
     return <>
         {statistics.length > 0 && <section className="managed-section managed-stats-band" aria-label="District at a glance">
             <div className="container">
@@ -623,8 +622,8 @@ export function ManagedHomepageContent({ services, documents, departments, notic
                 </div>
                 <div className="managed-list">
                     {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-row">
-                        <div><h3><a href={L(`/services/${item.slug}`)}>{item.name}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
-                        <a className="managed-row-link" href={L(`/services/${item.slug}`)} aria-label={`Open ${item.name}`}>→</a>
+                        <div><h3><a href={P('services', item.slug)}>{item.name}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
+                        <a className="managed-row-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>→</a>
                     </article>) : <p className="managed-empty">Approved services will appear here once published.</p>}
                 </div>
             </div>
@@ -640,7 +639,7 @@ export function ManagedHomepageContent({ services, documents, departments, notic
                 <div className="managed-list">
                     {notices.length ? notices.slice(0, 5).map(item => <article key={item.slug} className="managed-row managed-notice">
                         <span className="notice-marker" aria-hidden="true" />
-                        <div><h3><a href={L(`/notices/${item.slug}`)}>{item.title}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
+                        <div><h3><a href={P('notices', item.slug)}>{item.title}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
                     </article>) : <p className="managed-empty">No published notices at this time.</p>}
                 </div>
             </div>
@@ -655,7 +654,7 @@ export function ManagedHomepageContent({ services, documents, departments, notic
                 </div>
                 <div className="managed-list">
                     {documents.length ? documents.slice(0, 5).map(item => <article key={item.slug} className="managed-row">
-                        <div><h3><a href={L(`/documents/${item.slug}`)}>{item.title}</a></h3>{item.description && <p>{item.description}</p>}</div>
+                        <div><h3><a href={P('documents', item.slug)}>{item.title}</a></h3>{item.description && <p>{item.description}</p>}</div>
                     </article>) : <p className="managed-empty">No published documents at this time.</p>}
                 </div>
             </div>
@@ -671,7 +670,7 @@ export function ManagedHomepageContent({ services, documents, departments, notic
                 <article aria-labelledby="managed-officials-heading">
                     <p className="managed-eyebrow">Leadership</p>
                     <h2 id="managed-officials-heading">Council leadership</h2>
-                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/officials/${item.slug}`)}>{item.name}</a><span> — {item.title}</span></li>)}</ul> : <p>Leadership profiles are being prepared for publication.</p>}
+                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={P('officials', item.slug)}>{item.name}</a><span> — {item.title}</span></li>)}</ul> : <p>Leadership profiles are being prepared for publication.</p>}
                     <a className="managed-viewall" href={L('/officials')}>View council officials <span aria-hidden="true">→</span></a>
                 </article>
                 <article aria-labelledby="managed-contact-heading">
@@ -686,7 +685,7 @@ export function ManagedHomepageContent({ services, documents, departments, notic
             <div className="container managed-columns">
                 {tenders.length > 0 && <div><h2>Tenders</h2><ul className="managed-mini-list">{tenders.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/tenders/${item.slug}`)}>{item.title}</a> <span>({item.reference})</span></li>)}</ul><a className="managed-viewall" href={L('/tenders')}>View all tenders →</a></div>}
                 {projects.length > 0 && <div><h2>Projects</h2><ul className="managed-mini-list">{projects.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/projects/${item.slug}`)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/projects')}>View all projects →</a></div>}
-                {investment.length > 0 && <div><h2>Investment</h2><ul className="managed-mini-list">{investment.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/investment/${item.slug}`)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/investment')}>Explore investment →</a></div>}
+                {investment.length > 0 && <div><h2>Investment</h2><ul className="managed-mini-list">{investment.slice(0, 3).map(item => <li key={item.slug}><a href={P('investment', item.slug)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/investment')}>Explore investment →</a></div>}
                 {departments.length > 0 && <div><h2>Departments</h2><ul className="managed-mini-list">{departments.slice(0, 4).map(item => <li key={item.id}><a href={L(`/departments/${item.id}`)}>{item.public_name}</a></li>)}</ul></div>}
             </div>
         </section>}
