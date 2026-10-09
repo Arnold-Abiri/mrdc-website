@@ -4,25 +4,52 @@ import AccessibilitySettings from '../Components/public/AccessibilitySettings';
 import { normalizeLocale, translate } from '../localization';
 import type { ReactNode } from 'react';
 
-const navigation = [
+type NavChild = { label: string; href: string };
+type NavEntry = { label: string; href: string; children?: NavChild[] };
+
+const navigation: NavEntry[] = [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/#about' },
-    { label: 'Council', href: '/departments' },
-    { label: 'Officials', href: '/officials' },
-    { label: 'Wards', href: '/wards' },
-    { label: 'Services', href: '/services' },
-    { label: 'Documents', href: '/documents' },
-    { label: 'News', href: '/news' },
-    { label: 'Notices', href: '/notices' },
-    { label: 'Tenders', href: '/tenders' },
-    { label: 'Vacancies', href: '/vacancies' },
-    { label: 'Investment', href: '/investment' },
-    { label: 'Meetings', href: '/meetings' },
-    { label: 'Projects', href: '/projects' },
-    { label: 'Tourism', href: '/tourism' },
-    { label: 'Transparency', href: '/transparency' },
-    { label: 'Rates', href: '/rates' },
-    { label: 'Search', href: '/search' },
+    {
+        label: 'Council',
+        href: '/departments',
+        children: [
+            { label: 'Departments', href: '/departments' },
+            { label: 'Officials', href: '/officials' },
+            { label: 'Wards', href: '/wards' },
+            { label: 'Meetings', href: '/meetings' },
+            { label: 'Transparency', href: '/transparency' },
+        ],
+    },
+    {
+        label: 'Services',
+        href: '/services',
+        children: [
+            { label: 'All Services', href: '/services' },
+            { label: 'Projects', href: '/projects' },
+            { label: 'Rates', href: '/rates' },
+            { label: 'Feedback', href: '/feedback' },
+        ],
+    },
+    {
+        label: 'Media',
+        href: '/news',
+        children: [
+            { label: 'News', href: '/news' },
+            { label: 'Notices', href: '/notices' },
+            { label: 'Documents', href: '/documents' },
+        ],
+    },
+    {
+        label: 'Opportunities',
+        href: '/investment',
+        children: [
+            { label: 'Investment', href: '/investment' },
+            { label: 'Tenders', href: '/tenders' },
+            { label: 'Vacancies', href: '/vacancies' },
+            { label: 'Tourism', href: '/tourism' },
+        ],
+    },
     { label: 'Contact', href: '/contact' },
 ];
 
@@ -133,16 +160,41 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label={t('primaryNavigation')}>
                         {navigation.map(item =>
                             item.label === 'Home' ? (
-                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} aria-current="page" href={L("/")} className="nav-item nav-item-active">
-                                    <span>{t(item.label.toLowerCase() as Parameters<typeof translate>[1])}</span>
+                                <a key="home" aria-current="page" href={L("/")} className="nav-item nav-item-active">
+                                    <span>{t('home')}</span>
                                     <span className="nav-active-indicator" aria-hidden="true" />
                                 </a>
+                            ) : item.children ? (
+                                <div key={item.label} className="nav-group">
+                                    <a href={L(item.href)} className="nav-item nav-parent">
+                                        {t(item.label.toLowerCase() as Parameters<typeof translate>[1])}
+                                        <span className="nav-caret" aria-hidden="true">▾</span>
+                                    </a>
+                                    <ul className="nav-dropdown" aria-label={item.label}>
+                                        {item.children.map(child => (
+                                            <li key={child.label}>
+                                                <a href={L(child.href)} className="nav-dropdown-link">
+                                                    {child.label}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ) : item.label === 'Contact' ? (
+                                <a key={item.label} href={L(item.href)} className="nav-cta">{t('contact')}</a>
                             ) : (
-                                <a key={t(item.label.toLowerCase() as Parameters<typeof translate>[1])} href={L(item.href)} className="nav-item">
+                                <a key={item.label} href={L(item.href)} className="nav-item">
                                     {t(item.label.toLowerCase() as Parameters<typeof translate>[1])}
                                 </a>
                             )
                         )}
+                        <a href={L("/search")} className="nav-search-pill" aria-label={t('search')}>
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <line x1="16.5" y1="16.5" x2="21" y2="21" />
+                            </svg>
+                            <span>{t('search')}</span>
+                        </a>
                     </nav>
                 </div>
 

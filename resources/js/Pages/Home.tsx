@@ -3,6 +3,7 @@ import { organizationSchema, SeoHead } from '../Seo';
 import {
     AboutSection,
     CtaBanner,
+    ExploreDirectory,
     Hero,
     ManagedHomepageContent,
     NewsAndEvents,
@@ -39,7 +40,7 @@ export default function Home({ services, documents, departments, news, notices, 
             <NewsAndEvents news={news.map(item => ({ title: item.title, summary: item.summary ?? '', date: item.published_at ?? '', href: `/${locale}/news/${item.slug}` }))} events={[]} />
             <ManagedHomepageContent services={services} documents={documents} departments={departments} notices={notices} contacts={contacts} officials={officials} wardCount={ward_count} statistics={statistics} tenders={tenders} investment={investment} projects={projects} />
 
-
+            <ExploreDirectory />
 
                 <CtaBanner />
         </PublicLayout>

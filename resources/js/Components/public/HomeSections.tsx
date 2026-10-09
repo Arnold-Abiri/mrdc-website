@@ -708,6 +708,84 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
     );
 }
 
+export function ExploreDirectory() {
+    const locale = usePublicLocale();
+    const L = (path: string) => `/${locale}${path}`;
+    const groups: { title: string; blurb: string; links: { label: string; href: string; desc: string }[] }[] = [
+        {
+            title: 'Your Council',
+            blurb: 'Who leads, decides and represents you.',
+            links: [
+                { label: 'Departments', href: '/departments', desc: 'What each department does' },
+                { label: 'Officials', href: '/officials', desc: 'Management profiles' },
+                { label: 'Wards', href: '/wards', desc: 'Find your ward & councillor' },
+                { label: 'Meetings', href: '/meetings', desc: 'Agendas & minutes' },
+                { label: 'Transparency', href: '/transparency', desc: 'Open governance' },
+            ],
+        },
+        {
+            title: 'Services & Living',
+            blurb: 'Day-to-day services that keep Mutoko running.',
+            links: [
+                { label: 'All Services', href: '/services', desc: 'Water, roads, health & more' },
+                { label: 'Projects', href: '/projects', desc: 'Development on the ground' },
+                { label: 'Rates', href: '/rates', desc: 'Fees & payment info' },
+                { label: 'Feedback', href: '/feedback', desc: 'Report & track issues' },
+            ],
+        },
+        {
+            title: 'News & Records',
+            blurb: 'Stay informed and verify the record.',
+            links: [
+                { label: 'News', href: '/news', desc: 'Latest stories' },
+                { label: 'Notices', href: '/notices', desc: 'Official announcements' },
+                { label: 'Documents', href: '/documents', desc: 'Plans, reports & forms' },
+            ],
+        },
+        {
+            title: 'Grow With Us',
+            blurb: 'Work, invest and visit Mutoko.',
+            links: [
+                { label: 'Investment', href: '/investment', desc: 'Solar, mining, horticulture' },
+                { label: 'Tenders', href: '/tenders', desc: 'Do business with council' },
+                { label: 'Vacancies', href: '/vacancies', desc: 'Join the team' },
+                { label: 'Tourism', href: '/tourism', desc: 'Discover Mutoko' },
+            ],
+        },
+    ];
+    return (
+        <section className="explore-directory" aria-labelledby="explore-heading">
+            <div className="container">
+                <div className="section-eyebrow-pill">
+                    <span className="eyebrow-bar" aria-hidden="true" />
+                    <span className="eyebrow-text">EXPLORE COUNCIL</span>
+                </div>
+                <h2 id="explore-heading" className="section-title">Everything in council, one glance</h2>
+                <p className="section-subtext">Every service and office — organised by what you came to do.</p>
+                <div className="explore-grid">
+                    {groups.map(group => (
+                        <article key={group.title} className="explore-card">
+                            <h3>{group.title}</h3>
+                            <p className="explore-blurb">{group.blurb}</p>
+                            <ul>
+                                {group.links.map(link => (
+                                    <li key={link.label}>
+                                        <a href={L(link.href)}>
+                                            <span className="explore-link-label">{link.label}</span>
+                                            <span className="explore-link-desc">{link.desc}</span>
+                                            <span aria-hidden="true">→</span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </article>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
 export function CtaBanner() {
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
