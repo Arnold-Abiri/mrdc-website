@@ -15,6 +15,7 @@ export default function Contact({ csrfToken, submitted, contacts, context = null
         <Head title={t('contact')} />
         <div className="container coming-soon">
             <h1>{t('contactCouncil')}</h1>
+            <p>Visit us at Stand 366 Mutoko Centre, Mutoko, Zimbabwe (P Box 130, Mutoko) or call +263 771 592 888. Offices are open Monday to Friday during working hours; service requests from all 29 wards are welcome.</p>
             {submitted && <p role="status">{t('enquiryReceived')}</p>}
             {formErrors.length > 0 && <div role="alert"><p>{t('formErrorsNotice')}:</p><ul>{formErrors.map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
             <p>{t('enquiryHelp')}</p>

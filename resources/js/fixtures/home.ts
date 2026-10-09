@@ -44,17 +44,25 @@ export const eventPreviews: EventPreview[] = [];
 
 export const keyServices: ServicePreview[] = [
     {
-        id: 'water',
-        title: 'Water Supply',
-        description: 'Provision and maintenance of clean and safe water systems.',
-        image: '/images/home/service-water.webp',
-        icon: 'water',
-        href: '/coming-soon?topic=water',
+        id: 'education',
+        title: 'Education',
+        description: 'Supporting 84 primary and 44 secondary schools with classroom blocks, teacher housing and learning facilities.',
+        image: '/images/home/service-roads.webp',
+        icon: 'roads',
+        href: '/coming-soon?topic=education',
+    },
+    {
+        id: 'environment',
+        title: 'Environment & Conservation',
+        description: 'Protecting wetlands, woodlands and grazing lands through community-led conservation and clean-up programmes.',
+        image: '/images/home/service-environment.webp',
+        icon: 'environment',
+        href: '/coming-soon?topic=environment',
     },
     {
         id: 'roads',
-        title: 'Roads & Infrastructure',
-        description: 'Construction and maintenance of rural roads and infrastructure.',
+        title: 'Roads & Works',
+        description: 'Grading, gravelling and maintaining the district road network plus bridges, drifts and public infrastructure.',
         image: '/images/home/service-roads.webp',
         icon: 'roads',
         href: '/coming-soon?topic=roads',
@@ -62,18 +70,42 @@ export const keyServices: ServicePreview[] = [
     {
         id: 'health',
         title: 'Health & Sanitation',
-        description: 'Support for health facilities and improved sanitation services.',
+        description: 'Supporting rural health centres, outreach services and improved sanitation across all 29 wards.',
         image: '/images/home/service-health.webp',
         icon: 'health',
         href: '/coming-soon?topic=health',
     },
     {
-        id: 'environment',
-        title: 'Environmental Management',
-        description: 'Conservation of natural resources and a cleaner environment.',
-        image: '/images/home/service-environment.webp',
-        icon: 'environment',
-        href: '/coming-soon?topic=environment',
+        id: 'water',
+        title: 'Water Supply',
+        description: 'Provision and maintenance of boreholes, piped schemes and clean, safe water points for households.',
+        image: '/images/home/service-water.webp',
+        icon: 'water',
+        href: '/coming-soon?topic=water',
+    },
+    {
+        id: 'business',
+        title: 'Business Centres & Markets',
+        description: 'Servicing stands, markets and growth points at Mutoko Centre and rural service centres for local traders.',
+        image: '/images/home/service-roads.webp',
+        icon: 'roads',
+        href: '/coming-soon?topic=business',
+    },
+    {
+        id: 'property',
+        title: 'Property & Planning',
+        description: 'Stand allocation, leases, development control and the Mutoko Master Plan public exhibition process.',
+        image: '/images/home/service-water.webp',
+        icon: 'water',
+        href: '/coming-soon?topic=property',
+    },
+    {
+        id: 'recreation',
+        title: 'Recreation & Welfare',
+        description: 'Managing Chikondoma Stadium, community halls, sports and social welfare programmes for vulnerable groups.',
+        image: '/images/home/service-health.webp',
+        icon: 'health',
+        href: '/coming-soon?topic=recreation',
     },
 ];
 
@@ -106,23 +138,23 @@ export const tourismDestinations: TourismPreview[] = [
 
 export const aboutPillars: AboutPillar[] = [
     {
-        title: 'Service Delivery',
-        description: 'Quality services for all communities',
+        title: 'Our Location',
+        description: 'Located 143km north-east of Harare on the Harare–Nyamapanda highway, 90km from the Mozambique border.',
         icon: 'gear',
     },
     {
-        title: 'Transparency',
-        description: 'Accountable and open governance',
+        title: 'Our Communities',
+        description: 'Serving 29 wards plus a women\u2019s quota and the Mutoko Town Board across 428,916 hectares.',
+        icon: 'users',
+    },
+    {
+        title: 'Our Mission',
+        description: 'To provide quality, sustainable services and promote inclusive development with our communities.',
         icon: 'shield',
     },
     {
-        title: 'Sustainable Growth',
-        description: 'Environmental stewardship',
+        title: 'Vision 2030',
+        description: 'A vibrant, prosperous district aligned with Zimbabwe\u2019s Vision 2030 of an upper-middle-income society.',
         icon: 'leaf',
-    },
-    {
-        title: 'Community Focus',
-        description: 'People-centred development',
-        icon: 'users',
     },
 ];

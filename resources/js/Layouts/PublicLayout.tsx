@@ -55,7 +55,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
             {/* Top Utility Bar */}
             <div className="utility-bar">
-                <p className="development-notice">{t('developmentNotice')}</p>
                 <div className="container utility-inner">
                     <div className="utility-location">
                         <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

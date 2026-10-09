@@ -326,8 +326,17 @@ export function AboutSection() {
                         A Vibrant and Prosperous Mutoko
                     </h2>
                     <p className="about-description">
-                        Mutoko Rural District Council is committed to effective service delivery, sustainable development and inclusive growth for all our communities.
+                        Mutoko Rural District Council covers 428,916 hectares, 143km north-east of Harare on the Harare–Nyamapanda highway and 90km from the Mozambique border. We serve 29 wards plus a women's quota and the Mutoko Town Board.
                     </p>
+                    <p className="about-description">
+                        Our mission is to provide quality, sustainable services with our communities. Our vision is a vibrant and prosperous Mutoko by 2030.
+                    </p>
+                    <div className="about-stats-row" aria-label="District figures">
+                        <div className="about-stat"><strong>~163,000</strong><span>Population</span></div>
+                        <div className="about-stat"><strong>84 + 44</strong><span>Primary &amp; secondary schools</span></div>
+                        <div className="about-stat"><strong>29</strong><span>Wards served</span></div>
+                        <div className="about-stat"><strong>428,916 ha</strong><span>District area</span></div>
+                    </div>
                     <div>
                         <a href={L("/coming-soon?topic=council")} className="btn-section-primary">
                             <span>Learn More</span>
@@ -555,7 +564,7 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                     </a>
                 </div>
                 <p className="section-subtext">
-                    We provide essential services that improve the quality of life for our communities.
+                    From education and health to roads, water, business centres, property and recreation at Chikondoma Stadium — services that improve daily life across all 29 wards.
                 </p>
 
                 <div className="services-grid">
