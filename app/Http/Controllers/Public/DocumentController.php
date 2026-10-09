@@ -42,7 +42,7 @@ class DocumentController extends Controller
     {
         $document = Document::query()->with('translations')->public()->where('slug', $slug)->firstOrFail();
 
-        return Inertia::render('Document', ['document' => [...$document->toLocalizedArray(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'current_version']), 'reference_year' => $document->referenceYear()]]);
+        return Inertia::render('Document', ['document' => [...$document->toLocalizedArray(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'current_version']), 'reference_year' => $document->referenceYear(), 'has_file' => $document->media instanceof Media && Storage::disk(config('cms.media_disk'))->exists($document->media->storage_path)]]);
     }
 
     public function download(string $locale, string $slug): StreamedResponse

@@ -118,12 +118,12 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     if (!active) {
     return (
         <section className="hero" aria-labelledby="hero-title">
-            <img
+            <SafeImage
                 className="hero-image"
                 src="/images/hero-clean.webp"
                 width="1983"
                 height="793"
-                fetchPriority="high"
+                eager
                 alt="Scenic Mutoko landscape showing rocky kopje mountains, green valley and Mutoko town center"
             />
             <div className="hero-shade" />
@@ -163,13 +163,13 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     }
     return (
         <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel" aria-live="polite">
-            <img
+            <SafeImage
                 className="hero-image"
                 key={active.headline}
                 src={active.image_url ?? '/images/hero-clean.webp'}
                 width="1983"
                 height="793"
-                fetchPriority="high"
+                eager
                 alt={active.headline}
             />
             <div className="hero-shade" />
@@ -354,13 +354,12 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                 </div>
 
                 <div className="about-image-wrapper">
-                    <img
+                    <SafeImage
                         src="/images/home/welcome-sign.webp"
                         alt="Welcome to Mutoko road entrance"
                         className="about-image"
                         width="320"
                         height="280"
-                        loading="lazy"
                     />
                 </div>
             </div>
@@ -393,15 +392,38 @@ function EmptyPreview({ type, title, description }: { type: 'news' | 'events'; t
     );
 }
 
+function SafeImage({ src, alt, className, width, height, eager = false, fallbackLabel = 'Image currently unavailable' }: { src: string; alt: string; className?: string; width?: number | string; height?: number | string; eager?: boolean; fallbackLabel?: string }) {
+    const [broken, setBroken] = useState(false);
+    if (broken || !src) {
+        return (
+            <span className={`img-fallback${className ? ` ${className}-fallback` : ''}`} role="img" aria-label={`${fallbackLabel}: ${alt}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="9" cy="9" r="2" />
+                    <path d="m21 15-3.5-3.5a1.5 1.5 0 0 0-2 0L6 21" />
+                </svg>
+                <span>{fallbackLabel}</span>
+            </span>
+        );
+    }
+    return <img className={className} src={src} alt={alt} width={width} height={height} fetchPriority={eager ? 'high' : undefined} loading={eager ? undefined : 'lazy'} onError={() => setBroken(true)} />;
+}
+
 function NewsCard({ item }: { item: NewsPreview }) {
     return (
         <article className="news-card">
             <div className="news-image">
                 {item.image ? (
-                    <img src={item.image} alt={item.title} loading="lazy" width="480" height="270" />
-                ) : (
+                    <img src={item.image} alt={item.title} loading="lazy" width="480" height="270" onError={event => { event.currentTarget.style.display = 'none'; }} />
+                ) : null}
+                <span className="img-fallback" role="img" aria-label={`No image available for ${item.title}`} style={item.image ? { position: 'absolute', inset: 0 } : undefined}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="9" cy="9" r="2" />
+                        <path d="m21 15-3.5-3.5a1.5 1.5 0 0 0-2 0L6 21" />
+                    </svg>
                     <span>Image pending approval</span>
-                )}
+                </span>
             </div>
             <div className="news-body">
                 <div className="news-date-meta">

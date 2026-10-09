@@ -17,6 +17,7 @@ use App\Models\PublicContact;
 use App\Models\Service;
 use App\Models\Tender;
 use App\Models\Ward;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -122,7 +123,7 @@ class PreviewController extends Controller
 
         return Inertia::render('Document', [
             'preview' => true,
-            'document' => [...$document->toLocalizedArray(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'current_version']), 'reference_year' => $document->referenceYear(), 'is_review_content' => true],
+            'document' => [...$document->toLocalizedArray(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'current_version']), 'reference_year' => $document->referenceYear(), 'has_file' => $document->media instanceof Media && Storage::disk(config('cms.media_disk'))->exists($document->media->storage_path), 'is_review_content' => true],
         ]);
     }
 

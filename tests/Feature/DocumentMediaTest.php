@@ -12,6 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Inertia\Testing\AssertableInertia;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -92,5 +93,22 @@ class DocumentMediaTest extends TestCase
         $document = app(DocumentManager::class)->create($admin, ['slug' => 'development-test', 'title' => 'Development test document', 'category' => 'other', 'media_id' => $media->id, 'visibility' => 'public']);
         $this->expectException(AuthorizationException::class);
         app(DocumentManager::class)->setStatus(User::factory()->create(), $document, 'published');
+    }
+
+    public function test_document_with_missing_file_shows_fallback_and_no_download(): void
+    {
+        Storage::fake('local');
+        $admin = $this->administrator();
+        $media = app(MediaManager::class)->upload($admin, UploadedFile::fake()->createWithContent('test.pdf', "%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF"), ['title' => 'Development test file']);
+        $manager = app(DocumentManager::class);
+        $document = $manager->create($admin, ['slug' => 'missing-file-doc', 'title' => 'Document with missing file', 'category' => 'other', 'media_id' => $media->id, 'visibility' => 'public']);
+        $manager->setVerification($admin, $document, 'publishable');
+        $manager->setStatus($admin, $document, 'published');
+        Storage::disk(config('cms.media_disk'))->delete($media->storage_path);
+
+        $this->get('/en/documents/missing-file-doc')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page->where('document.has_file', false));
+        $this->get('/en/documents/missing-file-doc/download')->assertNotFound();
     }
 }

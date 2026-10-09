@@ -367,6 +367,17 @@ a.social-pill:hover {
   object-fit: cover;
   object-position: 58% center;
 }
+.hero-image-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  background: var(--color-civic-navy);
+  color: #CBD5E1;
+}
+.hero-image-fallback svg { color: #64748B; }
+.about-image-wrapper .img-fallback { width: 100%; height: 100%; min-height: 240px; justify-content: center; background: var(--color-sky-tint); }
 .hero-shade {
   background: linear-gradient(
     180deg,
@@ -877,13 +888,43 @@ h3 { margin: 0; }
   background: var(--color-sky-tint);
   overflow: hidden;
   position: relative;
+  display: grid;
+  place-items: center;
 }
+.img-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 20px;
+  text-align: center;
+}
+.img-fallback svg { width: 32px; height: 32px; color: #94A3B8; }
+.file-fallback {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted);
+  background: var(--color-page);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.file-fallback svg { width: 20px; height: 20px; color: #94A3B8; flex-shrink: 0; }
 .news-image img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
+.news-image .img-fallback { width: 100%; height: 100%; justify-content: center; }
 .news-card:hover .news-image img {
   transform: scale(1.04);
 }
