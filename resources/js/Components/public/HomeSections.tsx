@@ -115,20 +115,40 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const [index, setIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [isHovering, setIsHovering] = useState(false);
+    const [hasFocus, setHasFocus] = useState(false);
+    const rotationStopped = isPaused || isHovering || hasFocus;
     const currentIndex = slides.length > 0 ? index % slides.length : 0;
     const active = slides[currentIndex];
     const isCouncilWelcome = active?.headline === 'Mutoko Rural District Council';
+    const headlineWords = active?.headline.trim().split(/\s+/) ?? [];
+    const accentStart = Math.max(1, headlineWords.length - 2);
 
     useEffect(() => {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setIsPaused(true);
+        const motionPreference = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+        const pauseForReducedMotion = () => {
+            if (motionPreference?.matches) setIsPaused(true);
+        };
+        const pauseWhenHidden = () => {
+            if (document.hidden) setIsPaused(true);
+        };
+
+        pauseForReducedMotion();
+        motionPreference?.addEventListener('change', pauseForReducedMotion);
+        document.addEventListener('visibilitychange', pauseWhenHidden);
+
+        return () => {
+            motionPreference?.removeEventListener('change', pauseForReducedMotion);
+            document.removeEventListener('visibilitychange', pauseWhenHidden);
+        };
     }, []);
 
     useEffect(() => {
-        if (slides.length < 2 || isPaused) return;
+        if (slides.length < 2 || rotationStopped) return;
 
-        const timer = window.setInterval(() => setIndex(current => (current + 1) % slides.length), 7000);
+        const timer = window.setInterval(() => setIndex(current => (current + 1) % slides.length), 8000);
         return () => window.clearInterval(timer);
-    }, [slides.length, isPaused]);
+    }, [slides.length, rotationStopped]);
     if (!active) {
     return (
         <section className="hero" aria-labelledby="hero-title">
@@ -176,7 +196,7 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     );
     }
     return (
-        <section className="hero" aria-labelledby="hero-title" aria-roledescription="carousel" aria-live={isPaused ? 'polite' : 'off'}>
+        <section className={`hero hero--managed${rotationStopped ? ' hero--paused' : ''}`} aria-labelledby="hero-title" aria-roledescription={slides.length > 1 ? 'carousel' : undefined} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} onFocusCapture={() => setHasFocus(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHasFocus(false); }}>
             <SafeImage
                 className="hero-image"
                 key={`${currentIndex}-${active.image_url}`}
@@ -189,14 +209,14 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
             <div className="hero-shade" />
 
             <div className="container hero-container">
-                <div className="hero-content">
+                <div className="hero-content" key={currentIndex} aria-live={rotationStopped ? 'polite' : 'off'}>
                     <div className="hero-eyebrow-pill">
                         <span className="eyebrow-bar" aria-hidden="true" />
                         <span className="eyebrow-text">WELCOME TO</span>
                     </div>
 
                     <h1 id="hero-title" className="hero-heading">
-                        {isCouncilWelcome ? <><span className="hero-heading-white">Mutoko Rural</span>{' '}<span className="hero-heading-green">District Council</span></> : <span className="hero-heading-white">{active.headline}</span>}
+                        {isCouncilWelcome ? <><span className="hero-heading-white">Mutoko Rural</span>{' '}<span className="hero-heading-green">District Council</span></> : headlineWords.length > 1 ? <><span className="hero-heading-white">{headlineWords.slice(0, accentStart).join(' ')}</span>{' '}<span className="hero-heading-green">{headlineWords.slice(accentStart).join(' ')}</span></> : <span className="hero-heading-white">{active.headline}</span>}
                     </h1>
 
                     {isCouncilWelcome && <p className="hero-statement">People. Development. Sustainable Communities.</p>}
@@ -208,14 +228,18 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                             <span>About Council</span>
                         </a>
                     </div>
-                    {slides.length > 1 && <div className="hero-carousel-controls">
-                        <button type="button" className="hero-carousel-button" aria-label={t('previousSlide')} onClick={() => { setIsPaused(true); setIndex(current => (current + slides.length - 1) % slides.length); }}><span aria-hidden="true">‹</span></button>
-                        <p className="hero-carousel-status" aria-live={isPaused ? 'polite' : 'off'}>{currentIndex + 1} / {slides.length}</p>
-                        <button type="button" className="hero-carousel-button" aria-label={t('nextSlide')} onClick={() => { setIsPaused(true); setIndex(current => (current + 1) % slides.length); }}><span aria-hidden="true">›</span></button>
-                        <button type="button" className="hero-carousel-button" aria-label={isPaused ? t('resumeSlides') : t('pauseSlides')} aria-pressed={isPaused} onClick={() => setIsPaused(paused => !paused)}><span aria-hidden="true">{isPaused ? '▶' : 'Ⅱ'}</span></button>
-                    </div>}
                 </div>
-
+                {slides.length > 1 && <div className="hero-carousel-controls" role="group" aria-label={t('slideNavigation')}>
+                    <span className="hero-carousel-status" aria-live={rotationStopped ? 'polite' : 'off'}><strong>{String(currentIndex + 1).padStart(2, '0')}</strong><span> / {String(slides.length).padStart(2, '0')}</span></span>
+                    <div className="hero-slide-picker" role="group" aria-label={t('chooseSlide')}>
+                        {slides.map((slide, slideIndex) => <button key={`${slide.headline}-${slideIndex}`} type="button" className={`hero-slide-marker${slideIndex === currentIndex ? ' is-active' : ''}`} aria-label={`${t('showSlide')} ${slideIndex + 1}: ${slide.headline}`} aria-current={slideIndex === currentIndex ? 'true' : undefined} onClick={() => { setIsPaused(true); setIndex(slideIndex); }}><span aria-hidden="true" /></button>)}
+                    </div>
+                    <div className="hero-carousel-actions">
+                        <button type="button" className="hero-carousel-button" aria-label={t('previousSlide')} onClick={() => { setIsPaused(true); setIndex(current => (current + slides.length - 1) % slides.length); }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14 5-7 7 7 7" /></svg></button>
+                        <button type="button" className="hero-carousel-button hero-carousel-pause" aria-label={isPaused ? t('resumeSlides') : t('pauseSlides')} aria-pressed={isPaused} onClick={() => setIsPaused(paused => !paused)}>{isPaused ? <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2a1 1 0 0 1 1.5-.86l9.5 6.8a1 1 0 0 1 0 1.72l-9.5 6.8A1 1 0 0 1 8 18.8V5.2Z" /></svg> : <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>}</button>
+                        <button type="button" className="hero-carousel-button" aria-label={t('nextSlide')} onClick={() => { setIsPaused(true); setIndex(current => (current + 1) % slides.length); }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m10 5 7 7-7 7" /></svg></button>
+                    </div>
+                </div>}
             </div>
         </section>
     );

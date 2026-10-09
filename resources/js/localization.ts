@@ -49,7 +49,7 @@ const english = {
     aboutContext: 'About', viewDetails: 'View details',
     accessibility: 'Accessibility', fontSize: 'Font size', decreaseFontSize: 'Decrease font size',
     resetFontSize: 'Reset font size', increaseFontSize: 'Increase font size',
-    highContrast: 'High contrast', previousSlide: 'Previous highlight', nextSlide: 'Next highlight', pauseSlides: 'Pause slide rotation', resumeSlides: 'Resume slide rotation',
+    highContrast: 'High contrast', previousSlide: 'Previous highlight', nextSlide: 'Next highlight', pauseSlides: 'Pause slide rotation', resumeSlides: 'Resume slide rotation', slideNavigation: 'Slide navigation', chooseSlide: 'Choose a slide', showSlide: 'Show slide',
     formErrorsNotice: 'Please correct the following errors',
     councilDocuments: 'Council documents', supportingDocument: 'Supporting document',
     investInMutoko: 'Invest in Mutoko', makeInvestmentEnquiry: 'Make an investment enquiry',
