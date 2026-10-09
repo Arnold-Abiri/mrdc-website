@@ -93,7 +93,7 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
 
     Route::get('/tourism', [TourismController::class, 'index'])->name('tourism.index');
 
-    Route::get('/about', [UtilityController::class, 'about'])->name('about');
+    Route::get('/about', [PageController::class, 'about'])->name('about');
     Route::get('/downloads', [UtilityController::class, 'downloads'])->name('downloads');
 
     Route::get('/managed-media/{media}', [MediaController::class, 'show'])->whereNumber('media')->name('managed-media.show');

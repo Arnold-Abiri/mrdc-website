@@ -9,7 +9,7 @@ type NavEntry = { label: string; href: string; children?: NavChild[] };
 
 const navigation: NavEntry[] = [
     { label: 'Home', href: '/' },
-    { label: 'About', href: '/#about' },
+    { label: 'About', href: '/about' },
     {
         label: 'Council',
         href: '/departments',

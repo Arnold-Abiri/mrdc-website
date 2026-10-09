@@ -40,7 +40,7 @@ class PreviewController extends Controller
             'preview' => true,
             'services' => Service::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'summary']),
             'documents' => Document::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('title')->limit(5)->get(['slug', 'title', 'description']),
-            'news' => EditorialItem::query()->with('translations')->where('type', 'news')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
+            'news' => EditorialItem::query()->with('translations')->where('type', 'news')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at', 'featured_media_id'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null]),
             'notices' => EditorialItem::query()->with('translations')->where('type', 'notice')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
             'departments' => Department::query()->with('translations')->where('status', 'active')->orderBy('public_display_order')->limit(4)->get(['id', 'public_name', 'public_summary']),
             'contacts' => PublicContact::query()->orderBy('display_order')->limit(4)->get(['office', 'type', 'value']),

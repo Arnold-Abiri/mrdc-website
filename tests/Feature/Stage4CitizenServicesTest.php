@@ -13,6 +13,7 @@ use Database\Seeders\SecuritySeeder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -116,7 +117,7 @@ class Stage4CitizenServicesTest extends TestCase
 
     public function test_about_and_downloads_aliases(): void
     {
-        $this->get('/en/about')->assertRedirect('/en/pages/about-mutoko');
+        $this->get('/en/about')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->component('About', false)->where('page.content_pending', true));
         $this->get('/en/downloads')->assertRedirect('/en/documents');
     }
 

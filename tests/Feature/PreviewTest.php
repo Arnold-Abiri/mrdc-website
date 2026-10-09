@@ -119,7 +119,7 @@ class PreviewTest extends TestCase
 
         $this->assertTrue(Page::query()->public()->where('slug', 'about-mutoko')->exists());
         $this->get('/en/pages/about-mutoko')->assertOk();
-        $this->get('/en/about')->assertRedirect();
+        $this->get('/en/about')->assertOk()->assertInertia(fn (Assert $page) => $page->component('About', false)->missing('page.content_pending'));
     }
 
     public function test_preview_routes_are_not_in_sitemap(): void

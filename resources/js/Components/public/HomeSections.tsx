@@ -15,13 +15,6 @@ import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslatio
 
 const services = [
     {
-        icon: 'council',
-        title: 'Our Council',
-        description: 'Leadership & governance structures',
-        theme: 'blue',
-        href: '#about',
-    },
-    {
         icon: 'services',
         title: 'Our Services',
         description: 'Water, roads, health, sanitation & more',
@@ -29,18 +22,18 @@ const services = [
         href: '#services',
     },
     {
-        icon: 'development',
-        title: 'Development',
-        description: 'Projects & investment opportunities',
+        icon: 'rates',
+        title: 'Online Services',
+        description: 'Rates, bills, fees & payments',
         theme: 'cyan',
-        href: '/investment',
+        href: '/rates',
     },
     {
-        icon: 'tourism',
-        title: 'Tourism',
-        description: "Explore Mutoko's natural beauty",
-        theme: 'green',
-        href: '/tourism',
+        icon: 'notices',
+        title: 'Public Notices',
+        description: 'Announcements & consultations',
+        theme: 'blue',
+        href: '/notices',
     },
     {
         icon: 'tenders',
@@ -57,7 +50,14 @@ const services = [
         href: '/vacancies',
     },
     {
-        icon: 'services',
+        icon: 'contact',
+        title: 'Contact Directory',
+        description: 'Reach the council & enquire',
+        theme: 'green',
+        href: '/contact',
+    },
+    {
+        icon: 'feedback',
         title: 'Feedback',
         description: 'Complaints, feedback & service requests',
         theme: 'emerald',
@@ -67,29 +67,10 @@ const services = [
 
 function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
     switch (name) {
-        case 'council':
-            return (
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                </svg>
-            );
         case 'services':
             return (
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M19 12h-2V8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2v4H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z" />
-                </svg>
-            );
-        case 'development':
-            return (
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M4 19h16v2H4zM6 10h3v7H6zm5-5h3v12h-3zm5 8h3v4h-3z" />
-                </svg>
-            );
-        case 'tourism':
-            return (
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <circle cx="12" cy="12" r="3.2" />
-                    <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
                 </svg>
             );
         case 'tenders':
@@ -102,6 +83,30 @@ function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
             return (
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
+                </svg>
+            );
+        case 'rates':
+            return (
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" />
+                </svg>
+            );
+        case 'notices':
+            return (
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z" />
+                </svg>
+            );
+        case 'contact':
+            return (
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                </svg>
+            );
+        case 'feedback':
+            return (
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c1.1 0 2-.9 2-2zm-9 9H7V9h4v2zm6 0h-4V9h4v2zm-6 4H7v-2h4v2zm6 0h-4v-2h4v2z" />
                 </svg>
             );
     }
@@ -656,6 +661,58 @@ export type ManagedHomepageTender = { slug: string; reference: string; title: st
 export type ManagedHomepageInvestment = { slug: string; title: string; sector: string | null; summary: string | null };
 export type ManagedHomepageProject = { slug: string; title: string; project_status: string; summary: string | null };
 
+function StatIcon({ name }: { name: string | null }) {
+    switch (name) {
+        case 'wards':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                    <line x1="8" y1="2" x2="8" y2="18" />
+                    <line x1="16" y1="6" x2="16" y2="22" />
+                </svg>
+            );
+        case 'population':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            );
+        case 'area':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+            );
+        case 'education':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+            );
+        case 'history':
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 14 14" />
+                </svg>
+            );
+        default:
+            return (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+            );
+    }
+}
+
 export function ManagedHomepageContent({ preview = false, services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { preview?: boolean; services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
@@ -665,8 +722,13 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
             <div className="container">
                 <dl className="managed-stats-grid">
                     {statistics.slice(0, 4).map(item => <div key={item.label} className="managed-stat">
-                        <dd><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong></dd>
-                        <dt>{item.label}</dt>
+                        <span className="managed-stat-icon" aria-hidden="true">
+                            <StatIcon name={item.icon} />
+                        </span>
+                        <div className="managed-stat-info">
+                            <dd><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong></dd>
+                            <dt>{item.label}</dt>
+                        </div>
                     </div>)}
                 </dl>
             </div>
@@ -680,8 +742,18 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     <a className="managed-viewall" href={L('/services')}>View all services <span aria-hidden="true">→</span></a>
                 </div>
                 <div className="managed-list">
-                    {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-row">
-                        <div><h3><a href={P('services', item.slug)}>{item.name}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
+                    {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-row managed-service-card">
+                        <div className="managed-row-main">
+                            <span className="managed-row-badge" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h3><a href={P('services', item.slug)}>{item.name}</a></h3>
+                                {item.summary && <p>{item.summary}</p>}
+                            </div>
+                        </div>
                         <a className="managed-row-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>→</a>
                     </article>) : <p className="managed-empty">Approved services will appear here once published.</p>}
                 </div>
@@ -698,7 +770,14 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                 <div className="managed-list">
                     {notices.length ? notices.slice(0, 5).map(item => <article key={item.slug} className="managed-row managed-notice">
                         <span className="notice-marker" aria-hidden="true" />
-                        <div><h3><a href={P('notices', item.slug)}>{item.title}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
+                        <div className="managed-row-main">
+                            <span className="managed-notice-tag">Notice</span>
+                            <div>
+                                <h3><a href={P('notices', item.slug)}>{item.title}</a></h3>
+                                {item.summary && <p>{item.summary}</p>}
+                            </div>
+                        </div>
+                        <a className="managed-row-link" href={P('notices', item.slug)} aria-label={`Read notice: ${item.title}`}>→</a>
                     </article>) : <p className="managed-empty">No published notices at this time.</p>}
                 </div>
             </div>
@@ -712,27 +791,58 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     <a className="managed-viewall" href={L('/documents')}>View document centre <span aria-hidden="true">→</span></a>
                 </div>
                 <div className="managed-list">
-                    {documents.length ? documents.slice(0, 5).map(item => <article key={item.slug} className="managed-row">
-                        <div><h3><a href={P('documents', item.slug)}>{item.title}</a></h3>{item.description && <p>{item.description}</p>}</div>
+                    {documents.length ? documents.slice(0, 5).map(item => <article key={item.slug} className="managed-row managed-doc-card">
+                        <div className="managed-row-main">
+                            <span className="managed-doc-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                    <polyline points="10 9 9 9 8 9" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h3><a href={P('documents', item.slug)}>{item.title}</a></h3>
+                                {item.description && <p>{item.description}</p>}
+                            </div>
+                        </div>
+                        <a className="managed-row-link" href={P('documents', item.slug)} aria-label={`View document ${item.title}`}>→</a>
                     </article>) : <p className="managed-empty">No published documents at this time.</p>}
                 </div>
             </div>
         </section>
         <section className="managed-strip" aria-label="Wards, leadership and contact">
             <div className="container managed-strip-grid">
-                <article aria-labelledby="managed-wards-heading">
+                <article className="managed-strip-col" aria-labelledby="managed-wards-heading">
+                    <div className="managed-strip-badge" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                        </svg>
+                    </div>
                     <p className="managed-eyebrow">Wards</p>
                     <h2 id="managed-wards-heading">{wardCount ? `${wardCount} wards` : 'Ward directory'}</h2>
-                    <p>{wardCount ? 'Find your ward, councillor and local services.' : 'Ward profiles are being prepared for publication.'}</p>
+                    <p>{wardCount ? 'Find your ward, councillor and local services across all rural and urban wards.' : 'Ward profiles are being prepared for publication.'}</p>
                     <a className="managed-viewall" href={L('/wards')}>Explore our wards <span aria-hidden="true">→</span></a>
                 </article>
-                <article aria-labelledby="managed-officials-heading">
+                <article className="managed-strip-col" aria-labelledby="managed-officials-heading">
+                    <div className="managed-strip-badge" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                        </svg>
+                    </div>
                     <p className="managed-eyebrow">Leadership</p>
                     <h2 id="managed-officials-heading">Council leadership</h2>
-                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={P('officials', item.slug)}>{item.name}</a><span> — {item.title}</span></li>)}</ul> : <p>Leadership profiles are being prepared for publication.</p>}
+                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={P('officials', item.slug)}>{item.name}</a><span className="managed-title-sub"> — {item.title}</span></li>)}</ul> : <p>Leadership profiles are being prepared for publication.</p>}
                     <a className="managed-viewall" href={L('/officials')}>View council officials <span aria-hidden="true">→</span></a>
                 </article>
-                <article aria-labelledby="managed-contact-heading">
+                <article className="managed-strip-col" aria-labelledby="managed-contact-heading">
+                    <div className="managed-strip-badge" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                    </div>
                     <p className="managed-eyebrow">Contact</p>
                     <h2 id="managed-contact-heading">Talk to the council</h2>
                     {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>Use our enquiry form and the team will respond.</p>}
@@ -742,10 +852,10 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
         </section>
         {(tenders.length > 0 || investment.length > 0 || projects.length > 0 || departments.length > 0 || statistics.length > 0) && <section className="managed-section managed-alt" aria-label="More council information">
             <div className="container managed-columns">
-                {tenders.length > 0 && <div><h2>Tenders</h2><ul className="managed-mini-list">{tenders.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/tenders/${item.slug}`)}>{item.title}</a> <span>({item.reference})</span></li>)}</ul><a className="managed-viewall" href={L('/tenders')}>View all tenders →</a></div>}
-                {projects.length > 0 && <div><h2>Projects</h2><ul className="managed-mini-list">{projects.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/projects/${item.slug}`)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/projects')}>View all projects →</a></div>}
-                {investment.length > 0 && <div><h2>Investment</h2><ul className="managed-mini-list">{investment.slice(0, 3).map(item => <li key={item.slug}><a href={P('investment', item.slug)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/investment')}>Explore investment →</a></div>}
-                {departments.length > 0 && <div><h2>Departments</h2><ul className="managed-mini-list">{departments.slice(0, 4).map(item => <li key={item.id}><a href={L(`/departments/${item.id}`)}>{item.public_name}</a></li>)}</ul></div>}
+                {tenders.length > 0 && <div className="managed-col-card"><h2>Tenders</h2><ul className="managed-mini-list">{tenders.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/tenders/${item.slug}`)}>{item.title}</a> <span className="managed-ref-pill">({item.reference})</span></li>)}</ul><a className="managed-viewall" href={L('/tenders')}>View all tenders →</a></div>}
+                {projects.length > 0 && <div className="managed-col-card"><h2>Projects</h2><ul className="managed-mini-list">{projects.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/projects/${item.slug}`)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/projects')}>View all projects →</a></div>}
+                {investment.length > 0 && <div className="managed-col-card"><h2>Investment</h2><ul className="managed-mini-list">{investment.slice(0, 3).map(item => <li key={item.slug}><a href={P('investment', item.slug)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/investment')}>Explore investment →</a></div>}
+                {departments.length > 0 && <div className="managed-col-card"><h2>Departments</h2><ul className="managed-mini-list">{departments.slice(0, 4).map(item => <li key={item.id}><a href={L(`/departments/${item.id}`)}>{item.public_name}</a></li>)}</ul><a className="managed-viewall" href={L('/departments')}>View departments →</a></div>}
             </div>
         </section>}
     </>;

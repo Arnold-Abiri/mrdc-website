@@ -30,7 +30,9 @@ class EditorialItemResource extends Resource
     protected static ?string $model = EditorialItem::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
+
     protected static \UnitEnum|string|null $navigationGroup = 'Content';
+
     protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'News and notices';

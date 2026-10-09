@@ -10,6 +10,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Inertia\Testing\AssertableInertia;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -42,10 +43,13 @@ class CmsPageTest extends TestCase
         $manager->update($admin, $page, [...$this->content(), 'title' => 'Updated about Mutoko']);
         $this->assertSame(2, $page->revisions()->count());
         $manager->setStatus($admin, $page, 'published');
+        $this->get('/en/pages/about-mutoko')->assertNotFound();
+        $manager->setVerification($admin, $page, 'publishable');
         $this->get('/en/pages/about-mutoko')->assertOk()->assertSee('Updated about Mutoko');
+        $this->get('/en/about')->assertOk()->assertInertia(fn (AssertableInertia $response) => $response->component('About', false)->where('page.title', 'Updated about Mutoko')->missing('page.content_pending'));
         $manager->setStatus($admin, $page, 'unpublished');
         $this->get('/en/pages/about-mutoko')->assertNotFound();
-        $this->assertSame(4, $page->revisions()->count());
+        $this->assertSame(5, $page->revisions()->count());
         $this->assertDatabaseHas('audit_events', ['action' => 'pages.unpublished', 'subject_id' => (string) $page->id]);
     }
 

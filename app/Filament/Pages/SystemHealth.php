@@ -14,7 +14,9 @@ class SystemHealth extends FilamentPage
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
     protected static ?string $navigationLabel = 'System health';
+
     protected static \UnitEnum|string|null $navigationGroup = 'Reports & Monitoring';
+
     protected static ?int $navigationSort = 6;
 
     protected static ?string $title = 'System health';

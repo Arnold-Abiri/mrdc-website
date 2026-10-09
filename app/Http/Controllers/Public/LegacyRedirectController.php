@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class LegacyRedirectController extends \App\Http\Controllers\Controller
+class LegacyRedirectController extends Controller
 {
-    public function show(Request $request, string $legacy): \Illuminate\Http\RedirectResponse
+    public function show(Request $request, string $legacy): RedirectResponse
     {
         $locale = session('public_locale', 'en');
-            $query = $request->getQueryString();
+        $query = $request->getQueryString();
 
-            return redirect('/'.(in_array($locale, ['en', 'sn', 'nd'], true) ? $locale : 'en').'/'.$legacy.($query ? '?'.$query : ''));
+        return redirect('/'.(in_array($locale, ['en', 'sn', 'nd'], true) ? $locale : 'en').'/'.$legacy.($query ? '?'.$query : ''));
     }
-
 }

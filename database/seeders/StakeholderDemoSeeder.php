@@ -516,13 +516,16 @@ class StakeholderDemoSeeder extends Seeder
         }
 
         $publishablePages = ['about-mutoko', 'mandate', 'organogram', 'tourism-mutoko', 'rates-information'];
-        foreach (Page::query()->whereIn('slug', $publishablePages)->where('status', 'draft')->get() as $page) {
+        foreach (Page::query()->whereIn('slug', $publishablePages)->get() as $page) {
             $page->blocks = array_values(array_filter(
                 array_map(fn ($block) => $this->cleanDemoMarker($block), (array) $page->blocks),
                 fn ($block) => ! (($block['type'] ?? '') === 'paragraph' && trim((string) ($block['text'] ?? '')) === '')
             ));
-            $page->status = 'published';
-            $page->published_at ??= $now;
+            if ($page->status === 'draft') {
+                $page->status = 'published';
+                $page->published_at ??= $now;
+            }
+            $page->verification_status = 'publishable';
             $page->save();
         }
 

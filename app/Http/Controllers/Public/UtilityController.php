@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class UtilityController extends \App\Http\Controllers\Controller
+class UtilityController extends Controller
 {
     public function comingSoon(): Response
     {
@@ -17,12 +19,7 @@ class UtilityController extends \App\Http\Controllers\Controller
         ]);
     }
 
-    public function about(): \Illuminate\Http\RedirectResponse
-    {
-        return redirect(public_route('pages.show', ['slug' => 'about-mutoko']));
-    }
-
-    public function downloads(): \Illuminate\Http\RedirectResponse
+    public function downloads(): RedirectResponse
     {
         return redirect(public_route('documents.index'));
     }

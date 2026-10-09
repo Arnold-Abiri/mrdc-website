@@ -27,20 +27,20 @@ describe('homepage sections', () => {
         expect(screen.queryByText('50+')).not.toBeInTheDocument();
     });
 
-    it('renders the 6 quick access cards with correct titles and descriptions', () => {
+    it('renders the 7 TOR quick access cards with correct titles and descriptions', () => {
         render(<QuickAccess />);
-        expect(screen.getByText('Our Council')).toBeInTheDocument();
-        expect(screen.getByText('Leadership & governance structures')).toBeInTheDocument();
         expect(screen.getByText('Our Services')).toBeInTheDocument();
         expect(screen.getByText('Water, roads, health, sanitation & more')).toBeInTheDocument();
-        expect(screen.getByText('Development')).toBeInTheDocument();
-        expect(screen.getByText('Projects & investment opportunities')).toBeInTheDocument();
-        expect(screen.getByText('Tourism')).toBeInTheDocument();
-        expect(screen.getByText("Explore Mutoko's natural beauty")).toBeInTheDocument();
+        expect(screen.getByText('Online Services')).toBeInTheDocument();
+        expect(screen.getByText('Rates, bills, fees & payments')).toBeInTheDocument();
+        expect(screen.getByText('Public Notices')).toBeInTheDocument();
+        expect(screen.getByText('Announcements & consultations')).toBeInTheDocument();
         expect(screen.getByText('Tenders')).toBeInTheDocument();
         expect(screen.getByText('Business opportunities')).toBeInTheDocument();
         expect(screen.getByText('Vacancies')).toBeInTheDocument();
         expect(screen.getByText('Join our team')).toBeInTheDocument();
+        expect(screen.getByText('Contact Directory')).toBeInTheDocument();
+        expect(screen.getByText('Reach the council & enquire')).toBeInTheDocument();
     });
 
     it('renders the 3 strategic value pillars', () => {
@@ -134,6 +134,29 @@ describe('homepage sections', () => {
         expect(screen.getByText(longTitle)).toBeInTheDocument();
         expect(document.querySelectorAll('.news-image .img-fallback')).toHaveLength(2);
         expect(screen.getByText('Fixture event')).toBeInTheDocument();
+    });
+
+    it('renders managed homepage CMS items with statistics, services, notices, and documents', () => {
+        render(
+            <ManagedHomepageContent
+                services={[{ slug: 'roads', name: 'Roads & Works', summary: 'Road network maintenance' }]}
+                documents={[{ slug: 'master-plan', title: 'Mutoko Master Plan', description: 'Development blueprint' }]}
+                departments={[{ id: 1, public_name: 'Engineering', public_summary: 'Civil works' }]}
+                notices={[{ slug: 'budget-consultation', title: 'Budget Consultation Notice', summary: 'Community input needed' }]}
+                statistics={[{ label: 'Electoral wards', value: '29', unit: null, icon: 'wards' }]}
+                officials={[{ slug: 'ceo', name: 'Council CEO', title: 'Chief Executive Officer' }]}
+                wardCount={29}
+                contacts={[{ office: 'Main Office', type: 'phone', value: '+263 123 456' }]}
+            />
+        );
+        expect(screen.getByText('29')).toBeInTheDocument();
+        expect(screen.getByText('Electoral wards')).toBeInTheDocument();
+        expect(screen.getByText('Roads & Works')).toBeInTheDocument();
+        expect(screen.getByText('Road network maintenance')).toBeInTheDocument();
+        expect(screen.getByText('Budget Consultation Notice')).toBeInTheDocument();
+        expect(screen.getByText('Mutoko Master Plan')).toBeInTheDocument();
+        expect(screen.getByText('Council CEO')).toBeInTheDocument();
+        expect(screen.getByText('Main Office:')).toBeInTheDocument();
     });
 });
 

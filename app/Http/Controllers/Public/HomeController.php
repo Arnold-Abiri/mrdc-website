@@ -35,7 +35,7 @@ class HomeController extends Controller
         return Inertia::render('Home', [
             'services' => Service::query()->with('translations')->public()->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'summary']),
             'documents' => Document::query()->with('translations')->public()->orderByDesc('published_at')->limit(5)->get(['slug', 'title', 'description']),
-            'news' => EditorialItem::query()->with('translations')->public()->where('type', 'news')->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
+            'news' => EditorialItem::query()->with('translations')->public()->where('type', 'news')->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at', 'featured_media_id'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null]),
             'notices' => EditorialItem::query()->with('translations')->public()->where('type', 'notice')->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
             'departments' => Department::query()->with('translations')->where('status', 'active')->where('public_status', 'published')->where('public_verification_status', 'publishable')->whereNotNull('public_published_at')->where('public_published_at', '<=', now())->orderBy('public_display_order')->get(['id', 'public_name', 'public_summary']),
             'contacts' => PublicContact::query()->public()->orderBy('display_order')->limit(4)->get(['office', 'type', 'value']),

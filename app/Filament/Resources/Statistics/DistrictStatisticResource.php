@@ -24,7 +24,9 @@ class DistrictStatisticResource extends Resource
     protected static ?string $model = DistrictStatistic::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
+
     protected static \UnitEnum|string|null $navigationGroup = 'Council';
+
     protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationLabel = 'District statistics';

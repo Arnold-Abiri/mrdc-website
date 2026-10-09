@@ -14,9 +14,9 @@ type Page = {
     is_review_content: boolean;
 };
 
-export default function CmsPage({ page, about, preview }: { page: Page; about?: { officials: { slug: string; name: string; title: string; photo_url: string | null }[]; investment: { slug: string; title: string; summary: string | null }[] } | null; preview?: boolean }) {
-    if (page.slug === 'about-mutoko') return <About page={page} about={about} preview={preview} />;
+export default function CmsPage({ page, about, preview }: { page: Page; about?: { officials: { slug: string; name: string; title: string; photo_url: string | null }[]; investment: { slug: string; title: string; summary: string | null }[]; pages: string[] } | null; preview?: boolean }) {
     const locale = usePublicLocale();
+    if (page.slug === 'about-mutoko') return <About page={page} about={about} preview={preview} />;
     return (
         <PublicLayout>
             <Head title={page.seo_title || page.title}>
