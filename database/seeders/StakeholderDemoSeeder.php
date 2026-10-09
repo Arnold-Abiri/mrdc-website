@@ -234,14 +234,19 @@ class StakeholderDemoSeeder extends Seeder
     // ------------------------------------------------------------------
     private function seedSlides(): void
     {
+        // The first slide mirrors the approved static hero (identity + image),
+        // so the carousel opens with the council's established presentation.
+        // A legacy first-slide headline from an earlier demo seed is retired.
+        HomepageSlide::query()->where('headline', 'Quality Services for Every Ward')->where('status', 'draft')->delete();
+
         $slides = [
             [
                 'source' => 'public/images/hero-clean.webp',
                 'path' => 'slides/demo-services.webp',
-                'alt' => 'Mutoko granite kopjes above the town at sunset',
-                'headline' => 'Quality Services for Every Ward',
-                'supporting_text' => 'Water, roads, health support, education infrastructure and business-centre servicing — delivered with our communities across 29 wards.',
-                'cta_label' => 'Explore our services',
+                'alt' => 'Scenic Mutoko landscape showing rocky kopje mountains, green valley and Mutoko town center',
+                'headline' => 'Mutoko Rural District Council',
+                'supporting_text' => 'People. Development. Sustainable Communities. Working with our communities to deliver quality services, promote local development and build a better Mutoko.',
+                'cta_label' => 'Our Services',
                 'cta_url' => '/services',
             ],
             [
