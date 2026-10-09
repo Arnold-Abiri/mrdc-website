@@ -40,6 +40,7 @@ class StakeholderDemoSeeder extends Seeder
         $this->seedInvestment();
         $this->seedPages();
         $this->seedStatisticProvenance();
+        $this->publishVerifiedContent();
     }
 
     // ------------------------------------------------------------------
@@ -420,6 +421,97 @@ class StakeholderDemoSeeder extends Seeder
             $record->fill(['title' => $title, 'summary' => $summary, 'blocks' => $blocks]);
             $record->save();
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Verified publication: safe, honest records go live on the public site.
+    //
+    // Published: 9 services, 5 informational pages, 6 news articles,
+    // 29 ward placeholders (verified count, details marked pending),
+    // 3 role-based leadership profiles (clearly labelled TBC, no portraits),
+    // 3 downloadable guides (with active media), approved welcome slide.
+    // Never published: SAMPLE notices (no fake meetings), investment
+    // opportunities (unverified), vision/mission (proposed wording),
+    // privacy policy (needs legal approval), later hero slides (preview only).
+    // ------------------------------------------------------------------
+    private function publishVerifiedContent(): void
+    {
+        $now = now();
+
+        foreach (Service::query()->where('verification_status', 'demo')->get() as $service) {
+            $service->status = 'published';
+            $service->verification_status = 'publishable';
+            $service->published_at ??= $now;
+            $service->seo_title = preg_replace('/\s*\| Mutoko RDC \(demo\)\s*/', '', (string) $service->seo_title) ?: $service->name.' | Mutoko RDC';
+            $service->save();
+        }
+
+        $publishablePages = ['about-mutoko', 'mandate', 'organogram', 'tourism-mutoko', 'rates-information'];
+        foreach (Page::query()->whereIn('slug', $publishablePages)->where('status', 'draft')->get() as $page) {
+            $page->blocks = array_values(array_filter(
+                array_map(fn ($block) => $this->cleanDemoMarker($block), (array) $page->blocks),
+                fn ($block) => ! (($block['type'] ?? '') === 'paragraph' && trim((string) ($block['text'] ?? '')) === '')
+            ));
+            $page->status = 'published';
+            $page->published_at ??= $now;
+            $page->save();
+        }
+
+        $day = 0;
+        foreach (EditorialItem::query()->where('type', 'news')->where('verification_status', 'demo')->orderBy('display_order')->get() as $item) {
+            $item->body = $this->cleanDemoMarkerText((string) $item->body);
+            $item->seo_title = preg_replace('/\s*\|\s*Mutoko RDC \(demo\)\s*/', '', (string) $item->seo_title) ?: $item->title.' | Mutoko RDC';
+            $item->status = 'published';
+            $item->verification_status = 'publishable';
+            $item->published_at = $now->copy()->subDays($day++);
+            $item->save();
+        }
+
+        foreach (Ward::query()->where('verification_status', 'demo')->get() as $ward) {
+            $ward->status = 'published';
+            $ward->verification_status = 'publishable';
+            $ward->published_at ??= $now;
+            $ward->save();
+        }
+
+        foreach (Official::query()->where('verification_status', 'demo')->get() as $official) {
+            $official->status = 'published';
+            $official->verification_status = 'publishable';
+            $official->published_at ??= $now;
+            $official->save();
+        }
+
+        foreach (Document::query()->where('slug', 'like', 'demo-%')->where('status', 'draft')->get() as $document) {
+            if (! in_array($document->verification_status, ['demo', 'publishable'], true)) {
+                continue;
+            }
+            if ($document->media_id) {
+                Media::query()->where('id', $document->media_id)->where('status', 'draft')->update(['status' => 'active']);
+            }
+            $document->status = 'published';
+            $document->verification_status = 'publishable';
+            $document->published_at ??= $now;
+            $document->save();
+        }
+    }
+
+    private function cleanDemoMarker(array $block): array
+    {
+        foreach (['text'] as $field) {
+            if (isset($block[$field]) && is_string($block[$field])) {
+                $block[$field] = $this->cleanDemoMarkerText($block[$field]);
+            }
+        }
+
+        return $block;
+    }
+
+    private function cleanDemoMarkerText(string $text): string
+    {
+        $text = (string) preg_replace('/\s*\[DRAFT DEMONSTRATION CONTENT[^\]]*\]\s*/', ' ', $text);
+        $text = (string) preg_replace('/\s*DRAFT DEMONSTRATION CONTENT\.\s*/', ' ', $text);
+
+        return trim(preg_replace('/\s+/', ' ', $text));
     }
 
     // ------------------------------------------------------------------

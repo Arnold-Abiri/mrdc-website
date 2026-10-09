@@ -37,18 +37,18 @@ class PreviewController extends Controller
 
         return Inertia::render('Home', [
             'preview' => true,
-            'services' => Service::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'summary']),
-            'documents' => Document::query()->with('translations')->where('status', 'draft')->orderBy('title')->limit(5)->get(['slug', 'title', 'description']),
-            'news' => EditorialItem::query()->with('translations')->where('type', 'news')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
-            'notices' => EditorialItem::query()->with('translations')->where('type', 'notice')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
+            'services' => Service::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'summary']),
+            'documents' => Document::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('title')->limit(5)->get(['slug', 'title', 'description']),
+            'news' => EditorialItem::query()->with('translations')->where('type', 'news')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
+            'notices' => EditorialItem::query()->with('translations')->where('type', 'notice')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'published_at']),
             'departments' => Department::query()->with('translations')->where('status', 'active')->orderBy('public_display_order')->limit(4)->get(['id', 'public_name', 'public_summary']),
             'contacts' => PublicContact::query()->orderBy('display_order')->limit(4)->get(['office', 'type', 'value']),
-            'officials' => Official::query()->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'name', 'title']),
-            'ward_count' => Ward::query()->where('status', 'draft')->count(),
+            'officials' => Official::query()->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'name', 'title']),
+            'ward_count' => Ward::query()->whereIn('status', ['draft', 'published'])->count(),
             'statistics' => DistrictStatistic::query()->public()->orderBy('display_order')->get(['label', 'value', 'unit', 'icon']),
-            'tenders' => Tender::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'reference', 'title'])->map(fn (Tender $tender): array => [...$tender->toLocalizedArray(['slug', 'reference', 'title']), 'display_status' => $tender->displayStatus()]),
-            'investment' => InvestmentOpportunity::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'title', 'sector', 'summary']),
-            'projects' => CouncilProject::query()->with('translations')->where('status', 'draft')->orderBy('display_order')->limit(3)->get(['slug', 'title', 'project_status', 'summary']),
+            'tenders' => Tender::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'reference', 'title'])->map(fn (Tender $tender): array => [...$tender->toLocalizedArray(['slug', 'reference', 'title']), 'display_status' => $tender->displayStatus()]),
+            'investment' => InvestmentOpportunity::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'sector', 'summary']),
+            'projects' => CouncilProject::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['slug', 'title', 'project_status', 'summary']),
             'slides' => HomepageSlide::query()->whereIn('status', ['draft', 'published'])->where('is_active', true)->orderBy('display_order')->get(['headline', 'supporting_text', 'cta_label', 'cta_url', 'media_id'])->map(function (HomepageSlide $slide): array {
                 $media = $slide->media_id ? Media::query()->where('id', $slide->media_id)->where('status', 'active')->first() : null;
 

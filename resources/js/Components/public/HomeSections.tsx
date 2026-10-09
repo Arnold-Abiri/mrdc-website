@@ -348,7 +348,7 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                         Our mission is to provide quality, sustainable services with our communities. Our vision is a vibrant and prosperous Mutoko by 2030.
                     </p>
                     <div>
-                        <a href={aboutHref ?? L("/departments")} className="btn-section-primary">
+                        <a href={aboutHref ?? L("/about")} className="btn-section-primary">
                             <span>Learn More</span>
                             <span aria-hidden="true">→</span>
                         </a>

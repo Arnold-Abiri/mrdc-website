@@ -49,8 +49,8 @@ class DocumentController extends Controller
     {
         $document = Document::query()->with('translations')->public()->where('slug', $slug)->with('media')->first();
         if (! $document instanceof Document && session('preview_authorized') === true) {
-            // Stakeholder preview: allow downloading draft/demo guides from a signed preview session.
-            $document = Document::query()->where('slug', $slug)->where('verification_status', 'demo')->with('media')->first();
+            // Stakeholder preview: allow downloading draft guides from a signed preview session.
+            $document = Document::query()->where('slug', $slug)->where('status', 'draft')->with('media')->first();
         }
         abort_unless($document instanceof Document, 404);
         $media = $document->media;

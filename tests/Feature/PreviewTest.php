@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Document;
 use App\Models\HomepageSlide;
 use App\Models\Page;
 use Database\Seeders\Stage4MutokoContentSeeder;
@@ -103,18 +104,20 @@ class PreviewTest extends TestCase
         $this->assertSame('Updated council highlight', $slide->fresh()->headline);
     }
 
-    public function test_public_homepage_stays_empty_while_preview_has_content(): void
+    public function test_public_homepage_shows_verified_content_without_preview_flag(): void
     {
-        $this->seed(StakeholderDemoSeeder::class);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
 
         $this->get('/en')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Home', false)
-            ->has('services', 0)
-            ->has('news', 0)
+            ->has('services', 9)
+            ->has('news', 3)
+            ->where('ward_count', 29)
             ->missing('preview'));
 
-        $this->assertFalse(Page::query()->public()->where('slug', 'about-mutoko')->exists());
-        $this->get('/en/pages/about-mutoko')->assertNotFound();
+        $this->assertTrue(Page::query()->public()->where('slug', 'about-mutoko')->exists());
+        $this->get('/en/pages/about-mutoko')->assertOk();
+        $this->get('/en/about')->assertRedirect();
     }
 
     public function test_preview_routes_are_not_in_sitemap(): void
@@ -142,12 +145,19 @@ class PreviewTest extends TestCase
     {
         $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
 
-        $this->get('/en/documents/demo-public-enquiry-guide/download')->assertNotFound();
+        // Published guides download publicly.
+        $this->get('/en/documents/demo-public-enquiry-guide/download')->assertOk();
+
+        // A draft guide stays hidden publicly but downloads in a preview session.
+        $guide = Document::query()->where('slug', 'demo-community-participation-guide')->firstOrFail();
+        $guide->status = 'draft';
+        $guide->save();
+        $this->get('/en/documents/demo-community-participation-guide/download')->assertNotFound();
 
         $home = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
         $this->get($home)->assertOk();
 
-        $this->get('/en/documents/demo-public-enquiry-guide/download')
+        $this->get('/en/documents/demo-community-participation-guide/download')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
     }
