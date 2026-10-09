@@ -40,7 +40,7 @@ const services = [
         title: 'Tourism',
         description: "Explore Mutoko's natural beauty",
         theme: 'green',
-        href: '/coming-soon?topic=tourism',
+        href: '/tourism',
     },
     {
         icon: 'tenders',
@@ -338,7 +338,7 @@ export function AboutSection() {
                         <div className="about-stat"><strong>428,916 ha</strong><span>District area</span></div>
                     </div>
                     <div>
-                        <a href={L("/coming-soon?topic=council")} className="btn-section-primary">
+                        <a href={L("/about")} className="btn-section-primary">
                             <span>Learn More</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -499,8 +499,8 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             </div>
                             <h2 className="section-title">Events Calendar</h2>
                         </div>
-                        <a href={L("/coming-soon?topic=events")} className="header-viewall-link">
-                            View All Events <span aria-hidden="true">→</span>
+                        <a href={L("/meetings")} className="header-viewall-link">
+                            View council meetings <span aria-hidden="true">→</span>
                         </a>
                     </div>
                     <div className="events-list">
@@ -608,20 +608,85 @@ export type ManagedHomepageProject = { slug: string; title: string; project_stat
 export function ManagedHomepageContent({ services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
-    return <section id="services" className="container coming-soon" aria-label="Approved council information">
-        <h2>Approved council information</h2>
-        <section aria-labelledby="managed-services-heading"><h3 id="managed-services-heading">Services</h3>{services.length ? <ul>{services.map(item => <li key={item.slug}><a href={L(`/services/${item.slug}`)}>{item.name}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved services are available yet.</p>}</section>
-        <section aria-labelledby="managed-departments-heading"><h3 id="managed-departments-heading">Departments</h3>{departments.length ? <ul>{departments.map(item => <li key={item.id}><a href={L(`/departments/${item.id}`)}>{item.public_name}</a>{item.public_summary && <p>{item.public_summary}</p>}</li>)}</ul> : <p>No approved department information is available yet.</p>}</section>
-        <section aria-labelledby="managed-documents-heading"><h3 id="managed-documents-heading">Documents</h3>{documents.length ? <ul>{documents.map(item => <li key={item.slug}><a href={L(`/documents/${item.slug}`)}>{item.title}</a>{item.description && <p>{item.description}</p>}</li>)}</ul> : <p>No approved documents are available yet.</p>}</section>
-        <section aria-labelledby="managed-notices-heading"><h3 id="managed-notices-heading">Notices</h3>{notices.length ? <ul>{notices.map(item => <li key={item.slug}><a href={L(`/notices/${item.slug}`)}>{item.title}</a>{item.summary && <p>{item.summary}</p>}</li>)}</ul> : <p>No approved notices are available yet.</p>}</section>
-        <section aria-labelledby="managed-officials-heading"><h3 id="managed-officials-heading">Council leadership</h3>{officials.length ? <ul>{officials.map(item => <li key={item.slug}><a href={L(`/officials/${item.slug}`)}>{item.name}</a> — {item.title}</li>)}</ul> : <p>No approved leadership profiles are available yet.</p>}<a href={L("/officials")}>View council officials</a></section>
-        <section aria-labelledby="managed-wards-heading"><h3 id="managed-wards-heading">Wards</h3><p>{wardCount ? `${wardCount} approved ward ${wardCount === 1 ? 'profile' : 'profiles'} available.` : 'No approved ward profiles are available yet.'}</p><a href={L("/wards")}>View ward directory</a></section>
-        <section aria-labelledby="managed-contacts-heading"><h3 id="managed-contacts-heading">Council contacts</h3>{contacts.length ? <ul>{contacts.map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>No approved contact details are available yet.</p>}<a href={L("/contact")}>Contact the council</a></section>
-        <section aria-labelledby="managed-statistics-heading"><h3 id="managed-statistics-heading">Our district</h3>{statistics.length ? <ul>{statistics.map(item => <li key={item.label}><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong> — {item.label}</li>)}</ul> : <p>District statistics are being verified for publication.</p>}</section>
-        <section aria-labelledby="managed-tenders-heading"><h3 id="managed-tenders-heading">Tenders</h3>{tenders.length ? <ul>{tenders.map(item => <li key={item.slug}><a href={L(`/tenders/${item.slug}`)}>{item.title}</a> — {item.reference} ({item.display_status})</li>)}</ul> : <p>No tenders are published at this time.</p>}<a href={L("/tenders")}>View all tenders</a></section>
-        <section aria-labelledby="managed-investment-heading"><h3 id="managed-investment-heading">Invest in Mutoko</h3>{investment.length ? <ul>{investment.map(item => <li key={item.slug}><a href={L(`/investment/${item.slug}`)}>{item.title}</a>{item.sector ? ` — ${item.sector}` : ''}</li>)}</ul> : <p>Investment opportunities are being prepared for publication.</p>}<a href={L("/investment")}>Explore investment</a></section>
-        <section aria-labelledby="managed-projects-heading"><h3 id="managed-projects-heading">Projects and programmes</h3>{projects.length ? <ul>{projects.map(item => <li key={item.slug}><a href={L(`/projects/${item.slug}`)}>{item.title}</a> — {item.project_status}</li>)}</ul> : <p>Project profiles are being prepared for publication.</p>}<a href={L("/projects")}>View all projects</a></section>
-    </section>;
+    return <>
+        <section id="services" className="managed-section" aria-labelledby="managed-services-heading">
+            <div className="container managed-split">
+                <div className="managed-intro">
+                    <p className="managed-eyebrow">Council services</p>
+                    <h2 id="managed-services-heading">Services that keep Mutoko running</h2>
+                    <p>Water, roads, health, planning and community services delivered across our wards. Start with the services residents use most.</p>
+                    <a className="managed-viewall" href={L('/services')}>View all services <span aria-hidden="true">→</span></a>
+                </div>
+                <div className="managed-list">
+                    {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-row">
+                        <div><h3><a href={L(`/services/${item.slug}`)}>{item.name}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
+                        <a className="managed-row-link" href={L(`/services/${item.slug}`)} aria-label={`Open ${item.name}`}>→</a>
+                    </article>) : <p className="managed-empty">Approved services will appear here once published.</p>}
+                </div>
+            </div>
+        </section>
+        <section className="managed-section managed-alt" aria-labelledby="managed-notices-heading">
+            <div className="container managed-split">
+                <div className="managed-intro">
+                    <p className="managed-eyebrow">Public notices</p>
+                    <h2 id="managed-notices-heading">Notices residents should read</h2>
+                    <p>Official announcements, closures, meetings and deadlines from the council.</p>
+                    <a className="managed-viewall" href={L('/notices')}>View all notices <span aria-hidden="true">→</span></a>
+                </div>
+                <div className="managed-list">
+                    {notices.length ? notices.slice(0, 5).map(item => <article key={item.slug} className="managed-row managed-notice">
+                        <span className="notice-marker" aria-hidden="true" />
+                        <div><h3><a href={L(`/notices/${item.slug}`)}>{item.title}</a></h3>{item.summary && <p>{item.summary}</p>}</div>
+                    </article>) : <p className="managed-empty">No published notices at this time.</p>}
+                </div>
+            </div>
+        </section>
+        <section className="managed-section" aria-labelledby="managed-documents-heading">
+            <div className="container managed-split">
+                <div className="managed-intro">
+                    <p className="managed-eyebrow">Document centre</p>
+                    <h2 id="managed-documents-heading">Plans, reports and forms</h2>
+                    <p>Key public documents approved for release by the council.</p>
+                    <a className="managed-viewall" href={L('/documents')}>View document centre <span aria-hidden="true">→</span></a>
+                </div>
+                <div className="managed-list">
+                    {documents.length ? documents.slice(0, 5).map(item => <article key={item.slug} className="managed-row">
+                        <div><h3><a href={L(`/documents/${item.slug}`)}>{item.title}</a></h3>{item.description && <p>{item.description}</p>}</div>
+                    </article>) : <p className="managed-empty">No published documents at this time.</p>}
+                </div>
+            </div>
+        </section>
+        <section className="managed-strip" aria-label="Wards, leadership and contact">
+            <div className="container managed-strip-grid">
+                <article aria-labelledby="managed-wards-heading">
+                    <p className="managed-eyebrow">Wards</p>
+                    <h2 id="managed-wards-heading">{wardCount ? `${wardCount} wards` : 'Ward directory'}</h2>
+                    <p>{wardCount ? 'Find your ward, councillor and local services.' : 'Ward profiles are being prepared for publication.'}</p>
+                    <a className="managed-viewall" href={L('/wards')}>Explore our wards <span aria-hidden="true">→</span></a>
+                </article>
+                <article aria-labelledby="managed-officials-heading">
+                    <p className="managed-eyebrow">Leadership</p>
+                    <h2 id="managed-officials-heading">Council leadership</h2>
+                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/officials/${item.slug}`)}>{item.name}</a><span> — {item.title}</span></li>)}</ul> : <p>Leadership profiles are being prepared for publication.</p>}
+                    <a className="managed-viewall" href={L('/officials')}>View council officials <span aria-hidden="true">→</span></a>
+                </article>
+                <article aria-labelledby="managed-contact-heading">
+                    <p className="managed-eyebrow">Contact</p>
+                    <h2 id="managed-contact-heading">Talk to the council</h2>
+                    {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>Use our enquiry form and the team will respond.</p>}
+                    <a className="managed-viewall" href={L('/contact')}>Make an enquiry <span aria-hidden="true">→</span></a>
+                </article>
+            </div>
+        </section>
+        {(tenders.length > 0 || investment.length > 0 || projects.length > 0 || departments.length > 0 || statistics.length > 0) && <section className="managed-section managed-alt" aria-label="More council information">
+            <div className="container managed-columns">
+                {tenders.length > 0 && <div><h2>Tenders</h2><ul className="managed-mini-list">{tenders.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/tenders/${item.slug}`)}>{item.title}</a> <span>({item.reference})</span></li>)}</ul><a className="managed-viewall" href={L('/tenders')}>View all tenders →</a></div>}
+                {projects.length > 0 && <div><h2>Projects</h2><ul className="managed-mini-list">{projects.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/projects/${item.slug}`)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/projects')}>View all projects →</a></div>}
+                {investment.length > 0 && <div><h2>Investment</h2><ul className="managed-mini-list">{investment.slice(0, 3).map(item => <li key={item.slug}><a href={L(`/investment/${item.slug}`)}>{item.title}</a></li>)}</ul><a className="managed-viewall" href={L('/investment')}>Explore investment →</a></div>}
+                {departments.length > 0 && <div><h2>Departments</h2><ul className="managed-mini-list">{departments.slice(0, 4).map(item => <li key={item.id}><a href={L(`/departments/${item.id}`)}>{item.public_name}</a></li>)}</ul></div>}
+            </div>
+        </section>}
+    </>;
 }
 
 export function DevelopmentSection() {

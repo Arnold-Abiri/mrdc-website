@@ -30,9 +30,9 @@ export default function Home({ services, documents, departments, news, notices, 
     return (
         <PublicLayout>
             <Head title="Mutoko Rural District Council">
-                <meta name="description" content="Development preview of the Mutoko Rural District Council website." />
+                <meta name="description" content="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." />
             </Head>
-            <SeoHead title="Mutoko Rural District Council" description="Development preview of the Mutoko Rural District Council website." type="website" schema={organizationSchema()} />
+            <SeoHead title="Mutoko Rural District Council" description="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." type="website" schema={organizationSchema()} />
                 <Hero slides={slides} />
                 <QuickAccess />
             <ValuePillars />

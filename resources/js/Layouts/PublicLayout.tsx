@@ -262,8 +262,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <li><a href={L("/#about")}>{t('about')}</a></li>
                             <li><a href={L("/#services")}>{t('ourServices')}</a></li>
                             <li><a href={L("/investment")}>{t('development')}</a></li>
-                            <li><a href={L("/coming-soon?topic=tourism")}>{t('tourism')}</a></li>
-                            <li><a href={L("/coming-soon?topic=media")}>{t('media')}</a></li>
+                            <li><a href={L("/tourism")}>{t('tourism')}</a></li>
+                            <li><a href={L("/news")}>{t('media')}</a></li>
                             <li><a href={L("/contact")}>{t('contactUs')}</a></li>
                         </ul>
                     </div>
@@ -271,12 +271,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <div className="footer-col-nav">
                         <h3 className="footer-heading">{t('ourServices')}</h3>
                         <ul className="footer-link-list">
-                            <li><a href={L("/coming-soon?topic=water")}>{t('waterSupply')}</a></li>
-                            <li><a href={L("/coming-soon?topic=roads")}>{t('roadsInfrastructure')}</a></li>
-                            <li><a href={L("/coming-soon?topic=health")}>{t('healthSanitation')}</a></li>
-                            <li><a href={L("/coming-soon?topic=environment")}>{t('environmentalManagement')}</a></li>
-                            <li><a href={L("/coming-soon?topic=development")}>{t('developmentPlanning')}</a></li>
-                            <li><a href={L("/coming-soon?topic=community")}>{t('communityServices')}</a></li>
+                            <li><a href={L("/services")}>{t('waterSupply')}</a></li>
+                            <li><a href={L("/projects")}>{t('roadsInfrastructure')}</a></li>
+                            <li><a href={L("/services")}>{t('healthSanitation')}</a></li>
+                            <li><a href={L("/services")}>{t('environmentalManagement')}</a></li>
+                            <li><a href={L("/investment")}>{t('developmentPlanning')}</a></li>
+                            <li><a href={L("/feedback")}>{t('communityServices')}</a></li>
                         </ul>
                     </div>
 
@@ -306,9 +306,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             {t('previewCopyright')}
                         </span>
                         <div className="footer-legal-links">
-                            <a href={L("/coming-soon?topic=privacy")}>{t('privacyPolicy')}</a>
+                            <a href={L("/transparency")}>{t('privacyPolicy')}</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
-                            <a href={L("/coming-soon?topic=terms")}>{t('termsOfUse')}</a>
+                            <a href={L("/transparency")}>{t('termsOfUse')}</a>
                             <span className="footer-legal-divider" aria-hidden="true">|</span>
                             <a href="/sitemap.xml">{t('siteMap')}</a>
                         </div>
