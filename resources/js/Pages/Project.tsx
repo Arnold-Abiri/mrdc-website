@@ -1,6 +1,7 @@
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
+import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
 type Ward = { slug: string; name: string };
 type LinkedDocument = { slug: string; title: string };
 type Update = { update_date: string | null; title: string; summary: string | null; progress_percent: number | null };
@@ -9,5 +10,26 @@ const projectStatuses: Record<string, string> = { planned: 'planned', ongoing: '
 export default function Project({ project, department, wards, documents, updates }: { project: ProjectDetail; department: string | null; wards: Ward[]; documents: LinkedDocument[]; updates: Update[] }) {
     const t = usePublicTranslation();
     const locale = usePublicLocale();
-    return <PublicLayout><div className="container coming-soon"><p><Link href={`/${locale}/projects`}>{t('projects')}</Link></p><h1>{project.title}</h1><p>{project.project_type === 'programme' ? t('programme') : t('project')} — {t('projectStatus')}: {t(projectStatuses[project.project_status] as 'planned')}</p>{project.location && <p>{t('location')}: {project.location}</p>}{project.summary && <p>{project.summary}</p>}{project.image_url && <img src={project.image_url} alt={project.title} />}{department && <p>{t('department')}: {department}</p>}{wards.length > 0 && <p>{t('wards')}: {wards.map(ward => ward.name).join(', ')}</p>}<section><h2>{t('timeline')}</h2><p>{t('startsAt')}: {project.starts_at ?? '—'} — {t('expectedCompletion')}: {project.expected_completed_at ?? '—'}{project.completed_at ? ` — ${t('completedAt')}: ${project.completed_at}` : ''}</p>{project.progress_percent !== null && <p>{t('progress')}: {project.progress_percent}%</p>}</section><p>{project.description}</p>{project.contact_instructions && <section><h2>{t('contactCouncil')}</h2><p>{project.contact_instructions}</p></section>}<section><h2>{t('projectUpdates')}</h2>{updates.length === 0 ? <p>{t('noProjectUpdates')}</p> : <ul>{updates.map((update, index) => <li key={index}><strong>{update.title}</strong> ({update.update_date}){update.summary && <p>{update.summary}</p>}{update.progress_percent !== null && <p>{t('progress')}: {update.progress_percent}%</p>}</li>)}</ul>}</section>{documents.length > 0 && <section><h2>{t('relatedDocuments')}</h2><ul>{documents.map(document => <li key={document.slug}><Link href={`/${locale}/documents/${document.slug}`}>{document.title}</Link></li>)}</ul></section>}<p><Link href={`/${locale}/contact`}>{t('contactCouncil')}</Link></p></div></PublicLayout>;
+    return <PublicLayout>
+        <Head title={project.title} />
+        <PageHero eyebrow="PROJECTS" title={project.title} subtitle={`${project.project_type === 'programme' ? t('programme') : t('project')} — ${t(projectStatuses[project.project_status] as 'planned')}${project.location ? ` — ${project.location}` : ''}`} crumb={[{ label: t('projects'), href: `/${locale}/projects` }, { label: project.title }]} />
+        <section className="about-page-section"><div className="container">
+            {project.summary && <p className="about-page-lead">{project.summary}</p>}
+            {project.image_url && <figure className="about-whoweare-figure"><img src={project.image_url} alt={project.title} className="about-whoweare-img" loading="lazy" /></figure>}
+            <div className="about-mandate-grid">
+                <div className="about-mandate-card"><h3>{t('timeline')}</h3><p>{t('startsAt')}: {project.starts_at ?? '—'} — {t('expectedCompletion')}: {project.expected_completed_at ?? '—'}{project.completed_at ? ` — ${t('completedAt')}: ${project.completed_at}` : ''}</p>{project.progress_percent !== null && <p>{t('progress')}: {project.progress_percent}%</p>}</div>
+                <div className="about-mandate-card"><h3>{t('location')}</h3><p>{project.location ?? '—'}</p>{department && <p>{t('department')}: {department}</p>}{wards.length > 0 && <p>{t('wards')}: {wards.map(ward => ward.name).join(', ')}</p>}</div>
+            </div>
+            <div className="about-page-copy" style={{ marginTop: '20px' }}><p>{project.description}</p></div>
+            {project.contact_instructions && <div className="about-vision-card" style={{ marginTop: '20px' }}><div><h3>{t('contactCouncil')}</h3><p>{project.contact_instructions}</p></div></div>}
+        </div></section>
+        <section className="about-page-section about-page-section-muted"><div className="container">
+            <span className="about-accent-eyebrow">UPDATES</span>
+            <h2>{t('projectUpdates')}</h2>
+            {updates.length === 0 ? <EmptyState title={t('noProjectUpdates')} text={t('projectUpdates')} /> : <div className="about-economic-grid">{updates.map((update, index) => <div key={index} className="about-economic-card"><div className="about-economic-body"><h3>{update.title}</h3><p>{update.update_date}</p>{update.summary && <p>{update.summary}</p>}{update.progress_percent !== null && <p>{t('progress')}: {update.progress_percent}%</p>}</div></div>)}</div>}
+            {documents.length > 0 && <><h2 style={{ marginTop: '24px' }}>{t('relatedDocuments')}</h2><div className="about-focus-grid">{documents.map(document => <Link key={document.slug} href={`/${locale}/documents/${document.slug}`} className="about-focus-card"><h3>{document.title}</h3><span className="about-economic-link">Open document <span aria-hidden="true">→</span></span></Link>)}</div></>}
+            <p style={{ marginTop: '20px' }}><Link className="about-page-text-link" href={`/${locale}/contact`}>{t('contactCouncil')} <span aria-hidden="true">→</span></Link></p>
+        </div></section>
+        <ConnectBanner />
+    </PublicLayout>;
 }
