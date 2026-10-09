@@ -573,6 +573,15 @@ class StakeholderDemoSeeder extends Seeder
                 $item->save();
             }
         }
+        // Standing information notices: honest, undated guidance with no
+        // fabricated events, safe to publish so the notices section is alive.
+        $noticeDay = 0;
+        foreach (EditorialItem::query()->where('type', 'notice')->whereIn('slug', ['how-council-consultations-work', 'attending-council-meetings', 'how-service-updates-are-communicated'])->where('status', 'draft')->get() as $item) {
+            $item->status = 'published';
+            $item->verification_status = 'publishable';
+            $item->published_at = $now->copy()->subDays($noticeDay++);
+            $item->save();
+        }
     }
 
     private function cleanDemoMarker(array $block): array

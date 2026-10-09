@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale } from '../usePublicTranslation';
+import About from './About';
 
 type Block = { type: 'heading' | 'paragraph' | 'cta'; text: string; url?: string };
 type Page = {
@@ -13,7 +14,8 @@ type Page = {
     is_review_content: boolean;
 };
 
-export default function CmsPage({ page }: { page: Page }) {
+export default function CmsPage({ page, about, preview }: { page: Page; about?: { officials: { slug: string; name: string; title: string; photo_url: string | null }[]; investment: { slug: string; title: string; summary: string | null }[] } | null; preview?: boolean }) {
+    if (page.slug === 'about-mutoko') return <About page={page} about={about} preview={preview} />;
     const locale = usePublicLocale();
     return (
         <PublicLayout>
