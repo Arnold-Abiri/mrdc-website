@@ -38,7 +38,8 @@ class PreviewTest extends TestCase
                 ->where('preview', true)
                 ->has('services', 9)
                 ->has('news', 3)
-                ->has('notices', 3));
+                ->has('notices', 3)
+                ->has('slides', 3));
     }
 
     public function test_preview_page_shows_draft_after_home_unlocks_session(): void

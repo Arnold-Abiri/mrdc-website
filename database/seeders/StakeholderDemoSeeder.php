@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\DistrictStatistic;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\HomepageSlide;
 use App\Models\InvestmentOpportunity;
 use App\Models\Media;
 use App\Models\Official;
@@ -34,6 +35,7 @@ class StakeholderDemoSeeder extends Seeder
         $this->seedDocuments();
         $this->seedWards();
         $this->seedOfficials();
+        $this->seedSlides();
         $this->seedServices();
         $this->seedInvestment();
         $this->seedPages();
@@ -224,6 +226,80 @@ class StakeholderDemoSeeder extends Seeder
                 ]);
                 $record->save();
             }
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Hero slides (3 demo slides reusing approved local imagery)
+    // ------------------------------------------------------------------
+    private function seedSlides(): void
+    {
+        $slides = [
+            [
+                'source' => 'public/images/hero-clean.webp',
+                'path' => 'slides/demo-services.webp',
+                'alt' => 'Mutoko granite kopjes above the town at sunset',
+                'headline' => 'Quality Services for Every Ward',
+                'supporting_text' => 'Water, roads, health support, education infrastructure and business-centre servicing — delivered with our communities across 29 wards.',
+                'cta_label' => 'Explore our services',
+                'cta_url' => '/services',
+            ],
+            [
+                'source' => 'public/images/home/dev-background.webp',
+                'path' => 'slides/demo-development.webp',
+                'alt' => 'Mutoko rural landscape earmarked for development',
+                'headline' => 'Roads, Water and Growth Points',
+                'supporting_text' => 'The council maintains rural access, services business centres and programmes rehabilitation where funding allows.',
+                'cta_label' => 'See development priorities',
+                'cta_url' => '/projects',
+            ],
+            [
+                'source' => 'public/images/feature-invest-development.webp',
+                'path' => 'slides/demo-investment.webp',
+                'alt' => 'Development activity in Mutoko District',
+                'headline' => 'Invest in Mutoko’s Future',
+                'supporting_text' => 'Agriculture, agro-processing, mining value addition and housing — provisional sector briefs for investor engagement.',
+                'cta_label' => 'Explore investment',
+                'cta_url' => '/investment',
+            ],
+        ];
+
+        foreach ($slides as $order => $slide) {
+            if (! is_file(base_path($slide['source']))) {
+                continue;
+            }
+            Storage::disk(config('cms.media_disk', 'local'))->put($slide['path'], file_get_contents(base_path($slide['source'])));
+            $media = Media::unguarded(function () use ($slide) {
+                return Media::query()->updateOrCreate(
+                    ['storage_path' => $slide['path']],
+                    [
+                        'title' => $slide['headline'],
+                        'alt_text' => $slide['alt'],
+                        'original_filename' => basename($slide['path']),
+                        'mime_type' => 'image/webp',
+                        'size' => Storage::disk(config('cms.media_disk', 'local'))->size($slide['path']),
+                        'width' => 1983,
+                        'height' => 793,
+                        'status' => 'active',
+                    ]
+                );
+            });
+
+            HomepageSlide::unguarded(function () use ($slide, $media, $order) {
+                $record = HomepageSlide::query()->firstOrNew(['headline' => $slide['headline']]);
+                if (! $record->exists) {
+                    $record->fill(['status' => 'draft', 'is_active' => true, 'display_order' => $order]);
+                }
+                if ($record->status === 'draft') {
+                    $record->fill([
+                        'supporting_text' => $slide['supporting_text'],
+                        'cta_label' => $slide['cta_label'],
+                        'cta_url' => $slide['cta_url'],
+                        'media_id' => $media->id,
+                    ]);
+                    $record->save();
+                }
+            });
         }
     }
 
