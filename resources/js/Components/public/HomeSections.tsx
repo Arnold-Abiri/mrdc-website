@@ -331,14 +331,8 @@ export function AboutSection() {
                     <p className="about-description">
                         Our mission is to provide quality, sustainable services with our communities. Our vision is a vibrant and prosperous Mutoko by 2030.
                     </p>
-                    <div className="about-stats-row" aria-label="District figures">
-                        <div className="about-stat"><strong>~163,000</strong><span>Population</span></div>
-                        <div className="about-stat"><strong>84 + 44</strong><span>Primary &amp; secondary schools</span></div>
-                        <div className="about-stat"><strong>29</strong><span>Wards served</span></div>
-                        <div className="about-stat"><strong>428,916 ha</strong><span>District area</span></div>
-                    </div>
                     <div>
-                        <a href={L("/about")} className="btn-section-primary">
+                        <a href={L("/departments")} className="btn-section-primary">
                             <span>Learn More</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -609,6 +603,16 @@ export function ManagedHomepageContent({ services, documents, departments, notic
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return <>
+        {statistics.length > 0 && <section className="managed-section managed-stats-band" aria-label="District at a glance">
+            <div className="container">
+                <dl className="managed-stats-grid">
+                    {statistics.slice(0, 4).map(item => <div key={item.label} className="managed-stat">
+                        <dd><strong>{item.value}{item.unit ? ` ${item.unit}` : ''}</strong></dd>
+                        <dt>{item.label}</dt>
+                    </div>)}
+                </dl>
+            </div>
+        </section>}
         <section id="services" className="managed-section" aria-labelledby="managed-services-heading">
             <div className="container managed-split">
                 <div className="managed-intro">

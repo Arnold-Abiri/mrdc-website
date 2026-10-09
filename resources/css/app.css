@@ -1920,6 +1920,14 @@ h3 { margin: 0; }
 .managed-notice { position: relative; padding-left: 16px; }
 .notice-marker { position: absolute; left: 0; top: 18px; bottom: 18px; width: 3px; background: var(--color-critical); border-radius: 2px; }
 .managed-empty { color: var(--color-muted); border: 1px dashed var(--color-border); border-radius: 8px; padding: 20px; }
+/* Verified district statistics band */
+.managed-stats-band { padding-block: 28px; background: #fff; }
+.managed-stats-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); margin: 0; }
+@media (min-width: 900px) { .managed-stats-grid { grid-template-columns: repeat(4, 1fr); } }
+.managed-stat { border-left: 3px solid var(--color-council-green); padding-left: 12px; }
+.managed-stat dd { margin: 0; }
+.managed-stat dd strong { color: var(--color-civic-navy); font-size: 1.3rem; font-weight: 800; }
+.managed-stat dt { color: var(--color-muted); font-size: 0.8rem; margin-top: 2px; }
 .managed-strip { background: var(--color-civic-navy); color: #e2e8f0; padding-block: 44px; }
 .managed-strip h2 { color: #fff; font-size: 1.25rem; margin: 0 0 8px; }
 .managed-strip p, .managed-strip span { color: #cbd5e1; font-size: 0.87rem; }

@@ -31,7 +31,16 @@ class FoundationTest extends TestCase
 
     public function test_sitemap_contains_only_published_public_route(): void
     {
-        $this->get('/sitemap.xml')->assertOk()->assertHeader('Content-Type', 'application/xml; charset=UTF-8')->assertSee(route('home'));
+        $this->get('/sitemap.xml')->assertOk()->assertHeader('Content-Type', 'application/xml; charset=UTF-8')->assertSee(route('home', ['locale' => 'en'], false));
+    }
+
+    public function test_sitemap_lists_localized_homepage_for_every_locale(): void
+    {
+        $response = $this->get('/sitemap.xml')->assertOk();
+
+        foreach (['en', 'sn', 'nd'] as $locale) {
+            $response->assertSee(route('home', ['locale' => $locale], false));
+        }
     }
 
     public function test_guest_is_redirected_to_admin_login(): void
