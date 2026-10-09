@@ -33,6 +33,7 @@ class StakeholderDemoSeeder extends Seeder
     public function run(): void
     {
         $this->seedEditorial();
+        $this->call(NewsIllustrationSeeder::class);
         $this->seedDocuments();
         $this->seedWards();
         $this->seedOfficials();

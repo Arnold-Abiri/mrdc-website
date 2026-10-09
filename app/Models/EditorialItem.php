@@ -22,6 +22,7 @@ class EditorialItem extends Model implements TranslatableContent
         return ['published_at' => 'datetime', 'expires_at' => 'date', 'verified_at' => 'datetime'];
     }
 
+    /** @return BelongsTo<Media, $this> */
     public function featuredMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'featured_media_id');

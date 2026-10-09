@@ -4,8 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\CouncilMeeting;
 use App\Models\Document;
+use App\Models\EditorialItem;
 use App\Models\HomepageSlide;
+use App\Models\Media;
 use App\Models\Page;
+use Database\Seeders\NewsIllustrationSeeder;
 use Database\Seeders\Stage4MutokoContentSeeder;
 use Database\Seeders\StakeholderDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,6 +48,30 @@ class PreviewTest extends TestCase
                 ->has('notices', 3)
                 ->has('meetings', 2)
                 ->has('slides', 3));
+    }
+
+    public function test_seeded_news_illustrations_are_managed_and_labelled(): void
+    {
+        Storage::fake(config('cms.media_disk'));
+        $this->seed(StakeholderDemoSeeder::class);
+
+        $items = EditorialItem::query()->where('type', 'news')->where('slug', 'like', 'demo-%')->with('featuredMedia')->get();
+        $this->assertCount(6, $items);
+
+        foreach ($items as $item) {
+            $this->assertNotNull($item->featuredMedia);
+            $this->assertStringStartsWith('AI-generated editorial illustration', $item->featuredMedia->caption);
+            $this->assertSame('image/webp', $item->featuredMedia->mime_type);
+            Storage::disk(config('cms.media_disk'))->assertExists($item->featuredMedia->storage_path);
+            $this->get(route('managed-media.show', ['locale' => 'en', 'media' => $item->featured_media_id]))->assertOk()->assertHeader('Content-Type', 'image/webp');
+        }
+
+        $this->get('/en/news/demo-understanding-mrdc-role')->assertOk()->assertSee('AI-generated editorial illustration');
+
+        EditorialItem::query()->where('type', 'news')->where('slug', 'like', 'demo-%')->update(['featured_media_id' => null]);
+        $this->seed(NewsIllustrationSeeder::class);
+        $this->assertSame(6, EditorialItem::query()->where('type', 'news')->where('slug', 'like', 'demo-%')->whereNotNull('featured_media_id')->count());
+        $this->assertSame(6, Media::query()->where('storage_path', 'like', 'news/illustrations/%')->count());
     }
 
     public function test_preview_page_shows_draft_after_home_unlocks_session(): void
