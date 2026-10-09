@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\InvestmentOpportunity;
 use App\Models\Official;
 use App\Models\Page;
+use App\Models\Ward;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,13 +37,14 @@ class PageController extends Controller
     private function aboutDirectory(): array
     {
         return [
+            'ward_count' => Ward::query()->public()->count() ?: 29,
             'officials' => Official::query()->public()->orderBy('display_order')->limit(4)->get(['slug', 'name', 'title', 'photo_media_id'])->map(fn ($official): array => [
                 'slug' => $official->slug,
                 'name' => $official->name,
                 'title' => $official->title,
                 'photo_url' => $official->photo_media_id ? public_route('managed-media.show', $official->photo_media_id) : null,
             ]),
-            'investment' => InvestmentOpportunity::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary']),
+            'investment' => InvestmentOpportunity::query()->public()->orderBy('display_order')->limit(3)->get(['slug', 'title', 'summary', 'sector']),
             'pages' => Page::query()->public()->where('verification_status', 'publishable')->whereIn('slug', ['mandate', 'organogram'])->pluck('slug'),
         ];
     }
