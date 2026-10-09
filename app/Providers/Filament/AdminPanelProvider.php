@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
+use App\Filament\Pages\Auth\PasswordReset\ResetPassword;
 use App\Filament\Pages\Profile;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
@@ -29,8 +32,11 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
-            ->passwordReset()
+            ->login(Login::class)
+            ->passwordReset(
+                RequestPasswordReset::class,
+                ResetPassword::class,
+            )
             ->profile(Profile::class)
             ->multiFactorAuthentication(AppAuthentication::make()->recoverable())
             ->brandName('Mutoko Rural District Council')
