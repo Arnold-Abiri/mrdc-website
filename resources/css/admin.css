@@ -4,6 +4,41 @@
 @source '../../resources/views';
 @source '../../vendor/filament/filament/resources/views';
 
+/* Admin toolbar */
+.fi-topbar { border-bottom: 1px solid #e6edf4; background: #fff; }
+.fi-topbar-start { flex: none; }
+.fi-topbar-start .fi-logo { margin-left: 0; }
+.fi-topbar .mrdc-admin-brand { color: #102345; }
+.fi-topbar .mrdc-admin-brand-copy small { color: #63748c; }
+.fi-topbar-end { flex: 1; min-width: 0; justify-content: flex-end; gap: .8rem; }
+.fi-topbar-end .fi-global-search-ctn { flex: 1 1 20rem; min-width: 8rem; max-width: 38rem; margin-right: auto; }
+.fi-topbar-end .fi-global-search,
+.fi-topbar-end .fi-global-search-field { width: 100%; }
+.fi-topbar-end .fi-global-search-field .fi-input-wrp { min-height: 2.35rem; border: 1px solid #e5edf5; border-radius: .45rem; background: #f1f5f9; box-shadow: none; }
+.mrdc-topbar-actions { display: flex; align-items: center; flex: none; gap: .7rem; margin-left: auto; }
+.mrdc-topbar-visit { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 2.35rem; padding: 0 .85rem; border-radius: .4rem; background: #078753; color: #fff; font-size: .73rem; font-weight: 700; white-space: nowrap; text-decoration: none; }
+.mrdc-topbar-visit:hover { background: #056f46; color: #fff; }
+.mrdc-topbar-visit svg { width: .9rem; height: .9rem; }
+.mrdc-topbar-alerts { position: relative; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-left: 1px solid #e8edf3; color: #102345; }
+.mrdc-topbar-alerts svg { width: 1.25rem; height: 1.25rem; }
+.mrdc-topbar-alert-count { position: absolute; top: -.1rem; right: -.16rem; display: grid; place-items: center; min-width: 1rem; height: 1rem; padding: 0 .15rem; border-radius: 1rem; background: #e51e32; color: #fff; font-size: .55rem; font-weight: 700; }
+.fi-topbar-end .fi-user-menu { flex: none; }
+.mrdc-topbar-user-meta { display: grid; gap: .05rem; max-width: 9rem; padding: 0; border: 0; background: transparent; text-align: left; line-height: 1.2; cursor: pointer; }
+.mrdc-topbar-user-meta:focus-visible { outline: 2px solid #078753; outline-offset: 4px; }
+.mrdc-topbar-user-meta:hover strong { color: #078753; }
+.mrdc-topbar-user-meta strong { overflow: hidden; color: #102345; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.mrdc-topbar-user-meta span { overflow: hidden; color: #63748c; font-size: .64rem; text-overflow: ellipsis; white-space: nowrap; }
+.fi-sidebar .mrdc-topbar-user-meta { display: none; }
+.dark .fi-topbar { border-color: #263c56; background: #101f34; }
+.dark .fi-topbar .mrdc-admin-brand,
+.dark .mrdc-topbar-alerts,
+.dark .mrdc-topbar-user-meta strong { color: #f2f6fb; }
+.dark .fi-topbar .mrdc-admin-brand-copy small,
+.dark .mrdc-topbar-user-meta span { color: #b6c7dd; }
+.dark .fi-topbar-end .fi-global-search-field .fi-input-wrp { border-color: #30445f; background: #1a2b43; }
+@media (max-width: 900px) { .mrdc-topbar-user-meta { display: none; } .fi-topbar-end { gap: .5rem; } }
+@media (max-width: 640px) { .mrdc-topbar-visit { width: 2.35rem; padding: 0; } .mrdc-topbar-visit span { display: none; } .fi-topbar-end .fi-global-search-ctn { min-width: 5rem; } .mrdc-topbar-actions { gap: .35rem; } }
+
 /* Council overview dashboard */
 .mrdc-council-page .fi-page-header-main-ctn { padding-top:.5rem; }
 .mrdc-council-page .fi-header { display:none; }
@@ -125,6 +160,10 @@
     flex: none;
     object-fit: contain;
 }
+
+.mrdc-admin-brand-mark-dark { display: none; }
+.fi-sidebar .mrdc-admin-brand-mark-light { display: none; }
+.fi-sidebar .mrdc-admin-brand-mark-dark { display: block; }
 
 .mrdc-admin-brand-copy {
     display: flex;

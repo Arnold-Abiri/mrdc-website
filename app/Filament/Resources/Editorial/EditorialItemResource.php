@@ -29,6 +29,8 @@ class EditorialItemResource extends Resource
 {
     protected static ?string $model = EditorialItem::class;
 
+    protected static ?string $recordTitleAttribute = 'title';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
 
     protected static \UnitEnum|string|null $navigationGroup = 'Content';
