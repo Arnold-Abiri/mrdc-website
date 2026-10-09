@@ -24,7 +24,7 @@ export default function CmsPage({ page }: { page: Page }) {
                 <nav aria-label="Breadcrumb"><a href={`/${locale}`}>Home</a> / {page.title}</nav>
                 <article>
                     <h1>{page.title}</h1>
-                    {page.is_review_content && <p role="note">Development review content — awaiting council approval.</p>}
+                    {page.is_review_content && <p role="note">This page is under council review.</p>}
                     {page.summary && <p>{page.summary}</p>}
                     {page.blocks.map((block, index) => {
                         if (block.type === 'heading') return <h2 key={index}>{block.text}</h2>;

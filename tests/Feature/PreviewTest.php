@@ -134,7 +134,7 @@ class PreviewTest extends TestCase
 
         $this->get('/preview/en/services/education-services')->assertOk()->assertHeader('X-Robots-Tag', 'noindex, nofollow');
         $this->get('/preview/en/news/demo-understanding-mrdc-role')->assertOk();
-        $this->get('/preview/en/notices/sample-service-announcement')->assertOk();
+        $this->get('/preview/en/notices/how-service-updates-are-communicated')->assertOk();
         $this->get('/preview/en/documents/demo-public-enquiry-guide')->assertOk();
         $this->get('/preview/en/wards/ward-01')->assertOk();
         $this->get('/preview/en/officials/demo-office-ceo')->assertOk();

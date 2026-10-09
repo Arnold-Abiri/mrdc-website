@@ -56,10 +56,10 @@ describe('homepage sections', () => {
     it('renders the about us section with core pillars and welcome image', () => {
         render(<AboutSection />);
         expect(screen.getByText('A Vibrant and Prosperous Mutoko')).toBeInTheDocument();
-        expect(screen.getByText('Service Delivery')).toBeInTheDocument();
-        expect(screen.getByText('Transparency')).toBeInTheDocument();
-        expect(screen.getByText('Sustainable Growth')).toBeInTheDocument();
-        expect(screen.getByText('Community Focus')).toBeInTheDocument();
+        expect(screen.getByText('Our Location')).toBeInTheDocument();
+        expect(screen.getByText('Our Communities')).toBeInTheDocument();
+        expect(screen.getByText('Our Mission')).toBeInTheDocument();
+        expect(screen.getByText('Vision 2030')).toBeInTheDocument();
         expect(screen.getByAltText('Welcome to Mutoko road entrance')).toBeInTheDocument();
     });
 
@@ -67,20 +67,19 @@ describe('homepage sections', () => {
         render(<KeyServicesSection />);
         expect(screen.getByText('Key Services')).toBeInTheDocument();
         expect(screen.getByText('Water Supply')).toBeInTheDocument();
-        expect(screen.getByText('Roads & Infrastructure')).toBeInTheDocument();
+        expect(screen.getByText('Roads & Works')).toBeInTheDocument();
         expect(screen.getByText('Health & Sanitation')).toBeInTheDocument();
-        expect(screen.getByText('Environmental Management')).toBeInTheDocument();
+        expect(screen.getByText('Environment & Conservation')).toBeInTheDocument();
     });
 
     it('shows empty states when no approved homepage CMS records exist', () => {
         render(<ManagedHomepageContent services={[]} documents={[]} departments={[]} notices={[]} />);
-        expect(screen.getByText('No approved services are available yet.')).toBeInTheDocument();
-        expect(screen.getByText('No approved documents are available yet.')).toBeInTheDocument();
-        expect(screen.getByText('No approved department information is available yet.')).toBeInTheDocument();
-        expect(screen.getByText('No approved notices are available yet.')).toBeInTheDocument();
-        expect(screen.getByText('No approved leadership profiles are available yet.')).toBeInTheDocument();
-        expect(screen.getByText('No approved ward profiles are available yet.')).toBeInTheDocument();
-        expect(screen.getByText('No approved contact details are available yet.')).toBeInTheDocument();
+        expect(screen.getByText('Approved services will appear here once published.')).toBeInTheDocument();
+        expect(screen.getByText('No published documents at this time.')).toBeInTheDocument();
+        expect(screen.getByText('No published notices at this time.')).toBeInTheDocument();
+        expect(screen.getByText('Leadership profiles are being prepared for publication.')).toBeInTheDocument();
+        expect(screen.getByText('Ward profiles are being prepared for publication.')).toBeInTheDocument();
+        expect(screen.getByText('Use our enquiry form and the team will respond.')).toBeInTheDocument();
     });
 
     it('renders development banner section with headline and metrics', () => {
@@ -133,7 +132,7 @@ describe('homepage sections', () => {
             />
         );
         expect(screen.getByText(longTitle)).toBeInTheDocument();
-        expect(screen.getAllByText('Image pending approval')).toHaveLength(2);
+        expect(document.querySelectorAll('.news-image .img-fallback')).toHaveLength(2);
         expect(screen.getByText('Fixture event')).toBeInTheDocument();
     });
 });

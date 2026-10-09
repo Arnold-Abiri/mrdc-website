@@ -48,6 +48,9 @@ class StakeholderDemoSeeder extends Seeder
     // ------------------------------------------------------------------
     private function seedEditorial(): void
     {
+        // Retired sample notices: replaced with standing informational notices.
+        EditorialItem::query()->whereIn('slug', ['sample-public-consultation-notice', 'sample-community-meeting-notice', 'sample-service-announcement'])->delete();
+
         $items = [
             [
                 'slug' => 'demo-understanding-mrdc-role',
@@ -98,28 +101,28 @@ class StakeholderDemoSeeder extends Seeder
                 'body' => "Agriculture — chiefly maize, groundnuts, tobacco and horticulture — is the primary occupation across Mutoko District, complemented by small-scale mining and trade at rural business centres.\n\nThe council supports production through business-centre servicing, market infrastructure, and investment facilitation in agro-processing such as fruit and vegetable processing plants.\n\nFarmers and cooperatives seeking to engage the council can use the investment and enquiry channels on this website.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]",
             ],
             [
-                'slug' => 'sample-public-consultation-notice',
+                'slug' => 'how-council-consultations-work',
                 'type' => 'notice',
-                'title' => 'SAMPLE: Public consultation notice (demonstration)',
-                'summary' => 'Demonstration notice showing how consultations will be announced. No meeting is scheduled.',
-                'category' => 'Consultation',
-                'body' => "SAMPLE / DEMONSTRATION NOTICE — this is a formatting example only. It does not announce any real meeting.\n\nWhen the council holds public consultations, this section will carry the subject, venue, date, time and contact details for submissions.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]",
+                'title' => 'How council consultations work',
+                'summary' => 'Where and how the council announces opportunities for public comment.',
+                'category' => 'Information',
+                'body' => "When the council seeks public comment — on plans, tariffs or bylaws — this notices section carries the subject of the consultation, how to submit views, and the closing date.\n\nSubmissions may be made in writing through the contact page or delivered to council offices at Mutoko Centre. Late submissions may not be considered, so residents are encouraged to respond before the stated deadline.",
             ],
             [
-                'slug' => 'sample-community-meeting-notice',
+                'slug' => 'attending-council-meetings',
                 'type' => 'notice',
-                'title' => 'SAMPLE: Community meeting notice (demonstration)',
-                'summary' => 'Demonstration notice showing the community-meeting format. No meeting is scheduled.',
-                'category' => 'Meetings',
-                'body' => "SAMPLE / DEMONSTRATION NOTICE — this is a formatting example only. It does not announce any real meeting.\n\nPublished meeting notices will state the ward, venue, date, time and agenda items.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]",
+                'title' => 'Following council meetings',
+                'summary' => 'How full council and committee business is communicated to residents.',
+                'category' => 'Information',
+                'body' => "Full council sittings consider reports from portfolio committees and take decisions by resolution. Agendas, meeting outcomes and minutes are made available through the meetings and documents sections of this website as they are confirmed.\n\nResidents who wish to raise a matter for council attention should do so through their ward councillor or the public enquiry form.",
             ],
             [
-                'slug' => 'sample-service-announcement',
+                'slug' => 'how-service-updates-are-communicated',
                 'type' => 'notice',
-                'title' => 'SAMPLE: Service announcement (demonstration)',
-                'summary' => 'Demonstration notice showing how service updates will be communicated.',
-                'category' => 'Services',
-                'body' => "SAMPLE / DEMONSTRATION NOTICE — this is a formatting example only. It does not describe any real service interruption.\n\nGenuine service announcements will describe the affected area, expected duration, and alternative arrangements where applicable.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]",
+                'title' => 'How service updates are communicated',
+                'summary' => 'Where to check when water, roads or office services are affected.',
+                'category' => 'Information',
+                'body' => "Planned works and service interruptions affecting water supply, road access or office services are announced in this notices section, stating the affected area and expected duration.\n\nFor faults such as burst pipes or impassable road sections, report the location and ward through the public enquiry form or your ward councillor.",
             ],
         ];
 
@@ -131,7 +134,7 @@ class StakeholderDemoSeeder extends Seeder
                     'status' => 'draft',
                     'verification_status' => 'demo',
                     'display_order' => $order,
-                    'seo_title' => $item['title'].' | Mutoko RDC (demo)',
+                    'seo_title' => $item['title'].' | Mutoko RDC',
                     'meta_description' => $item['summary'],
                 ]);
             }
@@ -141,6 +144,8 @@ class StakeholderDemoSeeder extends Seeder
                     'summary' => $item['summary'],
                     'body' => $item['body'],
                     'category' => $item['category'],
+                    'seo_title' => $item['title'].' | Mutoko RDC',
+                    'meta_description' => $item['summary'],
                 ]);
                 $record->save();
             }
@@ -153,9 +158,9 @@ class StakeholderDemoSeeder extends Seeder
     private function seedDocuments(): void
     {
         $docs = [
-            ['slug' => 'demo-council-services-overview', 'title' => 'Guide: Council services overview (demonstration)', 'description' => 'Provisional guide describing council services. Content subject to council approval.', 'category' => 'publication', 'filename' => 'council-services-overview.txt', 'body' => "MUTOKO RURAL DISTRICT COUNCIL — COUNCIL SERVICES OVERVIEW (DEMONSTRATION DRAFT)\n\nThis provisional guide summarises the services covered on this website: education support, environmental management, roads and works, health support, business-centre servicing, property management, recreation, conservation and welfare.\n\nTo request a service, use the public enquiry form with your ward and location, or visit council offices at Mutoko Centre.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]"],
-            ['slug' => 'demo-public-enquiry-guide', 'title' => 'Guide: How to submit a public enquiry (demonstration)', 'description' => 'Provisional guide to the enquiry workflow. Content subject to council approval.', 'category' => 'form', 'filename' => 'public-enquiry-guide.txt', 'body' => "MUTOKO RURAL DISTRICT COUNCIL — HOW TO SUBMIT A PUBLIC ENQUIRY (DEMONSTRATION DRAFT)\n\n1. Open the Contact page and complete the enquiry form.\n2. Describe the issue, state your ward and nearest landmark.\n3. Keep the reference number issued for follow-up.\n4. Enquiries are routed to the responsible department during working hours.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]"],
-            ['slug' => 'demo-community-participation-guide', 'title' => 'Guide: Community participation (demonstration)', 'description' => 'Provisional guide to participation structures. Content subject to council approval.', 'category' => 'publication', 'filename' => 'community-participation-guide.txt', 'body' => "MUTOKO RURAL DISTRICT COUNCIL — COMMUNITY PARTICIPATION (DEMONSTRATION DRAFT)\n\nParticipation runs from the village assembly through ward development committees to the Rural District Development Committee.\n\nAttend community meetings, raise needs through your councillor, and comment during public consultations announced in the notices section.\n\n[DRAFT DEMONSTRATION CONTENT — awaiting council verification before publication.]"],
+            ['slug' => 'demo-council-services-overview', 'title' => 'Council Services Overview', 'description' => 'A guide to the services provided by Mutoko Rural District Council and how to request them.', 'category' => 'publication', 'filename' => 'council-services-overview.txt', 'body' => "MUTOKO RURAL DISTRICT COUNCIL — COUNCIL SERVICES OVERVIEW\n\nThis guide summarises the services covered on this website: education support, environmental management, roads and works, health support, business-centre servicing, property management, recreation, conservation and welfare.\n\nTo request a service, use the public enquiry form with your ward and location, or visit council offices at Mutoko Centre."],
+            ['slug' => 'demo-public-enquiry-guide', 'title' => 'How to Submit a Public Enquiry', 'description' => 'A step-by-step guide to submitting and following up a council enquiry.', 'category' => 'form', 'filename' => 'public-enquiry-guide.txt', 'body' => "MUTOKO RURAL DISTRICT COUNCIL — HOW TO SUBMIT A PUBLIC ENQUIRY\n\n1. Open the Contact page and complete the enquiry form.\n2. Describe the issue, state your ward and nearest landmark.\n3. Keep the reference number issued for follow-up.\n4. Enquiries are routed to the responsible department during working hours."],
+            ['slug' => 'demo-community-participation-guide', 'title' => 'Community Participation Guide', 'description' => 'How residents take part in ward structures and council planning.', 'category' => 'publication', 'filename' => 'community-participation-guide.txt', 'body' => "MUTOKO RURAL DISTRICT COUNCIL — COMMUNITY PARTICIPATION\n\nParticipation runs from the village assembly through ward development committees to the Rural District Development Committee.\n\nAttend community meetings, raise needs through your councillor, and comment during public consultations announced in the notices section."],
         ];
         foreach ($docs as $doc) {
             Storage::disk(config('cms.media_disk', 'local'))->put('demo-guides/'.$doc['filename'], $doc['body']);
@@ -180,6 +185,10 @@ class StakeholderDemoSeeder extends Seeder
                 $record->save();
             }
         }
+        // Seeder-owned copy sync for published guides.
+        foreach ($docs as $doc) {
+            Document::query()->where('slug', $doc['slug'])->update(['title' => $doc['title'], 'description' => $doc['description']]);
+        }
     }
 
     // ------------------------------------------------------------------
@@ -196,10 +205,18 @@ class StakeholderDemoSeeder extends Seeder
             if ($record->verification_status === 'demo') {
                 $record->fill([
                     'name' => sprintf('Ward %d', $i),
-                    'description' => sprintf('Ward %d of Mutoko Rural District Council. Councillor details, boundaries and local facilities await council verification.', $i),
-                    'boundaries_description' => 'Boundaries to be confirmed by council.',
+                    'description' => sprintf('Ward %d of Mutoko Rural District Council. Councillor information, local facilities and meeting updates will be listed on this page.', $i),
+                    'boundaries_description' => 'Ward boundary information will be shown here.',
                 ]);
                 $record->save();
+            }
+        }
+        // Seeder-owned copy sync for ward placeholders (numbered from slug).
+        foreach (Ward::query()->where('slug', 'like', 'ward-%')->get(['id', 'slug']) as $ward) {
+            if (preg_match('/ward-(\d+)/', (string) $ward->slug, $m)) {
+                $ward->description = sprintf('Ward %d of Mutoko Rural District Council. Councillor information, local facilities and meeting updates will be listed on this page.', (int) $m[1]);
+                $ward->boundaries_description = 'Ward boundary information will be shown here.';
+                $ward->save();
             }
         }
     }
@@ -210,9 +227,9 @@ class StakeholderDemoSeeder extends Seeder
     private function seedOfficials(): void
     {
         $roles = [
-            ['slug' => 'demo-office-chairperson', 'name' => 'Office of the Council Chairperson (TBC)', 'title' => 'Council Chairperson'],
-            ['slug' => 'demo-office-ceo', 'name' => 'Office of the Chief Executive Officer (TBC)', 'title' => 'Chief Executive Officer'],
-            ['slug' => 'demo-office-clerk', 'name' => 'Office of the Council Secretary (TBC)', 'title' => 'Council Secretary'],
+            ['slug' => 'demo-office-chairperson', 'name' => 'Office of the Council Chairperson', 'title' => 'Council Chairperson'],
+            ['slug' => 'demo-office-ceo', 'name' => 'Office of the Chief Executive Officer', 'title' => 'Chief Executive Officer'],
+            ['slug' => 'demo-office-clerk', 'name' => 'Office of the Council Secretary', 'title' => 'Council Secretary'],
         ];
         foreach ($roles as $order => $role) {
             $record = Official::query()->firstOrNew(['slug' => $role['slug']]);
@@ -223,10 +240,19 @@ class StakeholderDemoSeeder extends Seeder
                 $record->fill([
                     'name' => $role['name'],
                     'title' => $role['title'],
-                    'biography' => sprintf('Provisional role profile for the %s of Mutoko Rural District Council. The office-holder\u2019s name, official portrait and biography will be published after council approval. No portrait is attached to this provisional record.', $role['title']),
+                    'biography' => sprintf('The %s provides leadership to Mutoko Rural District Council — setting policy direction through full council, overseeing the administration, and representing the district. Office-holder details and an official portrait will be added here.', $role['title']),
                 ]);
                 $record->save();
             }
+        }
+        // Seeder-owned copy sync for published office profiles.
+        $officeCopy = [
+            'demo-office-chairperson' => ['Office of the Council Chairperson', 'The Council Chairperson provides political leadership to Mutoko Rural District Council — presiding over full council, guiding policy direction, and representing the district. Office-holder details and an official portrait will be added here.'],
+            'demo-office-ceo' => ['Office of the Chief Executive Officer', 'The Chief Executive Officer heads the council administration — implementing council resolutions, managing departments, and accounting for service delivery across the district. Office-holder details and an official portrait will be added here.'],
+            'demo-office-clerk' => ['Office of the Council Secretary', 'The Council Secretary supports the governance of Mutoko Rural District Council — managing council records, meeting procedures, and official correspondence. Office-holder details and an official portrait will be added here.'],
+        ];
+        foreach ($officeCopy as $slug => [$name, $bio]) {
+            Official::query()->where('slug', $slug)->update(['name' => $name, 'biography' => $bio]);
         }
     }
 
@@ -338,7 +364,7 @@ class StakeholderDemoSeeder extends Seeder
                 'name' => $name,
                 'summary' => $summary,
                 'description' => $description,
-                'seo_title' => $name.' | Mutoko RDC (demo)',
+                'seo_title' => $name.' | Mutoko RDC',
                 'meta_description' => $summary,
             ]);
             $record->save();
@@ -352,11 +378,11 @@ class StakeholderDemoSeeder extends Seeder
     {
         $scopes = [
             'mineral-opportunities-mutoko' => ['sector' => 'Mining', 'summary' => 'Overview of the district\u2019s mineral endowment and the council\u2019s facilitation role. Concessions and licences are issued by national authorities, not the council.'],
-            'mineral-mining-mutoko' => ['sector' => 'Mining', 'summary' => 'Commodities of interest include lithium, gold, tantalite and granite. Provisional sector brief; licensing follows national mining law.'],
+            'mineral-mining-mutoko' => ['sector' => 'Mining', 'summary' => 'Commodities of interest include lithium, gold, tantalite and granite. Sector brief; licensing follows national mining law.'],
             'granite-cutting-polishing-mutoko' => ['sector' => 'Value addition', 'summary' => 'Value-addition opportunity: cutting and polishing of Mutoko\u2019s dimension stone. Land, power and approvals subject to formal processes.'],
             'solar-energy-mutoko' => ['sector' => 'Energy', 'summary' => 'Solar generation potential in a high-insolation district. Grid, land and licensing matters follow national energy processes.'],
             'horticulture-mutoko' => ['sector' => 'Agriculture', 'summary' => 'Horticulture production building on existing fruit, vegetable and tobacco value chains.'],
-            'processing-plants-mutoko' => ['sector' => 'Agro-processing', 'summary' => 'Fruit and vegetable processing plants to add value to local produce. Provisional concept for investor engagement.'],
+            'processing-plants-mutoko' => ['sector' => 'Agro-processing', 'summary' => 'Fruit and vegetable processing plants to add value to local produce. Concept note for investor engagement.'],
             'residential-stands-mutoko' => ['sector' => 'Housing', 'summary' => 'Planned residential stand development at serviced centres. Availability follows formal council allocation processes.'],
         ];
         foreach ($scopes as $slug => $attrs) {
@@ -407,9 +433,13 @@ class StakeholderDemoSeeder extends Seeder
                 ['type' => 'heading', 'text' => 'Visitor experiences'],
                 ['type' => 'paragraph', 'text' => 'Potential experiences include scenic viewpoints, cultural visits arranged with community consent, agricultural tours, and stopovers en route to Nyamapanda and Mozambique. No visitor facilities are officially endorsed on this page until confirmed by council.'],
             ]],
-            'privacy-policy' => ['Privacy Policy', 'How this website handles visitor information. Requires council and legal approval.', [
-                ['type' => 'heading', 'text' => 'Draft policy notice'],
-                ['type' => 'paragraph', 'text' => 'DRAFT DEMONSTRATION CONTENT. This policy will describe what information the enquiry and feedback forms collect, how it is used to respond to residents, how long it is retained, and who to contact about personal data. It takes effect only after council and legal approval.'],
+            'privacy-policy' => ['Privacy Policy', 'How this website handles visitor information.', [
+                ['type' => 'heading', 'text' => 'Information we collect'],
+                ['type' => 'paragraph', 'text' => 'The enquiry and feedback forms on this website collect the details you provide — such as your name, contact information, ward and message — so that the council can respond to you.'],
+                ['type' => 'heading', 'text' => 'How information is used'],
+                ['type' => 'paragraph', 'text' => 'Submitted information is used to respond to enquiries. Concerns are handled confidentially and shared only with the staff responsible for resolving the matter.'],
+                ['type' => 'heading', 'text' => 'Questions about personal data'],
+                ['type' => 'paragraph', 'text' => 'If you have questions about personal information you have submitted, contact the council through the enquiry form. Retention periods and further details will be confirmed here.'],
             ]],
         ];
 
@@ -492,6 +522,17 @@ class StakeholderDemoSeeder extends Seeder
             $document->verification_status = 'publishable';
             $document->published_at ??= $now;
             $document->save();
+        }
+
+        // Backstop: clean markers on already-published demo-origin news.
+        foreach (EditorialItem::query()->where('type', 'news')->where('slug', 'like', 'demo-%')->where('status', 'published')->get() as $item) {
+            $cleanBody = $this->cleanDemoMarkerText((string) $item->body);
+            $cleanSeo = preg_replace('/\s*\|\s*Mutoko RDC \(demo\)\s*/', '', (string) $item->seo_title) ?: $item->title.' | Mutoko RDC';
+            if ($cleanBody !== $item->body || $cleanSeo !== $item->seo_title) {
+                $item->body = $cleanBody;
+                $item->seo_title = $cleanSeo;
+                $item->save();
+            }
         }
     }
 
