@@ -26,6 +26,8 @@ class ProjectUpdateResource extends Resource
     protected static ?string $model = ProjectUpdate::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingUp;
+    protected static \UnitEnum|string|null $navigationGroup = 'Services & Development';
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Project updates';
 

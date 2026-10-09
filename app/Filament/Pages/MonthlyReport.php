@@ -14,6 +14,8 @@ class MonthlyReport extends FilamentPage
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentChartBar;
 
     protected static ?string $navigationLabel = 'Monthly report';
+    protected static \UnitEnum|string|null $navigationGroup = 'Reports & Monitoring';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $title = 'Monthly performance report';
 

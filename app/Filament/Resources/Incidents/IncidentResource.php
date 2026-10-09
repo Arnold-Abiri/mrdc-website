@@ -23,6 +23,8 @@ class IncidentResource extends Resource
     protected static ?string $model = Incident::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
+    protected static \UnitEnum|string|null $navigationGroup = 'Public Enquiries';
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Incidents';
 

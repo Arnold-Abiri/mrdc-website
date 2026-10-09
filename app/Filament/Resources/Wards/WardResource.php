@@ -27,6 +27,8 @@ class WardResource extends Resource
     protected static ?string $model = Ward::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMap;
+    protected static \UnitEnum|string|null $navigationGroup = 'Council';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

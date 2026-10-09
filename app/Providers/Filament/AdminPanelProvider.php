@@ -36,6 +36,14 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#0B8F62'),
             ])
+            ->navigationGroups([
+                'Content',
+                'Council',
+                'Services & Development',
+                'Public Enquiries',
+                'Reports & Monitoring',
+                'Administration',
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

@@ -12,6 +12,8 @@ class AnalyticsDashboard extends FilamentPage
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static ?string $navigationLabel = 'M&E dashboard';
+    protected static \UnitEnum|string|null $navigationGroup = 'Reports & Monitoring';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $title = 'Monitoring & Evaluation';
 

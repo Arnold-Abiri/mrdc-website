@@ -18,6 +18,8 @@ class AuditEventResource extends Resource
     protected static ?string $model = AuditEvent::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static \UnitEnum|string|null $navigationGroup = 'Reports & Monitoring';
+    protected static ?int $navigationSort = 4;
 
     public static function infolist(Schema $schema): Schema
     {

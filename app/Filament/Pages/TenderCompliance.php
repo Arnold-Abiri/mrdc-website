@@ -15,6 +15,8 @@ class TenderCompliance extends Page
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
     protected static ?string $navigationLabel = 'Tender compliance';
+    protected static \UnitEnum|string|null $navigationGroup = 'Services & Development';
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $title = 'Tender compliance';
 

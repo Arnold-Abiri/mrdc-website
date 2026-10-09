@@ -22,6 +22,8 @@ class ErrorEventResource extends Resource
     protected static ?string $model = ErrorEvent::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
+    protected static \UnitEnum|string|null $navigationGroup = 'Reports & Monitoring';
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationLabel = 'Error events';
 

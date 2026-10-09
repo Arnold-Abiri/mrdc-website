@@ -31,6 +31,8 @@ class TenderResource extends Resource
     protected static ?string $model = Tender::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
+    protected static \UnitEnum|string|null $navigationGroup = 'Services & Development';
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationLabel = 'Tenders';
 

@@ -25,6 +25,8 @@ class TranslationStatus extends FilamentPage
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
     protected static ?string $navigationLabel = 'Translation status';
+    protected static \UnitEnum|string|null $navigationGroup = 'Content';
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $title = 'Translation status';
 

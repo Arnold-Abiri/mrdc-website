@@ -25,6 +25,8 @@ class HomepageSlideResource extends Resource
     protected static ?string $model = HomepageSlide::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+    protected static \UnitEnum|string|null $navigationGroup = 'Content';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Homepage slides';
 

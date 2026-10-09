@@ -13,6 +13,8 @@ class AuditReport extends FilamentPage
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     protected static ?string $navigationLabel = 'Audit report';
+    protected static \UnitEnum|string|null $navigationGroup = 'Reports & Monitoring';
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $title = 'Audit report';
 

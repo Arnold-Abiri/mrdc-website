@@ -22,6 +22,8 @@ class EnquiryResource extends Resource
     protected static ?string $model = Enquiry::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
+    protected static \UnitEnum|string|null $navigationGroup = 'Public Enquiries';
+    protected static ?int $navigationSort = 1;
 
     public static function infolist(Schema $schema): Schema
     {

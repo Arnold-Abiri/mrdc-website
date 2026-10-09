@@ -28,6 +28,8 @@ class OfficialResource extends Resource
     protected static ?string $model = Official::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
+    protected static \UnitEnum|string|null $navigationGroup = 'Council';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
