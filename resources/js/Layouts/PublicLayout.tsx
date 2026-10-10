@@ -63,6 +63,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     useEffect(() => { document.documentElement.lang = locale; }, [locale]);
     const menuButton = useRef<HTMLButtonElement>(null);
 
+    const [searchOpen, setSearchOpen] = useState(false);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+    const openSearchBtnRef = useRef<HTMLButtonElement>(null);
+
     useEffect(() => {
         if (!open) return;
         const closeOnEscape = (event: KeyboardEvent) => {
@@ -74,6 +78,38 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         document.addEventListener('keydown', closeOnEscape);
         return () => document.removeEventListener('keydown', closeOnEscape);
     }, [open]);
+
+    useEffect(() => {
+        if (!searchOpen) return;
+        document.body.style.overflow = 'hidden';
+        const timer = setTimeout(() => {
+            searchInputRef.current?.focus();
+        }, 60);
+
+        const closeSearchOnEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setSearchOpen(false);
+                openSearchBtnRef.current?.focus();
+            }
+        };
+        document.addEventListener('keydown', closeSearchOnEscape);
+
+        return () => {
+            document.body.style.overflow = '';
+            clearTimeout(timer);
+            document.removeEventListener('keydown', closeSearchOnEscape);
+        };
+    }, [searchOpen]);
+
+    const openSearch = () => {
+        setOpen(false);
+        setSearchOpen(true);
+    };
+
+    const closeSearch = () => {
+        setSearchOpen(false);
+        openSearchBtnRef.current?.focus();
+    };
 
     return (
         <>
@@ -144,17 +180,33 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         </span>
                     </a>
 
-                    <button
-                        ref={menuButton}
-                        className="menu-toggle"
-                        type="button"
-                        aria-expanded={open}
-                        aria-controls="primary-navigation"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? t('closeMenu') : t('menu')}
-                        <span className="menu-lines" aria-hidden="true">☰</span>
-                    </button>
+                    <div className="header-actions">
+                        <button
+                            ref={openSearchBtnRef}
+                            type="button"
+                            className="header-search-icon-btn"
+                            aria-label={t('search')}
+                            title={t('search')}
+                            onClick={openSearch}
+                        >
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <line x1="16.5" y1="16.5" x2="21" y2="21" />
+                            </svg>
+                        </button>
+
+                        <button
+                            ref={menuButton}
+                            className="menu-toggle"
+                            type="button"
+                            aria-expanded={open}
+                            aria-controls="primary-navigation"
+                            onClick={() => setOpen(!open)}
+                        >
+                            {open ? t('closeMenu') : t('menu')}
+                            <span className="menu-lines" aria-hidden="true">☰</span>
+                        </button>
+                    </div>
 
                     <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label={t('primaryNavigation')}>
                         {navigation.map(item =>
@@ -187,13 +239,18 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 </a>
                             )
                         )}
-                        <a href={L("/search")} className="nav-search-pill" aria-label={t('search')}>
+                        <button
+                            type="button"
+                            className="nav-search-pill"
+                            aria-label={t('search')}
+                            onClick={openSearch}
+                        >
                             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <circle cx="11" cy="11" r="7" />
                                 <line x1="16.5" y1="16.5" x2="21" y2="21" />
                             </svg>
                             <span>{t('search')}</span>
-                        </a>
+                        </button>
                     </nav>
                 </div>
 
@@ -209,6 +266,71 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </svg>
                 </div>
             </header>
+
+            {/* Harare-style Fullscreen Search Modal Overlay */}
+            <div
+                id="search-overlay"
+                className={`search-overlay${searchOpen ? ' open' : ''}`}
+                role="dialog"
+                aria-modal="true"
+                aria-label={t('search')}
+                aria-hidden={!searchOpen}
+                onClick={(e) => { if (e.target === e.currentTarget) closeSearch(); }}
+            >
+                <button
+                    type="button"
+                    className="search-overlay-close"
+                    aria-label={t('closeMenu')}
+                    onClick={closeSearch}
+                >
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                <div className="search-overlay-box">
+                    <div className="search-overlay-label">
+                        Search Mutoko Rural District Council
+                    </div>
+
+                    <form className="search-overlay-form" action={`/${locale}/search`} method="get" role="search">
+                        <svg className="search-overlay-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7" />
+                            <line x1="16.5" y1="16.5" x2="21" y2="21" />
+                        </svg>
+
+                        <input
+                            ref={searchInputRef}
+                            className="search-overlay-input"
+                            id="search-overlay-input"
+                            type="search"
+                            name="q"
+                            placeholder="Search services, notices, tenders, wards, documents..."
+                            autoComplete="off"
+                            aria-label={t('searchCouncilPages')}
+                        />
+
+                        <button className="search-overlay-submit" type="submit" aria-label={t('search')}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                            </svg>
+                        </button>
+                    </form>
+
+                    <div className="search-overlay-hints" aria-label="Search suggestions">
+                        <span className="search-hints-title">Popular searches:</span>
+                        <a className="search-hint" href={L('/rates')}>Rates &amp; Payments</a>
+                        <a className="search-hint" href={L('/services')}>Council Services</a>
+                        <a className="search-hint" href={L('/tenders')}>Tenders &amp; Procurement</a>
+                        <a className="search-hint" href={L('/notices')}>Public Notices</a>
+                        <a className="search-hint" href={L('/documents')}>Documents &amp; By-Laws</a>
+                        <a className="search-hint" href={L('/wards')}>Wards &amp; Councillors</a>
+                        <a className="search-hint" href={L('/feedback')}>Feedback &amp; Faults</a>
+                    </div>
+                </div>
+            </div>
 
             <main id="main" tabIndex={-1}>{children}</main>
 

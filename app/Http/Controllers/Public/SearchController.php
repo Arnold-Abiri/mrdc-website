@@ -135,6 +135,26 @@ class SearchController extends Controller
             'url' => public_route('projects.show', $project->slug), 'is_review_content' => false,
         ]);
 
-        return Inertia::render('Search', ['query' => $query, 'results' => $pageResults->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->concat($projectResults)->take(20)->values()]);
+        $staticResults = collect();
+        $lowerQuery = mb_strtolower($query);
+        if ($query !== '' && (
+            str_contains($lowerQuery, 'rate') ||
+            str_contains($lowerQuery, 'bill') ||
+            str_contains($lowerQuery, 'pay') ||
+            str_contains($lowerQuery, 'charge') ||
+            str_contains($lowerQuery, 'fee') ||
+            str_contains($lowerQuery, 'mutero') ||
+            str_contains($lowerQuery, 'terela')
+        )) {
+            $staticResults->push([
+                'type' => 'Service',
+                'title' => 'Council Rates, Charges & Payment Channels',
+                'summary' => 'Access current rate schedules, approved council tariffs, billing schedules, and official banking and mobile payment channels for Mutoko Rural District Council.',
+                'url' => public_route('rates.index'),
+                'is_review_content' => false,
+            ]);
+        }
+
+        return Inertia::render('Search', ['query' => $query, 'results' => $staticResults->concat($pageResults)->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->concat($projectResults)->take(20)->values()]);
     }
 }
