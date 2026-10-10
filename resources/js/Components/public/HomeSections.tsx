@@ -457,8 +457,8 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                         src="/images/home/welcome-sign.webp"
                         alt="Welcome to Mutoko road entrance"
                         className="about-image"
-                        width="320"
-                        height="280"
+                        width="1313"
+                        height="1198"
                     />
                 </div>
             </div>
@@ -804,6 +804,49 @@ function StatIcon({ name }: { name: string | null }) {
     }
 }
 
+function getServiceDomain(slug: string): { label: string; themeClass: string; iconPath: string } {
+    if (slug.includes('water') || slug.includes('sanitation')) {
+        return {
+            label: 'Water & Utilities',
+            themeClass: 'service-theme-water',
+            iconPath: 'M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z',
+        };
+    }
+    if (slug.includes('road') || slug.includes('works') || slug.includes('transport')) {
+        return {
+            label: 'Infrastructure',
+            themeClass: 'service-theme-roads',
+            iconPath: 'M4 19L19 4M8 20l4-8 4-8M12 22V2',
+        };
+    }
+    if (slug.includes('health') || slug.includes('clinic')) {
+        return {
+            label: 'Public Health',
+            themeClass: 'service-theme-health',
+            iconPath: 'M22 12h-4l-3 9L9 3l-3 9H2',
+        };
+    }
+    if (slug.includes('environment') || slug.includes('waste')) {
+        return {
+            label: 'Environment',
+            themeClass: 'service-theme-environment',
+            iconPath: 'M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12A10 10 0 0 1 12 2zm0 4a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6z',
+        };
+    }
+    if (slug.includes('property') || slug.includes('stand') || slug.includes('housing') || slug.includes('business')) {
+        return {
+            label: 'Land & Planning',
+            themeClass: 'service-theme-land',
+            iconPath: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+        };
+    }
+    return {
+        label: 'Ward Delivery',
+        themeClass: 'service-theme-civic',
+        iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+    };
+}
+
 export function ManagedHomepageContent({ preview = false, services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { preview?: boolean; services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
     const locale = usePublicLocale();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
@@ -824,7 +867,7 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                 </dl>
             </div>
         </section>}
-        <section id="services" className="managed-section" aria-labelledby="managed-services-heading">
+        <section id="services" className="managed-section managed-services-section" aria-labelledby="managed-services-heading">
             <div className="container">
                 <div className="managed-section-header">
                     <div className="managed-header-copy">
@@ -838,30 +881,35 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     </a>
                 </div>
                 <div className="managed-services-grid">
-                    {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-service-card-2026">
-                        <div className="managed-service-card-top">
-                            <span className="managed-service-icon-badge" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                </svg>
-                            </span>
-                            <span className="managed-service-tag">Ward Delivery</span>
-                        </div>
-                        <div className="managed-service-card-body">
-                            <h3><a href={P('services', item.slug)}>{item.name}</a></h3>
-                            {item.summary && <p>{item.summary}</p>}
-                        </div>
-                        <div className="managed-service-card-footer">
-                            <a className="managed-service-action-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>
-                                <span>Access service</span>
-                                <span aria-hidden="true">→</span>
-                            </a>
-                        </div>
-                    </article>) : <p className="managed-empty">Approved services will appear here once published.</p>}
+                    {services.length ? services.slice(0, 6).map(item => {
+                        const domain = getServiceDomain(item.slug);
+                        return (
+                            <article key={item.slug} className={`managed-service-card-2026 ${domain.themeClass}`}>
+                                <div className="managed-service-card-top">
+                                    <span className="managed-service-icon-badge" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d={domain.iconPath} />
+                                        </svg>
+                                    </span>
+                                    <span className="managed-service-tag">{domain.label}</span>
+                                </div>
+                                <div className="managed-service-card-body">
+                                    <h3><a href={P('services', item.slug)}>{item.name}</a></h3>
+                                    {item.summary && <p>{item.summary}</p>}
+                                </div>
+                                <div className="managed-service-card-footer">
+                                    <a className="managed-service-action-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>
+                                        <span>Access service</span>
+                                        <span aria-hidden="true">→</span>
+                                    </a>
+                                </div>
+                            </article>
+                        );
+                    }) : <p className="managed-empty">Approved services will appear here once published.</p>}
                 </div>
             </div>
         </section>
-        <section className="managed-section managed-alt" aria-labelledby="managed-notices-heading">
+        <section className="managed-section managed-notices-section" aria-labelledby="managed-notices-heading">
             <div className="container">
                 <div className="managed-section-header">
                     <div className="managed-header-copy">
@@ -878,20 +926,21 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     {notices.length ? notices.slice(0, 4).map(item => <article key={item.slug} className="managed-notice-card-2026">
                         <div className="managed-notice-card-top">
                             <span className="managed-notice-tag">Notice</span>
-                            <span className="managed-notice-indicator" aria-hidden="true">Official</span>
+                            <span className="managed-notice-indicator" aria-hidden="true">Official Bulletin</span>
                         </div>
                         <div className="managed-notice-card-body">
                             <h3><a href={P('notices', item.slug)}>{item.title}</a></h3>
                             {item.summary && <p>{item.summary}</p>}
                         </div>
                         <div className="managed-notice-card-footer">
+                            <span className="managed-notice-cta-text">Read Announcement</span>
                             <a className="managed-row-link" href={P('notices', item.slug)} aria-label={`Read notice: ${item.title}`}>→</a>
                         </div>
                     </article>) : <p className="managed-empty">No published notices at this time.</p>}
                 </div>
             </div>
         </section>
-        <section className="managed-section" aria-labelledby="managed-documents-heading">
+        <section className="managed-section managed-documents-section" aria-labelledby="managed-documents-heading">
             <div className="container">
                 <div className="managed-section-header">
                     <div className="managed-header-copy">
@@ -916,15 +965,16 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                     <polyline points="10 9 9 9 8 9" />
                                 </svg>
                             </span>
-                            <span className="managed-doc-pill">PDF Document</span>
+                            <span className="managed-doc-pill">Approved Public Release</span>
                         </div>
                         <div className="managed-doc-card-body">
                             <h3><a href={P('documents', item.slug)}>{item.title}</a></h3>
                             {item.description && <p>{item.description}</p>}
                         </div>
                         <div className="managed-doc-card-footer">
+                            <span className="managed-doc-format-tag">PDF Publication</span>
                             <a className="managed-doc-download-link" href={P('documents', item.slug)} aria-label={`View document ${item.title}`}>
-                                <span>View Document</span>
+                                <span>Download / View</span>
                                 <span aria-hidden="true">→</span>
                             </a>
                         </div>

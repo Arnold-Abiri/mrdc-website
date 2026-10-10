@@ -158,10 +158,10 @@ describe('homepage sections', () => {
         expect(screen.getByText('Road network maintenance')).toBeInTheDocument();
         expect(screen.getByText('Access service')).toBeInTheDocument();
         expect(screen.getByText('Budget Consultation Notice')).toBeInTheDocument();
-        expect(screen.getByText('Official')).toBeInTheDocument();
+        expect(screen.getByText('Official Bulletin')).toBeInTheDocument();
         expect(screen.getByText('Mutoko Master Plan')).toBeInTheDocument();
-        expect(screen.getByText('PDF Document')).toBeInTheDocument();
-        expect(screen.getByText('View Document')).toBeInTheDocument();
+        expect(screen.getByText('Approved Public Release')).toBeInTheDocument();
+        expect(screen.getByText('Download / View')).toBeInTheDocument();
         expect(screen.getByText('Council CEO')).toBeInTheDocument();
         expect(screen.getByText('Main Office:')).toBeInTheDocument();
     });

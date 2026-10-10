@@ -2896,9 +2896,20 @@ h3 { margin: 0; }
   padding-block: 80px;
   max-width: 760px;
 }
-/* Managed homepage editorial sections */
-.managed-section { background: #fff; border-bottom: 1px solid var(--color-border); padding-block: 48px; }
-.managed-alt { background: #f8fafc; }
+/* Managed homepage editorial sections with alternating visual rhythm */
+.managed-section { background: #FFFFFF; border-bottom: 1px solid var(--color-border); padding-block: 56px; }
+.managed-alt { background: #F8FAFC; }
+.managed-services-section {
+  background: #F8FAFC;
+  position: relative;
+}
+.managed-notices-section {
+  background: #FFFFFF;
+}
+.managed-documents-section {
+  background: #F1F5F9;
+  border-top: 1px solid rgba(11, 45, 77, 0.06);
+}
 .managed-split { display: grid; gap: 24px; grid-template-columns: 1fr; }
 @media (min-width: 900px) { .managed-split { grid-template-columns: minmax(260px, 320px) 1fr; gap: 40px; } }
 .managed-eyebrow { color: var(--color-deep-green); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 8px; }
@@ -2939,15 +2950,16 @@ h3 { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #F1F5F9;
+  background: #FFFFFF;
   color: var(--color-civic-navy);
   font-weight: 700;
   font-size: 0.88rem;
-  padding: 10px 18px;
+  padding: 10px 20px;
   border-radius: 9999px;
   border: 1px solid var(--color-border);
   text-decoration: none;
   white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: all 0.2s ease;
 }
 .managed-viewall-btn:hover {
@@ -2955,12 +2967,13 @@ h3 { margin: 0; }
   color: #FFFFFF;
   border-color: var(--color-deep-green);
   transform: translateX(2px);
+  box-shadow: 0 4px 12px rgba(11, 143, 98, 0.25);
 }
 
-/* 2026 Responsive Services Grid */
+/* 2026 Responsive Services Grid & Domain Themes */
 .managed-services-grid {
   display: grid;
-  gap: 20px;
+  gap: 22px;
   grid-template-columns: 1fr;
 }
 @media (min-width: 640px) {
@@ -2975,50 +2988,135 @@ h3 { margin: 0; }
 }
 .managed-service-card-2026 {
   background: #FFFFFF;
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 22px;
+  border: 1px solid rgba(11, 45, 77, 0.09);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  box-shadow: 0 2px 8px rgba(11, 45, 77, 0.04);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 4px 14px rgba(11, 45, 77, 0.05);
+}
+.managed-service-card-2026::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--service-accent, var(--color-council-green));
 }
 .managed-service-card-2026:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-council-green);
-  box-shadow: 0 10px 24px rgba(11, 45, 77, 0.09);
+  transform: translateY(-4px);
+  border-color: var(--service-accent, var(--color-council-green));
+  box-shadow: 0 14px 30px rgba(11, 45, 77, 0.12);
 }
+
+/* Domain-Specific Accents */
+.service-theme-water {
+  --service-accent: #0284C7;
+}
+.service-theme-water .managed-service-icon-badge {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+.service-theme-water .managed-service-tag {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+.service-theme-roads {
+  --service-accent: #D97706;
+}
+.service-theme-roads .managed-service-icon-badge {
+  background: #FEF3C7;
+  color: #B45309;
+}
+.service-theme-roads .managed-service-tag {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.service-theme-health {
+  --service-accent: #E11D48;
+}
+.service-theme-health .managed-service-icon-badge {
+  background: #FFE4E6;
+  color: #BE123C;
+}
+.service-theme-health .managed-service-tag {
+  background: #FFE4E6;
+  color: #BE123C;
+}
+
+.service-theme-environment {
+  --service-accent: #059669;
+}
+.service-theme-environment .managed-service-icon-badge {
+  background: #D1FAE5;
+  color: #047857;
+}
+.service-theme-environment .managed-service-tag {
+  background: #D1FAE5;
+  color: #047857;
+}
+
+.service-theme-land {
+  --service-accent: #4F46E5;
+}
+.service-theme-land .managed-service-icon-badge {
+  background: #EEF2FF;
+  color: #4338CA;
+}
+.service-theme-land .managed-service-tag {
+  background: #EEF2FF;
+  color: #4338CA;
+}
+
+.service-theme-civic {
+  --service-accent: var(--color-council-green);
+}
+.service-theme-civic .managed-service-icon-badge {
+  background: var(--color-sky-tint);
+  color: var(--color-deep-green);
+}
+.service-theme-civic .managed-service-tag {
+  background: rgba(11, 143, 98, 0.1);
+  color: var(--color-deep-green);
+}
+
 .managed-service-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 .managed-service-icon-badge {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display: grid;
   place-items: center;
-  background: var(--color-sky-tint);
-  color: var(--color-deep-green);
+  transition: transform 0.2s ease;
+}
+.managed-service-card-2026:hover .managed-service-icon-badge {
+  transform: scale(1.06);
 }
 .managed-service-icon-badge svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 .managed-service-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-deep-green);
-  background: rgba(11, 143, 98, 0.1);
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
 }
 .managed-service-card-body h3 {
-  font-size: 1.12rem;
+  font-size: 1.15rem;
   font-weight: 800;
   margin: 0 0 8px;
   line-height: 1.3;
@@ -3028,38 +3126,38 @@ h3 { margin: 0; }
   text-decoration: none;
 }
 .managed-service-card-body h3 a:hover {
-  color: var(--color-deep-green);
+  color: var(--service-accent, var(--color-deep-green));
 }
 .managed-service-card-body p {
   color: #475569;
   font-size: 0.88rem;
-  line-height: 1.5;
+  line-height: 1.55;
   margin: 0 0 16px;
 }
 .managed-service-card-footer {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 16px;
   border-top: 1px solid #F1F5F9;
 }
 .managed-service-action-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--color-deep-green);
+  color: var(--service-accent, var(--color-deep-green));
   text-decoration: none;
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 .managed-service-action-link:hover {
   transform: translateX(4px);
-  color: var(--color-council-green);
+  opacity: 0.85;
 }
 
-/* 2026 Responsive Public Notices Grid */
+/* 2026 Responsive Public Notices Bulletin Grid */
 .managed-notices-grid {
   display: grid;
-  gap: 18px;
+  gap: 20px;
   grid-template-columns: 1fr;
 }
 @media (min-width: 640px) {
@@ -3073,34 +3171,40 @@ h3 { margin: 0; }
   }
 }
 .managed-notice-card-2026 {
-  background: #FFFFFF;
-  border: 1px solid var(--color-border);
-  border-top: 4px solid var(--color-critical);
-  border-radius: 12px;
-  padding: 18px;
+  background: #FFFDF9;
+  border: 1px solid #FDE68A;
+  border-left: 5px solid #D97706;
+  border-radius: 14px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 3px 10px rgba(217, 119, 6, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .managed-notice-card-2026:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(11, 45, 77, 0.08);
+  transform: translateY(-3px);
+  border-color: #B45309;
+  box-shadow: 0 10px 24px rgba(217, 119, 6, 0.12);
 }
 .managed-notice-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .managed-notice-indicator {
   font-size: 0.72rem;
-  font-weight: 700;
-  color: #64748B;
+  font-weight: 800;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 .managed-notice-card-body h3 {
-  font-size: 0.98rem;
-  font-weight: 700;
+  font-size: 1.02rem;
+  font-weight: 800;
   margin: 0 0 8px;
   line-height: 1.35;
 }
@@ -3109,24 +3213,32 @@ h3 { margin: 0; }
   text-decoration: none;
 }
 .managed-notice-card-body h3 a:hover {
-  color: var(--color-critical);
+  color: #B45309;
 }
 .managed-notice-card-body p {
-  color: var(--color-muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
+  color: #475569;
+  font-size: 0.85rem;
+  line-height: 1.48;
   margin: 0 0 14px;
 }
 .managed-notice-card-footer {
   margin-top: auto;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(217, 119, 6, 0.2);
+}
+.managed-notice-cta-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #B45309;
 }
 
-/* 2026 Document Centre Grid */
+/* 2026 Document Centre Grid (Dossier Archive Theme) */
 .managed-docs-grid {
   display: grid;
-  gap: 18px;
+  gap: 20px;
   grid-template-columns: 1fr;
 }
 @media (min-width: 640px) {
@@ -3141,18 +3253,18 @@ h3 { margin: 0; }
 }
 .managed-doc-card-2026 {
   background: #FFFFFF;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 18px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .managed-doc-card-2026:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: var(--color-civic-navy);
-  box-shadow: 0 8px 18px rgba(11, 45, 77, 0.08);
+  box-shadow: 0 12px 26px rgba(11, 45, 77, 0.1);
 }
 .managed-doc-top {
   display: flex;
@@ -3161,32 +3273,31 @@ h3 { margin: 0; }
   margin-bottom: 14px;
 }
 .managed-doc-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: grid;
   place-items: center;
-  background: #FEF3C7;
-  color: #B45309;
+  background: #FEE2E2;
+  color: #DC2626;
 }
 .managed-doc-badge svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 .managed-doc-pill {
   font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #92400E;
-  background: #FFFBEB;
-  border: 1px solid #FDE68A;
-  padding: 2px 7px;
-  border-radius: 4px;
+  color: #1E293B;
+  background: #E2E8F0;
+  padding: 3px 8px;
+  border-radius: 6px;
 }
 .managed-doc-card-body h3 {
-  font-size: 0.98rem;
-  font-weight: 700;
+  font-size: 1.02rem;
+  font-weight: 800;
   margin: 0 0 8px;
   line-height: 1.35;
 }
@@ -3198,29 +3309,43 @@ h3 { margin: 0; }
   color: var(--color-deep-green);
 }
 .managed-doc-card-body p {
-  color: var(--color-muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
+  color: #64748B;
+  font-size: 0.85rem;
+  line-height: 1.48;
   margin: 0 0 14px;
 }
 .managed-doc-card-footer {
   margin-top: auto;
-  padding-top: 10px;
-  border-top: 1px solid #F8FAFC;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #F1F5F9;
+}
+.managed-doc-format-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748B;
 }
 .managed-doc-download-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.84rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-civic-navy);
   text-decoration: none;
-  transition: transform 0.15s ease, color 0.15s ease;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 .managed-doc-download-link:hover {
-  color: var(--color-deep-green);
-  transform: translateX(3px);
+  background: var(--color-civic-navy);
+  color: #FFFFFF;
+  border-color: var(--color-civic-navy);
+  transform: translateX(2px);
 }
 
 .managed-list { display: flex; flex-direction: column; gap: 10px; }
@@ -3320,40 +3445,51 @@ h3 { margin: 0; }
   border-radius: 9999px;
 }
 
-/* Verified district statistics band */
-.managed-stats-band { padding-block: 28px; background: #fff; }
-.managed-stats-grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 0; }
+/* Verified district statistics band (Elevated Civic Ribbon) */
+.managed-stats-band {
+  padding-block: 36px;
+  background: linear-gradient(135deg, #075D46 0%, #064E3B 100%);
+  color: #FFFFFF;
+  border-bottom: 3px solid #D97706;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.managed-stats-grid { display: grid; gap: 18px; grid-template-columns: 1fr; margin: 0; }
 @media (min-width: 560px) { .managed-stats-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 900px) { .managed-stats-grid { grid-template-columns: repeat(4, 1fr); } }
 .managed-stat {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  background: #F8FAFC;
-  border: 1px solid var(--color-border);
-  border-left: 4px solid var(--color-council-green);
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-left: 4px solid #F59E0B;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.managed-stat:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.14);
 }
 .managed-stat-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(11, 143, 98, 0.12);
-  color: var(--color-deep-green);
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.2);
+  color: #FDE68A;
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
 .managed-stat-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 .managed-stat-info { display: flex; flex-direction: column; }
 .managed-stat dd { margin: 0; }
-.managed-stat dd strong { color: var(--color-civic-navy); font-size: 1.35rem; font-weight: 800; line-height: 1.1; }
-.managed-stat dt { color: var(--color-muted); font-size: 0.78rem; font-weight: 600; margin-top: 3px; line-height: 1.3; }
+.managed-stat dd strong { color: #FFFFFF; font-size: 1.45rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.managed-stat dt { color: #CBD5E1; font-size: 0.8rem; font-weight: 600; margin-top: 4px; line-height: 1.3; }
 
 /* Council Strip (Wards, Leadership, Contact) */
 .managed-strip { background: var(--color-civic-navy); color: #e2e8f0; padding-block: 52px; }
