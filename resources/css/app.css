@@ -2712,7 +2712,7 @@ h3 { margin: 0; }
     font-size: 0.85rem;
   }
   /* Desktop dropdowns */
-  .nav-group { flex-direction: row; align-items: stretch; }
+  .nav-group { flex-direction: row; align-items: stretch; position: relative; }
   .nav-dropdown {
     position: absolute;
     top: 100%;
@@ -2730,6 +2730,15 @@ h3 { margin: 0; }
     transition: opacity 0.16s ease, transform 0.16s ease;
     z-index: 50;
   }
+  /* Invisible hover tunnel to avoid accidental mouse-off */
+  .nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
   .nav-group:hover .nav-dropdown,
   .nav-group:focus-within .nav-dropdown {
     opacity: 1;
@@ -2738,10 +2747,10 @@ h3 { margin: 0; }
     transform: translate(-50%, 0);
   }
   .nav-dropdown-link { border-top: none; border-radius: 8px; padding: 10px 12px; min-height: 40px; }
-  .nav-dropdown-link:hover { background: #f1f8f3; }
-  .nav-search-pill { margin-top: 0; margin-left: 8px; padding: 8px 18px; font-size: 0.85rem; min-height: 38px; }
-  .nav-search-pill:hover { transform: translateY(-1px); }
+  .nav-dropdown-link:hover,
+  .nav-dropdown-link-active { background: #f1f8f3; color: var(--color-deep-green); font-weight: 700; }
   .nav-cta { margin-top: 0; margin-left: 4px; padding: 8px 18px; font-size: 0.85rem; min-height: 38px; }
+  .nav-cta-active { background: #086b49; box-shadow: 0 0 0 2px rgba(11, 143, 98, 0.4); }
 
   .hero { min-height: 560px; }
   .hero-container {
@@ -3492,37 +3501,136 @@ h3 { margin: 0; }
 .managed-stat dt { color: #CBD5E1; font-size: 0.8rem; font-weight: 600; margin-top: 4px; line-height: 1.3; }
 
 /* Council Strip (Wards, Leadership, Contact) */
-.managed-strip { background: var(--color-civic-navy); color: #e2e8f0; padding-block: 52px; }
-.managed-strip-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
-@media (min-width: 900px) { .managed-strip-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
+.managed-strip {
+  background: var(--color-civic-navy);
+  color: #e2e8f0;
+  padding-block: 64px;
+  position: relative;
+}
+.managed-strip-grid {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .managed-strip-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+}
 .managed-strip-col {
   position: relative;
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 24px;
+  border-radius: 16px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.managed-strip-col:hover {
+  transform: translateY(-4px);
+  border-color: rgba(74, 222, 128, 0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.managed-strip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 .managed-strip-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(74, 222, 128, 0.15);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.2);
   color: var(--color-mint-green);
   display: grid;
   place-items: center;
-  margin-bottom: 14px;
 }
-.managed-strip h2 { color: #fff; font-size: 1.3rem; font-weight: 800; margin: 0 0 10px; }
-.managed-strip p, .managed-strip span { color: #cbd5e1; font-size: 0.88rem; line-height: 1.5; }
-.managed-strip-col a.managed-viewall { color: var(--color-mint-green); font-weight: 700; margin-top: auto; padding-top: 14px; text-decoration: none; }
-.managed-strip-col a.managed-viewall:hover { color: #ffffff; text-decoration: underline; }
-.managed-mini-list { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.managed-mini-list li { font-size: 0.88rem; }
-.managed-mini-list a { color: #fff; font-weight: 600; text-decoration: none; }
-.managed-mini-list a:hover { color: var(--color-mint-green); text-decoration: underline; }
-.managed-title-sub { color: #94a3b8; font-size: 0.8rem; }
+.managed-strip-badge svg {
+  width: 22px;
+  height: 22px;
+}
+.managed-strip-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-mint-green);
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.24);
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+.managed-strip .managed-eyebrow {
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin: 0 0 6px;
+}
+.managed-strip h2 {
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin: 0 0 12px;
+}
+.managed-strip p,
+.managed-strip span {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.managed-strip-col a.managed-viewall {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-mint-green);
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-top: auto;
+  padding-top: 20px;
+  text-decoration: none;
+  transition: color 0.15s ease, gap 0.15s ease;
+}
+.managed-strip-col a.managed-viewall:hover {
+  color: #ffffff;
+  gap: 10px;
+  text-decoration: none;
+}
+.managed-mini-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.managed-mini-list li {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+.managed-mini-list a {
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.managed-mini-list a:hover {
+  color: var(--color-mint-green);
+  text-decoration: underline;
+}
+.managed-title-sub {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
 
 /* Secondary CMS Columns */
 .managed-columns { display: grid; gap: 20px; grid-template-columns: 1fr; }

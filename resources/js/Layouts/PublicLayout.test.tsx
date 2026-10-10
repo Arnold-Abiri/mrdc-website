@@ -41,5 +41,13 @@ describe('public navigation', () => {
         expect(screen.getByText('Urgent Alert')).toBeInTheDocument();
         expect(screen.getByText('Planned Water Disruption in Ward 5')).toBeInTheDocument();
     });
+
+    it('renders Financial Transparency in the navigation and has a single search trigger', () => {
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        expect(screen.getByRole('link', { name: 'Financial Transparency' })).toBeInTheDocument();
+        const searchButtons = screen.getAllByRole('button', { name: 'Search' });
+        // Exactly one search trigger in the header
+        expect(searchButtons).toHaveLength(1);
+    });
 });
 

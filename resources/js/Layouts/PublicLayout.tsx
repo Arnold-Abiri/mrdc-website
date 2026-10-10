@@ -18,7 +18,7 @@ const navigation: NavEntry[] = [
             { label: 'Officials', href: '/officials' },
             { label: 'Wards', href: '/wards' },
             { label: 'Meetings', href: '/meetings' },
-            { label: 'Transparency', href: '/transparency' },
+            { label: 'Financial Transparency', href: '/transparency' },
         ],
     },
     {
@@ -130,11 +130,27 @@ function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
 }
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
-    const { locale: rawLocale, localeCsrfToken, urgent_alerts: urgentAlerts, topbar_notices: topbarNotices } = usePage().props as { locale?: string; localeCsrfToken?: string; urgent_alerts?: { slug: string; title: string }[]; topbar_notices?: TopbarNotice[] };
+    const page = usePage();
+    const { locale: rawLocale, localeCsrfToken, urgent_alerts: urgentAlerts, topbar_notices: topbarNotices } = page.props as { locale?: string; localeCsrfToken?: string; urgent_alerts?: { slug: string; title: string }[]; topbar_notices?: TopbarNotice[] };
     const locale = normalizeLocale(rawLocale);
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const [open, setOpen] = useState(false);
+
+    // Dynamic current path detection without locale prefix
+    const currentUrl = page.url || '/';
+    const rawPathname = currentUrl.split('?')[0].split('#')[0] || '/';
+    const normalizedCurrentPath = rawPathname.replace(new RegExp(`^/(?:en|sn|nd)(?=/|$)`), '') || '/';
+
+    const isPathActive = (href: string) => {
+        if (href === '/') return normalizedCurrentPath === '/';
+        return normalizedCurrentPath === href || normalizedCurrentPath.startsWith(`${href}/`);
+    };
+
+    const isEntryActive = (item: NavEntry) => {
+        if (isPathActive(item.href)) return true;
+        return Boolean(item.children?.some(child => isPathActive(child.href)));
+    };
 
     useEffect(() => { document.documentElement.lang = locale; }, [locale]);
     const menuButton = useRef<HTMLButtonElement>(null);
@@ -269,48 +285,80 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <nav id="primary-navigation" className={open ? 'navigation open' : 'navigation'} aria-label={t('primaryNavigation')}>
-                        {navigation.map(item =>
-                            item.label === 'Home' ? (
-                                <a key="home" aria-current="page" href={L("/")} className="nav-item nav-item-active">
-                                    <span>{t('home')}</span>
-                                    <span className="nav-active-indicator" aria-hidden="true" />
-                                </a>
-                            ) : item.children ? (
-                                <div key={item.label} className="nav-group">
-                                    <a href={L(item.href)} className="nav-item nav-parent">
-                                        {t(item.label.toLowerCase() as Parameters<typeof translate>[1])}
-                                        <span className="nav-caret" aria-hidden="true">▾</span>
+                        {navigation.map(item => {
+                            const active = isEntryActive(item);
+                            if (item.label === 'Home') {
+                                return (
+                                    <a
+                                        key="home"
+                                        aria-current={active ? 'page' : undefined}
+                                        href={L("/")}
+                                        className={`nav-item${active ? ' nav-item-active' : ''}`}
+                                    >
+                                        <span>{t('home')}</span>
+                                        {active && <span className="nav-active-indicator" aria-hidden="true" />}
                                     </a>
-                                    <ul className="nav-dropdown" aria-label={item.label}>
-                                        {item.children.map(child => (
-                                            <li key={child.label}>
-                                                <a href={L(child.href)} className="nav-dropdown-link">
-                                                    {child.label}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ) : item.label === 'Contact' ? (
-                                <a key={item.label} href={L(item.href)} className="nav-cta">{t('contact')}</a>
-                            ) : (
-                                <a key={item.label} href={L(item.href)} className="nav-item">
-                                    {t(item.label.toLowerCase() as Parameters<typeof translate>[1])}
+                                );
+                            }
+
+                            if (item.children) {
+                                return (
+                                    <div key={item.label} className="nav-group">
+                                        <a
+                                            href={L(item.href)}
+                                            className={`nav-item nav-parent${active ? ' nav-item-active' : ''}`}
+                                            aria-haspopup="true"
+                                            aria-current={isPathActive(item.href) ? 'page' : undefined}
+                                        >
+                                            <span>{t(item.label.toLowerCase() as Parameters<typeof translate>[1])}</span>
+                                            <span className="nav-caret" aria-hidden="true">▾</span>
+                                            {active && <span className="nav-active-indicator" aria-hidden="true" />}
+                                        </a>
+                                        <ul className="nav-dropdown" aria-label={item.label}>
+                                            {item.children.map(child => {
+                                                const childActive = isPathActive(child.href);
+                                                return (
+                                                    <li key={child.label}>
+                                                        <a
+                                                            href={L(child.href)}
+                                                            className={`nav-dropdown-link${childActive ? ' nav-dropdown-link-active' : ''}`}
+                                                            aria-current={childActive ? 'page' : undefined}
+                                                        >
+                                                            {child.label}
+                                                        </a>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
+                                );
+                            }
+
+                            if (item.label === 'Contact') {
+                                return (
+                                    <a
+                                        key={item.label}
+                                        href={L(item.href)}
+                                        className={`nav-cta${active ? ' nav-cta-active' : ''}`}
+                                        aria-current={active ? 'page' : undefined}
+                                    >
+                                        {t('contact')}
+                                    </a>
+                                );
+                            }
+
+                            return (
+                                <a
+                                    key={item.label}
+                                    href={L(item.href)}
+                                    className={`nav-item${active ? ' nav-item-active' : ''}`}
+                                    aria-current={active ? 'page' : undefined}
+                                >
+                                    <span>{t(item.label.toLowerCase() as Parameters<typeof translate>[1])}</span>
+                                    {active && <span className="nav-active-indicator" aria-hidden="true" />}
                                 </a>
-                            )
-                        )}
-                        <button
-                            type="button"
-                            className="nav-search-pill"
-                            aria-label={t('search')}
-                            onClick={openSearch}
-                        >
-                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <circle cx="11" cy="11" r="7" />
-                                <line x1="16.5" y1="16.5" x2="21" y2="21" />
-                            </svg>
-                            <span>{t('search')}</span>
-                        </button>
+                            );
+                        })}
                     </nav>
                 </div>
 
