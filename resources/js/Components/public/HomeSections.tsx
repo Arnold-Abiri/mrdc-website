@@ -825,66 +825,89 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
             </div>
         </section>}
         <section id="services" className="managed-section" aria-labelledby="managed-services-heading">
-            <div className="container managed-split">
-                <div className="managed-intro">
-                    <p className="managed-eyebrow">Council services</p>
-                    <h2 id="managed-services-heading">Services that keep Mutoko running</h2>
-                    <p>Water, roads, health, planning and community services delivered across our wards. Start with the services residents use most.</p>
-                    <a className="managed-viewall" href={L('/services')}>View all services <span aria-hidden="true">→</span></a>
+            <div className="container">
+                <div className="managed-section-header">
+                    <div className="managed-header-copy">
+                        <p className="managed-eyebrow">Council services</p>
+                        <h2 id="managed-services-heading">Services that keep Mutoko running</h2>
+                        <p className="managed-subtitle">Water, roads, health, planning and community services delivered across our wards. Start with the services residents use most.</p>
+                    </div>
+                    <a className="managed-viewall-btn" href={L('/services')}>
+                        <span>View all services</span>
+                        <span aria-hidden="true">→</span>
+                    </a>
                 </div>
-                <div className="managed-list">
-                    {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-row managed-service-card">
-                        <div className="managed-row-main">
-                            <span className="managed-row-badge" aria-hidden="true">
+                <div className="managed-services-grid">
+                    {services.length ? services.slice(0, 6).map(item => <article key={item.slug} className="managed-service-card-2026">
+                        <div className="managed-service-card-top">
+                            <span className="managed-service-icon-badge" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                                 </svg>
                             </span>
-                            <div>
-                                <h3><a href={P('services', item.slug)}>{item.name}</a></h3>
-                                {item.summary && <p>{item.summary}</p>}
-                            </div>
+                            <span className="managed-service-tag">Ward Delivery</span>
                         </div>
-                        <a className="managed-row-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>→</a>
+                        <div className="managed-service-card-body">
+                            <h3><a href={P('services', item.slug)}>{item.name}</a></h3>
+                            {item.summary && <p>{item.summary}</p>}
+                        </div>
+                        <div className="managed-service-card-footer">
+                            <a className="managed-service-action-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>
+                                <span>Access service</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
                     </article>) : <p className="managed-empty">Approved services will appear here once published.</p>}
                 </div>
             </div>
         </section>
         <section className="managed-section managed-alt" aria-labelledby="managed-notices-heading">
-            <div className="container managed-split">
-                <div className="managed-intro">
-                    <p className="managed-eyebrow">Public notices</p>
-                    <h2 id="managed-notices-heading">Notices residents should read</h2>
-                    <p>Official announcements, closures, meetings and deadlines from the council.</p>
-                    <a className="managed-viewall" href={L('/notices')}>View all notices <span aria-hidden="true">→</span></a>
+            <div className="container">
+                <div className="managed-section-header">
+                    <div className="managed-header-copy">
+                        <p className="managed-eyebrow">Public notices</p>
+                        <h2 id="managed-notices-heading">Notices residents should read</h2>
+                        <p className="managed-subtitle">Official announcements, closures, meetings and deadlines from the council.</p>
+                    </div>
+                    <a className="managed-viewall-btn" href={L('/notices')}>
+                        <span>View all notices</span>
+                        <span aria-hidden="true">→</span>
+                    </a>
                 </div>
-                <div className="managed-list">
-                    {notices.length ? notices.slice(0, 5).map(item => <article key={item.slug} className="managed-row managed-notice">
-                        <span className="notice-marker" aria-hidden="true" />
-                        <div className="managed-row-main">
+                <div className="managed-notices-grid">
+                    {notices.length ? notices.slice(0, 4).map(item => <article key={item.slug} className="managed-notice-card-2026">
+                        <div className="managed-notice-card-top">
                             <span className="managed-notice-tag">Notice</span>
-                            <div>
-                                <h3><a href={P('notices', item.slug)}>{item.title}</a></h3>
-                                {item.summary && <p>{item.summary}</p>}
-                            </div>
+                            <span className="managed-notice-indicator" aria-hidden="true">Official</span>
                         </div>
-                        <a className="managed-row-link" href={P('notices', item.slug)} aria-label={`Read notice: ${item.title}`}>→</a>
+                        <div className="managed-notice-card-body">
+                            <h3><a href={P('notices', item.slug)}>{item.title}</a></h3>
+                            {item.summary && <p>{item.summary}</p>}
+                        </div>
+                        <div className="managed-notice-card-footer">
+                            <a className="managed-row-link" href={P('notices', item.slug)} aria-label={`Read notice: ${item.title}`}>→</a>
+                        </div>
                     </article>) : <p className="managed-empty">No published notices at this time.</p>}
                 </div>
             </div>
         </section>
         <section className="managed-section" aria-labelledby="managed-documents-heading">
-            <div className="container managed-split">
-                <div className="managed-intro">
-                    <p className="managed-eyebrow">Document centre</p>
-                    <h2 id="managed-documents-heading">Plans, reports and forms</h2>
-                    <p>Key public documents approved for release by the council.</p>
-                    <a className="managed-viewall" href={L('/documents')}>View document centre <span aria-hidden="true">→</span></a>
+            <div className="container">
+                <div className="managed-section-header">
+                    <div className="managed-header-copy">
+                        <p className="managed-eyebrow">Document centre</p>
+                        <h2 id="managed-documents-heading">Plans, reports and forms</h2>
+                        <p className="managed-subtitle">Key public documents approved for release by the council.</p>
+                    </div>
+                    <a className="managed-viewall-btn" href={L('/documents')}>
+                        <span>View document centre</span>
+                        <span aria-hidden="true">→</span>
+                    </a>
                 </div>
-                <div className="managed-list">
-                    {documents.length ? documents.slice(0, 5).map(item => <article key={item.slug} className="managed-row managed-doc-card">
-                        <div className="managed-row-main">
-                            <span className="managed-doc-icon" aria-hidden="true">
+                <div className="managed-docs-grid">
+                    {documents.length ? documents.slice(0, 4).map(item => <article key={item.slug} className="managed-doc-card-2026">
+                        <div className="managed-doc-top">
+                            <span className="managed-doc-badge" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                     <polyline points="14 2 14 8 20 8" />
@@ -893,12 +916,18 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                     <polyline points="10 9 9 9 8 9" />
                                 </svg>
                             </span>
-                            <div>
-                                <h3><a href={P('documents', item.slug)}>{item.title}</a></h3>
-                                {item.description && <p>{item.description}</p>}
-                            </div>
+                            <span className="managed-doc-pill">PDF Document</span>
                         </div>
-                        <a className="managed-row-link" href={P('documents', item.slug)} aria-label={`View document ${item.title}`}>→</a>
+                        <div className="managed-doc-card-body">
+                            <h3><a href={P('documents', item.slug)}>{item.title}</a></h3>
+                            {item.description && <p>{item.description}</p>}
+                        </div>
+                        <div className="managed-doc-card-footer">
+                            <a className="managed-doc-download-link" href={P('documents', item.slug)} aria-label={`View document ${item.title}`}>
+                                <span>View Document</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
                     </article>) : <p className="managed-empty">No published documents at this time.</p>}
                 </div>
             </div>
@@ -906,10 +935,13 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
         <section className="managed-strip" aria-label="Wards, leadership and contact">
             <div className="container managed-strip-grid">
                 <article className="managed-strip-col" aria-labelledby="managed-wards-heading">
-                    <div className="managed-strip-badge" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
-                        </svg>
+                    <div className="managed-strip-header">
+                        <div className="managed-strip-badge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                            </svg>
+                        </div>
+                        <span className="managed-strip-pill">Ward Directory</span>
                     </div>
                     <p className="managed-eyebrow">Wards</p>
                     <h2 id="managed-wards-heading">{wardCount ? `${wardCount} wards` : 'Ward directory'}</h2>
@@ -917,11 +949,14 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     <a className="managed-viewall" href={L('/wards')}>Explore our wards <span aria-hidden="true">→</span></a>
                 </article>
                 <article className="managed-strip-col" aria-labelledby="managed-officials-heading">
-                    <div className="managed-strip-badge" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                        </svg>
+                    <div className="managed-strip-header">
+                        <div className="managed-strip-badge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <span className="managed-strip-pill">Administration</span>
                     </div>
                     <p className="managed-eyebrow">Leadership</p>
                     <h2 id="managed-officials-heading">Council leadership</h2>
@@ -929,10 +964,13 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     <a className="managed-viewall" href={L('/officials')}>View council officials <span aria-hidden="true">→</span></a>
                 </article>
                 <article className="managed-strip-col" aria-labelledby="managed-contact-heading">
-                    <div className="managed-strip-badge" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                        </svg>
+                    <div className="managed-strip-header">
+                        <div className="managed-strip-badge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                        </div>
+                        <span className="managed-strip-pill">Helpdesk</span>
                     </div>
                     <p className="managed-eyebrow">Contact</p>
                     <h2 id="managed-contact-heading">Talk to the council</h2>
@@ -1157,10 +1195,16 @@ export function CitizenFeedbackBanner() {
                         <h2 id="feedback-callout-heading">{t('reportIssueTitle')}</h2>
                         <p>{t('reportIssueDesc')}</p>
                     </div>
-                    <div>
+                    <div className="citizen-feedback-actions-cluster">
                         <a href={L('/feedback')} className="btn-feedback-action">
                             <span>{t('reportIssueBtn')}</span>
                             <span aria-hidden="true">→</span>
+                        </a>
+                        <a href="https://wa.me/263772000000" target="_blank" rel="noopener noreferrer" className="btn-feedback-whatsapp">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                            <span>WhatsApp Council Desk</span>
                         </a>
                     </div>
                 </div>

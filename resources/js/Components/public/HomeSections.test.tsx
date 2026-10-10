@@ -7,6 +7,7 @@ vi.mock('@inertiajs/react', async (importOriginal) => ({
 }));
 import {
     AboutSection,
+    CitizenFeedbackBanner,
     CtaBanner,
     DevelopmentSection,
     FeatureCallouts,
@@ -155,10 +156,21 @@ describe('homepage sections', () => {
         expect(screen.getByText('Electoral wards')).toBeInTheDocument();
         expect(screen.getByText('Roads & Works')).toBeInTheDocument();
         expect(screen.getByText('Road network maintenance')).toBeInTheDocument();
+        expect(screen.getByText('Access service')).toBeInTheDocument();
         expect(screen.getByText('Budget Consultation Notice')).toBeInTheDocument();
+        expect(screen.getByText('Official')).toBeInTheDocument();
         expect(screen.getByText('Mutoko Master Plan')).toBeInTheDocument();
+        expect(screen.getByText('PDF Document')).toBeInTheDocument();
+        expect(screen.getByText('View Document')).toBeInTheDocument();
         expect(screen.getByText('Council CEO')).toBeInTheDocument();
         expect(screen.getByText('Main Office:')).toBeInTheDocument();
+    });
+
+    it('renders the enhanced citizen feedback banner with WhatsApp Desk', () => {
+        render(<CitizenFeedbackBanner />);
+        expect(screen.getByText('Report an Issue or Send Feedback')).toBeInTheDocument();
+        expect(screen.getByText('Lodge Feedback / Complaint')).toBeInTheDocument();
+        expect(screen.getByText('WhatsApp Council Desk')).toBeInTheDocument();
     });
 });
 

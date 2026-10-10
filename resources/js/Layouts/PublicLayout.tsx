@@ -53,8 +53,84 @@ const navigation: NavEntry[] = [
     { label: 'Contact', href: '/contact' },
 ];
 
+type TopbarNotice = { slug: string; title: string; is_urgent?: boolean };
+
+function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
+    const locale = normalizeLocale(usePage().props.locale);
+    const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+
+    const items: TopbarNotice[] = notices.length > 0 ? notices : [
+        {
+            slug: 'welcome',
+            title: 'Welcome to Mutoko Rural District Council — People. Development. Sustainable Communities.',
+            is_urgent: false,
+        },
+    ];
+
+    useEffect(() => {
+        if (isPaused || items.length <= 1) return;
+        const interval = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % items.length);
+        }, 5500);
+        return () => clearInterval(interval);
+    }, [isPaused, items.length]);
+
+    const active = items[currentIndex] || items[0];
+
+    return (
+        <div
+            className="topbar-ticker"
+            role="region"
+            aria-label="Council Announcements"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onFocusCapture={() => setIsPaused(true)}
+            onBlurCapture={() => setIsPaused(false)}
+        >
+            <span className={`topbar-ticker-badge ${active.is_urgent ? 'badge-urgent' : 'badge-notice'}`}>
+                {active.is_urgent ? 'Urgent Alert' : 'Notice'}
+            </span>
+            <div className="topbar-ticker-content" aria-live="polite" aria-atomic="true">
+                {active.slug !== 'welcome' ? (
+                    <a href={L(`/notices/${active.slug}`)} className="topbar-ticker-link">
+                        <span className="topbar-ticker-title">{active.title}</span>
+                        <span className="topbar-ticker-arrow" aria-hidden="true">→</span>
+                    </a>
+                ) : (
+                    <span className="topbar-ticker-text">{active.title}</span>
+                )}
+            </div>
+            {items.length > 1 && (
+                <div className="topbar-ticker-controls" aria-label="Announcement carousel controls">
+                    <button
+                        type="button"
+                        className="topbar-ticker-arrow-btn"
+                        onClick={() => setCurrentIndex((prev) => (prev - 1 + items.length) % items.length)}
+                        aria-label="Previous announcement"
+                    >
+                        ‹
+                    </button>
+                    <span className="topbar-ticker-index" aria-hidden="true">
+                        {currentIndex + 1}/{items.length}
+                    </span>
+                    <button
+                        type="button"
+                        className="topbar-ticker-arrow-btn"
+                        onClick={() => setCurrentIndex((prev) => (prev + 1) % items.length)}
+                        aria-label="Next announcement"
+                    >
+                        ›
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function PublicLayout({ children }: { children: ReactNode }) {
-    const { locale: rawLocale, localeCsrfToken, urgent_alerts: urgentAlerts } = usePage().props as { locale?: string; localeCsrfToken?: string; urgent_alerts?: { slug: string; title: string }[] };
+    const { locale: rawLocale, localeCsrfToken, urgent_alerts: urgentAlerts, topbar_notices: topbarNotices } = usePage().props as { locale?: string; localeCsrfToken?: string; urgent_alerts?: { slug: string; title: string }[]; topbar_notices?: TopbarNotice[] };
     const locale = normalizeLocale(rawLocale);
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
@@ -119,15 +195,17 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             {/* Top Utility Bar */}
             <div className="utility-bar">
                 <div className="container utility-inner">
-                    <div className="utility-location">
-                        <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                            <circle cx="12" cy="9" r="2.5" />
-                        </svg>
-                        <span>Mutoko, Mashonaland East, Zimbabwe</span>
-                    </div>
+                    <TopbarTicker notices={topbarNotices} />
 
                     <div className="utility-actions">
+                        <a href={L('/contact')} className="utility-location" title="Council Headquarters location and directions">
+                            <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                                <circle cx="12" cy="9" r="2.5" />
+                            </svg>
+                            <span>Mutoko, Mashonaland East, Zimbabwe</span>
+                        </a>
+
                         <AccessibilitySettings />
 
                         <form action="/locale" method="post" className="utility-language-badge">
@@ -140,24 +218,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             </select>
                             <noscript><button type="submit">{t('setLanguage')}</button></noscript>
                         </form>
-
-                        <div className="utility-socials" aria-label={t('socialPreviews')}>
-                            <span className="social-pill" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
-                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                                </svg>
-                            </span>
-                            <span className="social-pill" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" aria-hidden="true">
-                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                </svg>
-                            </span>
-                            <span className="social-pill" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
-                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                </svg>
-                            </span>
-                        </div>
                     </div>
                 </div>
             </div>
