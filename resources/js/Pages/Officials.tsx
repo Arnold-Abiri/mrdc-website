@@ -4,18 +4,6 @@ import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHe
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 
 type OfficialSummary = { slug: string; name: string; title: string; biography: string | null; department: string | null; photo_url: string | null };
-const TEAM = [
-    { name: 'B. Tasarira', role: 'Chief Executive Officer' },
-    { name: 'K.K. Chamisa', role: 'Town Board Administrator' },
-    { name: 'R. Makore', role: 'Engineer' },
-    { name: 'Z. Nhidza', role: 'Executive Officer — Social Services' },
-    { name: 'T. Nyabonde', role: 'Executive Officer — Finance' },
-    { name: 'D. Tshuma', role: 'Planner' },
-    { name: 'O. Katuka', role: 'Executive Officer — Human Resources' },
-    { name: 'T.K. Hambaguzha', role: 'Internal Audit' },
-    { name: 'D.T. Mutangadura', role: 'Procurement' },
-];
-
 export default function Officials({ officials }: { officials: OfficialSummary[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -27,25 +15,11 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                 <div className="container">
                     <span className="about-accent-eyebrow">MANAGEMENT TEAM</span>
                     <h2 id="team-heading">Management team</h2>
-                    <div className="about-gov-grid">
-                        {TEAM.map((m) => (
-                            <div key={m.name} className="about-gov-card">
-                                <h3>{m.name}</h3>
-                                <p>{m.role}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-            <section className="about-page-section" aria-label="Published officials">
-                <div className="container">
-                    <span className="about-accent-eyebrow">PUBLISHED PROFILES</span>
-                    <h2>Official Profiles</h2>
                     {officials.length ? (
                         <div className="about-gov-grid">
                             {officials.map((official) => (
                                 <Link key={official.slug} href={`/${locale}/officials/${official.slug}`} className="about-gov-card">
-                                    {official.photo_url && <img src={official.photo_url} alt={official.name} width={160} height={160} loading="lazy" />}
+                                    {official.photo_url && <img className="official-portrait" src={official.photo_url} alt={official.name} width={240} height={240} loading="lazy" />}
                                     <h3>{official.name}</h3>
                                     <p>{official.title}</p>
                                     {official.department && <p>{official.department}</p>}

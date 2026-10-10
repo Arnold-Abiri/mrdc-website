@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(Stage5TourismSeeder::class);
         $this->call(VacancySeeder::class);
         $this->call(Stage7PrivacySeeder::class);
+        $this->call(CouncilTeamSeeder::class);
     }
 }

@@ -509,6 +509,13 @@ a:focus-visible, button:focus-visible {
   border-color: var(--color-council-green);
   box-shadow: 0 8px 20px rgba(11, 45, 77, 0.08);
 }
+.official-portrait {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  object-position: center bottom;
+  margin-bottom: 16px;
+}
 .about-gov-icon {
   width: 48px;
   height: 48px;
