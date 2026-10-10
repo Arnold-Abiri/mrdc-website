@@ -10,6 +10,8 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 class Login extends BaseLogin
 {
@@ -46,7 +48,7 @@ class Login extends BaseLogin
     {
         return TextInput::make('password')
             ->label('Password')
-            ->hint(filament()->hasPasswordReset() ? new \Illuminate\Support\HtmlString(\Illuminate\Support\Facades\Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="-1">Forgot password?</x-filament::link>')) : null)
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="-1">Forgot password?</x-filament::link>')) : null)
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')

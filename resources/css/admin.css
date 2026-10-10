@@ -796,8 +796,60 @@
    ========================================================================== */
 
 /* Outer full-bleed override for simple layout when rendering custom login */
+html:has(.mrdc-auth-page),
 body:has(.mrdc-auth-page) {
     background-color: #F8FAFC !important;
+    overflow-x: hidden;
+}
+
+@media (min-width: 1024px) {
+    html:has(.mrdc-auth-page),
+    body:has(.mrdc-auth-page) {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    body:has(.mrdc-auth-page) .fi-simple-layout {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+        min-height: 0 !important;
+    }
+
+    body:has(.mrdc-auth-page) .fi-simple-main-ctn {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    body:has(.mrdc-auth-page) .fi-simple-main {
+        height: 100% !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    .mrdc-auth-page {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    .mrdc-auth-hero {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    .mrdc-auth-form-panel {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        scrollbar-width: thin;
+    }
 }
 
 body:has(.mrdc-auth-page) .fi-simple-main-ctn,
@@ -806,6 +858,10 @@ body:has(.mrdc-auth-page) .fi-simple-main {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    ring: 0 !important;
 }
 
 /* Custom form components within MRDC Login */

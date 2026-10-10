@@ -24,6 +24,8 @@ describe('homepage sections', () => {
         render(<Hero />);
         expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Mutoko Rural District Council');
         expect(screen.getByText('People. Development. Sustainable Communities.')).toBeInTheDocument();
+        expect(screen.getByRole('search')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Search council services, by-laws, public notices, and tenders...')).toBeInTheDocument();
         expect(screen.queryByText('50+')).not.toBeInTheDocument();
     });
 
