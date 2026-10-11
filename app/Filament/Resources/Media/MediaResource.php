@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Media;
 
 use App\Domain\Cms\MediaManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Media\Pages\CreateMedia;
 use App\Filament\Resources\Media\Pages\EditMedia;
 use App\Filament\Resources\Media\Pages\ListMedia;
@@ -41,6 +42,7 @@ class MediaResource extends Resource
             TextInput::make('alt_text')->maxLength(255),
             Textarea::make('caption')->maxLength(2000),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+            TranslationFields::make(Media::translatableFields()),
         ]);
     }
 

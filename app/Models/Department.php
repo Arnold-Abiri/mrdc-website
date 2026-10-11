@@ -14,7 +14,7 @@ class Department extends Model implements TranslatableContent
 {
     use HasTranslations;
 
-    public const TRANSLATABLE_FIELDS = ['public_name', 'public_summary', 'public_description'];
+    public const TRANSLATABLE_FIELDS = ['public_name', 'public_summary', 'public_description', 'responsibilities'];
 
     protected function casts(): array
     {

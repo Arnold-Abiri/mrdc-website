@@ -26,10 +26,10 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/investment`}>Investment</Link>
+                        <Link href={`/${locale}/investment`}>{t('investment')}</Link>
                         <span aria-hidden="true">/</span>
                         <span aria-current="page">{opportunity.title}</span>
                     </nav>
@@ -49,7 +49,7 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
                     <div className="about-detail-layout">
                         <div className="about-detail-main">
                             <article className="rates-guidance-card">
-                                <h3 id="opportunity-detail">Project &amp; Investment Overview</h3>
+                                <h3 id="opportunity-detail">{t('investOverview')}</h3>
                                 <div style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#334155' }}>
                                     <SourcedText text={opportunity.description} />
                                 </div>
@@ -69,7 +69,7 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
                             </article>
                         </div>
 
-                        <aside className="about-summary-card" aria-label="Opportunity parameters">
+                        <aside className="about-summary-card" aria-label={t('oppParams')}>
                             <h3>{t('investmentSummary')}</h3>
                             <dl>
                                 {opportunity.sector && (

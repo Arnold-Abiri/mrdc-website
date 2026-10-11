@@ -30,7 +30,7 @@ export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
     return (
         <PublicLayout>
             <Head title={`${t('galleries')} | Mutoko RDC`} />
-            <PageHero eyebrow="MULTIMEDIA" title={t('galleries')} subtitle={t('galleriesDesc')} crumb={[{ label: t('gallery') }]} />
+            <PageHero eyebrow={t('multimedia')} title={t('galleries')} subtitle={t('galleriesDesc')} crumb={[{ label: t('gallery') }]} />
 
             <section className="about-page-section" aria-labelledby="gallery-list">
                 <div className="container">
@@ -60,7 +60,7 @@ export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
                                             )}
                                             {gallery.is_featured && <span className="gallery-album-flag">{t('featured')}</span>}
                                             <span className="gallery-album-count">
-                                                <span>{gallery.image_count}</span> {t('photos')}
+                                                <span>{gallery.image_count}</span> {gallery.image_count === 1 ? t('photo') : t('photos')}
                                             </span>
                                         </Link>
                                         <div className="gallery-album-body">

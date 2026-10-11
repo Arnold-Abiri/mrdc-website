@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectUpdates\Pages;
 
 use App\Domain\Cms\ProjectUpdateManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\ProjectUpdates\ProjectUpdateResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 class CreateProjectUpdate extends CreateRecord
 {
     protected static string $resource = ProjectUpdateResource::class;
+
+    use HandlesTranslations;
 
     protected function handleRecordCreation(array $data): Model
     {

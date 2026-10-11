@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 import { EmptyState } from '../Components/public/PageHeader';
 import { formatDate } from '../formatDate';
 
@@ -29,10 +30,10 @@ const copy = {
     },
 };
 
-const statusLabels: Record<string, { label: string; class: string }> = {
-    open: { label: 'Open for Bidding', class: 'currency-usd' },
-    closed: { label: 'Under Evaluation', class: 'currency-zig' },
-    awarded: { label: 'Contract Awarded', class: 'currency-multi' },
+const statusLabels: Record<string, { labelKey: TranslationKey; class: string }> = {
+    open: { labelKey: 'tenderOpen' as TranslationKey, class: 'currency-usd' },
+    closed: { labelKey: 'tenderClosed' as TranslationKey, class: 'currency-zig' },
+    awarded: { labelKey: 'tenderAwarded' as TranslationKey, class: 'currency-multi' },
 };
 
 export default function Tenders({ tenders }: { tenders: Tender[] }) {
@@ -63,15 +64,15 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/investment`}>Opportunities</Link>
+                        <Link href={`/${locale}/investment`}>{t('opportunities')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Tenders &amp; Procurement</span>
+                        <span aria-current="page">{t('tendersCrumb')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">STATUTORY PROCUREMENT · PPDPA ACT [CAP 22:23]</span>
-                    <h1>Tenders &amp; Public Bidding</h1>
+                    <span className="about-accent-eyebrow">{t('tendersEyebrow')}</span>
+                    <h1>{t('tendersTitle')}</h1>
                     <p className="about-page-hero-subtitle">
                         {copy[locale].intro}
                     </p>
@@ -84,26 +85,26 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                     <div className="about-stats-flex">
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">PRAZ</div>
-                                <div className="about-stat-label">Regulated Procurement</div>
+                                <div className="about-stat-num">{t('statPraz')}</div>
+                                <div className="about-stat-label">{t('statRegulated')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Stand 366</div>
-                                <div className="about-stat-label">Tender Box Location</div>
+                                <div className="about-stat-num">{t('statStand366')}</div>
+                                <div className="about-stat-label">{t('statTenderBox')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">10:00 AM</div>
-                                <div className="about-stat-label">Statutory Closing Time</div>
+                                <div className="about-stat-label">{t('statClosingTime')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Published</div>
-                                <div className="about-stat-label">Bidding Document Access</div>
+                                <div className="about-stat-num">{t('statPublished')}</div>
+                                <div className="about-stat-label">{t('statBidAccess')}</div>
                             </div>
                         </div>
                     </div>
@@ -122,12 +123,12 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                             <line x1="12" y1="16" x2="12.01" y2="16" />
                         </svg>
                         <p className="praz-compliance-text">
-                            <strong>Statutory Bidding Compliance Notice:</strong> {copy[locale].prazNotice} Standard bidding documents must be submitted in sealed envelopes endorsed with the Tender Number and Name into the Council Tender Box at Mutoko RDC Main Reception, Stand 366, before the designated deadline.
+                            <strong>{t('prazTitle')}</strong> {copy[locale].prazNotice} {t('prazTail')}
                         </p>
                     </div>
 
                     {/* TABS */}
-                    <div className="rates-filter-tabs" role="tablist" aria-label="Tender stage tabs">
+                    <div className="rates-filter-tabs" role="tablist" aria-label={t('tenderTabs')}>
                         <button
                             type="button"
                             role="tab"
@@ -135,7 +136,7 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                             className={`rates-tab-btn ${selectedTab === 'all' ? 'active' : ''}`}
                             onClick={() => setSelectedTab('all')}
                         >
-                            All Notices ({tenders.length})
+                            {t('allNotices')} ({tenders.length})
                         </button>
                         <button
                             type="button"
@@ -144,7 +145,7 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                             className={`rates-tab-btn ${selectedTab === 'open' ? 'active' : ''}`}
                             onClick={() => setSelectedTab('open')}
                         >
-                            Open for Bidding
+                            {t('tenderOpen')}
                         </button>
                         <button
                             type="button"
@@ -153,7 +154,7 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                             className={`rates-tab-btn ${selectedTab === 'closed' ? 'active' : ''}`}
                             onClick={() => setSelectedTab('closed')}
                         >
-                            Under Evaluation
+                            {t('underEvaluation')}
                         </button>
                         <button
                             type="button"
@@ -162,20 +163,20 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                             className={`rates-tab-btn ${selectedTab === 'awarded' ? 'active' : ''}`}
                             onClick={() => setSelectedTab('awarded')}
                         >
-                            Awarded Contracts
+                            {t('awardedContracts')}
                         </button>
                     </div>
 
                     {filtered.length === 0 ? (
                         <EmptyState
-                            title="No tenders found"
-                            text="There are no procurement notices currently matching this filter category. Please check back later."
+                            title={t('noTendersTitle')}
+                            text={t('noTendersDesc')}
                         />
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                             {filtered.map((tender) => {
                                 const statusInfo = statusLabels[tender.display_status] ?? {
-                                    label: tender.display_status,
+                                    labelKey: 'tenderClosed' as TranslationKey,
                                     class: 'currency-zig',
                                 };
 
@@ -191,9 +192,9 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                                                         type="button"
                                                         className={`rates-copy-btn ${copiedRef === tender.reference ? 'copied' : ''}`}
                                                         onClick={() => handleCopy(tender.reference)}
-                                                        aria-label="Copy tender reference"
+                                                        aria-label={t('copyRef')}
                                                     >
-                                                        {copiedRef === tender.reference ? '✓ Copied' : 'Copy Ref'}
+                                                        {copiedRef === tender.reference ? t('copiedMark') : t('copyRefShort')}
                                                     </button>
                                                 </div>
                                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-civic-navy)', margin: 0 }}>
@@ -201,7 +202,7 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                                                 </h3>
                                             </div>
                                             <span className={`rates-bank-currency ${statusInfo.class}`}>
-                                                {statusInfo.label}
+                                                {t(statusInfo.labelKey)}
                                             </span>
                                         </div>
 
@@ -221,17 +222,17 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                                                         <circle cx="12" cy="12" r="10" />
                                                         <polyline points="12 6 12 12 16 14" />
                                                     </svg>
-                                                    <span>Submission Deadline: <strong>{formatDate(tender.closes_at, locale)} at 10:00 AM</strong></span>
+                                                    <span>{t('submissionDeadline')}: <strong>{formatDate(tender.closes_at, locale)} {t('atTime')} 10:00 AM</strong></span>
                                                 </span>
                                             )}
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #F1F5F9' }}>
                                             <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                                                Tender Box: Stand 366 Mutoko Centre
+                                                {t('tenderBoxStand')}
                                             </span>
                                             <Link href={`/${locale}/tenders/${tender.slug}`} className="vacancy-view-cta">
-                                                <span>View Tender Details</span>
+                                                <span>{t('viewTenderDetails')}</span>
                                                 <span aria-hidden="true">→</span>
                                             </Link>
                                         </div>

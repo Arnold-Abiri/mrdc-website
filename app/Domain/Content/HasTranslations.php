@@ -41,11 +41,49 @@ trait HasTranslations
         }
         if (is_array($english)) {
             $decoded = json_decode($row->value, true);
+            if (! is_array($decoded)) {
+                return $english;
+            }
 
-            return is_array($decoded) ? $decoded : $english;
+            return $this->mergeTranslatedList($english, $decoded);
         }
 
         return $row->value;
+    }
+
+    /**
+     * Merge a stored translation list back into the English structure.
+     *
+     * Plain string lists (requirements, steps) are replaced wholesale when
+     * the translated line count matches. Structured page blocks keep their
+     * shape and only swap the text of each block by position; any mismatch
+     * falls back to English so the page can never break.
+     *
+     * @param  array<int, mixed>  $english
+     * @param  array<int, mixed>  $translated
+     * @return array<int, mixed>
+     */
+    private function mergeTranslatedList(array $english, array $translated): array
+    {
+        if ($english === []) {
+            return $english;
+        }
+        $texts = array_values(array_filter(array_map(fn ($line): string => trim((string) $line), $translated), fn ($line): bool => $line !== ''));
+        if ($texts === []) {
+            return $english;
+        }
+        $isBlocks = is_array($english[0]) && array_key_exists('text', $english[0]);
+        if (! $isBlocks) {
+            return count($texts) === count($english) ? $texts : $english;
+        }
+
+        return array_map(function ($block, int $index) use ($texts): mixed {
+            if (is_array($block) && array_key_exists('text', $block) && isset($texts[$index])) {
+                $block['text'] = $texts[$index];
+            }
+
+            return $block;
+        }, array_values($english), array_keys(array_values($english)));
     }
 
     /**

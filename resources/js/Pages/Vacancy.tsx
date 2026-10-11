@@ -114,7 +114,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                     </div>
                     {related.length > 0 && (
                         <section className="about-related-section" aria-labelledby="other-openings">
-                            <span className="about-accent-eyebrow">CAREERS</span>
+                            <span className="about-accent-eyebrow">{t('careersEyebrowShort')}</span>
                             <h2 id="other-openings">{t('otherOpenings')}</h2>
                             <div className="about-focus-grid about-focus-grid-3">
                                 {related.map((item) => (

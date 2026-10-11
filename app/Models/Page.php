@@ -13,7 +13,7 @@ class Page extends Model implements TranslatableContent
 {
     use HasTranslations;
 
-    public const TRANSLATABLE_FIELDS = ['title', 'summary', 'seo_title', 'meta_description'];
+    public const TRANSLATABLE_FIELDS = ['title', 'summary', 'blocks', 'seo_title', 'meta_description'];
 
     protected $fillable = ['slug', 'title', 'summary', 'blocks', 'seo_title', 'meta_description', 'department_id'];
 

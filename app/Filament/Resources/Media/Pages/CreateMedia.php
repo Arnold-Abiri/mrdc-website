@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Media\Pages;
 
 use App\Domain\Cms\MediaManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Media\MediaResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 class CreateMedia extends CreateRecord
 {
     protected static string $resource = MediaResource::class;
+
+    use HandlesTranslations;
 
     protected function handleRecordCreation(array $data): Model
     {

@@ -201,7 +201,7 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                                             className="btn-mandate-action"
                                             style={{ alignSelf: 'center' }}
                                         >
-                                            <span>View Agenda &amp; Minutes</span>
+                                            <span>{t('viewAgendaMinutes')}</span>
                                             <span aria-hidden="true">→</span>
                                         </Link>
                                     </article>
@@ -218,25 +218,25 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                                 <line x1="12" y1="16" x2="12" y2="12" />
                                 <line x1="12" y1="8" x2="12.01" y2="8" />
                             </svg>
-                            <span>Council Resolutions &amp; Public Transparency</span>
+                            <span>{t('resolutionsTitle')}</span>
                         </div>
                         <div className="dept-portal-grid">
                             <Link href={`/${locale}/transparency`} className="dept-portal-card">
-                                <h4>Financial Transparency &amp; Budgets</h4>
-                                <p>Download adopted council tariffs, financial statements, and devolution expenditure.</p>
-                                <span>Access financial reports →</span>
+                                <h4>{t('finTransBudgets')}</h4>
+                                <p>{t('finTransBudgetsDesc')}</p>
+                                <span>{t('accessFinReports')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/officials`} className="dept-portal-card">
-                                <h4>Appointed Officials &amp; Councillors</h4>
-                                <p>Discover committee memberships and executive leadership heading council departments.</p>
-                                <span>View council leadership →</span>
+                                <h4>{t('officialsCouncillors')}</h4>
+                                <p>{t('officialsCouncillorsDesc')}</p>
+                                <span>{t('viewLeadership')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/documents`} className="dept-portal-card">
-                                <h4>Council Bylaws &amp; Gazettes</h4>
-                                <p>Browse statutory instruments, developmental policies, and municipal forms.</p>
-                                <span>Open document repository →</span>
+                                <h4>{t('bylawsGazettes')}</h4>
+                                <p>{t('bylawsGazettesDesc')}</p>
+                                <span>{t('openDocRepo')} →</span>
                             </Link>
                         </div>
                     </div>

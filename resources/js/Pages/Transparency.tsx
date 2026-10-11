@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 import { formatDate } from '../formatDate';
 import { SourcedText } from '../Components/public/SourceButtons';
 
@@ -14,12 +15,12 @@ type FinancialDocument = {
     download_count: number;
 };
 
-const categoryLabels: Record<string, string> = {
-    budget: 'Approved Council Budget',
-    financial_statement: 'Audited Financial Statements',
-    financial_report: 'Quarterly Financial Report',
-    procurement_plan: 'Annual Procurement Plan',
-    awards_register: 'Public Tender Awards Register',
+const categoryLabels: Record<string, TranslationKey> = {
+    budget: 'finBudget',
+    financial_statement: 'finStatement',
+    financial_report: 'finReport',
+    procurement_plan: 'finProcPlan',
+    awards_register: 'finAwards',
 };
 
 export default function Transparency({
@@ -34,26 +35,27 @@ export default function Transparency({
     filters: { category: string | null; year: string | null };
 }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
 
     return (
         <PublicLayout>
-            <Head title="Financial Transparency, Budgets & Audit Disclosures" />
+            <Head title={t('finHeadTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/departments`}>Council</Link>
+                        <Link href={`/${locale}/departments`}>{t('wardsCrumbCouncil')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Transparency</span>
+                        <span aria-current="page">{t('transparency')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">STATUTORY FINANCIAL DISCLOSURE · PUBLIC FINANCE MANAGEMENT ACT</span>
-                    <h1>Financial Transparency &amp; Open Council</h1>
+                    <span className="about-accent-eyebrow">{t('finEyebrow')}</span>
+                    <h1>{t('finTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        Public access to adopted annual estimates, audited balance sheets, procurement plans, and devolution grant disbursements for Mutoko Rural District Council.
+                        {t('finSubtitle')}
                     </p>
                 </div>
             </header>
@@ -64,26 +66,26 @@ export default function Transparency({
                     <div className="about-stats-flex">
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Audited</div>
-                                <div className="about-stat-label">Statutory Oversight</div>
+                                <div className="about-stat-num">{t('statAudited')}</div>
+                                <div className="about-stat-label">{t('statOversight')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Devolution</div>
-                                <div className="about-stat-label">Capital Grant Tracking</div>
+                                <div className="about-stat-num">{t('statDevolution')}</div>
+                                <div className="about-stat-label">{t('statCapitalGrant')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">PFMA</div>
-                                <div className="about-stat-label">Treasury Compliance</div>
+                                <div className="about-stat-num">{t('statPfma')}</div>
+                                <div className="about-stat-label">{t('statTreasury')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{documents.length}</div>
-                                <div className="about-stat-label">Published Disclosures</div>
+                                <div className="about-stat-label">{t('statPublishedDisc')}</div>
                             </div>
                         </div>
                     </div>
@@ -93,10 +95,10 @@ export default function Transparency({
             {/* MAIN DISCLOSURE SECTION */}
             <section className="about-page-section" aria-labelledby="transparency-docs">
                 <div className="container">
-                    <span className="about-accent-eyebrow">FISCAL ACCOUNTABILITY</span>
-                    <h2 id="transparency-docs">Financial Disclosures &amp; Statutory Reports</h2>
+                    <span className="about-accent-eyebrow">{t('fiscalEyebrow')}</span>
+                    <h2 id="transparency-docs">{t('fiscalTitle')}</h2>
                     <p className="about-page-section-intro">
-                        Mutoko Rural District Council publishes its fiscal plans and expenditure registers in compliance with the Constitution of Zimbabwe and the Public Finance Management Act [Chapter 22:19].
+                        {t('fiscalIntro')}
                     </p>
 
                     {/* PILLARS STRIP */}
@@ -108,8 +110,8 @@ export default function Transparency({
                                 </svg>
                             </div>
                             <div>
-                                <div className="transparency-kpi-label">Annual Council Budget</div>
-                                <div className="transparency-kpi-value">Participatory Ward Consultations</div>
+                                <div className="transparency-kpi-label">{t('kpiBudget')}</div>
+                                <div className="transparency-kpi-value">{t('kpiBudgetDesc')}</div>
                             </div>
                         </div>
 
@@ -123,8 +125,8 @@ export default function Transparency({
                                 </svg>
                             </div>
                             <div>
-                                <div className="transparency-kpi-label">Auditor-General Submissions</div>
-                                <div className="transparency-kpi-value">External Statutory Audits</div>
+                                <div className="transparency-kpi-label">{t('kpiAudit')}</div>
+                                <div className="transparency-kpi-value">{t('kpiAuditDesc')}</div>
                             </div>
                         </div>
 
@@ -136,8 +138,8 @@ export default function Transparency({
                                 </svg>
                             </div>
                             <div>
-                                <div className="transparency-kpi-label">Procurement &amp; PRAZ</div>
-                                <div className="transparency-kpi-value">Public Tender Awards</div>
+                                <div className="transparency-kpi-label">{t('kpiPraz')}</div>
+                                <div className="transparency-kpi-value">{t('kpiPrazDesc')}</div>
                             </div>
                         </div>
                     </div>
@@ -146,7 +148,7 @@ export default function Transparency({
                     <form method="get" action={`/${locale}/transparency`} className="transparency-filter-bar">
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexGrow: 1, minWidth: 220 }}>
                             <label htmlFor="transparency-category" style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-civic-navy)' }}>
-                                Document Category
+                                {t('docCategory')}
                             </label>
                             <select
                                 id="transparency-category"
@@ -154,10 +156,10 @@ export default function Transparency({
                                 defaultValue={filters.category ?? ''}
                                 style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid var(--color-border)', fontSize: '0.88rem' }}
                             >
-                                <option value="">All Financial Categories</option>
+                                <option value="">{t('allFinCats')}</option>
                                 {categories.map((category) => (
                                     <option key={category} value={category}>
-                                        {categoryLabels[category] ?? category}
+                                        {categoryLabels[category] ? t(categoryLabels[category]) : category}
                                     </option>
                                 ))}
                             </select>
@@ -165,7 +167,7 @@ export default function Transparency({
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: 140 }}>
                             <label htmlFor="transparency-year" style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-civic-navy)' }}>
-                                Fiscal Year
+                                {t('fiscalYear')}
                             </label>
                             <select
                                 id="transparency-year"
@@ -173,7 +175,7 @@ export default function Transparency({
                                 defaultValue={filters.year ?? ''}
                                 style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid var(--color-border)', fontSize: '0.88rem' }}
                             >
-                                <option value="">All Years</option>
+                                <option value="">{t('allYears')}</option>
                                 {years.map((year) => (
                                     <option key={year} value={year}>{year}</option>
                                 ))}
@@ -186,7 +188,7 @@ export default function Transparency({
                                 className="btn-mandate-action"
                                 style={{ padding: '9px 18px', fontSize: '0.86rem' }}
                             >
-                                Filter Reports
+                                {t('filterReports')}
                             </button>
                             {(filters.category || filters.year) && (
                                 <Link
@@ -194,7 +196,7 @@ export default function Transparency({
                                     className="dept-filter-btn"
                                     style={{ padding: '9px 14px', textDecoration: 'none' }}
                                 >
-                                    Reset
+                                    {t('resetLink')}
                                 </Link>
                             )}
                         </div>
@@ -204,7 +206,7 @@ export default function Transparency({
                     {documents.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
-                                No financial disclosure documents match the selected filters.
+                                {t('noFinMatch')}
                             </p>
                         </div>
                     ) : (
@@ -212,9 +214,9 @@ export default function Transparency({
                             {documents.map((doc) => (
                                 <article key={doc.slug} className="transparency-doc-card">
                                     <div className="transparency-doc-top">
-                                        <span className="transparency-file-pill">OFFICIAL PDF</span>
+                                        <span className="transparency-file-pill">{t('schedOfficialPdf')}</span>
                                         <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>
-                                            {doc.reference_date ? formatDate(doc.reference_date, locale) : 'Recent'}
+                                            {doc.reference_date ? formatDate(doc.reference_date, locale) : t('docRecent')}
                                         </span>
                                     </div>
 
@@ -223,18 +225,18 @@ export default function Transparency({
                                     </h3>
 
                                     <div className="transparency-doc-desc">
-                                        <SourcedText text={doc.description ?? 'Official council financial publication released by the Finance Department.'} />
+                                        <SourcedText text={doc.description ?? t('finFallback')} />
                                     </div>
 
                                     <div className="transparency-doc-footer">
                                         <span>
-                                            {categoryLabels[doc.category] ?? doc.category}
+                                            {categoryLabels[doc.category] ? t(categoryLabels[doc.category]) : doc.category}
                                         </span>
                                         <Link
                                             href={`/${locale}/documents/${doc.slug}`}
                                             className="transparency-download-cta"
                                         >
-                                            <span>View &amp; Download</span>
+                                            <span>{t('viewDownload')}</span>
                                             <span aria-hidden="true">→</span>
                                         </Link>
                                     </div>
@@ -251,25 +253,25 @@ export default function Transparency({
                                 <line x1="12" y1="16" x2="12" y2="12" />
                                 <line x1="12" y1="8" x2="12.01" y2="8" />
                             </svg>
-                            <span>Statutory Governance &amp; Council Procurement</span>
+                            <span>{t('govProcure')}</span>
                         </div>
                         <div className="dept-portal-grid">
                             <Link href={`/${locale}/tenders`} className="dept-portal-card">
-                                <h4>Open Tenders &amp; Expressions of Interest</h4>
-                                <p>View active bidding opportunities for roads, water supply, and capital civil works.</p>
-                                <span>Browse open tenders →</span>
+                                <h4>{t('openTendersCard')}</h4>
+                                <p>{t('openTendersCardDesc')}</p>
+                                <span>{t('browseOpenTenders')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/rates`} className="dept-portal-card">
-                                <h4>Tariffs &amp; Ratepayer Billing</h4>
-                                <p>Check current gazetted council tariffs, development levies, and payment instructions.</p>
-                                <span>Check rates information →</span>
+                                <h4>{t('tariffsCard')}</h4>
+                                <p>{t('tariffsBillingCardDesc2')}</p>
+                                <span>{t('checkRatesInfo')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/contact`} className="dept-portal-card">
-                                <h4>Audit &amp; Finance Inquiries</h4>
-                                <p>Contact the Finance Directorate or Internal Audit Unit at Mutoko Centre.</p>
-                                <span>Enquire with treasury →</span>
+                                <h4>{t('auditCard')}</h4>
+                                <p>{t('auditCardDesc')}</p>
+                                <span>{t('enquireTreasury')} →</span>
                             </Link>
                         </div>
                     </div>

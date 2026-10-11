@@ -9,10 +9,14 @@ use App\Models\Department;
 use App\Models\DistrictStatistic;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\Gallery;
 use App\Models\HomepageSlide;
 use App\Models\InvestmentOpportunity;
+use App\Models\Media;
 use App\Models\Official;
 use App\Models\Page;
+use App\Models\ProjectUpdate;
+use App\Models\PublicContact;
 use App\Models\Service;
 use App\Models\Tender;
 use App\Models\Vacancy;
@@ -58,10 +62,14 @@ class TranslationStatus extends FilamentPage
             'Vacancies' => Vacancy::class,
             'Documents' => Document::class,
             'Meetings' => CouncilMeeting::class,
+            'Galleries' => Gallery::class,
             'Wards' => Ward::class,
             'Officials' => Official::class,
             'Homepage slides' => HomepageSlide::class,
             'District statistics' => DistrictStatistic::class,
+            'Media captions' => Media::class,
+            'Project updates' => ProjectUpdate::class,
+            'Public contacts' => PublicContact::class,
         ];
         $report = [];
         foreach ($entities as $label => $class) {

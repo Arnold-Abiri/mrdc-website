@@ -12,7 +12,7 @@ class Service extends Model implements TranslatableContent
 {
     use HasTranslations;
 
-    public const TRANSLATABLE_FIELDS = ['name', 'summary', 'description', 'fees_information', 'seo_title', 'meta_description'];
+    public const TRANSLATABLE_FIELDS = ['name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'seo_title', 'meta_description'];
 
     protected $fillable = ['slug', 'name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'department_id', 'display_order', 'seo_title', 'meta_description'];
 

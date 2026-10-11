@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectUpdates;
 
 use App\Domain\Cms\ProjectUpdateManager;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\ProjectUpdates\Pages\CreateProjectUpdate;
 use App\Filament\Resources\ProjectUpdates\Pages\EditProjectUpdate;
 use App\Filament\Resources\ProjectUpdates\Pages\ListProjectUpdates;
@@ -43,6 +44,7 @@ class ProjectUpdateResource extends Resource
             TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100),
             Select::make('media_id')->relationship('media', 'title')->searchable(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
+            TranslationFields::make(ProjectUpdate::translatableFields()),
         ]);
     }
 

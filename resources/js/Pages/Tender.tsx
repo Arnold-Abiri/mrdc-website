@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 import { formatDate } from '../formatDate';
 
 type TenderDetail = {
@@ -22,16 +23,17 @@ type TenderDetail = {
     document: { slug: string; title: string } | null;
 };
 
-const statusLabels: Record<string, { label: string; class: string }> = {
-    open: { label: 'Open for Bidding', class: 'currency-usd' },
-    closed: { label: 'Under Evaluation', class: 'currency-zig' },
-    awarded: { label: 'Contract Awarded', class: 'currency-multi' },
+const statusLabels: Record<string, { labelKey: TranslationKey; class: string }> = {
+    open: { labelKey: 'tenderOpen' as TranslationKey, class: 'currency-usd' },
+    closed: { labelKey: 'tenderClosed' as TranslationKey, class: 'currency-zig' },
+    awarded: { labelKey: 'tenderAwarded' as TranslationKey, class: 'currency-multi' },
 };
 
 export default function Tender({ tender, department }: { tender: TenderDetail; department: string | null }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const statusInfo = statusLabels[tender.display_status] ?? {
-        label: tender.display_status,
+        labelKey: 'tenderClosed' as TranslationKey,
         class: 'currency-zig',
     };
 
@@ -43,19 +45,19 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/tenders`}>Tenders</Link>
+                        <Link href={`/${locale}/tenders`}>{t('tenders')}</Link>
                         <span aria-hidden="true">/</span>
                         <span aria-current="page">{tender.reference}</span>
                     </nav>
                     <span className="about-accent-eyebrow">
-                        TENDER REF: {tender.reference} · PRAZ REGULATED
+                        {t('tenderRefEyebrow')}: {tender.reference} · {t('prazRegulated')}
                     </span>
                     <h1>{tender.title}</h1>
                     <p className="about-page-hero-subtitle">
-                        {department ? `Responsible Directorate: ${department}. ` : ''}Public competitive tender issued by Mutoko Rural District Council under the PPDPA Act.
+                        {department ? `${t('respDirectorate')}: ${department}. ` : ''} {t('tenderIssuedTail')}
                     </p>
                 </div>
             </header>
@@ -67,9 +69,9 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                         <div className="about-detail-main">
                             <article className="rates-guidance-card">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                                    <h3 id="tender-overview" style={{ margin: 0 }}>Tender Scope &amp; Specifications</h3>
+                                    <h3 id="tender-overview" style={{ margin: 0 }}>{t('tenderScopeTitle')}</h3>
                                     <span className={`rates-bank-currency ${statusInfo.class}`}>
-                                        {statusInfo.label}
+                                        {t(statusInfo.labelKey)}
                                     </span>
                                 </div>
 
@@ -96,19 +98,19 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                                         <dl style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '8px', fontSize: '0.9rem', margin: 0 }}>
                                             {tender.awarded_to && (
                                                 <>
-                                                    <dt style={{ fontWeight: 700, color: '#047857' }}>Awarded Contractor:</dt>
+                                                    <dt style={{ fontWeight: 700, color: '#047857' }}>{t('awardedContractor')}:</dt>
                                                     <dd style={{ margin: 0, color: '#1E293B', fontWeight: 700 }}>{tender.awarded_to}</dd>
                                                 </>
                                             )}
                                             {tender.award_amount && (
                                                 <>
-                                                    <dt style={{ fontWeight: 700, color: '#047857' }}>Award Value:</dt>
+                                                    <dt style={{ fontWeight: 700, color: '#047857' }}>{t('awardValue')}</dt>
                                                     <dd style={{ margin: 0, color: '#1E293B' }}>{tender.award_amount}</dd>
                                                 </>
                                             )}
                                             {tender.awarded_at && (
                                                 <>
-                                                    <dt style={{ fontWeight: 700, color: '#047857' }}>Date of Award:</dt>
+                                                    <dt style={{ fontWeight: 700, color: '#047857' }}>{t('awardDate')}</dt>
                                                     <dd style={{ margin: 0, color: '#1E293B' }}>{formatDate(tender.awarded_at, locale)}</dd>
                                                 </>
                                             )}
@@ -119,31 +121,31 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                         </div>
 
                         <aside className="about-summary-card" aria-label="Tender submission summary">
-                            <h3>Bidding Summary</h3>
+                            <h3>{t('biddingSummary')}</h3>
                             <dl>
-                                <dt>Reference</dt>
+                                <dt>{t('reference')}</dt>
                                 <dd style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 700 }}>{tender.reference}</dd>
-                                <dt>Status</dt>
-                                <dd>{statusInfo.label}</dd>
+                                <dt>{t('statusLabel')}</dt>
+                                <dd>{t(statusInfo.labelKey)}</dd>
                                 {tender.category && (
                                     <>
-                                        <dt>Category</dt>
+                                        <dt>{t('category')}</dt>
                                         <dd>{tender.category}</dd>
                                     </>
                                 )}
                                 {tender.opens_at && (
                                     <>
-                                        <dt>Opening Date</dt>
+                                        <dt>{t('openingDate')}</dt>
                                         <dd>{formatDate(tender.opens_at, locale)}</dd>
                                     </>
                                 )}
                                 {tender.closes_at && (
                                     <>
-                                        <dt>Closing Date</dt>
+                                        <dt>{t('closingDate')}</dt>
                                         <dd><strong>{formatDate(tender.closes_at, locale)} at 10:00 AM</strong></dd>
                                     </>
                                 )}
-                                <dt>Submission Box</dt>
+                                <dt>{t('submissionBox')}</dt>
                                 <dd>Stand 366 Mutoko Centre</dd>
                             </dl>
 
@@ -154,14 +156,14 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                                         className="rates-pop-btn-primary"
                                         style={{ width: '100%', justifyContent: 'center' }}
                                     >
-                                        <span>Download Bidding RFP (PDF)</span>
+                                        <span>{t('downloadRfp')}</span>
                                         <span aria-hidden="true">→</span>
                                     </Link>
                                 </div>
                             )}
 
                             <p style={{ marginTop: '16px', fontSize: '0.82rem', color: '#64748B', textAlign: 'center' }}>
-                                Questions regarding this tender? <Link href={`/${locale}/contact?context=tender:${tender.slug}`} className="about-page-text-link">Contact Procurement Desk</Link>
+                                {t('tenderQuestions')} <Link href={`/${locale}/contact?context=tender:${tender.slug}`} className="about-page-text-link">{t('procurementDesk')}</Link>
                             </p>
                         </aside>
                     </div>

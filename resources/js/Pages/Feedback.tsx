@@ -40,12 +40,12 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
             <header className="about-page-hero contact-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
                         <a href={`/${locale}`}>{t('home')}</a>
                         <span aria-hidden="true">/</span>
                         <span aria-current="page">{t('feedbackPage')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">HAVE YOUR SAY</span>
+                    <span className="about-accent-eyebrow">{t('haveYourSay')}</span>
                     <h1>{t('feedbackPage')}</h1>
                     <p className="about-page-hero-subtitle">{t('feedbackDesc')}</p>
                 </div>
@@ -55,32 +55,32 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
                 <div className="container">
                     <section className="contact-columns" aria-label="How feedback works and feedback form">
                         <div className="contact-panel contact-info-col">
-                            <span className="contact-eyebrow">HOW IT WORKS</span>
-                            <h2 id="feedback-info-heading">What happens next</h2>
-                            <p className="contact-intro">Every submission is recorded in the Council Registry and routed to the relevant team for resolution.</p>
+                            <span className="contact-eyebrow">{t('howItWorks')}</span>
+                            <h2 id="feedback-info-heading">{t('whatHappensNext')}</h2>
+                            <p className="contact-intro">{t('feedbackIntro')}</p>
                             <ul className="contact-details-list">
                                 <li>
                                     <span className="contact-detail-icon"><FeedbackIcon name="tracking" /></span>
-                                    <div><strong>Tracked submission</strong><span className="contact-office">Each message receives a unique tracking reference number.</span></div>
+                                    <div><strong>{t('trackedSubmission')}</strong><span className="contact-office">{t('trackedSubmissionDesc')}</span></div>
                                 </li>
                                 <li>
                                     <span className="contact-detail-icon"><FeedbackIcon name="response" /></span>
-                                    <div><strong>48-hour response</strong><span className="contact-office">Standard initial response within two working days.</span></div>
+                                    <div><strong>{t('response48')}</strong><span className="contact-office">{t('response48Desc')}</span></div>
                                 </li>
                                 <li>
                                     <span className="contact-detail-icon"><FeedbackIcon name="routing" /></span>
-                                    <div><strong>Direct routing</strong><span className="contact-office">Choose a directorate or let the secretariat route it for you.</span></div>
+                                    <div><strong>{t('directRouting')}</strong><span className="contact-office">{t('directRoutingDesc')}</span></div>
                                 </li>
                             </ul>
-                            <div className="contact-info-note"><strong>Complaints stay private.</strong><p>Complaints are handled confidentially by council staff and never published.</p></div>
+                            <div className="contact-info-note"><strong>{t('complaintsPrivate')}</strong><p>{t('complaintsPrivateDesc')}</p></div>
                         </div>
 
                         <div className="contact-panel contact-form-col" id="feedback-form">
                             <div className="contact-form-heading">
                                 <div>
-                                    <span className="contact-eyebrow">SEND FEEDBACK</span>
-                                    <h2>Share your feedback</h2>
-                                    <p className="contact-intro">Submit suggestions, compliments, service enquiries or confidential complaints.</p>
+                                    <span className="contact-eyebrow">{t('sendFeedbackEyebrow')}</span>
+                                    <h2>{t('shareFeedback')}</h2>
+                                    <p className="contact-intro">{t('shareFeedbackDesc')}</p>
                                 </div>
                                 <span className="contact-form-heading-icon" aria-hidden="true"><FeedbackIcon name="message" /></span>
                             </div>
@@ -232,9 +232,9 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
                         <section className="contact-departments" aria-labelledby="feedback-departments-heading">
                             <div className="contact-section-heading">
                                 <div>
-                                    <span className="contact-eyebrow">CONTACT THE RIGHT TEAM</span>
-                                    <h2 id="feedback-departments-heading">Council Departments</h2>
-                                    <p>Select the relevant department in your feedback submission for direct routing.</p>
+                                    <span className="contact-eyebrow">{t('contactRightTeam')}</span>
+                                    <h2 id="feedback-departments-heading">{t('councilDepartments')}</h2>
+                                    <p>{t('contactDeptDesc')}</p>
                                 </div>
                                 <a href={`/${locale}/departments`}>View all departments <span aria-hidden="true">→</span></a>
                             </div>
@@ -253,16 +253,16 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
                     <section className="contact-quick-links" aria-labelledby="feedback-links-heading">
                         <div className="contact-section-heading">
                             <div>
-                                <span className="contact-eyebrow">LOOKING FOR SOMETHING SPECIFIC?</span>
-                                <h2 id="feedback-links-heading">Quick Links</h2>
-                                <p>Find information and services across the Council website.</p>
+                                <span className="contact-eyebrow">{t('contactLookingFor')}</span>
+                                <h2 id="feedback-links-heading">{t('quickLinks')}</h2>
+                                <p>{t('contactQuickLinksDesc')}</p>
                             </div>
                         </div>
                         <div className="contact-link-grid">
-                            <a href={`/${locale}/contact`}>Contact Us &amp; Switchboard <span aria-hidden="true">→</span></a>
-                            <a href={`/${locale}/services`}>Council Services <span aria-hidden="true">→</span></a>
-                            <a href={`/${locale}/notices`}>Public Notices <span aria-hidden="true">→</span></a>
-                            <a href={`/${locale}/documents`}>Documents and Downloads <span aria-hidden="true">→</span></a>
+                            <a href={`/${locale}/contact`}>{t('contactUs')} <span aria-hidden="true">→</span></a>
+                            <a href={`/${locale}/services`}>{t('councilServices')} <span aria-hidden="true">→</span></a>
+                            <a href={`/${locale}/notices`}>{t('publicNotices')} <span aria-hidden="true">→</span></a>
+                            <a href={`/${locale}/documents`}>{t('linkDocsDownloads')} <span aria-hidden="true">→</span></a>
                         </div>
                     </section>
                 </div>

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PublicContacts;
 
 use App\Domain\Cms\PublicContactManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\PublicContacts\Pages\CreatePublicContact;
 use App\Filament\Resources\PublicContacts\Pages\EditPublicContact;
 use App\Filament\Resources\PublicContacts\Pages\ListPublicContacts;
@@ -37,7 +38,7 @@ class PublicContactResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([TextInput::make('office')->required()->maxLength(255), Select::make('type')->options(['phone' => 'Phone', 'email' => 'Email', 'physical_address' => 'Physical address', 'postal_address' => 'Postal address'])->required(), Textarea::make('value')->required()->maxLength(2000), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(), TextInput::make('display_order')->numeric()->default(0)->required()]);
+        return $schema->components([TextInput::make('office')->required()->maxLength(255), Select::make('type')->options(['phone' => 'Phone', 'email' => 'Email', 'physical_address' => 'Physical address', 'postal_address' => 'Postal address'])->required(), Textarea::make('value')->required()->maxLength(2000), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(), TextInput::make('display_order')->numeric()->default(0)->required(), TranslationFields::make(PublicContact::translatableFields())]);
     }
 
     public static function table(Table $table): Table

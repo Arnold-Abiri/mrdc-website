@@ -19,7 +19,7 @@ class PublicEnquiryController extends Controller
         return Inertia::render('Contact', [
             'csrfToken' => csrf_token(),
             'submitted' => $request->query('submitted') === '1',
-            'contacts' => PublicContact::query()->public()->orderBy('display_order')->get(['office', 'type', 'value']),
+            'contacts' => PublicContact::query()->with('translations')->public()->orderBy('display_order')->get(['office', 'type', 'value'])->map(fn (PublicContact $contact): array => $contact->toLocalizedArray(['office', 'type', 'value'])),
             'departments' => Department::query()->where('status', 'active')->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'public_name']),
             'context' => $this->resolveContext($request->query('context')),
         ]);

@@ -18,10 +18,10 @@ class ServiceController extends Controller
 
     public function show(string $locale, string $slug): Response
     {
-        $service = Service::query()->with('translations')->public()->with('department')->where('slug', $slug)->firstOrFail();
+        $service = Service::query()->with('translations')->public()->with('department.translations', 'department')->where('slug', $slug)->firstOrFail();
 
         $department = $service->department;
 
-        return Inertia::render('Service', ['service' => $service->toLocalizedArray(['slug', 'name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'seo_title', 'meta_description']), 'department' => $department instanceof Department ? $department->name : null, 'documents' => $service->department_id ? Document::query()->with('translations')->public()->where('department_id', $service->department_id)->orderByDesc('published_at')->limit(10)->get(['id', 'slug', 'title', 'category'])->map(fn (Document $document): array => $document->toLocalizedArray(['slug', 'title', 'category'])) : []]);
+        return Inertia::render('Service', ['service' => $service->toLocalizedArray(['slug', 'name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'seo_title', 'meta_description']), 'department' => $department instanceof Department ? $department->translated('public_name') : null, 'documents' => $service->department_id ? Document::query()->with('translations')->public()->where('department_id', $service->department_id)->orderByDesc('published_at')->limit(10)->get(['id', 'slug', 'title', 'category'])->map(fn (Document $document): array => $document->toLocalizedArray(['slug', 'title', 'category'])) : []]);
     }
 }

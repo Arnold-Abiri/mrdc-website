@@ -14,7 +14,7 @@ class GalleryController extends Controller
     public function index(): Response
     {
         $galleries = Gallery::query()
-            ->with(['translations', 'media', 'coverMedia'])
+            ->with(['translations', 'media.translations', 'coverMedia.translations', 'coverMedia'])
             ->public()
             ->orderByDesc('is_featured')
             ->orderBy('display_order')
@@ -35,7 +35,7 @@ class GalleryController extends Controller
                     'is_featured' => (bool) $gallery->is_featured,
                     'image_count' => $images->count(),
                     'cover_url' => $cover instanceof Media ? public_route('managed-media.show', $cover->id) : null,
-                    'cover_alt' => $cover instanceof Media ? ($cover->alt_text ?: $gallery->title) : null,
+                    'cover_alt' => $cover instanceof Media ? ($cover->translated('alt_text') ?: $gallery->title) : null,
                 ];
             })->values(),
         ]);
@@ -44,15 +44,15 @@ class GalleryController extends Controller
     public function show(string $locale, string $slug): Response
     {
         $gallery = Gallery::query()
-            ->with(['translations', 'media', 'coverMedia', 'department'])
+            ->with(['translations', 'media.translations', 'coverMedia.translations', 'coverMedia', 'department.translations', 'department'])
             ->public()
             ->where('slug', $slug)
             ->firstOrFail();
 
         $images = $this->activeImages($gallery)->map(fn (Media $media): array => [
             'url' => public_route('managed-media.show', $media->id),
-            'alt' => $media->alt_text ?: $gallery->title,
-            'caption' => $media->pivot->caption ?: $media->caption,
+            'alt' => $media->translated('alt_text') ?: $gallery->title,
+            'caption' => $media->pivot->caption ?: $media->translated('caption'),
             'width' => $media->width,
             'height' => $media->height,
         ])->values();
@@ -61,7 +61,7 @@ class GalleryController extends Controller
             'gallery' => [
                 ...$gallery->toLocalizedArray(['slug', 'title', 'summary', 'description', 'location']),
                 'album_date' => $gallery->album_date?->format('Y-m-d'),
-                'department' => $gallery->department?->name,
+                'department' => $gallery->department?->translated('public_name'),
             ],
             'images' => $images,
         ]);

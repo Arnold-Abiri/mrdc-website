@@ -41,21 +41,21 @@ export default function Investment({ opportunities }: { opportunities: Opportuni
 
     return (
         <PublicLayout>
-            <Head title="Invest in Mutoko | Economic Opportunities & Industrial Development" />
+            <Head title={t('invHeadTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/investment`}>Opportunities</Link>
+                        <Link href={`/${locale}/investment`}>{t('opportunities')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Invest in Mutoko</span>
+                        <span aria-current="page">{t('invCrumb')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">ECONOMIC PROSPECTUS · MASHONALAND EAST</span>
-                    <h1>Invest in Mutoko District</h1>
+                    <span className="about-accent-eyebrow">{t('invEyebrow')}</span>
+                    <h1>{t('invTitle')}</h1>
                     <p className="about-page-hero-subtitle">
                         {copy[locale].intro}
                     </p>
@@ -69,25 +69,25 @@ export default function Investment({ opportunities }: { opportunities: Opportuni
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">428,916 ha</div>
-                                <div className="about-stat-label">Total District Land Area</div>
+                                <div className="about-stat-label">{t('statLandArea')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">143 km</div>
-                                <div className="about-stat-label">From Harare via A2 Corridor</div>
+                                <div className="about-stat-label">{t('statFromHarare')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">90 km</div>
-                                <div className="about-stat-label">To Mozambique Border</div>
+                                <div className="about-stat-label">{t('statToMoz')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">29 Wards</div>
-                                <div className="about-stat-label">Agricultural &amp; Mining Hub</div>
+                                <div className="about-stat-num">{t('stat29Wards')}</div>
+                                <div className="about-stat-label">{t('statAgriMining')}</div>
                             </div>
                         </div>
                     </div>
@@ -101,28 +101,28 @@ export default function Investment({ opportunities }: { opportunities: Opportuni
                     {/* ZIDA & COUNCIL FACILITATION BANNER */}
                     <div className="invest-zida-banner">
                         <div className="invest-zida-info">
-                            <h3>Mutoko Investment &amp; Business Facilitation Desk</h3>
+                            <h3>{t('zidaTitle')}</h3>
                             <p>
-                                {copy[locale].detail} Serviced commercial and industrial stands are surveyed and ready for allocation at Mutoko Centre and Jani Growth Point.
+                                {copy[locale].detail} {t('zidaTail')}
                             </p>
                         </div>
                         <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
                             <Link href={`/${locale}/contact?context=investor-desk`} className="rates-pop-btn-primary">
-                                <span>Contact Investor Desk</span>
+                                <span>{t('contactInvestorDesk')}</span>
                                 <span aria-hidden="true">→</span>
                             </Link>
                         </div>
                     </div>
 
                     {/* SECTOR FILTER TABS */}
-                    <span className="about-accent-eyebrow">STRATEGIC SECTORS</span>
-                    <h2 id="investment-opps">Priority Economic Opportunities</h2>
+                    <span className="about-accent-eyebrow">{t('sectorsEyebrow')}</span>
+                    <h2 id="investment-opps">{t('sectorsTitle')}</h2>
                     <p className="about-page-section-intro">
-                        Explore verified priority sectors where Mutoko boasts distinct comparative advantages across Southern Africa.
+                        {t('sectorsIntro')}
                     </p>
 
                     {sectors.length > 1 && (
-                        <div className="rates-filter-tabs" role="tablist" aria-label="Sector filters">
+                        <div className="rates-filter-tabs" role="tablist" aria-label={t('sectorFilters')}>
                             {sectors.map((sec) => (
                                 <button
                                     key={sec}
@@ -132,21 +132,21 @@ export default function Investment({ opportunities }: { opportunities: Opportuni
                                     className={`rates-tab-btn ${selectedSector === sec ? 'active' : ''}`}
                                     onClick={() => setSelectedSector(sec)}
                                 >
-                                    {sec === 'all' ? 'All Opportunities' : sec}
+                                    {sec === 'all' ? t('allOpportunities') : sec}
                                 </button>
                             ))}
                         </div>
                     )}
 
                     {filtered.length === 0 ? (
-                        <EmptyState title="No opportunities listed" text="No opportunities currently match your filter criteria." />
+                        <EmptyState title={t('noOpportunities')} text={t('noInvestmentDesc')} />
                     ) : (
                         <div className="vacancies-modern-grid">
                             {filtered.map((item) => (
                                 <article key={item.slug} className="vacancy-card-modern">
                                     <div className="vacancy-top-pills">
                                         <span className="vacancy-pill-grade">
-                                            {item.sector ?? 'General Sector'}
+                                            {item.sector ?? t('generalSector')}
                                         </span>
                                         <span className="vacancy-pill-type" style={{ background: '#ECFDF5', color: '#047857' }}>
                                             {item.opportunity_status}
@@ -175,10 +175,10 @@ export default function Investment({ opportunities }: { opportunities: Opportuni
 
                                     <div className="vacancy-card-footer-modern">
                                         <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>
-                                            Council Supported
+                                            {t('councilSupported')}
                                         </span>
                                         <Link href={`/${locale}/investment/${item.slug}`} className="vacancy-view-cta">
-                                            <span>Explore Proposal</span>
+                                            <span>{t('exploreProposal')}</span>
                                             <span aria-hidden="true">→</span>
                                         </Link>
                                     </div>

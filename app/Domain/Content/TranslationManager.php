@@ -37,16 +37,42 @@ class TranslationManager
             foreach ($data as $locale => $values) {
                 foreach ($values as $field => $value) {
                     $attributes = ['locale' => $locale, 'field' => $field];
-                    if ($value === null || trim($value) === '') {
+                    $stored = self::encodeTranslationValue($model, $field, $value);
+                    if ($stored === null) {
                         $model->translations()->where($attributes)->delete();
 
                         continue;
                     }
-                    $model->translations()->updateOrCreate($attributes, ['value' => $value, 'updated_by' => $actor->id]);
+                    $model->translations()->updateOrCreate($attributes, ['value' => $stored, 'updated_by' => $actor->id]);
                 }
             }
             app(AuditWriter::class)->record($actor, 'translations.saved', $model, ['locales' => array_keys($data)]);
         });
+    }
+
+    /**
+     * Encode a translator's textarea input for storage.
+     *
+     * List fields (requirements, steps) use one item per line; page blocks
+     * use one paragraph per blank-line-separated block. Both are stored as
+     * JSON lists so the public reader can merge them positionally, with
+     * English fallback on any mismatch. Returns null when empty so the
+     * stored row is removed and English is served.
+     */
+    private static function encodeTranslationValue(Model&TranslatableContent $model, string $field, ?string $value): ?string
+    {
+        if ($value === null || trim($value) === '') {
+            return null;
+        }
+        $english = $model->getAttribute($field);
+        if (! is_array($english) || $english === []) {
+            return $value;
+        }
+        $isBlocks = isset($english[0]) && is_array($english[0]) && array_key_exists('text', $english[0]);
+        $parts = $isBlocks ? preg_split('/\R\s*\R/', $value) : preg_split('/\R/', $value);
+        $lines = array_values(array_filter(array_map(fn ($line): string => trim((string) $line), $parts === false ? [] : $parts), fn ($line): bool => $line !== ''));
+
+        return $lines === [] ? null : json_encode($lines, JSON_UNESCAPED_UNICODE);
     }
 
     /**

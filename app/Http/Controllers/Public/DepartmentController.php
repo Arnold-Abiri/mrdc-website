@@ -27,7 +27,7 @@ class DepartmentController extends Controller
         $head = Official::query()->with('translations')->public()->where('department_id', $department->id)->where('is_department_head', true)->orderBy('display_order')->first(['id', 'slug', 'name', 'title']);
         $officials = Official::query()->with('translations')->public()->where('department_id', $department->id)->where('is_department_head', false)->orderBy('display_order')->orderBy('name')->get(['id', 'slug', 'name', 'title']);
         $services = Service::query()->with('translations')->public()->where('department_id', $department->id)->orderBy('display_order')->orderBy('name')->get(['id', 'slug', 'name', 'summary']);
-        $contacts = PublicContact::query()->public()->where('department_id', $department->id)->orderBy('display_order')->get(['office', 'type', 'value']);
+        $contacts = PublicContact::query()->with('translations')->public()->where('department_id', $department->id)->orderBy('display_order')->get(['office', 'type', 'value'])->map(fn ($contact): array => $contact->toLocalizedArray(['office', 'type', 'value']));
         $documents = Document::query()->with('translations')->public()->where('department_id', $department->id)->orderByDesc('published_at')->limit(10)->get(['id', 'slug', 'title', 'category']);
         $news = EditorialItem::query()->with('translations')->public()->where('type', 'news')->where('department_id', $department->id)->orderByDesc('published_at')->limit(5)->get(['id', 'slug', 'title']);
         $notices = EditorialItem::query()->with('translations')->public()->where('type', 'notice')->where('department_id', $department->id)->orderByDesc('published_at')->limit(5)->get(['id', 'slug', 'title']);

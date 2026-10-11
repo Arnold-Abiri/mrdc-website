@@ -41,10 +41,10 @@ class PreviewController extends Controller
             'preview' => true,
             'services' => Service::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->orderBy('name')->get(['id', 'slug', 'name', 'summary'])->map(fn (Service $service): array => $service->toLocalizedArray(['slug', 'name', 'summary'])),
             'documents' => Document::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('title')->limit(5)->get(['id', 'slug', 'title', 'description'])->map(fn (Document $document): array => $document->toLocalizedArray(['slug', 'title', 'description'])),
-            'news' => EditorialItem::query()->with(['translations', 'featuredMedia'])->where('type', 'news')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['id', 'slug', 'title', 'summary', 'published_at', 'featured_media_id'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null, 'image_alt' => $item->featuredMedia?->alt_text, 'image_caption' => $item->featuredMedia?->caption]),
+            'news' => EditorialItem::query()->with(['translations', 'featuredMedia.translations'])->where('type', 'news')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['id', 'slug', 'title', 'summary', 'published_at', 'featured_media_id'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null, 'image_alt' => $item->featuredMedia?->translated('alt_text'), 'image_caption' => $item->featuredMedia?->translated('caption')]),
             'notices' => EditorialItem::query()->with('translations')->where('type', 'notice')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['id', 'slug', 'title', 'summary', 'published_at'])->map(fn (EditorialItem $item): array => $item->toLocalizedArray(['slug', 'title', 'summary', 'published_at'])),
             'departments' => Department::query()->with('translations')->where('status', 'active')->orderBy('public_display_order')->limit(4)->get(['id', 'public_name', 'public_summary'])->map(fn (Department $department): array => $department->toLocalizedArray(['id', 'public_name', 'public_summary'])),
-            'contacts' => PublicContact::query()->orderBy('display_order')->limit(4)->get(['office', 'type', 'value']),
+            'contacts' => PublicContact::query()->with('translations')->orderBy('display_order')->limit(4)->get(['office', 'type', 'value'])->map(fn ($contact): array => $contact->toLocalizedArray(['office', 'type', 'value'])),
             'officials' => Official::query()->with('translations')->whereIn('status', ['draft', 'published'])->orderBy('display_order')->limit(3)->get(['id', 'slug', 'name', 'title'])->map(fn (Official $official): array => $official->toLocalizedArray(['slug', 'name', 'title'])),
             'ward_count' => Ward::query()->whereIn('status', ['draft', 'published'])->count(),
             'statistics' => DistrictStatistic::query()->with('translations')->public()->orderBy('display_order')->get(['id', 'label', 'value', 'unit', 'icon'])->map(fn (DistrictStatistic $statistic): array => $statistic->toLocalizedArray(['label', 'value', 'unit', 'icon'])),
@@ -174,11 +174,11 @@ class PreviewController extends Controller
 
     private function previewGallery(string $slug): Response
     {
-        $gallery = Gallery::query()->with(['translations', 'media', 'department'])->where('slug', $slug)->firstOrFail();
+        $gallery = Gallery::query()->with(['translations', 'media.translations', 'media', 'department.translations', 'department'])->where('slug', $slug)->firstOrFail();
         $images = $gallery->media->where('status', 'active')->values()->map(fn (Media $media): array => [
             'url' => public_route('managed-media.show', $media->id),
-            'alt' => $media->alt_text ?: $gallery->title,
-            'caption' => $media->pivot->caption ?: $media->caption,
+            'alt' => $media->translated('alt_text') ?: $gallery->title,
+            'caption' => $media->pivot->caption ?: $media->translated('caption'),
             'width' => $media->width,
             'height' => $media->height,
         ]);
@@ -188,7 +188,7 @@ class PreviewController extends Controller
             'gallery' => [
                 ...$gallery->toLocalizedArray(['slug', 'title', 'summary', 'description', 'location']),
                 'album_date' => $gallery->album_date?->format('Y-m-d'),
-                'department' => $gallery->department?->name,
+                'department' => $gallery->department?->translated('public_name'),
                 'is_review_content' => true,
             ],
             'images' => $images->values(),

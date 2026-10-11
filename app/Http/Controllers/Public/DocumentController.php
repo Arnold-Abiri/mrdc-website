@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Document;
 use App\Models\Media;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class DocumentController extends Controller
         abort_unless($category === null || in_array($category, Document::CATEGORIES, true), 422);
         abort_unless($year === null || (is_numeric($year) && (int) $year >= 1990 && (int) $year <= (int) now()->format('Y') + 1), 422);
 
-        $documents = Document::query()->with(['translations', 'media:id,size,mime_type,original_filename', 'department:id,name,public_name'])->public()
+        $documents = Document::query()->with(['translations', 'media:id,size,mime_type,original_filename', 'department:id,name,public_name', 'department.translations'])->public()
             ->when($category, fn ($query) => $query->where('category', $category))
             ->when($year, fn ($query) => $query->whereYear('reference_date', (int) $year))
             ->when($departmentId, fn ($query) => $query->where('department_id', (int) $departmentId))
@@ -49,7 +50,7 @@ class DocumentController extends Controller
                     'download_count' => (int) $doc->download_count,
                     'file_size' => $formattedSize,
                     'mime_type' => $doc->media?->mime_type ?? 'application/pdf',
-                    'department' => $doc->department?->public_name ?? $doc->department?->name ?? null,
+                    'department' => $doc->department instanceof Department ? $doc->department->translated('public_name') : null,
                 ];
             });
 
@@ -75,7 +76,7 @@ class DocumentController extends Controller
 
     public function show(string $locale, string $slug): Response
     {
-        $document = Document::query()->with(['translations', 'media', 'department'])->public()->where('slug', $slug)->firstOrFail();
+        $document = Document::query()->with(['translations', 'media', 'department.translations', 'department'])->public()->where('slug', $slug)->firstOrFail();
 
         $bytes = $document->media?->size ?? 0;
         $formattedSize = $bytes >= 1048576
@@ -102,7 +103,7 @@ class DocumentController extends Controller
                 'has_file' => $hasFile,
                 'file_size' => $formattedSize,
                 'mime_type' => $document->media?->mime_type ?? 'application/pdf',
-                'department' => $document->department?->public_name ?? $document->department?->name ?? null,
+                'department' => $document->department instanceof Department ? $document->department->translated('public_name') : null,
             ],
             'reference_year' => $document->referenceYear(),
             'has_file' => $hasFile,

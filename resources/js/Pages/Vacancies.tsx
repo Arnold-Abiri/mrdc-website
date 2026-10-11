@@ -147,14 +147,14 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
 
     return (
         <PublicLayout>
-            <Head title="Careers & Municipal Vacancies | Mutoko RDC" />
+            <Head title={t('vacHeadTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
                         <Link href={`/${locale}/investment`}>{t('opportunities')}</Link>
                         <span aria-hidden="true">/</span>

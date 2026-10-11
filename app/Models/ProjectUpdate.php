@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Domain\Content\HasTranslations;
+use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProjectUpdate extends Model
+class ProjectUpdate extends Model implements TranslatableContent
 {
+    use HasTranslations;
+
+    public const TRANSLATABLE_FIELDS = ['title', 'summary'];
+
     protected $fillable = ['council_project_id', 'update_date', 'title', 'summary', 'progress_percent', 'media_id', 'display_order'];
 
     protected function casts(): array

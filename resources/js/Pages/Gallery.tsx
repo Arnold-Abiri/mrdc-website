@@ -35,7 +35,7 @@ export default function Gallery({ gallery, images }: { gallery: GalleryDetail; i
         <PublicLayout>
             <Head title={`${gallery.title} | ${t('galleries')}`} />
             <PageHero
-                eyebrow="GALLERY"
+                eyebrow={t('gallery')}
                 title={gallery.title}
                 subtitle={meta || undefined}
                 crumb={[{ label: t('gallery'), href: `/${locale}/galleries` }, { label: gallery.title }]}
@@ -47,7 +47,7 @@ export default function Gallery({ gallery, images }: { gallery: GalleryDetail; i
                     {gallery.description && <div className="gallery-detail-copy"><SourcedText text={gallery.description} /></div>}
 
                     <div className="gallery-detail-head">
-                        <span className="about-accent-eyebrow">ALBUM</span>
+                        <span className="about-accent-eyebrow">{t('album')}</span>
                         <h2 id="gallery-detail">
                             {images.length} {images.length === 1 ? t('photo') : t('photos')}
                         </h2>
