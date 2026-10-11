@@ -421,21 +421,21 @@ export default function About({
                                 <span>N</span>
                             </div>
                             <img
-                                src="/images/about/district-map.webp"
+                                src="/images/about/district-map.webp?v=2"
                                 alt="Stylized outline map of Mutoko District"
                                 className="about-map-svg"
-                                width="330"
-                                height="340"
+                                width="660"
+                                height="680"
                                 loading="lazy"
                             />
                         </div>
 
                         <div className="about-district-photo">
                             <img
-                                src="/images/about/district-communities.webp"
-                                alt="Communities across Mutoko District"
-                                width="386"
-                                height="300"
+                                src="/images/about/district-communities.webp?v=2"
+                                alt="Illustrative rural landscape with a winding road and granite hills"
+                                width="1200"
+                                height="900"
                                 loading="lazy"
                             />
                             <div className="about-district-photo-caption">
@@ -443,7 +443,7 @@ export default function About({
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
                                     <circle cx="12" cy="9" r="2.5" />
                                 </svg>
-                                <span>Communities across Mutoko District</span>
+                                <span>Illustrative rural landscape</span>
                             </div>
                         </div>
                     </div>
@@ -517,11 +517,11 @@ export default function About({
                     <div className="about-economic-grid">
                         <a href={link(locale, '/investment')} className="about-economic-card">
                             <img
-                                src="/images/about/econ-agriculture.webp"
-                                alt="Agriculture & Horticulture in Mutoko"
+                                src="/images/about/econ-agriculture.webp?v=2"
+                                alt="Illustrative maize field for agriculture and horticulture"
                                 className="about-economic-thumb"
-                                width="140"
-                                height="140"
+                                width="512"
+                                height="512"
                                 loading="lazy"
                             />
                             <div className="about-economic-body">
@@ -538,11 +538,11 @@ export default function About({
 
                         <a href={link(locale, '/investment')} className="about-economic-card">
                             <img
-                                src="/images/about/econ-mining.webp"
-                                alt="Mining & Mineral Value Addition in Mutoko"
+                                src="/images/about/econ-mining.webp?v=2"
+                                alt="Illustrative granite rock landscape for mining and mineral development"
                                 className="about-economic-thumb"
-                                width="140"
-                                height="140"
+                                width="512"
+                                height="512"
                                 loading="lazy"
                             />
                             <div className="about-economic-body">
@@ -559,11 +559,11 @@ export default function About({
 
                         <a href={link(locale, '/investment')} className="about-economic-card">
                             <img
-                                src="/images/about/econ-solar.webp"
-                                alt="Renewable Energy in Mutoko"
+                                src="/images/about/econ-solar.webp?v=2"
+                                alt="Illustrative solar panels for renewable energy"
                                 className="about-economic-thumb"
-                                width="140"
-                                height="140"
+                                width="512"
+                                height="512"
                                 loading="lazy"
                             />
                             <div className="about-economic-body">
