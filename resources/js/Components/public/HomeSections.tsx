@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
 import { useSiteSettings, whatsappLinkFor } from '../../useSiteSettings';
+import { EmergencyAlertCard } from './EmergencyAlertCard';
 
 const services = [
     {
@@ -156,61 +157,64 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
             <div className="hero-shade" />
 
             <div className="container hero-container">
-                <div className="hero-content">
-                    <div className="hero-eyebrow-pill">
-                        <span className="eyebrow-bar" aria-hidden="true" />
-                        <span className="eyebrow-text">WELCOME TO</span>
-                    </div>
-
-                    <h1 id="hero-title" className="hero-heading">
-                        <span className="hero-heading-white">Mutoko Rural</span>{' '}
-                        <span className="hero-heading-green">District Council</span>
-                    </h1>
-
-                    <p className="hero-statement">People. Development. Sustainable Communities.</p>
-
-                    <p className="hero-description">
-                        Working with our communities to deliver quality services, promote local development and build a better Mutoko.
-                    </p>
-
-                    <form action={`/${locale}/search`} method="get" role="search" className="hero-search-form">
-                        <label htmlFor="hero-search-input" className="sr-only">{t('searchCouncilPages')}</label>
-                        <div className="hero-search-wrapper">
-                            <span className="hero-search-icon" aria-hidden="true">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="10.8" cy="10.8" r="6.8" />
-                                    <path d="m16 16 4.6 4.6" />
-                                </svg>
-                            </span>
-                            <input
-                                id="hero-search-input"
-                                name="q"
-                                type="search"
-                                maxLength={100}
-                                placeholder={t('homeSearchPlaceholder')}
-                                autoComplete="off"
-                                className="hero-search-input"
-                            />
-                            <button type="submit" className="hero-search-button">
-                                <span>{t('search')}</span>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </button>
+                <div className="hero-main-row">
+                    <div className="hero-content">
+                        <div className="hero-eyebrow-pill">
+                            <span className="eyebrow-bar" aria-hidden="true" />
+                            <span className="eyebrow-text">WELCOME TO</span>
                         </div>
-                    </form>
 
-                    <div className="hero-actions">
-                        <a className="btn-hero-primary" href="#services">
-                            <span>Our Services</span>
-                            <span aria-hidden="true">→</span>
-                        </a>
-                        <a className="btn-hero-outline" href="#about">
-                            <span>About Council</span>
-                        </a>
+                        <h1 id="hero-title" className="hero-heading">
+                            <span className="hero-heading-white">Mutoko Rural</span>{' '}
+                            <span className="hero-heading-green">District Council</span>
+                        </h1>
+
+                        <p className="hero-statement">People. Development. Sustainable Communities.</p>
+
+                        <p className="hero-description">
+                            Working with our communities to deliver quality services, promote local development and build a better Mutoko.
+                        </p>
+
+                        <form action={`/${locale}/search`} method="get" role="search" className="hero-search-form">
+                            <label htmlFor="hero-search-input" className="sr-only">{t('searchCouncilPages')}</label>
+                            <div className="hero-search-wrapper">
+                                <span className="hero-search-icon" aria-hidden="true">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="10.8" cy="10.8" r="6.8" />
+                                        <path d="m16 16 4.6 4.6" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="hero-search-input"
+                                    name="q"
+                                    type="search"
+                                    maxLength={100}
+                                    placeholder={t('homeSearchPlaceholder')}
+                                    autoComplete="off"
+                                    className="hero-search-input"
+                                />
+                                <button type="submit" className="hero-search-button">
+                                    <span>{t('search')}</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div className="hero-actions">
+                            <a className="btn-hero-primary" href="#services">
+                                <span>Our Services</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
+                            <a className="btn-hero-outline" href="#about">
+                                <span>About Council</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
 
+                    <EmergencyAlertCard />
+                </div>
             </div>
         </section>
     );
@@ -229,7 +233,8 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
             <div className="hero-shade" />
 
             <div className="container hero-container">
-                <div className="hero-content" key={currentIndex} aria-live={rotationStopped ? 'polite' : 'off'}>
+                <div className="hero-main-row">
+                    <div className="hero-content" key={currentIndex} aria-live={rotationStopped ? 'polite' : 'off'}>
                     <div className="hero-eyebrow-pill">
                         <span className="eyebrow-bar" aria-hidden="true" />
                         <span className="eyebrow-text">WELCOME TO</span>
@@ -275,6 +280,9 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                             <span>About Council</span>
                         </a>
                     </div>
+                </div>
+
+                <EmergencyAlertCard />
                 </div>
                 {slides.length > 1 && <div className="hero-carousel-controls" role="group" aria-label={t('slideNavigation')}>
                     <span className="hero-carousel-status" aria-live={rotationStopped ? 'polite' : 'off'}><strong>{String(currentIndex + 1).padStart(2, '0')}</strong><span> / {String(slides.length).padStart(2, '0')}</span></span>

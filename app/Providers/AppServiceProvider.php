@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share('locale', fn (): string => app()->getLocale());
         Inertia::share('localeCsrfToken', fn (): string => csrf_token());
         Inertia::share('errors', fn (): array => session('errors') ? session('errors')->getBag('default')->messages() : []);
-        Inertia::share('urgent_alerts', fn (): array => EditorialItem::query()->public()->where('type', 'notice')->where('is_urgent', true)->orderByDesc('published_at')->limit(3)->get(['slug', 'title'])->toArray());
+        Inertia::share('urgent_alerts', fn (): array => EditorialItem::query()->public()->where('type', 'notice')->where('is_urgent', true)->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at', 'category'])->toArray());
         Inertia::share('topbar_notices', fn (): array => EditorialItem::query()->public()->where('type', 'notice')->orderByDesc('published_at')->limit(5)->get(['slug', 'title', 'is_urgent'])->toArray());
         Inertia::share('site_settings', fn (): array => SiteSetting::allKeyed());
         Gate::policy(Role::class, RolePolicy::class);

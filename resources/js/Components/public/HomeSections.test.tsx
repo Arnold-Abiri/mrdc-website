@@ -1,9 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+
+let mockPageState: Record<string, any> = { locale: 'en', localeCsrfToken: 'test-token', urgent_alerts: [] };
 
 vi.mock('@inertiajs/react', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@inertiajs/react')>()),
-    usePage: () => ({ props: { locale: 'en', localeCsrfToken: 'test-token' } }),
+    usePage: () => ({ props: mockPageState }),
 }));
 import {
     AboutSection,
@@ -28,6 +30,41 @@ describe('homepage sections', () => {
         expect(screen.getByRole('search')).toBeInTheDocument();
         expect(screen.getByPlaceholderText('Search council services, by-laws, public notices, and tenders...')).toBeInTheDocument();
         expect(screen.queryByText('50+')).not.toBeInTheDocument();
+    });
+
+    it('renders emergency alert card when urgent alerts exist', () => {
+        mockPageState = {
+            locale: 'en',
+            localeCsrfToken: 'test-token',
+            urgent_alerts: [
+                {
+                    slug: 'flash-flood-alert',
+                    title: 'Flash Flood Warning for Mudzi River',
+                    summary: 'Avoid crossing low-lying bridges.',
+                    category: 'Civil Protection',
+                },
+            ],
+        };
+
+        render(<Hero />);
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+        expect(screen.getByText('Flash Flood Warning for Mudzi River')).toBeInTheDocument();
+        expect(screen.getByText('Avoid crossing low-lying bridges.')).toBeInTheDocument();
+        expect(screen.getByText('CIVIL PROTECTION')).toBeInTheDocument();
+
+        // Test minimize to collapsed pill
+        const minimizeBtn = screen.getByRole('button', { name: 'Minimize emergency alert' });
+        fireEvent.click(minimizeBtn);
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Active emergency alert available' })).toBeInTheDocument();
+
+        // Test expand back to full card
+        const expandBtn = screen.getByRole('button', { name: /Active Alert:/i });
+        fireEvent.click(expandBtn);
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+
+        // Reset for subsequent tests
+        mockPageState = { locale: 'en', localeCsrfToken: 'test-token', urgent_alerts: [] };
     });
 
     it('renders the 7 TOR quick access cards with correct titles and descriptions', () => {
