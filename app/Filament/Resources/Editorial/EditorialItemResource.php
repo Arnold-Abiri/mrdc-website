@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Editorial;
 
 use App\Domain\Cms\EditorialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Editorial\Pages\CreateEditorialItem;
 use App\Filament\Resources\Editorial\Pages\EditEditorialItem;
@@ -13,10 +14,12 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -42,16 +45,26 @@ class EditorialItemResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('type')->options(['news' => 'News', 'notice' => 'Notice'])->required(),
-            TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
-            Textarea::make('summary')->maxLength(1000), Textarea::make('body')->required()->maxLength(50000)->helperText('Plain text only; HTML is not rendered.'),
-            TextInput::make('category')->maxLength(60), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            Select::make('featured_media_id')->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable(),
-            Select::make('documents')->multiple()->relationship('documents', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'published'), auth()->user(), 'documents.view', 'department_id', 'created_by'))->searchable(),
-            DatePicker::make('expires_at')->visible(fn (callable $get): bool => $get('type') === 'notice')->helperText('Expired notices are excluded from public pages and search.'),
-            Select::make('is_urgent')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Urgent notices appear in the public alert banner until they expire or are unpublished.'),
-            TextInput::make('seo_title')->maxLength(255), TextInput::make('meta_description')->maxLength(320),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Story')->description('The headline, text and classification. The web address is suggested from the title.')->schema([
+                Select::make('type')->options(['news' => 'News', 'notice' => 'Notice'])->required(),
+                TextInput::make('title')->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+                TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true)->helperText('Suggested from the title; you can edit it.'),
+                Textarea::make('summary')->maxLength(1000), Textarea::make('body')->required()->maxLength(50000)->helperText('Plain text only; HTML is not rendered.'),
+                TextInput::make('category')->maxLength(60), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+            ])->columns(2),
+            Section::make('Cover image')->description('Upload here, or pick an existing library image below. Uploading replaces the library pick.')->schema([
+                FileUpload::make('featured_image_upload')->label('Upload cover image')->image()->storeFiles(false)->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->maxSize(config('cms.max_upload_kb'))->helperText('JPEG, PNG or WebP. Saved to the Media library automatically.'),
+                TextInput::make('featured_image_alt')->label('Image alt text')->maxLength(255)->helperText('Short description for screen readers.'),
+                Textarea::make('featured_image_caption')->label('Image caption')->maxLength(2000)->helperText('Visible credit line under the image.'),
+                Select::make('featured_media_id')->label('Or pick a library image')->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable(),
+            ])->columns(2),
+            Section::make('Publishing')->description('Expiry, urgency, search and ordering.')->schema([
+                Select::make('documents')->multiple()->relationship('documents', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'published'), auth()->user(), 'documents.view', 'department_id', 'created_by'))->searchable(),
+                DatePicker::make('expires_at')->visible(fn (callable $get): bool => $get('type') === 'notice')->helperText('Expired notices are excluded from public pages and search.'),
+                Select::make('is_urgent')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Urgent notices appear in the public alert banner until they expire or are unpublished.'),
+                TextInput::make('seo_title')->maxLength(255), TextInput::make('meta_description')->maxLength(320),
+                TextInput::make('display_order')->numeric()->default(0)->required(),
+            ])->columns(2),
             TranslationFields::make(EditorialItem::translatableFields()), ]);
     }
 
@@ -61,6 +74,14 @@ class EditorialItemResource extends Resource
             EditAction::make(),
             Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),
+            Action::make('verifyAndPublish')->label('Verify & Publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record) && Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(function (EditorialItem $record): void {
+                $manager = app(EditorialManager::class);
+                $actor = auth()->user();
+                if ($record->verification_status !== 'publishable') {
+                    $manager->setVerification($actor, $record, 'publishable');
+                }
+                $manager->setStatus($actor, $record->fresh(), 'published');
+            }),
             Action::make('unpublish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'archived')),
         ]);

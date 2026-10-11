@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Editorial\Pages;
 
 use App\Domain\Cms\EditorialManager;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Editorial\EditorialItemResource;
 use App\Models\EditorialItem;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditEditorialItem extends EditRecord
 {
+    use HandlesFeaturedImageUpload;
     use HandlesTranslations;
 
     protected static string $resource = EditorialItemResource::class;
@@ -18,6 +20,8 @@ class EditEditorialItem extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         abort_unless($record instanceof EditorialItem, 404);
+
+        $data = $this->attachInlineFeaturedImage($data, $data['title'] ?? $record->title);
 
         return app(EditorialManager::class)->update(auth()->user(), $record, $data);
     }
