@@ -22,17 +22,7 @@ class SiteSettingLogoTest extends TestCase
     public function test_configured_logo_is_publicly_served_and_unselected_media_remains_private(): void
     {
         Storage::fake(config('cms.media_disk'));
-        $this->seed(SecuritySeeder::class);
-        $admin = User::factory()->create();
-        $role = Role::findByName('System Administrator');
-        $admin->assignRole($role);
-        DB::table('user_role_scopes')->insert([
-            'user_id' => $admin->id,
-            'role_id' => $role->id,
-            'scope_type' => 'global',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $admin = $this->createGlobalAdmin();
 
         $setting = SiteSetting::query()->where('key', 'logo_media_id')->firstOrFail();
         Livewire::actingAs($admin)
@@ -50,5 +40,50 @@ class SiteSettingLogoTest extends TestCase
             '/en/managed-media/'.$media->id,
             view('filament.components.admin-brand')->render(),
         );
+    }
+
+    public function test_textarea_setting_is_saved_without_clearing_its_value(): void
+    {
+        $admin = $this->createGlobalAdmin();
+        $setting = SiteSetting::query()->where('key', 'physical_address')->firstOrFail();
+        $address = "Updated council office\nMutoko, Zimbabwe";
+
+        Livewire::actingAs($admin)
+            ->test(EditSiteSetting::class, ['record' => $setting->getRouteKey()])
+            ->set('data.value', $address)
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertSame($address, $setting->fresh()->value);
+    }
+
+    public function test_email_setting_requires_a_valid_email_address(): void
+    {
+        $admin = $this->createGlobalAdmin();
+        $setting = SiteSetting::query()->where('key', 'email')->firstOrFail();
+
+        Livewire::actingAs($admin)
+            ->test(EditSiteSetting::class, ['record' => $setting->getRouteKey()])
+            ->set('data.value', 'not-an-email')
+            ->call('save')
+            ->assertHasErrors(['data.value' => 'email']);
+    }
+
+    private function createGlobalAdmin(): User
+    {
+        $this->seed(SecuritySeeder::class);
+        $admin = User::factory()->create();
+        $role = Role::findByName('System Administrator');
+        $admin->assignRole($role);
+
+        DB::table('user_role_scopes')->insert([
+            'user_id' => $admin->id,
+            'role_id' => $role->id,
+            'scope_type' => 'global',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return $admin;
     }
 }
