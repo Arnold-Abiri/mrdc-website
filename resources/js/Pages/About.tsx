@@ -384,11 +384,11 @@ export default function About({
                             <h3 style={{ fontSize: '1.15rem', color: 'var(--color-civic-navy)', marginBottom: '16px' }}>Key Appointed Officials</h3>
                             <div className="about-page-directory">
                                 {directory.officials.map(official => (
-                                    <a className="about-page-person" href={link(locale, `/officials/${official.slug}`)} key={official.slug}>
+                                    <div className="about-page-person" key={official.slug}>
                                         {official.photo_url && <img src={official.photo_url} alt="" loading="lazy" />}
                                         <strong>{official.name}</strong>
                                         <span>{official.title}</span>
-                                    </a>
+                                    </div>
                                 ))}
                             </div>
                         </div>

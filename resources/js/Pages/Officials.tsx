@@ -1,11 +1,10 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
-import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import { usePublicTranslation } from '../usePublicTranslation';
 
 type OfficialSummary = { slug: string; name: string; title: string; biography: string | null; department: string | null; photo_url: string | null };
 export default function Officials({ officials }: { officials: OfficialSummary[] }) {
-    const locale = usePublicLocale();
     const t = usePublicTranslation();
     return (
         <PublicLayout>
@@ -18,14 +17,13 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                     {officials.length ? (
                         <div className="about-gov-grid">
                             {officials.map((official) => (
-                                <Link key={official.slug} href={`/${locale}/officials/${official.slug}`} className="about-gov-card">
+                                <div key={official.slug} className="about-gov-card">
                                     {official.photo_url && <img className="official-portrait" src={official.photo_url} alt={official.name} width={240} height={240} loading="lazy" />}
                                     <h3>{official.name}</h3>
                                     <p>{official.title}</p>
                                     {official.department && <p>{official.department}</p>}
                                     {official.biography && <p>{official.biography}</p>}
-                                    <span className="about-gov-arrow">View profile <span aria-hidden="true">→</span></span>
-                                </Link>
+                                </div>
                             ))}
                         </div>
                     ) : (
