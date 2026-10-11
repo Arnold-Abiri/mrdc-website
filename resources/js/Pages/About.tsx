@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
+import { ConnectBanner } from '../Components/public/PageHeader';
 import { usePublicLocale } from '../usePublicTranslation';
 
 type Block = { type: 'heading' | 'paragraph' | 'cta'; text: string; url?: string };
@@ -84,6 +85,21 @@ export default function About({
                 </div>
             </header>
 
+            {/* In-Page Quick Navigation */}
+            <nav className="about-subnav-bar" aria-label="Page Sections">
+                <div className="container">
+                    <div className="about-subnav-list">
+                        <a href="#who-we-are" className="about-subnav-link">Overview</a>
+                        <a href="#vision-mission" className="about-subnav-link">Vision &amp; Mission</a>
+                        <a href="#our-mandate" className="about-subnav-link">Mandate</a>
+                        <a href="#our-history" className="about-subnav-link">History</a>
+                        <a href="#leadership" className="about-subnav-link">Governance &amp; Leadership</a>
+                        <a href="#district" className="about-subnav-link">Wards &amp; Communities</a>
+                        <a href="#priorities" className="about-subnav-link">Strategic Focus</a>
+                    </div>
+                </div>
+            </nav>
+
             {/* Review / Pending notice */}
             {page.is_review_content && (
                 <div className="container about-page-review" role="note">
@@ -108,20 +124,28 @@ export default function About({
                             ) : (
                                 <>
                                     <p>
-                                        Mutoko Rural District Council is a local authority established under the laws of Zimbabwe to provide governance and quality services to the people of Mutoko District. We are committed to improving the quality of life for our communities through sustainable development, effective service delivery and responsible stewardship of our resources.
+                                        Mutoko Rural District Council is the local government authority established under the Rural District Councils Act [Chapter 29:13], legally mandated to govern, administer, and spearhead socioeconomic development across Mutoko District in Mashonaland East Province, Zimbabwe.
                                     </p>
                                     <p>
-                                        The Council works with local communities, Government and development partners to create a cleaner, safer, healthier and more prosperous district for present and future generations.
+                                        Operating from the administrative headquarters at Stand 366 Mutoko Centre, the Council works collaboratively with traditional leaders, ward development committees, Government line ministries, and development partners to deliver public infrastructure, primary health, educational facilities, and natural resource stewardship.
                                     </p>
                                 </>
                             )}
+                            <div className="about-statutory-box" role="region" aria-label="Statutory Authority">
+                                <svg className="about-statutory-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                                </svg>
+                                <div className="about-statutory-content">
+                                    <strong>Statutory Authority &amp; Jurisdiction:</strong> Established under the Rural District Councils Act [Chapter 29:13]. Governing 29 administrative wards under the Ministry of Local Government &amp; Public Works.
+                                </div>
+                            </div>
                             {render(find('location'))}
                         </div>
 
                         <figure className="about-whoweare-figure">
                             <img
                                 src="/images/about/landscape-hills.webp"
-                                alt="Illustrative granite hill landscape with trees and savanna"
+                                alt="Scenic granite hills and natural savanna landscape across Mutoko District"
                                 className="about-whoweare-img"
                                 width="1672"
                                 height="941"
@@ -132,7 +156,7 @@ export default function About({
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
                                     <circle cx="12" cy="9" r="2.5" />
                                 </svg>
-                                <span>Illustrative granite landscape</span>
+                                <span>District Landscape, Mashonaland East Province</span>
                             </figcaption>
                         </figure>
                     </div>
@@ -152,7 +176,7 @@ export default function About({
                             <div>
                                 <div className="about-stat-num">{wardCount}</div>
                                 <div className="about-stat-label">Electoral Wards</div>
-                                <p className="about-stat-desc">Mutoko Rural District Council is composed of {wardCount} electoral wards.</p>
+                                <p className="about-stat-desc">Democratic representation across communal and resettlement wards.</p>
                             </div>
                         </div>
 
@@ -164,8 +188,34 @@ export default function About({
                             </div>
                             <div>
                                 <div className="about-stat-num">1995</div>
-                                <div className="about-stat-label">Council Amalgamation</div>
-                                <p className="about-stat-desc">Formed in 1995 through the amalgamation of three predecessor councils.</p>
+                                <div className="about-stat-label">Amalgamation</div>
+                                <p className="about-stat-desc">Unified administrative authority created from three predecessor councils.</p>
+                            </div>
+                        </div>
+
+                        <div className="about-stat-item">
+                            <div className="about-stat-icon-wrap" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div className="about-stat-num">Stand 366</div>
+                                <div className="about-stat-label">Civic Centre</div>
+                                <p className="about-stat-desc">Central district offices located at Mutoko Growth Point.</p>
+                            </div>
+                        </div>
+
+                        <div className="about-stat-item">
+                            <div className="about-stat-icon-wrap" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div className="about-stat-num">Cap 29:13</div>
+                                <div className="about-stat-label">Enabling Act</div>
+                                <p className="about-stat-desc">Governed under the Rural District Councils Act of Zimbabwe.</p>
                             </div>
                         </div>
                     </div>
@@ -208,9 +258,9 @@ export default function About({
             <section className="about-page-section" aria-labelledby="our-mandate">
                 <div className="container">
                     <span className="about-accent-eyebrow">OUR MANDATE</span>
-                    <h2 id="our-mandate">Working for Our Communities</h2>
+                    <h2 id="our-mandate">Statutory Powers &amp; Community Mandate</h2>
                     <p className="about-page-section-intro">
-                        As a rural district council, our mandate is to provide and facilitate services that promote the social and economic development of our communities. Our key mandate areas include:
+                        Operating under the Rural District Councils Act [Chapter 29:13], Council executes statutory, developmental, and regulatory functions structured across specialized council committees:
                     </p>
 
                     <div className="about-mandate-grid">
@@ -220,8 +270,8 @@ export default function About({
                                     <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
                                 </svg>
                             </div>
-                            <h3>Local Services</h3>
-                            <p>Provision of quality local authority services to our communities.</p>
+                            <h3>Primary Health &amp; Education</h3>
+                            <p>Administering council clinics, rural health centers, primary schools, water sanitation, and hygiene across all 29 wards.</p>
                         </div>
 
                         <div className="about-mandate-card">
@@ -230,8 +280,8 @@ export default function About({
                                     <path d="M19 12h-2V8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2v4H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z" />
                                 </svg>
                             </div>
-                            <h3>Infrastructure Development</h3>
-                            <p>Planning and development of local infrastructure.</p>
+                            <h3>Civil &amp; Road Infrastructure</h3>
+                            <p>Grading and maintaining feeder roads, bridges, storm drainage, piped water schemes, and civic facilities.</p>
                         </div>
 
                         <div className="about-mandate-card">
@@ -240,8 +290,8 @@ export default function About({
                                     <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2s-3-2-7 1c-3.1 2.33-4.5 6.04-4.8 9.5L5.7 13C6.7 9.8 9.9 7.6 17 8z" />
                                 </svg>
                             </div>
-                            <h3>Environmental Stewardship</h3>
-                            <p>Sustainable management of natural resources and a cleaner, healthier environment.</p>
+                            <h3>Planning &amp; Environmental Stewardship</h3>
+                            <p>Land use zoning, growth point spatial planning, sustainable natural resource conservation, and environmental monitoring.</p>
                         </div>
 
                         <div className="about-mandate-card">
@@ -250,8 +300,8 @@ export default function About({
                                     <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
                                 </svg>
                             </div>
-                            <h3>Public Participation</h3>
-                            <p>Engaging communities in development planning and decision making.</p>
+                            <h3>Ward Democracy &amp; Budgeting</h3>
+                            <p>Facilitating annual participatory budget consultations through Ward Development Committees (WADCOs) and traditional leadership.</p>
                         </div>
                     </div>
 
@@ -328,66 +378,91 @@ export default function About({
             <section className="about-page-section" aria-labelledby="leadership">
                 <div className="container">
                     <span className="about-accent-eyebrow">LEADERSHIP &amp; GOVERNANCE</span>
-                    <h2 id="leadership">Our Council</h2>
+                    <h2 id="leadership">Governance Structure</h2>
                     <p className="about-page-section-intro">
-                        The Council is led by elected councillors and supported by the administration to ensure effective governance and service delivery.
+                        Mutoko Rural District Council operates under a dual governance framework comprising an elected political wing that sets policy and an executive administration that implements council decisions:
                     </p>
 
                     <div className="about-gov-grid">
                         <a href={link(locale, '/officials')} className="about-gov-card">
+                            <span className="about-gov-badge about-gov-badge-pol">Political Wing</span>
                             <div className="about-gov-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                                 </svg>
                             </div>
                             <h3>Council Chairperson</h3>
-                            <p>Provides political leadership to the Council.</p>
-                            <span className="about-gov-arrow">Learn more <span aria-hidden="true">→</span></span>
+                            <p>Elected head of Council presiding over Full Council meetings and statutory policy committees.</p>
+                            <span className="about-gov-arrow">Council Leadership <span aria-hidden="true">→</span></span>
+                        </a>
+
+                        <a href={link(locale, '/wards')} className="about-gov-card">
+                            <span className="about-gov-badge about-gov-badge-pol">Political Wing</span>
+                            <div className="about-gov-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                                </svg>
+                            </div>
+                            <h3>29 Ward Councillors</h3>
+                            <p>Elected representatives of the 29 wards formulating bylaws, community resolutions, and development plans.</p>
+                            <span className="about-gov-arrow">Ward Directory <span aria-hidden="true">→</span></span>
                         </a>
 
                         <a href={link(locale, '/officials')} className="about-gov-card">
+                            <span className="about-gov-badge about-gov-badge-adm">Executive Secretariat</span>
                             <div className="about-gov-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
                                 </svg>
                             </div>
                             <h3>Chief Executive Officer</h3>
-                            <p>Oversees the day-to-day administration and implementation of Council programmes.</p>
-                            <span className="about-gov-arrow">Learn more <span aria-hidden="true">→</span></span>
-                        </a>
-
-                        <a href={link(locale, '/wards')} className="about-gov-card">
-                            <div className="about-gov-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                                </svg>
-                            </div>
-                            <h3>Councillors</h3>
-                            <p>Represent the interests of communities from the 29 electoral wards.</p>
-                            <span className="about-gov-arrow">Learn more <span aria-hidden="true">→</span></span>
+                            <p>Accounting officer leading the administrative secretariat, managing council operations and resource deployment.</p>
+                            <span className="about-gov-arrow">Executive Office <span aria-hidden="true">→</span></span>
                         </a>
 
                         <a href={link(locale, '/departments')} className="about-gov-card">
+                            <span className="about-gov-badge about-gov-badge-adm">Executive Secretariat</span>
                             <div className="about-gov-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 1L2 6v2h20V6L12 1zm-7 9v8h3v-8H5zm5 0v8h3v-8h-3zm5 0v8h3v-8h-3zm5 0v8h3v-8h-3zM2 20v2h20v-2H2z" />
                                 </svg>
                             </div>
-                            <h3>Departments</h3>
-                            <p>Responsible for the delivery of key services and programmes.</p>
-                            <span className="about-gov-arrow">Learn more <span aria-hidden="true">→</span></span>
+                            <h3>Directorates &amp; Staff</h3>
+                            <p>Professional departments executing engineering, finance, administration, environmental, and social services.</p>
+                            <span className="about-gov-arrow">Departments <span aria-hidden="true">→</span></span>
                         </a>
                     </div>
 
                     {directory.officials.length > 0 && (
-                        <div style={{ marginTop: '28px' }}>
-                            <h3 style={{ fontSize: '1.15rem', color: 'var(--color-civic-navy)', marginBottom: '16px' }}>Key Appointed Officials</h3>
-                            <div className="about-page-directory">
+                        <div style={{ marginTop: '40px', paddingTop: '32px', borderTop: '1px solid var(--color-border)' }}>
+                            <div className="about-officials-header">
+                                <div>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-civic-navy)', margin: '0 0 4px' }}>Executive &amp; Principal Officers</h3>
+                                    <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--color-muted)' }}>Heads of key administrative directorates guiding daily Council operations.</p>
+                                </div>
+                                <a href={link(locale, '/officials')} className="about-officials-link">
+                                    <span>Full Officials Directory</span>
+                                    <span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                            <div className="about-officials-grid">
                                 {directory.officials.map(official => (
-                                    <div className="about-page-person" key={official.slug}>
-                                        {official.photo_url && <img src={official.photo_url} alt="" loading="lazy" />}
-                                        <strong>{official.name}</strong>
-                                        <span>{official.title}</span>
+                                    <div className="about-official-card" key={official.slug}>
+                                        <div className="about-official-photo-wrap">
+                                            {official.photo_url ? (
+                                                <img className="about-official-photo" src={official.photo_url} alt={official.name} loading="lazy" />
+                                            ) : (
+                                                <div className="about-official-photo-placeholder" aria-hidden="true">
+                                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="about-official-info">
+                                            <div className="about-official-name">{official.name}</div>
+                                            <div className="about-official-title">{official.title}</div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -580,12 +655,14 @@ export default function About({
                     </div>
 
                     {directory.investment.length > 0 && (
-                        <div style={{ marginTop: '24px' }}>
-                            <div className="about-page-directory">
+                        <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '1px solid var(--color-border)' }}>
+                            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--color-civic-navy)', marginBottom: '14px' }}>Featured Investment Opportunities</h3>
+                            <div className="about-opportunities-grid">
                                 {directory.investment.map(item => (
-                                    <a className="about-page-opportunity" href={link(locale, `/investment/${item.slug}`)} key={item.slug}>
-                                        <strong>{item.title}</strong>
-                                        {item.summary && <span>{item.summary}</span>}
+                                    <a className="about-opportunity-card" href={link(locale, `/investment/${item.slug}`)} key={item.slug}>
+                                        <div className="about-opportunity-title">{item.title}</div>
+                                        {item.summary && <div className="about-opportunity-summary">{item.summary}</div>}
+                                        <span className="about-opportunity-link">View prospectus <span aria-hidden="true">→</span></span>
                                     </a>
                                 ))}
                             </div>
@@ -594,30 +671,38 @@ export default function About({
                 </div>
             </section>
 
-            {/* 11. CONNECT WITH YOUR COUNCIL CTA */}
-            <section className="about-connect-cta" aria-labelledby="about-contact">
+            {/* Quick District Portals Strip */}
+            <div className="about-resources-strip" role="navigation" aria-label="District Portals">
                 <div className="container">
-                    <div className="about-connect-inner">
-                        <div className="about-connect-info">
-                            <div className="about-connect-icon-box" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                    <polyline points="22,6 12,13 2,6" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 id="about-contact">Connect with Your Council</h2>
-                                <p>We value your feedback and encourage you to engage with us.</p>
-                            </div>
+                    <div className="about-resources-flex">
+                        <span className="about-resources-label">Official Portals &amp; Public Records:</span>
+                        <div className="about-resources-links">
+                            <a href={link(locale, '/wards')} className="about-resource-btn">
+                                <span>29 Wards Directory</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
+                            <a href={link(locale, '/departments')} className="about-resource-btn">
+                                <span>Council Departments</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
+                            <a href={link(locale, '/officials')} className="about-resource-btn">
+                                <span>Executive Management</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
+                            <a href={link(locale, '/documents')} className="about-resource-btn">
+                                <span>Public Documents &amp; Bylaws</span>
+                                <span aria-hidden="true">→</span>
+                            </a>
                         </div>
-
-                        <a href={link(locale, '/contact')} className="btn-connect-gold">
-                            <span>Contact Us</span>
-                            <span aria-hidden="true">→</span>
-                        </a>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            {/* 11. CONNECT WITH YOUR COUNCIL CTA */}
+            <ConnectBanner
+                title="Connect with Your Council"
+                text="We value your feedback and encourage you to engage with us."
+            />
         </PublicLayout>
     );
 }

@@ -27,16 +27,14 @@ export function PageHero({ eyebrow, title, subtitle, crumb }: { eyebrow: string;
 export function ConnectBanner({ title = 'Connect with Your Council', text = 'Questions about this page? Reach the right team through one enquiry form.' }: { title?: string; text?: string }) {
     const locale = usePublicLocale();
     return (
-        <section className="about-connect-cta" aria-labelledby="connect-banner">
-            <div className="container">
-                <div className="about-connect-inner">
-                    <div className="about-connect-info">
-                        <div>
-                            <h2 id="connect-banner">{title}</h2>
-                            <p>{text}</p>
-                        </div>
-                    </div>
-                    <Link href={`/${locale}/contact`} className="btn-connect-gold">
+        <section className="cta-banner-section" aria-labelledby="connect-banner">
+            <div className="container cta-banner-container">
+                <div className="cta-text-side">
+                    <h2 id="connect-banner" className="cta-heading">{title}</h2>
+                    <p className="cta-subtext">{text}</p>
+                </div>
+                <div className="cta-action-side">
+                    <Link href={`/${locale}/contact`} className="btn-cta-green">
                         <span>Contact Us</span>
                         <span aria-hidden="true">→</span>
                     </Link>
