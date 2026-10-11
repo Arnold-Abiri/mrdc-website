@@ -42,8 +42,7 @@ describe('homepage sections', () => {
         expect(screen.getByText('Business opportunities')).toBeInTheDocument();
         expect(screen.getByText('Vacancies')).toBeInTheDocument();
         expect(screen.getByText('Join our team')).toBeInTheDocument();
-        expect(screen.getByText('Contact Directory')).toBeInTheDocument();
-        expect(screen.getByText('Reach the council & enquire')).toBeInTheDocument();
+        expect(screen.queryByText('Contact Directory')).not.toBeInTheDocument();
     });
 
     it('renders the 3 strategic value pillars', () => {
