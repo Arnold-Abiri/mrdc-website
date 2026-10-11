@@ -50,8 +50,8 @@ class ProjectUpdateResource extends Resource
     {
         return $table->columns([TextColumn::make('project.title')->label('Project')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('update_date')->date(), TextColumn::make('status')->badge()])->recordActions([
             EditAction::make(),
-            Action::make('publish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+            Action::make('publish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->visible(fn (ProjectUpdate $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'published')),
+            Action::make('unpublish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->visible(fn (ProjectUpdate $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
         ]);
     }
 

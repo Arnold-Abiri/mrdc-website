@@ -42,9 +42,9 @@ class WardResource extends Resource
     {
         return $table->columns([TextColumn::make('name')->searchable(), TextColumn::make('slug')->searchable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
             EditAction::make(),
-            Action::make('verify')->authorize(fn (Ward $record): bool => Gate::allows('verify', $record))->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+            Action::make('verify')->authorize(fn (Ward $record): bool => Gate::allows('verify', $record))->visible(fn (Ward $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+            Action::make('publish')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->visible(fn (Ward $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'published')),
+            Action::make('unpublish')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->visible(fn (Ward $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'archived')),
         ]);
     }

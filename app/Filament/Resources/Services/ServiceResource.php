@@ -51,9 +51,9 @@ class ServiceResource extends Resource
     {
         return $table->columns([TextColumn::make('name')->searchable(), TextColumn::make('department.name'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->recordActions([
             EditAction::make(),
-            Action::make('verify')->authorize(fn (Service $record): bool => Gate::allows('verify', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+            Action::make('verify')->authorize(fn (Service $record): bool => Gate::allows('verify', $record))->visible(fn (Service $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+            Action::make('publish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'published')),
+            Action::make('unpublish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'archived')),
         ]);
     }

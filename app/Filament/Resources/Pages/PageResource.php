@@ -64,12 +64,16 @@ class PageResource extends Resource
         ])->recordActions([
             EditAction::make(),
             Action::make('publish')->authorize(fn (Page $record): bool => Gate::allows('publish', $record))
+                ->visible(fn (Page $record): bool => $record->status !== 'published')
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Page $record): bool => Gate::allows('publish', $record))
+                ->visible(fn (Page $record): bool => $record->status === 'published')
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('markVerified')->label('Mark verified')->authorize(fn (Page $record): bool => Gate::allows('verify', $record))
+                ->visible(fn (Page $record): bool => ! in_array($record->verification_status, ['verified', 'publishable'], true))
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setVerification(auth()->user(), $record, 'verified')),
             Action::make('markPublishable')->label('Mark publishable')->authorize(fn (Page $record): bool => Gate::allows('verify', $record))
+                ->visible(fn (Page $record): bool => $record->verification_status !== 'publishable')
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('archive')->authorize(fn (Page $record): bool => Gate::allows('publish', $record))
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setStatus(auth()->user(), $record, 'archived')),
