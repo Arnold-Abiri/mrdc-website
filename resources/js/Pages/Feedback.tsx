@@ -11,6 +11,16 @@ function FieldError({ errors, field }: { errors: Record<string, string>; field: 
     return <p className="contact-field-error" role="alert">{errors[field]}</p>;
 }
 
+function FeedbackIcon({ name }: { name: 'tracking' | 'response' | 'routing' | 'message' }) {
+    const paths: Record<string, React.ReactNode> = {
+        tracking: <><circle cx="12" cy="12" r="9" /><path d="m8.5 12.5 2.5 2.5 4.5-5.5" /></>,
+        response: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></>,
+        routing: <><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="18" r="2.5" /><path d="M8.5 6H15a3 3 0 0 1 3 3v6.5M15.5 18H9a3 3 0 0 1-3-3V8.5" /></>,
+        message: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></>,
+    };
+    return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
+}
+
 export default function Feedback({ csrfToken, submitted, reference, departments }: { csrfToken: string; submitted: boolean; reference: string | null; departments: DepartmentOption[] }) {
     const t = usePublicTranslation();
     const locale = usePublicLocale();
@@ -22,10 +32,35 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
             <PageHero eyebrow="HAVE YOUR SAY" title={t('feedbackPage')} subtitle={t('feedbackDesc')} crumb={[{ label: 'Feedback' }]} />
             <main id="main" className="contact-page">
                 <div className="container">
-                    <section className="about-page-section" aria-labelledby="feedback-form">
-                        <span className="about-accent-eyebrow">FEEDBACK FORM</span>
-                        <h2 id="feedback-form">Share your feedback</h2>
-                        <div className="contact-panel contact-form-col">
+                    <section className="contact-columns" aria-label="How feedback works and feedback form">
+                        <div className="contact-panel contact-info-col">
+                            <span className="contact-eyebrow">HOW IT WORKS</span>
+                            <h2 id="feedback-info-heading">What happens next</h2>
+                            <p className="contact-intro">Every submission is recorded in the Council Registry and routed to the relevant team for resolution.</p>
+                            <ul className="contact-details-list">
+                                <li>
+                                    <span className="contact-detail-icon"><FeedbackIcon name="tracking" /></span>
+                                    <div><strong>Tracked submission</strong><span className="contact-office">Each message receives a unique tracking reference number.</span></div>
+                                </li>
+                                <li>
+                                    <span className="contact-detail-icon"><FeedbackIcon name="response" /></span>
+                                    <div><strong>48-hour response</strong><span className="contact-office">Standard initial response within two working days.</span></div>
+                                </li>
+                                <li>
+                                    <span className="contact-detail-icon"><FeedbackIcon name="routing" /></span>
+                                    <div><strong>Direct routing</strong><span className="contact-office">Choose a directorate or let the secretariat route it for you.</span></div>
+                                </li>
+                            </ul>
+                            <div className="contact-info-note"><strong>Complaints stay private.</strong><p>Complaints are handled confidentially by council staff and never published.</p></div>
+                        </div>
+                        <div className="contact-panel contact-form-col" id="feedback-form">
+                            <div className="contact-form-heading">
+                                <div>
+                                    <span className="contact-eyebrow">SEND FEEDBACK</span>
+                                    <h2>Share your feedback</h2>
+                                </div>
+                                <span className="contact-form-heading-icon" aria-hidden="true"><FeedbackIcon name="message" /></span>
+                            </div>
                             {submitted && <p className="contact-success" role="status">{t('feedbackReceived')}: <strong>{reference}</strong></p>}
                             {Object.keys(formErrors).length > 0 && <div className="contact-error-summary" role="alert"><p>{t('formErrorsNotice')}:</p><ul>{Object.entries(formErrors).map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
                             <form className="contact-form" action={`/${locale}/feedback`} method="post">
@@ -45,6 +80,10 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
                                 </div>
                             </form>
                         </div>
+                    </section>
+                    <section className="contact-quick-links" aria-labelledby="feedback-links-heading">
+                        <div className="contact-section-heading"><div><span className="contact-eyebrow">OTHER COMMUNICATION CHANNELS</span><h2 id="feedback-links-heading">Quick Links</h2><p>Find information and services across the Council website.</p></div></div>
+                        <div className="contact-link-grid"><a href={`/${locale}/contact`}>Headquarters &amp; Switchboard <span aria-hidden="true">→</span></a><a href={`/${locale}/wards`}>Ward Councillors <span aria-hidden="true">→</span></a><a href={`/${locale}/services`}>Services Directory <span aria-hidden="true">→</span></a></div>
                     </section>
                 </div>
             </main>
