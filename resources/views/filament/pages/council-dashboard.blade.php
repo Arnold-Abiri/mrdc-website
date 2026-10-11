@@ -14,8 +14,8 @@
         $chartSeries = [
             ['key' => 'news', 'label' => 'News Articles', 'color' => '#1875ed'],
             ['key' => 'meetings', 'label' => 'Meetings & Events', 'color' => '#08b978'],
-            ['key' => 'documents', 'label' => 'Public Tenders', 'color' => '#f7ae21'],
-            ['key' => 'projects', 'label' => 'Vacancies', 'color' => '#eb3546'],
+            ['key' => 'documents', 'label' => 'Official Documents', 'color' => '#f7ae21'],
+            ['key' => 'projects', 'label' => 'Council Projects', 'color' => '#7959ed'],
         ];
 
         // Generate smooth SVG line coordinates
@@ -166,26 +166,34 @@
                         </div>
                     </div>
                     <div class="mrdc-dash-line-chart" role="img" aria-label="Monthly published news, meetings, documents and projects">
-                        <div class="mrdc-dash-y-labels">
-                            <span>{{ $maxMonth }}</span>
-                            <span>{{ (int) round($maxMonth * 0.66) }}</span>
-                            <span>{{ (int) round($maxMonth * 0.33) }}</span>
-                            <span>0</span>
-                        </div>
-                        <svg viewBox="0 0 600 180" preserveAspectRatio="none" aria-hidden="true">
-                            <path d="M35 30H574 M35 70H574 M35 110H574 M35 150H574" class="mrdc-dash-gridlines" />
-                            @foreach ($chartSeries as $series)
-                                <polyline points="{{ $chartPoints($series['key']) }}" fill="none" stroke="{{ $series['color'] }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
-                                @foreach ($months->values() as $index => $month)
-                                    <circle cx="{{ 35 + $index * 49 }}" cy="{{ 140 - ($month[$series['key']] / $maxMonth) * 110 }}" r="3.5" fill="#ffffff" stroke="{{ $series['color'] }}" stroke-width="2" />
+                        @if ($totalContent === 0)
+                            <div class="mrdc-dash-empty-chart">
+                                <p>No published activity recorded yet for this period.</p>
+                            </div>
+                        @else
+                            <div class="mrdc-dash-y-labels">
+                                <span>{{ $maxMonth }}</span>
+                                <span>{{ (int) round($maxMonth * 0.66) }}</span>
+                                <span>{{ (int) round($maxMonth * 0.33) }}</span>
+                                <span>0</span>
+                            </div>
+                            <svg viewBox="0 0 600 180" preserveAspectRatio="none" aria-hidden="true">
+                                <path d="M35 30H574 M35 70H574 M35 110H574 M35 150H574" class="mrdc-dash-gridlines" />
+                                @foreach ($chartSeries as $series)
+                                    <polyline points="{{ $chartPoints($series['key']) }}" fill="none" stroke="{{ $series['color'] }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+                                    @foreach ($months->values() as $index => $month)
+                                        <circle cx="{{ 35 + $index * 49 }}" cy="{{ 140 - ($month[$series['key']] / $maxMonth) * 110 }}" r="3.5" fill="#ffffff" stroke="{{ $series['color'] }}" stroke-width="2" class="mrdc-chart-dot">
+                                            <title>{{ $series['label'] }} ({{ $month['label'] }}): {{ $month[$series['key']] }}</title>
+                                        </circle>
+                                    @endforeach
                                 @endforeach
-                            @endforeach
-                        </svg>
-                        <div class="mrdc-dash-x-labels">
-                            @foreach ($months as $month)
-                                <span>{{ $month['label'] }}</span>
-                            @endforeach
-                        </div>
+                            </svg>
+                            <div class="mrdc-dash-x-labels">
+                                @foreach ($months as $month)
+                                    <span>{{ $month['label'] }}</span>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </section>
 
