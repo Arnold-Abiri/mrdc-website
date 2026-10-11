@@ -22,8 +22,13 @@ class SecuritySeeder extends Seeder
         foreach (['Website Administrator', 'Department Content Owner', 'Auditor'] as $name) {
             Role::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
         }
-        Role::findByName('Website Administrator', 'web')->syncPermissions(['admin.access', 'departments.view']);
-        Role::findByName('Department Content Owner', 'web')->syncPermissions(['admin.access', 'departments.view']);
+        Role::findByName('Website Administrator', 'web')->syncPermissions(array_values(array_unique(array_merge(
+            ['admin.access', 'departments.view', 'analytics.view'],
+            collect(self::PERMISSIONS)->filter(fn (string $p): bool => str_ends_with($p, '.view'))->all(),
+            ['editorial.create', 'editorial.update', 'documents.create', 'documents.update', 'media.create', 'media.update', 'services.create', 'services.update', 'pages.create', 'pages.update']
+        ))));
+        // Department Content Owner: create/update only within own department (enforced by DataScopeAuthorizer + policies).
+        Role::findByName('Department Content Owner', 'web')->syncPermissions(['admin.access', 'departments.view', 'editorial.view', 'editorial.create', 'editorial.update', 'documents.view', 'documents.create', 'media.view', 'media.create', 'enquiries.view']);
         Role::findByName('Auditor', 'web')->syncPermissions(['admin.access', 'audit.view', 'audit.export', 'analytics.view']);
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }

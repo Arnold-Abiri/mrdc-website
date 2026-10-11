@@ -13,6 +13,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -45,7 +46,7 @@ class CouncilProjectResource extends Resource
             Select::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled'])->required(),
             TextInput::make('location')->maxLength(255),
             Textarea::make('summary')->maxLength(1000),
-            Textarea::make('description')->required()->maxLength(50000)->helperText('Plain text only; HTML is not rendered. Do not fabricate progress.'),
+            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not fabricate progress.'),
             DatePicker::make('starts_at'), DatePicker::make('expected_completed_at'), DatePicker::make('completed_at'),
             TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100)->helperText('Council-managed only; leave empty when unconfirmed.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),

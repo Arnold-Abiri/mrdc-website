@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { SeoHead } from '../Seo';
+import { SourcedText } from '../Components/public/SourceButtons';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { PageHero } from '../Components/public/PageHeader';
 
@@ -97,7 +98,7 @@ export default function EditorialDetail({ type, item, documents }: { type: strin
                     )}
 
                     <div className="about-page-copy">
-                        <article className="editorial-article-body">{item.body}</article>
+                        <article className="editorial-article-body"><SourcedText text={item.body} /></article>
                     </div>
 
                     <div className="editorial-actions-bar">

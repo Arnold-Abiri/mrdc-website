@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use App\Filament\Pages\Auth\PasswordReset\ResetPassword;
 use App\Filament\Pages\CouncilDashboard;
 use App\Filament\Pages\Profile;
+use App\Filament\Widgets\MyTasksWidget;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -66,6 +67,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
+                MyTasksWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

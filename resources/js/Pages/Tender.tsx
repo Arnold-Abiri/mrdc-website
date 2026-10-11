@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
+import { SourcedText } from '../Components/public/SourceButtons';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import type { TranslationKey } from '../localization';
 import { formatDate } from '../formatDate';
@@ -75,9 +76,9 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                                     </span>
                                 </div>
 
-                                <p style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#334155', whiteSpace: 'pre-line' }}>
-                                    {tender.description}
-                                </p>
+                                <div style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#334155' }}>
+                                    <SourcedText text={tender.description} />
+                                </div>
 
                                 {tender.contact_instructions && (
                                     <div style={{ marginTop: '24px', padding: '18px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderLeft: '4px solid var(--color-civic-navy)', borderRadius: '10px' }}>

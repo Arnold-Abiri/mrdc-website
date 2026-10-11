@@ -13,6 +13,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,8 +45,8 @@ class VacancyResource extends Resource
             TextInput::make('grade')->maxLength(60),
             TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
             Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
-            Textarea::make('description')->required()->maxLength(50000)->helperText('Plain text only; HTML is not rendered.'),
-            Textarea::make('responsibilities')->maxLength(20000), Textarea::make('requirements')->maxLength(20000),
+            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
+            Textarea::make('responsibilities')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'), Textarea::make('requirements')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'),
             DatePicker::make('opens_at'), DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site. Expired vacancies must not be republished as open.'),
             Textarea::make('application_instructions')->maxLength(5000),
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Downloadable vacancy advert.'),

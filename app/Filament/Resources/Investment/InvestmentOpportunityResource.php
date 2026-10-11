@@ -12,6 +12,7 @@ use App\Models\InvestmentOpportunity;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -42,7 +43,7 @@ class InvestmentOpportunityResource extends Resource
             TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
             TextInput::make('sector')->maxLength(60)->helperText('e.g. Solar energy, Mining, Horticulture.'),
             Textarea::make('summary')->maxLength(1000),
-            Textarea::make('description')->required()->maxLength(50000)->helperText('Plain text only. Do not state financial returns.'),
+            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not state financial returns.'),
             TextInput::make('location')->maxLength(255),
             Select::make('opportunity_status')->options(['open' => 'Open', 'prospecting' => 'Prospecting', 'committed' => 'Committed', 'closed' => 'Closed'])->required(),
             Select::make('document_id')->relationship('document', 'title')->searchable(),

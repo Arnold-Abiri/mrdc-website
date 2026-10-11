@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { PageHero } from '../Components/public/PageHeader';
+import { SourcedText } from '../Components/public/SourceButtons';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 
 type ServiceContent = { slug: string; name: string; summary: string | null; description: string | null; requirements: string[] | null; steps: string[] | null; fees_information: string | null; seo_title: string | null; meta_description: string | null };
@@ -17,7 +18,7 @@ export default function Service({ service, department, documents = [] }: { servi
             <PageHero eyebrow={t('serviceGuideEyebrow')} title={service.name} subtitle={service.summary || service.description || `${t('serviceFindInfo')} ${service.name} ${t('serviceFindInfoTail')}`} crumb={[{ label: t('services'), href: `/${locale}/services` }, { label: service.name }]} />
             <section className="about-page-section" aria-label={service.name}>
                 <div className="container">
-                    {service.description && <p className="about-page-lead">{service.description}</p>}
+                    {service.description && <div className="about-page-lead"><SourcedText text={service.description} /></div>}
                     {department && <p><strong>{t('department')}:</strong> {department}</p>}
                     <div className="about-mandate-grid">
                         {service.requirements?.length ? (

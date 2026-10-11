@@ -12,6 +12,7 @@ use App\Models\Service;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -38,7 +39,7 @@ class ServiceResource extends Resource
     {
         return $schema->components([
             TextInput::make('name')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
-            Textarea::make('summary')->maxLength(1000), Textarea::make('description')->maxLength(20000),
+            Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('One or two sentences shown on cards and search results.'), MarkdownEditor::make('description')->maxLength(20000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Repeater::make('requirements')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),
             Repeater::make('steps')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),

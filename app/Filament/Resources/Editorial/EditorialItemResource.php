@@ -15,6 +15,7 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -49,7 +50,8 @@ class EditorialItemResource extends Resource
                 Select::make('type')->options(['news' => 'News', 'notice' => 'Notice'])->required(),
                 TextInput::make('title')->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
                 TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true)->helperText('Suggested from the title; you can edit it.'),
-                Textarea::make('summary')->maxLength(1000), Textarea::make('body')->required()->maxLength(50000)->helperText('Plain text only; HTML is not rendered.'),
+                Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('One or two sentences shown on listing cards and search results.'),
+                MarkdownEditor::make('body')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Headings, bold, lists and links only — scripts and embeds are stripped on the public site.'),
                 TextInput::make('category')->maxLength(60), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             ])->columns(2),
             Section::make('Cover image')->description('Upload here, or pick an existing library image below. Uploading replaces the library pick.')->schema([
@@ -70,21 +72,25 @@ class EditorialItemResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('category')->searchable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(), TextColumn::make('published_at')->dateTime()])->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
-            EditAction::make(),
-            Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('verifyAndPublish')->label('Verify & Publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record) && Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(function (EditorialItem $record): void {
-                $manager = app(EditorialManager::class);
-                $actor = auth()->user();
-                if ($record->verification_status !== 'publishable') {
-                    $manager->setVerification($actor, $record, 'publishable');
-                }
-                $manager->setStatus($actor, $record->fresh(), 'published');
-            }),
-            Action::make('unpublish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-            Action::make('archive')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        return $table
+            ->emptyStateHeading('No stories yet')
+            ->emptyStateDescription('Create your first news article or notice — it will appear here once saved as a draft.')
+            ->emptyStateIcon(Heroicon::OutlinedNewspaper)
+            ->columns([TextColumn::make('title')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('category')->searchable()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('published_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+                EditAction::make(),
+                Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),
+                Action::make('verifyAndPublish')->label('Verify & Publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record) && Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(function (EditorialItem $record): void {
+                    $manager = app(EditorialManager::class);
+                    $actor = auth()->user();
+                    if ($record->verification_status !== 'publishable') {
+                        $manager->setVerification($actor, $record, 'publishable');
+                    }
+                    $manager->setStatus($actor, $record->fresh(), 'published');
+                }),
+                Action::make('unpublish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                Action::make('archive')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'archived')),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

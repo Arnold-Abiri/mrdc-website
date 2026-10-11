@@ -87,7 +87,7 @@ class SearchController extends Controller
         })->orderByDesc('published_at')->limit(20)->get(['id', 'type', 'slug', 'title', 'summary']);
         $editorialResults = $editorial->map(fn (EditorialItem $item): array => [
             'type' => $item->type === 'news' ? 'News' : 'Notice', 'title' => $item->translated('title'), 'summary' => $item->translated('summary'),
-            'url' => route($item->type === 'news' ? 'news.show' : 'notices.show', $item->slug), 'is_review_content' => false,
+            'url' => public_route($item->type === 'news' ? 'news.show' : 'notices.show', $item->slug), 'is_review_content' => false,
         ]);
         $wards = $query === '' ? collect() : Ward::query()->with('translations')->public()->where(function ($builder) use ($query): void {
             $escaped = addcslashes($query, '%_\\');

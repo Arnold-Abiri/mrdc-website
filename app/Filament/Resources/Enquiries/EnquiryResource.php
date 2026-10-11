@@ -9,11 +9,13 @@ use App\Models\Department;
 use App\Models\Enquiry;
 use App\Models\User;
 use BackedEnum;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -45,21 +47,46 @@ class EnquiryResource extends Resource
             TextEntry::make('assignee_name')->label('Assigned to')->state(fn (Enquiry $record): ?string => $record->assignee instanceof User ? $record->assignee->name : null),
             TextEntry::make('subject'),
             TextEntry::make('message')->columnSpanFull(),
-            TextEntry::make('notes')->label('Internal notes')->state(fn (Enquiry $record): string => $record->notes()->with('author')->oldest()->get()->map(fn ($note): string => $note->created_at->format('Y-m-d H:i').' · '.$note->author?->name.': '.$note->body)->implode("\n\n"))->columnSpanFull(),
+            RepeatableEntry::make('notes_list')
+                ->label('Internal notes')
+                ->state(fn (Enquiry $record): array => $record->notes()->with('author')->oldest()->get()->map(fn ($note): array => [
+                    'meta' => $note->created_at->format('d M Y H:i').' · '.($note->author?->name ?? 'Staff'),
+                    'body' => $note->body,
+                ])->all())
+                ->schema([
+                    TextEntry::make('meta')->label('')->weight('bold'),
+                    TextEntry::make('body')->label(''),
+                ])
+                ->columnSpanFull()
+                ->visible(fn (Enquiry $record): bool => $record->notes()->exists()),
         ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table->columns([
-            TextColumn::make('public_id')->label('Reference')->searchable(),
-            TextColumn::make('subject')->searchable(),
-            TextColumn::make('department.name')->label('Department'),
-            TextColumn::make('category'),
-            TextColumn::make('context_type')->label('Origin')->toggleable(),
-            TextColumn::make('status')->badge(),
-            TextColumn::make('submitted_at')->dateTime()->sortable(),
-        ])->defaultSort('submitted_at', 'desc')->recordUrl(fn (Enquiry $record): string => static::getUrl('view', ['record' => $record]));
+        return $table
+            ->emptyStateHeading('No enquiries')
+            ->emptyStateDescription('New messages from the public website will appear here.')
+            ->emptyStateIcon(Heroicon::OutlinedEnvelope)
+            ->columns([
+                TextColumn::make('public_id')->label('Reference')->searchable(),
+                TextColumn::make('subject')->searchable()->limit(50),
+                TextColumn::make('department.name')->label('Department')->sortable(),
+                TextColumn::make('category')->toggleable(),
+                TextColumn::make('context_type')->label('Origin')->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('status')->badge()->sortable(),
+                TextColumn::make('submitted_at')->dateTime()->sortable(),
+            ])
+            ->filters([
+                SelectFilter::make('status')->label('Status')->options([
+                    'new' => 'New',
+                    'in_progress' => 'In progress',
+                    'resolved' => 'Resolved',
+                    'closed' => 'Closed',
+                ]),
+                SelectFilter::make('department')->label('Department')->relationship('department', 'name'),
+            ])
+            ->defaultSort('submitted_at', 'desc')->recordUrl(fn (Enquiry $record): string => static::getUrl('view', ['record' => $record]));
     }
 
     public static function getEloquentQuery(): Builder

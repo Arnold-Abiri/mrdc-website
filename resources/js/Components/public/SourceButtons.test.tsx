@@ -1,5 +1,11 @@
-import { describe, expect, it } from 'vitest';
-import { extractSources } from './SourceButtons';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@inertiajs/react', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@inertiajs/react')>()),
+    usePage: () => ({ props: { locale: 'en' } }),
+}));
+import { extractSources, SourcedText } from './SourceButtons';
 
 describe('extractSources', () => {
     it('extracts a direct Source: url', () => {
@@ -33,5 +39,35 @@ describe('extractSources', () => {
             body: 'Official council financial publication.',
             sources: [],
         });
+    });
+});
+
+describe('SourcedText markdown', () => {
+    it('renders bold, italic and links', () => {
+        render(<SourcedText text="Council meeting on **Friday** at *10am*. See [agenda](https://mutokordc.gov.zw/agenda)." />);
+        expect(screen.getByText('Friday').tagName).toBe('STRONG');
+        expect(screen.getByText('10am').tagName).toBe('EM');
+        const link = screen.getByRole('link', { name: 'agenda' });
+        expect(link).toHaveAttribute('href', 'https://mutokordc.gov.zw/agenda');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('renders bullet lists', () => {
+        const { container } = render(<SourcedText text={'Works update:\n- Roads graded\n- Boreholes drilled'} />);
+        const items = container.querySelectorAll('li');
+        expect(items).toHaveLength(2);
+        expect(items[0]).toHaveTextContent('Roads graded');
+    });
+
+    it('does not interpret raw HTML', () => {
+        const { container } = render(<SourcedText text={'<script>alert(1)</script><img src=x onerror=alert(1)>'} />);
+        expect(container.querySelector('script')).toBeNull();
+        expect(container.querySelector('img')).toBeNull();
+        expect(container.textContent).toContain('<script>');
+    });
+
+    it('renders plain paragraphs unchanged', () => {
+        render(<SourcedText text="Official council financial publication." />);
+        expect(screen.getByText('Official council financial publication.')).toBeInTheDocument();
     });
 });

@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { SeoHead } from '../Seo';
+import { SourcedText } from '../Components/public/SourceButtons';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 import { useSiteSettings } from '../useSiteSettings';
 import { PageHero } from '../Components/public/PageHeader';
@@ -60,7 +61,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                         <div className="about-detail-main">
                             <div className="about-mandate-card">
                                 <h3 id="vacancy-detail">{t('positionOverview')}</h3>
-                                <p>{vacancy.description}</p>
+                                <SourcedText text={vacancy.description} />
                                 {department && <p>{t('department')}: {department}</p>}
                                 {vacancy.opens_at && <p>{t('opensOn')}: {formatDate(vacancy.opens_at, locale)}</p>}
                             </div>
