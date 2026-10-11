@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Services;
 
 use App\Domain\Cms\ServiceManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
@@ -38,7 +39,16 @@ class ServiceResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('name')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+            TextInput::make('slug')
+                ->required()
+                ->maxLength(160)
+                ->unique(ignoreRecord: true)
+                ->helperText('Suggested from name; you can edit it.'),
             Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('One or two sentences shown on cards and search results.'), MarkdownEditor::make('description')->maxLength(20000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Repeater::make('requirements')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),

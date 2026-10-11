@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Documents\Pages;
 
 use App\Domain\Cms\DocumentManager;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Models\Document;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditDocument extends EditRecord
 {
+    use HandlesFeaturedImageUpload;
     use HandlesTranslations;
 
     protected static string $resource = DocumentResource::class;
@@ -18,6 +20,14 @@ class EditDocument extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         abort_unless($record instanceof Document, 404);
+
+        $data = $this->attachInlineMedia(
+            $data,
+            uploadKey: 'document_file_upload',
+            targetKey: 'media_id',
+            fallbackTitle: $data['title'] ?? $record->title,
+            titleSuffix: ' document',
+        );
 
         return app(DocumentManager::class)->update(auth()->user(), $record, $data);
     }

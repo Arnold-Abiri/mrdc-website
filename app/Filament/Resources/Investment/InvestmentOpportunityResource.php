@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Investment;
 
 use App\Domain\Cms\InvestmentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Investment\Pages\CreateInvestmentOpportunity;
 use App\Filament\Resources\Investment\Pages\EditInvestmentOpportunity;
@@ -40,7 +41,16 @@ class InvestmentOpportunityResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+            TextInput::make('slug')
+                ->required()
+                ->maxLength(160)
+                ->unique(ignoreRecord: true)
+                ->helperText('Suggested from title; you can edit it.'),
             TextInput::make('sector')->maxLength(60)->helperText('e.g. Solar energy, Mining, Horticulture.'),
             Textarea::make('summary')->maxLength(1000),
             MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not state financial returns.'),

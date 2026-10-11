@@ -19,22 +19,55 @@ trait HandlesFeaturedImageUpload
      */
     protected function attachInlineFeaturedImage(array $data, ?string $fallbackTitle = null): array
     {
-        $file = $data['featured_image_upload'] ?? null;
-        $alt = $data['featured_image_alt'] ?? null;
-        $caption = $data['featured_image_caption'] ?? null;
-        unset($data['featured_image_upload'], $data['featured_image_alt'], $data['featured_image_caption']);
+        return $this->attachInlineMedia(
+            $data,
+            uploadKey: 'featured_image_upload',
+            targetKey: 'featured_media_id',
+            altKey: 'featured_image_alt',
+            captionKey: 'featured_image_caption',
+            fallbackTitle: $fallbackTitle,
+            titleSuffix: ' image',
+        );
+    }
+
+    /**
+     * Attach an inline uploaded file to a specified media ID field on the model data.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function attachInlineMedia(
+        array $data,
+        string $uploadKey = 'media_upload',
+        string $targetKey = 'media_id',
+        ?string $altKey = null,
+        ?string $captionKey = null,
+        ?string $fallbackTitle = null,
+        string $titleSuffix = ' file',
+    ): array {
+        $file = $data[$uploadKey] ?? null;
+        $alt = $altKey ? ($data[$altKey] ?? null) : null;
+        $caption = $captionKey ? ($data[$captionKey] ?? null) : null;
+
+        unset($data[$uploadKey]);
+        if ($altKey) {
+            unset($data[$altKey]);
+        }
+        if ($captionKey) {
+            unset($data[$captionKey]);
+        }
 
         if ($file === null || $file === false) {
             return $data;
         }
 
         $media = app(MediaManager::class)->upload(auth()->user(), $file, [
-            'title' => trim((string) ($fallbackTitle ?? 'Inline upload')).' image',
+            'title' => trim((string) ($fallbackTitle ?? 'Inline upload')).$titleSuffix,
             'alt_text' => $alt,
             'caption' => $caption,
             'department_id' => $data['department_id'] ?? null,
         ]);
-        $data['featured_media_id'] = $media->id;
+        $data[$targetKey] = $media->id;
 
         return $data;
     }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Tenders;
 
 use App\Domain\Cms\TenderManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Tenders\Pages\CreateTender;
 use App\Filament\Resources\Tenders\Pages\EditTender;
@@ -43,7 +44,16 @@ class TenderResource extends Resource
     {
         return $schema->components([
             TextInput::make('reference')->required()->maxLength(60)->helperText('Official tender reference, e.g. MRDC/2026/014.'),
-            TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+            TextInput::make('slug')
+                ->required()
+                ->maxLength(160)
+                ->unique(ignoreRecord: true)
+                ->helperText('Suggested from title; you can edit it.'),
             TextInput::make('category')->maxLength(60),
             MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
             Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),

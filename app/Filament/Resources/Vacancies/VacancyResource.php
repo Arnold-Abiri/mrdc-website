@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Vacancies;
 
 use App\Domain\Cms\VacancyManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Vacancies\Pages\CreateVacancy;
 use App\Filament\Resources\Vacancies\Pages\EditVacancy;
@@ -41,7 +42,16 @@ class VacancyResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+            TextInput::make('slug')
+                ->required()
+                ->maxLength(160)
+                ->unique(ignoreRecord: true)
+                ->helperText('Suggested from title; you can edit it.'),
             TextInput::make('grade')->maxLength(60),
             TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
             Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),

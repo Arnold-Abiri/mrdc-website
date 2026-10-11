@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects;
 
 use App\Domain\Cms\CouncilProjectManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Projects\Pages\CreateCouncilProject;
 use App\Filament\Resources\Projects\Pages\EditCouncilProject;
@@ -13,11 +14,13 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -41,21 +44,53 @@ class CouncilProjectResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
-            Select::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])->required(),
-            Select::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled'])->required(),
-            TextInput::make('location')->maxLength(255),
-            Textarea::make('summary')->maxLength(1000),
-            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not fabricate progress.'),
-            DatePicker::make('starts_at'), DatePicker::make('expected_completed_at'), DatePicker::make('completed_at'),
-            TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100)->helperText('Council-managed only; leave empty when unconfirmed.'),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            Select::make('wards')->multiple()->relationship('wards', 'name')->searchable()->helperText('All wards covered; supports multi-ward projects.'),
-            Select::make('featured_media_id')->relationship('featuredMedia', 'title')->searchable()->helperText('Active image.'),
-            Select::make('documents')->multiple()->relationship('documents', 'title')->searchable(),
-            Textarea::make('contact_instructions')->maxLength(5000),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
-            TranslationFields::make(CouncilProject::translatableFields()), ]);
+            Section::make('Project Overview')->schema([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+                TextInput::make('slug')
+                    ->required()
+                    ->maxLength(160)
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Suggested from title; you can edit it.'),
+                Select::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])->required(),
+                Select::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled'])->required(),
+                TextInput::make('location')->maxLength(255),
+                Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                Select::make('wards')->multiple()->relationship('wards', 'name')->searchable()->helperText('All wards covered; supports multi-ward projects.'),
+                TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100)->helperText('Council-managed only; leave empty when unconfirmed.'),
+                DatePicker::make('starts_at'),
+                DatePicker::make('expected_completed_at'),
+                DatePicker::make('completed_at'),
+                TextInput::make('display_order')->numeric()->default(0)->required(),
+                Textarea::make('summary')->maxLength(1000)->columnSpanFull(),
+                MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not fabricate progress.'),
+                Textarea::make('contact_instructions')->maxLength(5000)->columnSpanFull(),
+            ])->columns(2),
+            Section::make('Cover Image')->description('Upload a project image directly, or pick one from the library.')->schema([
+                FileUpload::make('featured_image_upload')
+                    ->label('Upload cover image')
+                    ->image()
+                    ->storeFiles(false)
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(config('cms.max_upload_kb'))
+                    ->helperText('JPEG, PNG or WebP. Saved to the media library on save.'),
+                TextInput::make('featured_image_alt')
+                    ->label('Image alt text')
+                    ->maxLength(255),
+                Select::make('featured_media_id')
+                    ->label('Or pick library image')
+                    ->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))
+                    ->searchable()
+                    ->helperText('Active image from media library.'),
+            ])->columns(2),
+            Section::make('Associated Documents')->schema([
+                Select::make('documents')->multiple()->relationship('documents', 'title')->searchable()->helperText('Optional documents linked to this project.'),
+            ]),
+            TranslationFields::make(CouncilProject::translatableFields()),
+        ]);
     }
 
     public static function table(Table $table): Table

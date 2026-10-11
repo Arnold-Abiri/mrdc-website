@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Documents;
 
 use App\Domain\Cms\DocumentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Documents\Pages\CreateDocument;
 use App\Filament\Resources\Documents\Pages\EditDocument;
@@ -13,10 +14,12 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -37,15 +40,38 @@ class DocumentResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255),
-            TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
-            Textarea::make('description')->maxLength(5000),
-            Select::make('category')->options(collect(Document::CATEGORIES)->mapWithKeys(fn (string $category): array => [$category => ucwords(str_replace('_', ' ', $category))])->all())->required(),
-            Select::make('media_id')->relationship('media', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'application/pdf'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable()->required(),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            Select::make('visibility')->options(['public' => 'Public', 'private' => 'Private'])->required()->default('public'),
-            DatePicker::make('reference_date'),
-            TranslationFields::make(Document::translatableFields()), ]);
+            Section::make('Document Details')->schema([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+                TextInput::make('slug')
+                    ->required()
+                    ->maxLength(160)
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Suggested from the title; you can edit it.'),
+                Textarea::make('description')->maxLength(5000)->columnSpanFull(),
+                Select::make('category')->options(collect(Document::CATEGORIES)->mapWithKeys(fn (string $category): array => [$category => ucwords(str_replace('_', ' ', $category))])->all())->required(),
+                Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                Select::make('visibility')->options(['public' => 'Public', 'private' => 'Private'])->required()->default('public'),
+                DatePicker::make('reference_date'),
+            ])->columns(2),
+            Section::make('Document File')->description('Upload a PDF directly, or pick one already in the library.')->schema([
+                FileUpload::make('document_file_upload')
+                    ->label('Upload PDF document')
+                    ->storeFiles(false)
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->maxSize(config('cms.max_upload_kb'))
+                    ->helperText('PDF file. Automatically created in the Media library on save.'),
+                Select::make('media_id')
+                    ->label('Or select existing PDF from library')
+                    ->relationship('media', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'application/pdf'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))
+                    ->searchable()
+                    ->helperText('Required if no file is uploaded above.'),
+            ])->columns(2),
+            TranslationFields::make(Document::translatableFields()),
+        ]);
     }
 
     public static function table(Table $table): Table
