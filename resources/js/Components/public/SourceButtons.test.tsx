@@ -20,6 +20,14 @@ describe('extractSources', () => {
         expect(body).not.toContain('()');
     });
 
+    it('extracts a bare parenthesised licence url', () => {
+        const { body, sources } = extractSources(
+            'Licensed under Creative Commons Attribution-ShareAlike 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). No image edits have been made.',
+        );
+        expect(sources).toEqual(['https://creativecommons.org/licenses/by-sa/4.0/']);
+        expect(body).not.toContain('http');
+    });
+
     it('returns empty sources for plain copy', () => {
         expect(extractSources('Official council financial publication.')).toEqual({
             body: 'Official council financial publication.',

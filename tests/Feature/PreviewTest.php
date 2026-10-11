@@ -60,13 +60,13 @@ class PreviewTest extends TestCase
 
         foreach ($items as $item) {
             $this->assertNotNull($item->featuredMedia);
-            $this->assertStringStartsWith('AI-generated editorial illustration', $item->featuredMedia->caption);
+            $this->assertSame('Editorial illustration.', $item->featuredMedia->caption);
             $this->assertSame('image/webp', $item->featuredMedia->mime_type);
             Storage::disk(config('cms.media_disk'))->assertExists($item->featuredMedia->storage_path);
             $this->get(route('managed-media.show', ['locale' => 'en', 'media' => $item->featured_media_id]))->assertOk()->assertHeader('Content-Type', 'image/webp');
         }
 
-        $this->get('/en/news/demo-understanding-mrdc-role')->assertOk()->assertSee('AI-generated editorial illustration');
+        $this->get('/en/news/demo-understanding-mrdc-role')->assertOk()->assertSee('Editorial illustration')->assertDontSee('AI-generated');
 
         EditorialItem::query()->where('type', 'news')->where('slug', 'like', 'demo-%')->update(['featured_media_id' => null]);
         $this->seed(NewsIllustrationSeeder::class);

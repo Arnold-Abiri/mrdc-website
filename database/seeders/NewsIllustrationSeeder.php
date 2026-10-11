@@ -44,7 +44,7 @@ class NewsIllustrationSeeder extends Seeder
                 $media = Media::unguarded(fn (): Media => Media::query()->create([
                     'title' => 'News illustration: '.$slug,
                     'alt_text' => $altText,
-                    'caption' => 'AI-generated editorial illustration; not a photograph of a Council event.',
+                    'caption' => 'Editorial illustration.',
                     'original_filename' => $filename,
                     'storage_path' => $storagePath,
                     'mime_type' => 'image/webp',
@@ -53,6 +53,12 @@ class NewsIllustrationSeeder extends Seeder
                     'height' => $height,
                     'status' => 'active',
                 ]));
+            }
+
+            // Normalize legacy captions so no AI-generation wording is displayed.
+            if ($media->caption !== 'Editorial illustration.' && str_starts_with((string) $media->caption, 'AI-generated')) {
+                $media->caption = 'Editorial illustration.';
+                $media->save();
             }
 
             EditorialItem::query()->where('slug', $slug)->where('type', 'news')->whereNull('featured_media_id')->update(['featured_media_id' => $media->id]);

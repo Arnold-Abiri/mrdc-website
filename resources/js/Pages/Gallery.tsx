@@ -49,7 +49,7 @@ export default function Gallery({ gallery, images }: { gallery: GalleryDetail; i
                     <div className="gallery-detail-head">
                         <span className="about-accent-eyebrow">ALBUM</span>
                         <h2 id="gallery-detail">
-                            {images.length} {t('photos')}
+                            {images.length} {images.length === 1 ? t('photo') : t('photos')}
                         </h2>
                     </div>
 

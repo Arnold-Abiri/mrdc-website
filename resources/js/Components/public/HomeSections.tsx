@@ -530,7 +530,7 @@ function NewsCard({ item }: { item: NewsPreview }) {
         <article className="news-card">
             <div className="news-image">
                 {item.image && <SafeImage src={item.image} alt={item.imageAlt ?? item.title} width="480" height="270" />}
-                {item.imageCaption?.startsWith('AI-generated') && <span className="news-image-label">Editorial illustration</span>}
+                {item.imageCaption === 'Editorial illustration.' && <span className="news-image-label">Editorial illustration</span>}
                 {!item.image && <span className="img-fallback img-fallback-icon" role="img" aria-label={`No image available for ${item.title}`}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <rect x="3" y="3" width="18" height="18" rx="2" />

@@ -57,7 +57,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                         </p>
                     )}
                     <div className="about-detail-layout">
-                        <div className="about-mandate-grid">
+                        <div className="about-detail-main">
                             <div className="about-mandate-card">
                                 <h3 id="vacancy-detail">Position overview</h3>
                                 <p>{vacancy.description}</p>
@@ -113,9 +113,10 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                         </aside>
                     </div>
                     {related.length > 0 && (
-                        <>
-                            <h3>Other openings</h3>
-                            <div className="about-focus-grid">
+                        <section className="about-related-section" aria-labelledby="other-openings">
+                            <span className="about-accent-eyebrow">CAREERS</span>
+                            <h2 id="other-openings">Other openings</h2>
+                            <div className="about-focus-grid about-focus-grid-3">
                                 {related.map((item) => (
                                     <Link key={item.slug} href={`/${locale}/vacancies/${item.slug}`} className="about-focus-card">
                                         <h3>{item.title}</h3>
@@ -123,7 +124,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                                     </Link>
                                 ))}
                             </div>
-                        </>
+                        </section>
                     )}
                 </div>
             </section>

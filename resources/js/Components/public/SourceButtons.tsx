@@ -3,6 +3,8 @@ const SOURCE_PATTERNS = [
     /Source:\s*(https?:\/\/[^\s)]+)/gi,
     // `Source: <label> (<url>)` — e.g. `Source: Wikimedia Commons (https://…)`.
     /Source:\s*[^()\n]*?\(\s*(https?:\/\/[^\s)]+)\s*\)/gi,
+    // Bare parenthesised URLs — e.g. licence links `(https://…)` with no `Source:` prefix.
+    /\(\s*(https?:\/\/[^\s)]+)\s*\)/g,
 ];
 
 /**

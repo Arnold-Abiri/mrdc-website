@@ -64,7 +64,7 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
             <section className="about-page-section" aria-labelledby="tender-overview">
                 <div className="container">
                     <div className="about-detail-layout">
-                        <div className="about-mandate-grid">
+                        <div className="about-detail-main">
                             <article className="rates-guidance-card">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                                     <h3 id="tender-overview" style={{ margin: 0 }}>Tender Scope &amp; Specifications</h3>

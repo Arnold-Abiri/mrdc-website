@@ -46,7 +46,7 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
             <section className="about-page-section" aria-labelledby="opportunity-detail">
                 <div className="container">
                     <div className="about-detail-layout">
-                        <div className="about-mandate-grid">
+                        <div className="about-detail-main">
                             <article className="rates-guidance-card">
                                 <h3 id="opportunity-detail">Project &amp; Investment Overview</h3>
                                 <div style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#334155' }}>

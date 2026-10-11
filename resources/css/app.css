@@ -106,6 +106,12 @@ a:focus-visible, button:focus-visible {
   letter-spacing: -.025em;
   max-width: 660px;
   margin: 10px 0 14px;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .about-page-hero-subtitle {
   color: #E2E8F0;
@@ -114,14 +120,37 @@ a:focus-visible, button:focus-visible {
   line-height: 1.4;
   margin: 0;
   max-width: 640px;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.about-page-hero .about-accent-eyebrow {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .about-page-breadcrumb {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   font-size: 0.82rem;
   color: #CBD5E1;
   margin-bottom: 28px;
+  min-width: 0;
+}
+.about-page-breadcrumb a, .about-page-breadcrumb span[aria-current] {
+  min-width: 0;
+  max-width: 48ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 @media (max-width: 500px) {
   .about-page-hero { padding-block: 28px 42px; }
@@ -1162,6 +1191,12 @@ a:focus-visible, button:focus-visible {
   color: var(--color-civic-navy);
   margin: 0 0 8px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .transparency-doc-desc {
   font-size: 0.85rem;
@@ -1169,6 +1204,12 @@ a:focus-visible, button:focus-visible {
   color: #475569;
   margin: 0 0 16px;
   flex-grow: 1;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .transparency-doc-footer {
   display: flex;
@@ -2716,6 +2757,19 @@ a:focus-visible, button:focus-visible {
   margin: 0;
 }
 
+/* Related-content section (e.g. Other openings on detail pages) */
+.about-related-section {
+  margin-top: 44px;
+}
+.about-related-section h2 {
+  margin: 0 0 20px;
+}
+@media (min-width: 992px) {
+  .about-focus-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* 10. Economic & Investment Opportunities (3 Cards) */
 .about-economic-grid {
   display: grid;
@@ -3771,6 +3825,13 @@ h3 { margin: 0; }
   font-size: 0.9rem;
   line-height: 1.5;
   max-width: 680px;
+
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .header-viewall-link {
   display: inline-flex;
@@ -4287,12 +4348,25 @@ h3 { margin: 0; }
   line-height: 1.2;
   margin: 0 0 16px;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .dev-banner-description {
   color: #E2E8F0;
   font-size: 0.94rem;
   line-height: 1.6;
   margin: 0 0 24px;
+
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .dev-stats-grid {
   display: grid;
@@ -4435,6 +4509,12 @@ h3 { margin: 0; }
   font-weight: 800;
   margin: 0 0 8px;
   line-height: 1.25;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .cta-subtext {
   color: #CBD5E1;
@@ -4442,6 +4522,13 @@ h3 { margin: 0; }
   line-height: 1.55;
   margin: 0;
   max-width: 680px;
+
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .btn-cta-green {
   display: inline-flex;
@@ -6547,6 +6634,13 @@ h3 { margin: 0; }
     grid-template-columns: 1.9fr 1fr;
   }
 }
+.about-detail-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-content: start;
+}
 .about-summary-card {
   background: var(--color-civic-navy);
   color: #fff;
@@ -7074,6 +7168,18 @@ h3 { margin: 0; }
 .gallery-detail-copy {
   max-width: 70ch;
   color: var(--color-ink);
+}
+.gallery-detail-copy p {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin: 0 0 12px;
+}
+.gallery-detail-copy p:last-of-type {
+  margin-bottom: 0;
+}
+.gallery-detail-copy .source-buttons {
+  margin-top: 14px;
 }
 
 .gallery-detail-head {
@@ -8630,6 +8736,12 @@ h3 { margin: 0; }
   color: var(--color-civic-navy);
   line-height: 1.4;
   margin: 0 0 10px;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .editorial-card-title a {
   color: inherit;
@@ -8644,6 +8756,12 @@ h3 { margin: 0; }
   color: #475569;
   line-height: 1.6;
   margin: 0 0 16px;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   flex: 1;
 }
 
