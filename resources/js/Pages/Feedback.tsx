@@ -167,9 +167,20 @@ export default function Feedback({
                             )}
 
                             {submitted && (
-                                <p className="contact-success" role="status">
-                                    {t('feedbackReceived')}: <strong>{reference}</strong>
-                                </p>
+                                <div className="fault-success-card" role="status">
+                                    <div className="fault-success-header">
+                                        <span className="fault-success-icon" aria-hidden="true">✓</span>
+                                        <div>
+                                            <h3 className="fault-success-title">{t('feedbackReceived')}</h3>
+                                            <p className="fault-success-ref">
+                                                <span>REF:</span> <strong>{reference}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p className="fault-success-note">
+                                        {t('trackedSubmissionDesc')} {t('response48Desc')} Quote this reference when following up via Council offices or WhatsApp.
+                                    </p>
+                                </div>
                             )}
 
                             {Object.keys(formErrors).length > 0 && (
