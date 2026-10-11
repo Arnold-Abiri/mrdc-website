@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property string|null $alt_text
  * @property string|null $caption
+ * @property GalleryMedia $pivot
  */
 class Media extends Model
 {

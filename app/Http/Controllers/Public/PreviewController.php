@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\DistrictStatistic;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\Gallery;
 use App\Models\HomepageSlide;
 use App\Models\InvestmentOpportunity;
 use App\Models\Media;
@@ -86,6 +87,7 @@ class PreviewController extends Controller
             'officials' => $this->previewOfficial($slug),
             'investment' => $this->previewInvestment($slug),
             'meetings' => $this->previewMeeting($slug),
+            'galleries' => $this->previewGallery($slug),
             default => abort(404),
         };
     }
@@ -167,6 +169,29 @@ class PreviewController extends Controller
         return Inertia::render('Meeting', [
             'preview' => true,
             'meeting' => [...$meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status', 'summary']), 'agenda' => null, 'minutes' => null],
+        ]);
+    }
+
+    private function previewGallery(string $slug): Response
+    {
+        $gallery = Gallery::query()->with(['translations', 'media', 'department'])->where('slug', $slug)->firstOrFail();
+        $images = $gallery->media->where('status', 'active')->values()->map(fn (Media $media): array => [
+            'url' => public_route('managed-media.show', $media->id),
+            'alt' => $media->alt_text ?: $gallery->title,
+            'caption' => $media->pivot->caption ?: $media->caption,
+            'width' => $media->width,
+            'height' => $media->height,
+        ]);
+
+        return Inertia::render('Gallery', [
+            'preview' => true,
+            'gallery' => [
+                ...$gallery->toLocalizedArray(['slug', 'title', 'summary', 'description', 'location']),
+                'album_date' => $gallery->album_date?->format('Y-m-d'),
+                'department' => $gallery->department?->name,
+                'is_review_content' => true,
+            ],
+            'images' => $images->values(),
         ]);
     }
 }

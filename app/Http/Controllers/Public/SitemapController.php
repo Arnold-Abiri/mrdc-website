@@ -8,6 +8,7 @@ use App\Models\CouncilProject;
 use App\Models\Department;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\Gallery;
 use App\Models\InvestmentOpportunity;
 use App\Models\Official;
 use App\Models\Page;
@@ -25,7 +26,7 @@ class SitemapController extends Controller
         $urls = [];
         foreach ($locales as $locale) {
             $urls[] = route('home', ['locale' => $locale]);
-            foreach (['services.index', 'documents.index', 'departments.public.index', 'news.index', 'notices.index', 'wards.index', 'officials.index', 'tenders.index', 'vacancies.index', 'investment.index', 'meetings.index', 'transparency.index', 'rates.index', 'projects.index', 'tourism.index', 'contact.create', 'feedback.create'] as $name) {
+            foreach (['services.index', 'documents.index', 'departments.public.index', 'news.index', 'notices.index', 'galleries.index', 'wards.index', 'officials.index', 'tenders.index', 'vacancies.index', 'investment.index', 'meetings.index', 'transparency.index', 'rates.index', 'projects.index', 'tourism.index', 'contact.create', 'feedback.create'] as $name) {
                 $urls[] = route($name, ['locale' => $locale]);
             }
             foreach (Page::query()->public()->pluck('slug') as $slug) {
@@ -45,6 +46,9 @@ class SitemapController extends Controller
             }
             foreach (EditorialItem::query()->public()->where('type', 'notice')->pluck('slug') as $slug) {
                 $urls[] = route('notices.show', ['locale' => $locale, 'slug' => $slug]);
+            }
+            foreach (Gallery::query()->public()->pluck('slug') as $slug) {
+                $urls[] = route('galleries.show', ['locale' => $locale, 'slug' => $slug]);
             }
             foreach (Ward::query()->public()->pluck('slug') as $slug) {
                 $urls[] = route('wards.show', ['locale' => $locale, 'slug' => $slug]);

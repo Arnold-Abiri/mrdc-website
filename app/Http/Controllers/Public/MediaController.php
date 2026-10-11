@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\CouncilProject;
 use App\Models\EditorialItem;
+use App\Models\Gallery;
 use App\Models\HomepageSlide;
 use App\Models\Media;
 use App\Models\Official;
@@ -21,7 +22,9 @@ class MediaController extends Controller
         $isPublishedSlideImage = HomepageSlide::query()->public()->where('media_id', $media->id)->exists();
         $isPreviewSlideImage = session('preview_authorized') === true && HomepageSlide::query()->whereIn('status', ['draft', 'published'])->where('is_active', true)->where('media_id', $media->id)->exists();
         $isPublishedProjectImage = CouncilProject::query()->with('translations')->public()->where('featured_media_id', $media->id)->exists();
-        abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage || $isPreviewSlideImage || $isPublishedProjectImage, 404);
+        $isPublishedGalleryImage = Gallery::query()->public()->where(fn ($query) => $query->where('cover_media_id', $media->id)->orWhereHas('media', fn ($images) => $images->where('media.id', $media->id)))->exists();
+        $isPreviewGalleryImage = session('preview_authorized') === true && Gallery::query()->whereIn('status', ['draft', 'published'])->where(fn ($query) => $query->where('cover_media_id', $media->id)->orWhereHas('media', fn ($images) => $images->where('media.id', $media->id)))->exists();
+        abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage || $isPreviewSlideImage || $isPublishedProjectImage || $isPublishedGalleryImage || $isPreviewGalleryImage, 404);
         abort_unless(Storage::disk(config('cms.media_disk'))->exists($media->storage_path), 404);
 
         return Storage::disk(config('cms.media_disk'))->response($media->storage_path, 'image', [

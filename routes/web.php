@@ -6,6 +6,7 @@ use App\Http\Controllers\MonthlyMetricsExportController;
 use App\Http\Controllers\Public\DepartmentController;
 use App\Http\Controllers\Public\DocumentController;
 use App\Http\Controllers\Public\EditorialController;
+use App\Http\Controllers\Public\GalleryController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\InvestmentController;
 use App\Http\Controllers\Public\LegacyRedirectController;
@@ -67,6 +68,9 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
     Route::get('/notices', [EditorialController::class, 'noticesIndex'])->name('notices.index');
     Route::get('/notices/{slug}', [EditorialController::class, 'noticesShow'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('notices.show');
 
+    Route::get('/galleries', [GalleryController::class, 'index'])->name('galleries.index');
+    Route::get('/galleries/{slug}', [GalleryController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('galleries.show');
+
     Route::get('/wards', [WardController::class, 'index'])->name('wards.index');
     Route::get('/wards/{slug}', [WardController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('wards.show');
 
@@ -106,7 +110,7 @@ Route::middleware(['signed', 'noindex'])->prefix('preview')->group(function () {
 Route::middleware(['noindex'])->prefix('preview')->group(function () {
     // Unlocked by visiting a valid signed preview URL (session flag set there).
     Route::get('/{locale}/pages/{slug}', [PreviewController::class, 'page'])->where(['locale' => 'en|sn|nd', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.page');
-    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment|meetings', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
+    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment|meetings|galleries', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
 });
 
 Route::middleware('auth')->prefix('admin/reports')->group(function () {

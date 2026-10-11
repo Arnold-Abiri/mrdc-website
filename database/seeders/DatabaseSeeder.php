@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(VacancySeeder::class);
         $this->call(Stage7PrivacySeeder::class);
         $this->call(CouncilTeamSeeder::class);
+        $this->call(GallerySeeder::class);
+        $this->call(EmergencyNoticeSeeder::class);
     }
 }

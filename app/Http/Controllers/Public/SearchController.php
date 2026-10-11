@@ -8,6 +8,7 @@ use App\Models\CouncilProject;
 use App\Models\Department;
 use App\Models\Document;
 use App\Models\EditorialItem;
+use App\Models\Gallery;
 use App\Models\InvestmentOpportunity;
 use App\Models\Official;
 use App\Models\Page;
@@ -134,6 +135,14 @@ class SearchController extends Controller
             'type' => 'Project', 'title' => $project->title, 'summary' => $project->summary,
             'url' => public_route('projects.show', $project->slug), 'is_review_content' => false,
         ]);
+        $galleries = $query === '' ? collect() : Gallery::query()->with('translations')->public()->where(function ($builder) use ($query): void {
+            $escaped = addcslashes($query, '%_\\');
+            $builder->where('title', 'like', '%'.$escaped.'%')->orWhere('summary', 'like', '%'.$escaped.'%')->orWhere('description', 'like', '%'.$escaped.'%')->orWhere('location', 'like', '%'.$escaped.'%');
+        })->orderByDesc('is_featured')->orderBy('display_order')->orderByDesc('album_date')->limit(20)->get(['slug', 'title', 'summary']);
+        $galleryResults = $galleries->map(fn (Gallery $gallery): array => [
+            'type' => 'Gallery', 'title' => $gallery->title, 'summary' => $gallery->summary,
+            'url' => public_route('galleries.show', $gallery->slug), 'is_review_content' => false,
+        ]);
 
         $staticResults = collect();
         $lowerQuery = mb_strtolower($query);
@@ -155,6 +164,6 @@ class SearchController extends Controller
             ]);
         }
 
-        return Inertia::render('Search', ['query' => $query, 'results' => $staticResults->concat($pageResults)->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->concat($projectResults)->take(20)->values()]);
+        return Inertia::render('Search', ['query' => $query, 'results' => $staticResults->concat($pageResults)->concat($documentResults)->concat($serviceResults)->concat($departmentResults)->concat($editorialResults)->concat($galleryResults)->concat($wardResults)->concat($officialResults)->concat($tenderResults)->concat($vacancyResults)->concat($investmentResults)->concat($meetingResults)->concat($projectResults)->take(20)->values()]);
     }
 }

@@ -38,6 +38,7 @@ const navigation: NavEntry[] = [
         children: [
             { label: 'News', href: '/news' },
             { label: 'Notices', href: '/notices' },
+            { label: 'Gallery', href: '/galleries' },
             { label: 'Documents', href: '/documents' },
         ],
     },
@@ -218,7 +219,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <a className="skip-link" href="#main">{t('skip')}</a>
-            {urgentAlerts && urgentAlerts.length > 0 && <div className="urgent-alert" role="alert"><p><strong>{t('urgentNotice')}: </strong>{urgentAlerts.map((alert, index) => <span key={alert.slug}>{index > 0 && ' — '}<a href={L(`/notices/${alert.slug}`)}>{alert.title}</a></span>)}</p></div>}
+            {normalizedCurrentPath !== '/' && urgentAlerts && urgentAlerts.length > 0 && <div className="urgent-alert" role="alert"><p><strong>{t('urgentNotice')}: </strong>{urgentAlerts.map((alert, index) => <span key={alert.slug}>{index > 0 && ' — '}<a href={L(`/notices/${alert.slug}`)}>{alert.title}</a></span>)}</p></div>}
 
             {/* Top Utility Bar */}
             <div className="utility-bar">
