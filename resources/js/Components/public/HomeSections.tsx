@@ -436,7 +436,7 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                         Mutoko Rural District Council covers 428,916 hectares, 143km north-east of Harare on the Harare–Nyamapanda highway and 90km from the Mozambique border. We serve 29 wards plus a women's quota and the Mutoko Town Board.
                     </p>
                     <p className="about-description">
-                        Our mission is to provide quality, sustainable services with our communities. Our vision is a vibrant and prosperous Mutoko by 2030.
+                        Our mission is to provide quality, sustainable services with our communities. Our vision is a prosperous Mutoko by 2030.
                     </p>
                     <div>
                         <a href={aboutHref ?? L("/about")} className="btn-section-primary">

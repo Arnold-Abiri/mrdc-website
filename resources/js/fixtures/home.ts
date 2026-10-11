@@ -158,7 +158,7 @@ export const aboutPillars: AboutPillar[] = [
     },
     {
         title: 'Vision 2030',
-        description: 'A vibrant, prosperous district aligned with Zimbabwe\u2019s Vision 2030 of an upper-middle-income society.',
+        description: 'A prosperous district aligned with Zimbabwe\u2019s Vision 2030 of an upper-middle-income society.',
         icon: 'leaf',
     },
 ];

@@ -91,7 +91,7 @@ export default function EditorialList({ type, items }: { type: string; items: It
                             ))}
                         </div>
                     ) : (
-                        <EmptyState title={t(isNews ? 'noNews' : 'noNotices')} text={t(isNews ? 'noNews' : 'noNotices')} />
+                        <EmptyState title={t(isNews ? 'noNews' : 'noNotices')} text={t(isNews ? 'newsDesc' : 'noticesDesc')} />
                     )}
                 </div>
             </section>

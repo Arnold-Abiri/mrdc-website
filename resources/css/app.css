@@ -13,6 +13,10 @@
   --color-border: #D9E2E8;
   --color-critical: #B42318;
   --color-warning: #B7791F;
+  --color-gold: #B45309;
+  --color-gold-strong: #D97706;
+  --color-gold-soft: #FDE68A;
+  --color-gold-accent: #F59E0B;
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -8068,6 +8072,19 @@ h3 { margin: 0; }
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
+.sidebar-card-body { padding: 16px; }
+.sidebar-card-text { font-size: 0.875rem; color: var(--color-muted); }
+.sidebar-card-text p { margin: 0 0 12px; }
+.sidebar-card-text p:last-child { margin-bottom: 0; }
+.sidebar-registry-box {
+  font-size: 0.75rem;
+  background: var(--color-page);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+.sidebar-registry-box p { margin: 0 0 4px; color: var(--color-muted); }
+.sidebar-registry-title { font-weight: 700; color: var(--color-ink); }
 
 /* Tourism Spotlight Card */
 .sidebar-card.tourism-spotlight-card {

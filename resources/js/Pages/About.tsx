@@ -497,7 +497,7 @@ export default function About({
                     <div className="about-district-layout">
                         <div className="about-district-info">
                             <p>
-                                Mutoko District is a vibrant rural district in Mashonaland East Province, with {wardCount} electoral wards. The Council works closely with all wards to identify local priorities and deliver services that meet the needs of our communities.
+                                Mutoko District is a rural district in Mashonaland East Province, with {wardCount} electoral wards. The Council works closely with all wards to identify local priorities and deliver services that meet the needs of our communities.
                             </p>
                             <a href={link(locale, '/wards')} className="btn-ward-dir">
                                 <span>View Ward Directory</span>

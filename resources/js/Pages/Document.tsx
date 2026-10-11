@@ -175,7 +175,7 @@ export default function Document({
                                                 className="related-doc-row"
                                             >
                                                 <div className="related-doc-left">
-                                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" className="text-emerald-700" aria-hidden="true">
+                                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                         <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                                                     </svg>
                                                     <span className="related-doc-title">{rel.title}</span>
@@ -201,8 +201,8 @@ export default function Document({
                                         </div>
                                         <h4 className="sidebar-card-title">Document Repository</h4>
                                     </div>
-                                    <div className="p-4">
-                                        <p className="text-sm text-gray-600 mb-4">
+                                    <div className="sidebar-card-body">
+                                        <p className="sidebar-card-text">
                                             Need another council document, by-law, or financial report? Return to the main document portal.
                                         </p>
                                         <Link
@@ -225,12 +225,12 @@ export default function Document({
                                         </div>
                                         <h4 className="sidebar-card-title">Enquiries &amp; Public Records</h4>
                                     </div>
-                                    <div className="p-4 text-sm text-gray-600">
-                                        <p className="mb-3">
+                                    <div className="sidebar-card-body sidebar-card-text">
+                                        <p>
                                             For gazetted inquiries, archived records, or certified copies of council by-laws, contact the Registry Office.
                                         </p>
-                                        <div className="text-xs bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                            <p className="font-semibold text-gray-800">Council Registry</p>
+                                        <div className="sidebar-registry-box">
+                                            <p className="sidebar-registry-title">Council Registry</p>
                                             <p>registry@mutokordc.gov.zw</p>
                                             <p>+263 77 240 5683</p>
                                         </div>

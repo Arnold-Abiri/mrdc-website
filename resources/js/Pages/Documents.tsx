@@ -514,7 +514,7 @@ export default function Documents({
                                         </div>
                                         <h4 className="tourism-title">Mutoko District Information</h4>
                                         <p className="tourism-desc">
-                                            Renowned for black granite reserves, thriving commercial horticulture, historical Mutoko Ruins (Ruchera Cave), and vibrant rural community centers.
+                                            Renowned for black granite reserves, thriving commercial horticulture, historical Mutoko Ruins (Ruchera Cave), and active rural community centres.
                                         </p>
 
                                         <div className="tourism-meta-box">
@@ -558,7 +558,7 @@ export default function Documents({
                                     <div className="sidebar-links-list">
                                         <a href={L('/rates')} className="sidebar-link-item">
                                             <div className="sidebar-link-content">
-                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <rect x="2" y="4" width="20" height="16" rx="2" />
                                                     <line x1="2" y1="10" x2="22" y2="10" />
                                                 </svg>
@@ -569,7 +569,7 @@ export default function Documents({
 
                                         <a href={L('/services')} className="sidebar-link-item">
                                             <div className="sidebar-link-content">
-                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M19 12h-2V8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2v4H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z" />
                                                 </svg>
                                                 <span>Council Public Services</span>
@@ -579,7 +579,7 @@ export default function Documents({
 
                                         <a href={L('/tenders')} className="sidebar-link-item">
                                             <div className="sidebar-link-content">
-                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2z" />
                                                 </svg>
                                                 <span>Active Tenders &amp; Procurement</span>
@@ -589,7 +589,7 @@ export default function Documents({
 
                                         <a href={L('/wards')} className="sidebar-link-item">
                                             <div className="sidebar-link-content">
-                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
                                                 </svg>
                                                 <span>29 Wards &amp; Councillors Directory</span>
@@ -599,7 +599,7 @@ export default function Documents({
 
                                         <a href={L('/notices')} className="sidebar-link-item">
                                             <div className="sidebar-link-content">
-                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
                                                 </svg>
                                                 <span>Public Notices &amp; Gazettes</span>
@@ -609,7 +609,7 @@ export default function Documents({
 
                                         <a href={L('/feedback')} className="sidebar-link-item">
                                             <div className="sidebar-link-content">
-                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                                                 </svg>
                                                 <span>Citizen Feedback &amp; Fault Reports</span>
@@ -651,7 +651,7 @@ export default function Documents({
                                                 }}
                                             >
                                                 <div className="sidebar-link-content">
-                                                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-700" aria-hidden="true">
+                                                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                                         <polyline points="14 2 14 8 20 8" />
                                                     </svg>
