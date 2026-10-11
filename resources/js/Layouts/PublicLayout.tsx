@@ -3,6 +3,7 @@ import { usePage } from '@inertiajs/react';
 import AccessibilitySettings from '../Components/public/AccessibilitySettings';
 import { normalizeLocale, translate } from '../localization';
 import type { ReactNode } from 'react';
+import { useSiteSettings, whatsappLinkFor, type SiteSettings } from '../useSiteSettings';
 
 type NavChild = { label: string; href: string };
 type NavEntry = { label: string; href: string; children?: NavChild[] };
@@ -135,6 +136,17 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     const locale = normalizeLocale(rawLocale);
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
+    const settings: SiteSettings = useSiteSettings();
+    const footerPhone = settings.phone?.trim() || null;
+    const footerEmail = settings.email?.trim() || null;
+    const footerAddress = settings.physical_address?.trim() || null;
+    const footerHours = settings.office_hours?.trim() || null;
+    const footerWhatsapp = whatsappLinkFor(settings.whatsapp_number);
+    const socialLinks = [
+        settings.facebook_url?.trim() ? { href: settings.facebook_url.trim(), label: 'Facebook', path: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z' } : null,
+        settings.x_url?.trim() ? { href: settings.x_url.trim(), label: 'X', path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' } : null,
+        settings.youtube_url?.trim() ? { href: settings.youtube_url.trim(), label: 'YouTube', path: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' } : null,
+    ].filter((entry): entry is { href: string; label: string; path: string } => entry !== null);
     const [open, setOpen] = useState(false);
 
     // Dynamic current path detection without locale prefix
@@ -446,7 +458,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             <footer className="site-footer">
                 <div className="container footer-grid">
                     <div className="footer-col-about">
-                        <div className="footer-brand">
+                        <a className="footer-brand" href={L('/')} aria-label={t('councilHome')}>
                             <img
                                 src="/images/council-crest-light.webp"
                                 alt=""
@@ -455,16 +467,24 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 width="52"
                                 height="52"
                             />
-                            <div className="footer-brand-text">
+                            <span className="footer-brand-text">
                                 <strong className="footer-brand-title">Mutoko</strong>
                                 <strong className="footer-brand-subtitle">{t('councilName')}</strong>
                                 <small className="footer-brand-tagline">{t('tagline')}</small>
-                            </div>
-                        </div>
+                            </span>
+                        </a>
                         <p className="footer-about-text">
                             {t('footerAbout')}
                         </p>
                         <div className="footer-social-row" aria-label={t('socialPreviews')}>
+                            {socialLinks.length > 0 ? socialLinks.map(link => (
+                                <a key={link.label} className="social-pill" href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
+                                        <path d={link.path} />
+                                    </svg>
+                                </a>
+                            )) : (
+                                <>
                             <span className="social-pill" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true">
                                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
@@ -480,6 +500,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                                 </svg>
                             </span>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -517,12 +539,52 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                     <circle cx="12" cy="9" r="2.5" />
                                 </svg>
                                 <div>
-                                    <p>Mutoko Rural District Council</p>
-                                    <p>Mutoko, Mashonaland East</p>
-                                    <p>Zimbabwe</p>
+                                    <p className="footer-contact-org">Mutoko Rural District Council</p>
+                                    {footerAddress ? (
+                                        footerAddress.split('\n').filter(line => line.trim() && line.trim().toLowerCase() !== 'mutoko rural district council').map((line, index) => <p key={index} className="footer-contact-subline">{line}</p>)
+                                    ) : (
+                                        <>
+                                            <p className="footer-contact-subline">Council Headquarters, Stand 114</p>
+                                            <p className="footer-contact-subline">Mutoko Growth Point, Mashonaland East</p>
+                                            <p className="footer-contact-subline">Zimbabwe</p>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-
+                            {footerPhone && (
+                                <div className="footer-contact-item">
+                                    <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                                    </svg>
+                                    <div><p><a href={`tel:${footerPhone.replace(/\s+/g, '')}`}>{footerPhone}</a></p></div>
+                                </div>
+                            )}
+                            {footerEmail && (
+                                <div className="footer-contact-item">
+                                    <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                                        <path d="m22 7-10 6L2 7" />
+                                    </svg>
+                                    <div><p><a href={`mailto:${footerEmail}`}>{footerEmail}</a></p></div>
+                                </div>
+                            )}
+                            {footerWhatsapp && (
+                                <div className="footer-contact-item">
+                                    <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z" />
+                                    </svg>
+                                    <div><p><a href={footerWhatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Council Desk</a></p></div>
+                                </div>
+                            )}
+                            {footerHours && (
+                                <div className="footer-contact-item">
+                                    <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                    <div><p>{footerHours}</p></div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

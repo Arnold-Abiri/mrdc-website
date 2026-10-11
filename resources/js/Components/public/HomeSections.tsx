@@ -1117,72 +1117,139 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
     );
 }
 
+type DirectoryLink = {
+    label: string;
+    href: string;
+    desc: string;
+    badge?: string;
+};
+
+type DirectoryGroup = {
+    title: string;
+    blurb: string;
+    icon: 'council' | 'services' | 'records' | 'growth';
+    links: DirectoryLink[];
+};
+
+function DirectoryIcon({ icon }: { icon: DirectoryGroup['icon'] }) {
+    switch (icon) {
+        case 'council':
+            return (
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3z" />
+                </svg>
+            );
+        case 'services':
+            return (
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+            );
+        case 'records':
+            return (
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                </svg>
+            );
+        case 'growth':
+            return (
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                    <polyline points="17 6 23 6 23 12" />
+                </svg>
+            );
+    }
+}
+
 export function ExploreDirectory() {
     const locale = usePublicLocale();
     const L = (path: string) => `/${locale}${path}`;
-    const groups: { title: string; blurb: string; links: { label: string; href: string; desc: string }[] }[] = [
+    const groups: DirectoryGroup[] = [
         {
             title: 'Your Council',
-            blurb: 'Who leads, decides and represents you.',
+            blurb: 'Leadership, ward representatives & governance.',
+            icon: 'council',
             links: [
-                { label: 'Departments', href: '/departments', desc: 'What each department does' },
-                { label: 'Officials', href: '/officials', desc: 'Management profiles' },
-                { label: 'Wards', href: '/wards', desc: 'Find your ward & councillor' },
-                { label: 'Meetings', href: '/meetings', desc: 'Agendas & minutes' },
-                { label: 'Financial Transparency', href: '/transparency', desc: 'Open budgets & audits' },
+                { label: 'Departments', href: '/departments', desc: 'Council directorates & roles' },
+                { label: 'Officials', href: '/officials', desc: 'Executive leadership team' },
+                { label: 'Wards', href: '/wards', desc: 'Find your councillor & clinic', badge: '29 Wards' },
+                { label: 'Meetings', href: '/meetings', desc: 'Agendas, dates & minutes', badge: 'Public' },
+                { label: 'Financial Transparency', href: '/transparency', desc: 'Audits, budgets & procurement', badge: 'Audited' },
             ],
         },
         {
-            title: 'Services & Living',
-            blurb: 'Day-to-day services that keep Mutoko running.',
+            title: 'Services & Rates',
+            blurb: 'Essential public delivery, accounts & utilities.',
+            icon: 'services',
             links: [
-                { label: 'All Services', href: '/services', desc: 'Water, roads, health & more' },
-                { label: 'Projects', href: '/projects', desc: 'Development on the ground' },
-                { label: 'Rates', href: '/rates', desc: 'Fees & payment info' },
-                { label: 'Feedback', href: '/feedback', desc: 'Report & track issues' },
+                { label: 'All Services', href: '/services', desc: 'Water, roads, health & civil registry' },
+                { label: 'Projects', href: '/projects', desc: 'Community infrastructure works', badge: 'Active' },
+                { label: 'Rates & Accounts', href: '/rates', desc: 'Tariffs, billing & payment advice', badge: 'Pay Rates' },
+                { label: 'Feedback Desk', href: '/feedback', desc: 'Submit enquiry or report faults', badge: '24/7' },
             ],
         },
         {
             title: 'News & Records',
-            blurb: 'Stay informed and verify the record.',
+            blurb: 'Public notices, regulatory by-laws & gazettes.',
+            icon: 'records',
             links: [
-                { label: 'News', href: '/news', desc: 'Latest stories' },
-                { label: 'Notices', href: '/notices', desc: 'Official announcements' },
-                { label: 'Documents', href: '/documents', desc: 'Plans, reports & forms' },
+                { label: 'Official News', href: '/news', desc: 'Press releases & district updates' },
+                { label: 'Public Notices', href: '/notices', desc: 'Statutory consultations & notices', badge: 'Official' },
+                { label: 'Documents & By-Laws', href: '/documents', desc: 'Master plans, policies & forms', badge: 'PDF' },
             ],
         },
         {
             title: 'Grow With Us',
-            blurb: 'Work, invest and visit Mutoko.',
+            blurb: 'Economic investments, procurement & tourism.',
+            icon: 'growth',
             links: [
-                { label: 'Investment', href: '/investment', desc: 'Solar, mining, horticulture' },
-                { label: 'Tenders', href: '/tenders', desc: 'Do business with council' },
-                { label: 'Vacancies', href: '/vacancies', desc: 'Join the team' },
-                { label: 'Tourism', href: '/tourism', desc: 'Discover Mutoko' },
+                { label: 'Investment Opportunities', href: '/investment', desc: 'Granite, solar, agro-processing', badge: 'Invest' },
+                { label: 'Tenders & Procurement', href: '/tenders', desc: 'Open expressions of interest', badge: 'Open' },
+                { label: 'Council Vacancies', href: '/vacancies', desc: 'Public service careers' },
+                { label: 'Discover Mutoko', href: '/tourism', desc: 'Heritage, landscapes & culture' },
             ],
         },
     ];
+
     return (
         <section className="explore-directory" aria-labelledby="explore-heading">
             <div className="container">
-                <div className="section-eyebrow-pill">
-                    <span className="eyebrow-bar" aria-hidden="true" />
-                    <span className="eyebrow-text">EXPLORE COUNCIL</span>
+                <div className="explore-header-center">
+                    <div className="section-eyebrow-pill">
+                        <span className="eyebrow-bar" aria-hidden="true" />
+                        <span className="eyebrow-text">CIVIC DIRECTORY</span>
+                    </div>
+                    <h2 id="explore-heading" className="section-title">Everything in council, one glance</h2>
+                    <p className="section-subtext">Direct pathways to council administration, rate payments, public documents and business opportunities.</p>
                 </div>
-                <h2 id="explore-heading" className="section-title">Everything in council, one glance</h2>
-                <p className="section-subtext">Every service and office — organised by what you came to do.</p>
                 <div className="explore-grid">
                     {groups.map(group => (
                         <article key={group.title} className="explore-card">
-                            <h3>{group.title}</h3>
-                            <p className="explore-blurb">{group.blurb}</p>
-                            <ul>
+                            <div className="explore-card-header">
+                                <div className="explore-card-icon-wrap" aria-hidden="true">
+                                    <DirectoryIcon icon={group.icon} />
+                                </div>
+                                <div className="explore-card-heading-box">
+                                    <h3>{group.title}</h3>
+                                    <p className="explore-blurb">{group.blurb}</p>
+                                </div>
+                            </div>
+                            <ul className="explore-link-list">
                                 {group.links.map(link => (
                                     <li key={link.label}>
-                                        <a href={L(link.href)}>
-                                            <span className="explore-link-label">{link.label}</span>
-                                            <span className="explore-link-desc">{link.desc}</span>
-                                            <span aria-hidden="true">→</span>
+                                        <a href={L(link.href)} className="explore-link-row">
+                                            <div className="explore-link-content">
+                                                <div className="explore-label-wrap">
+                                                    <span className="explore-link-label">{link.label}</span>
+                                                    {link.badge && <span className="explore-micro-badge">{link.badge}</span>}
+                                                </div>
+                                                <span className="explore-link-desc">{link.desc}</span>
+                                            </div>
+                                            <span className="explore-link-arrow" aria-hidden="true">›</span>
                                         </a>
                                     </li>
                                 ))}
