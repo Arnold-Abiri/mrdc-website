@@ -24,7 +24,7 @@ class EditorialController extends Controller
 
     public function noticesIndex(): Response
     {
-        return Inertia::render('EditorialList', ['type' => 'Notices', 'items' => EditorialItem::query()->with('translations')->public()->where('type', 'notice')->orderByDesc('published_at')->get(['id', 'slug', 'title', 'summary', 'published_at', 'featured_media_id', 'expires_at'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null])]);
+        return Inertia::render('EditorialList', ['type' => 'Notices', 'items' => EditorialItem::query()->with(['translations', 'featuredMedia'])->public()->where('type', 'notice')->orderByDesc('published_at')->get(['id', 'slug', 'title', 'summary', 'published_at', 'featured_media_id', 'expires_at'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null, 'image_alt' => $item->featuredMedia?->alt_text, 'image_caption' => $item->featuredMedia?->caption, 'expires_at' => $item->expires_at?->format('Y-m-d')])]);
     }
 
     public function noticesShow(string $locale, string $slug): Response

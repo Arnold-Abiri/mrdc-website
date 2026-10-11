@@ -136,6 +136,8 @@ const english = {
     popularSearches: 'Popular searches:', ratesPayments: 'Rates & Payments',
     tendersProcurementShort: 'Tenders & Procurement', documentsBylawsShort: 'Documents & By-Laws',
     wardsCouncillorsShort: 'Wards & Councillors', feedbackFaults: 'Feedback & Faults', whatsappDesk: 'WhatsApp Council Desk',
+    publishedOn: 'Published on', validUntil: 'Valid until', shareWhatsApp: 'Share on WhatsApp', printNotice: 'Print / Save Notice',
+    backToNews: 'Back to all news', backToNotices: 'Back to all notices', readAnnouncementAction: 'Read full update',
 } as const;
 
 type Key = keyof typeof english;
@@ -290,6 +292,8 @@ const shona: Record<Key, string> = {
     popularSearches: 'Zvinowanzotsvakwa:', ratesPayments: 'Mitero nemabhadhariro',
     tendersProcurementShort: 'Matenda nekutenga', documentsBylawsShort: 'Zvinyorwa nemitemo',
     wardsCouncillorsShort: 'Mawadhi nemakanzura', feedbackFaults: 'Mhinduro nematambudziko', whatsappDesk: 'WhatsApp yeKanzuru',
+    publishedOn: 'Zvakabudiswa musi wa', validUntil: 'Zvinoshanda kusvika', shareWhatsApp: 'Govera paWhatsApp', printNotice: 'Dhinda / Chengetedza Chiziviso',
+    backToNews: 'Dzokera kunhau dzose', backToNotices: 'Dzokera kuzviziviso zvose', readAnnouncementAction: 'Verenga zvakadzama',
 };
 const ndebele: Record<Key, string> = {
     home: 'Ikhaya', about: 'Mayelana lathi', council: 'Umkhandlu', officials: 'Izikhulu zoMkhandlu', wards: 'Amawadi',
@@ -441,6 +445,8 @@ const ndebele: Record<Key, string> = {
     popularSearches: 'Okuvame ukuseshwa:', ratesPayments: 'Imithelo lokukhokha',
     tendersProcurementShort: 'Amathenda lokuthenga', documentsBylawsShort: 'Imibhalo lemithetho',
     wardsCouncillorsShort: 'Amawadi lamakhansila', feedbackFaults: 'Impendulo lezinkinga', whatsappDesk: 'WhatsApp yoMkhandlu',
+    publishedOn: 'Kukhutshwe mhlaka', validUntil: 'Kusebenza kuze kube', shareWhatsApp: 'Yabelana kuWhatsApp', printNotice: 'Gedla / Gcina Isaziso',
+    backToNews: 'Buyela ezindabeni zonke', backToNotices: 'Buyela ezazisweni zonke', readAnnouncementAction: 'Bala konke',
 };
 
 export function translate(locale: PublicLocale, key: Key): string {
