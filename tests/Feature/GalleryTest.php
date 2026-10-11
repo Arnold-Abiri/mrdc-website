@@ -6,6 +6,7 @@ use App\Domain\Cms\GalleryManager;
 use App\Models\Gallery;
 use App\Models\Media;
 use App\Models\User;
+use Database\Seeders\GallerySeeder;
 use Database\Seeders\SecuritySeeder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,6 +20,22 @@ use Tests\TestCase;
 class GalleryTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_sourced_tere_ruins_photo_is_visible_in_the_public_gallery(): void
+    {
+        Storage::fake('local');
+        $this->seed(GallerySeeder::class);
+
+        $gallery = Gallery::query()->where('slug', 'tere-ruins-mutoko')->firstOrFail();
+        $this->get('/en/galleries')->assertInertia(fn (Assert $page) => $page
+            ->component('Galleries', false)
+            ->where('galleries.0.slug', 'tere-ruins-mutoko')
+            ->where('galleries.0.image_count', 1));
+        $this->get('/en/galleries/tere-ruins-mutoko')->assertInertia(fn (Assert $page) => $page
+            ->component('Gallery', false)
+            ->where('images.0.url', public_route('managed-media.show', $gallery->cover_media_id)));
+        $this->get('/en/managed-media/'.$gallery->cover_media_id)->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+    }
 
     private function administrator(): User
     {

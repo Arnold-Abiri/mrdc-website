@@ -6,23 +6,23 @@ use App\Models\Gallery;
 use App\Models\Media;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 /**
- * Demonstration photo galleries.
+ * A sourced public photo gallery and demonstration albums.
  *
- * Classification: PROVISIONAL DEMO. Galleries are seeded as
- * status=draft + verification_status=demo, which scopePublic() can never
- * return. Council reviews each album in Filament and publishes it
- * explicitly; nothing here reaches the public site.
+ * The Tere Ruins album uses a documented CC BY-SA 4.0 photograph and is
+ * public. Demonstration albums remain draft until council review.
  *
- * Album images reuse the illustration media imported by
- * NewsIllustrationSeeder, so no new image files are introduced.
+ * Demonstration album images reuse the illustrations imported by
+ * NewsIllustrationSeeder.
  * Idempotent: stable slugs, and existing administrator edits are preserved.
  */
 class GallerySeeder extends Seeder
 {
     public function run(): void
     {
+        $this->seedTereRuinsGallery();
         $this->call(NewsIllustrationSeeder::class);
 
         $images = Media::query()
@@ -54,6 +54,61 @@ class GallerySeeder extends Seeder
             false,
             $images->slice(2, 4)->values(),
         );
+    }
+
+    private function seedTereRuinsGallery(): void
+    {
+        $filename = 'tere-ruin-mutoko.jpg';
+        $source = base_path('database/seeders/assets/'.$filename);
+        $dimensions = is_file($source) ? getimagesize($source) : false;
+        if ($dimensions === false) {
+            return;
+        }
+
+        $storagePath = 'gallery/'.$filename;
+        $disk = Storage::disk(config('cms.media_disk', 'local'));
+        if (! $disk->exists($storagePath) && ! $disk->put($storagePath, file_get_contents($source))) {
+            return;
+        }
+
+        $media = Media::query()->where('storage_path', $storagePath)->first();
+        if (! $media) {
+            $media = Media::unguarded(fn (): Media => Media::query()->create([
+                'title' => 'Tere Ruins, Mutoko',
+                'alt_text' => 'Stone walls of Tere Ruins near Mutoko, with granite hills in the background',
+                'caption' => 'Photo: Robert Stewart Burrett / Wikimedia Commons. CC BY-SA 4.0. Source: https://commons.wikimedia.org/wiki/File:Tere_Ruin_Mutoko.jpg',
+                'original_filename' => $filename,
+                'storage_path' => $storagePath,
+                'mime_type' => 'image/jpeg',
+                'size' => $disk->size($storagePath),
+                'width' => $dimensions[0],
+                'height' => $dimensions[1],
+                'status' => 'active',
+            ]));
+        }
+
+        if (Gallery::query()->where('slug', 'tere-ruins-mutoko')->exists()) {
+            return;
+        }
+
+        Gallery::unguarded(function () use ($media): void {
+            $gallery = Gallery::query()->create([
+                'slug' => 'tere-ruins-mutoko',
+                'title' => 'Tere Ruins, Mutoko',
+                'summary' => 'A historic stone structure just east of Mutoko town.',
+                'description' => 'Photographed on 22 November 2020 by Robert Stewart Burrett. Source: Wikimedia Commons (https://commons.wikimedia.org/wiki/File:Tere_Ruin_Mutoko.jpg). Licensed under Creative Commons Attribution-ShareAlike 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). No image edits have been made.',
+                'location' => 'East of Mutoko town',
+                'album_date' => '2020-11-22',
+                'cover_media_id' => $media->id,
+                'is_featured' => true,
+                'display_order' => 0,
+                'status' => 'published',
+                'verification_status' => 'publishable',
+                'verified_at' => now(),
+                'published_at' => now(),
+            ]);
+            $gallery->media()->attach($media->id, ['caption' => $media->caption, 'display_order' => 0]);
+        });
     }
 
     /**
