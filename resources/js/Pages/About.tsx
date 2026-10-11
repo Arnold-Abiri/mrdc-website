@@ -1,6 +1,5 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { ConnectBanner } from '../Components/public/PageHeader';
 import { usePublicLocale } from '../usePublicTranslation';
 
 type Block = { type: 'heading' | 'paragraph' | 'cta'; text: string; url?: string };
@@ -697,12 +696,6 @@ export default function About({
                     </div>
                 </div>
             </div>
-
-            {/* 11. CONNECT WITH YOUR COUNCIL CTA */}
-            <ConnectBanner
-                title="Connect with Your Council"
-                text="We value your feedback and encourage you to engage with us."
-            />
         </PublicLayout>
     );
 }

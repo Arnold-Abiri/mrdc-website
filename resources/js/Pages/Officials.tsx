@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 import { usePublicTranslation } from '../usePublicTranslation';
 
 type OfficialSummary = { slug: string; name: string; title: string; biography: string | null; department: string | null; photo_url: string | null };
@@ -31,7 +31,6 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

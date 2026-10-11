@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 
 type FinancialDocument = { slug: string; title: string; description: string | null; category: string; published_at: string | null; reference_date: string | null; download_count: number };
 
@@ -50,7 +50,6 @@ export default function Transparency({ documents, categories, years, filters }: 
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

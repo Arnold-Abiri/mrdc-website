@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 
 type DocumentItem = { slug: string; title: string; description: string | null; category: string; published_at: string | null; reference_date: string | null; download_count: number };
 const RESOURCE_LINKS = ['Constitution of Zimbabwe', 'Local Government Laws Amendment Act', 'Rural Land Act', 'Stock Theft Prevention Act', 'Traditional Leaders Act', 'Mutoko Master Plan — public exhibition notice'];
@@ -51,7 +51,6 @@ export default function Documents({ documents, categories, years, filters }: { d
                     </div>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

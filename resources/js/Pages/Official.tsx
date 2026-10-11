@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 import { usePublicLocale } from '../usePublicTranslation';
 
 type OfficialProfile = { name: string; title: string; biography: string | null; department: string | null; photo_url: string | null };
@@ -26,7 +26,6 @@ export default function Official({ official }: { official: OfficialProfile }) {
                     </p>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

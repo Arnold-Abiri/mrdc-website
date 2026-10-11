@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 type Meeting = { id: number; title: string; meeting_type: string; scheduled_date: string | null; scheduled_time: string | null; venue: string | null; meeting_status: string };
 const meetingTypes: Record<string, string> = { full_council: 'fullCouncil', committee: 'committee', special: 'special', public_hearing: 'publicHearing' };
 const meetingStatuses: Record<string, string> = { scheduled: 'scheduled', completed: 'completed', postponed: 'postponed', cancelled: 'cancelled' };
@@ -28,7 +28,6 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

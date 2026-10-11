@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale } from '../usePublicTranslation';
 import About from './About';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 
 type Block = { type: 'heading' | 'paragraph' | 'cta'; text: string; url?: string };
 type Page = {
@@ -39,7 +39,6 @@ export default function CmsPage({ page, about, preview }: { page: Page; about?: 
                     <p style={{ marginTop: '20px' }}><a className="about-page-text-link" href={`/${locale}/contact`}>Contact the council <span aria-hidden="true">→</span></a></p>
                 </article>
             </div></section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

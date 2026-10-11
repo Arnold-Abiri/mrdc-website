@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 type Opportunity = { slug: string; title: string; sector: string | null; summary: string | null; location: string | null; opportunity_status: string };
 export default function Investment({ opportunities }: { opportunities: Opportunity[] }) {
     const locale = usePublicLocale();
@@ -16,6 +16,5 @@ export default function Investment({ opportunities }: { opportunities: Opportuni
             {opportunities.length === 0 ? <EmptyState title="No opportunities published" text="No investment opportunities are published at this time. Contact the council to discuss proposals." /> : <div className="about-focus-grid">{opportunities.map(item => <Link key={item.slug} href={`/${locale}/investment/${item.slug}`} className="about-focus-card"><h3>{item.title}</h3><p>{item.sector ? `${item.sector} — ` : ''}{item.opportunity_status}{item.location ? ` — ${item.location}` : ''}</p>{item.summary && <p>{item.summary}</p>}<span className="about-economic-link">View opportunity <span aria-hidden="true">→</span></span></Link>)}</div>}
             <p style={{ marginTop: '20px' }}><Link className="about-page-text-link" href={`/${locale}/contact`}>{t('makeInvestmentEnquiry')} <span aria-hidden="true">→</span></Link></p>
         </div></section>
-        <ConnectBanner />
     </PublicLayout>;
 }

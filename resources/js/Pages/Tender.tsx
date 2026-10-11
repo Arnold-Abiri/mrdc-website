@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 
 type TenderDetail = { slug: string; reference: string; title: string; category: string | null; description: string; opens_at: string | null; closes_at: string | null; display_status: string; contact_instructions: string | null; award_status: string; awarded_to: string | null; awarded_at: string | null; award_amount: string | null; award_reference: string | null; award_remarks: string | null; document: { slug: string; title: string } | null };
 
@@ -51,7 +51,6 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                     <p style={{ marginTop: '16px' }}><Link href={`/${locale}/contact`}>{t('askAboutTender')} \u2192</Link></p>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

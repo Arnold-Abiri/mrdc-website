@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { SeoHead } from '../Seo';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 import { daysRemaining } from './Vacancies';
 
 type VacancyDetail = { slug: string; title: string; grade: string | null; reference: string | null; employment_type: string | null; description: string; responsibilities: string | null; requirements: string | null; opens_at: string | null; closes_at: string | null; is_open: boolean; application_instructions: string | null; document: { slug: string; title: string } | null };
@@ -122,7 +122,6 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

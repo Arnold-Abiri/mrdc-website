@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import AccessibilitySettings from '../Components/public/AccessibilitySettings';
+import { ConnectBanner } from '../Components/public/PageHeader';
 import { normalizeLocale, translate } from '../localization';
 import type { ReactNode } from 'react';
 import { useSiteSettings, whatsappLinkFor, type SiteSettings } from '../useSiteSettings';
@@ -453,7 +454,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 </div>
             </div>
 
-            <main id="main" tabIndex={-1}>{children}</main>
+            <main id="main" tabIndex={-1}>
+                {children}
+                {normalizedCurrentPath !== '/' && <ConnectBanner />}
+            </main>
 
             {/* Modern Clean Footer Matching Mockup */}
             <footer className="site-footer">

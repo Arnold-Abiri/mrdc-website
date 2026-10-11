@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 
 export default function ComingSoon({ topic }: { topic: string }) {
     const locale = usePublicLocale();
@@ -21,7 +21,6 @@ export default function ComingSoon({ topic }: { topic: string }) {
                     </div>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

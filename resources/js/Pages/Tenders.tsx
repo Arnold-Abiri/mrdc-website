@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 
 type Tender = { slug: string; reference: string; title: string; category: string | null; closes_at: string | null; display_status: string };
 
@@ -30,7 +30,6 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

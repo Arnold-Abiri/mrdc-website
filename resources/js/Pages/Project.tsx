@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 type Ward = { slug: string; name: string };
 type LinkedDocument = { slug: string; title: string };
 type Update = { update_date: string | null; title: string; summary: string | null; progress_percent: number | null };
@@ -30,6 +30,5 @@ export default function Project({ project, department, wards, documents, updates
             {documents.length > 0 && <><h2 style={{ marginTop: '24px' }}>{t('relatedDocuments')}</h2><div className="about-focus-grid">{documents.map(document => <Link key={document.slug} href={`/${locale}/documents/${document.slug}`} className="about-focus-card"><h3>{document.title}</h3><span className="about-economic-link">Open document <span aria-hidden="true">→</span></span></Link>)}</div></>}
             <p style={{ marginTop: '20px' }}><Link className="about-page-text-link" href={`/${locale}/contact`}>{t('contactCouncil')} <span aria-hidden="true">→</span></Link></p>
         </div></section>
-        <ConnectBanner />
     </PublicLayout>;
 }

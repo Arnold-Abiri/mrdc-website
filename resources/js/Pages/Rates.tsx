@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 
 type RatesBlock = { type: string; text: string; url?: string | null };
 type RatesPage = { slug: string; title: string; summary: string | null; blocks: RatesBlock[] } | null;
@@ -49,7 +49,6 @@ export default function Rates({ page, schedules }: { page: RatesPage; schedules:
                     <p style={{ marginTop: '16px' }}><Link href={`/${locale}/contact`}>{t('contactCouncil')} \u2192</Link></p>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

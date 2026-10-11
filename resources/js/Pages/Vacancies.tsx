@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 
 type Vacancy = { slug: string; title: string; grade: string | null; reference: string | null; employment_type: string | null; description: string; opens_at: string | null; closes_at: string | null; is_open: boolean; department: string | null };
 
@@ -127,7 +127,6 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

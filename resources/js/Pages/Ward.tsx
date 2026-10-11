@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 
 type WardContent = { name: string; description: string | null; boundaries_description: string | null };
@@ -27,7 +27,6 @@ export default function Ward({ ward }: { ward: WardContent }) {
                     </p>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

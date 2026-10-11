@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 type Project = { slug: string; title: string; project_type: string; project_status: string; location: string | null; summary: string | null; progress_percent: number | null };
 const projectStatuses: Record<string, string> = { planned: 'planned', ongoing: 'ongoing', completed: 'completed', on_hold: 'onHold', cancelled: 'cancelled' };
 export default function Projects({ projects, filters }: { projects: Project[]; filters: { status: string | null; type: string | null; department: string | null; ward: string | null } }) {
@@ -21,6 +21,5 @@ export default function Projects({ projects, filters }: { projects: Project[]; f
             {projects.length === 0 ? <EmptyState title={t('noProjects')} text={t('projectsDesc')} /> : <div className="about-focus-grid">{projects.map(project => <Link key={project.slug} href={`/${locale}/projects/${project.slug}`} className="about-focus-card"><h3>{project.title}</h3><p>{t(projectStatuses[project.project_status] as 'planned')}{project.location ? ` — ${project.location}` : ''}{project.progress_percent !== null ? ` — ${project.progress_percent}%` : ''}</p>{project.summary && <p>{project.summary}</p>}<span className="about-economic-link">View project <span aria-hidden="true">→</span></span></Link>)}</div>}
             </div>
         </div></section>
-        <ConnectBanner />
     </PublicLayout>;
 }

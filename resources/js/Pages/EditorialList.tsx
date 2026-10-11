@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 type Item = { slug: string; title: string; summary: string | null; published_at: string | null; image_url?: string | null; image_alt?: string | null; image_caption?: string | null };
 export default function EditorialList({ type, items }: { type: string; items: Item[] }) {
     const locale = usePublicLocale();
@@ -27,7 +27,6 @@ export default function EditorialList({ type, items }: { type: string; items: It
                     ) : <EmptyState title={`No ${type.toLowerCase()} yet`} text={`No approved ${type.toLowerCase()} are available yet.`} />}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

@@ -1,7 +1,7 @@
 import PublicLayout from '../Layouts/PublicLayout';
 import { SeoHead } from '../Seo';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 type Item = { slug: string; title: string; summary: string | null; body: string; published_at: string | null; expires_at?: string | null; image_url?: string | null; image_alt?: string | null; image_caption?: string | null };
 type DocumentLink = { slug: string; title: string };
 export default function EditorialDetail({ type, item, documents }: { type: string; item: Item; documents: DocumentLink[] }) {
@@ -35,7 +35,6 @@ export default function EditorialDetail({ type, item, documents }: { type: strin
                     ) : null}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

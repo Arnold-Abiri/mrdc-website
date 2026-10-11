@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { ConnectBanner, EmptyState, PageHero } from '../Components/public/PageHeader';
+import { EmptyState, PageHero } from '../Components/public/PageHeader';
 
 type GalleryCard = {
     slug: string;
@@ -80,8 +80,6 @@ export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
                     )}
                 </div>
             </section>
-
-            <ConnectBanner />
         </PublicLayout>
     );
 }

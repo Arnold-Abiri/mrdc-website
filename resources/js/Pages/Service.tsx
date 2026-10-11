@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 
 type ServiceContent = { slug: string; name: string; summary: string | null; description: string | null; requirements: string[] | null; steps: string[] | null; fees_information: string | null; seo_title: string | null; meta_description: string | null };
@@ -58,7 +58,6 @@ export default function Service({ service, department, documents = [] }: { servi
                     </p>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 
 type DocumentItem = { slug: string; title: string; description: string | null; category: string; published_at: string | null; reference_date: string | null; download_count: number; current_version: number; reference_year: number | null; has_file: boolean };
 export default function Document({ document }: { document: DocumentItem }) {
@@ -24,7 +24,6 @@ export default function Document({ document }: { document: DocumentItem }) {
                     </div>
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

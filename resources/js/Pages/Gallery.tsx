@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import { ConnectBanner, EmptyState, PageHero } from '../Components/public/PageHeader';
+import { EmptyState, PageHero } from '../Components/public/PageHeader';
 import GalleryLightbox, { type GalleryImage } from '../Components/public/GalleryLightbox';
 
 type GalleryDetail = {
@@ -88,8 +88,6 @@ export default function Gallery({ gallery, images }: { gallery: GalleryDetail; i
             {activeIndex !== null && (
                 <GalleryLightbox images={images} index={activeIndex} onClose={() => setActiveIndex(null)} onIndexChange={setActiveIndex} />
             )}
-
-            <ConnectBanner />
         </PublicLayout>
     );
 }

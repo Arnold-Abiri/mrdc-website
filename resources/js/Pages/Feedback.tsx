@@ -1,7 +1,7 @@
 import { Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 import '../../css/contact.css';
 
 type DepartmentOption = { id: number; name: string };
@@ -48,7 +48,6 @@ export default function Feedback({ csrfToken, submitted, reference, departments 
                     </section>
                 </div>
             </main>
-            <ConnectBanner />
         </PublicLayout>
     );
 }

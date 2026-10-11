@@ -1,15 +1,27 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-let mockPageState = { locale: 'en', localeCsrfToken: 'test-token', topbar_notices: [] };
+let mockPageState: { locale: string; localeCsrfToken: string; topbar_notices: { slug: string; title: string; is_urgent: boolean }[] } = { locale: 'en', localeCsrfToken: 'test-token', topbar_notices: [] };
+let mockPageUrl = '/en';
 
 vi.mock('@inertiajs/react', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@inertiajs/react')>()),
-    usePage: () => ({ props: mockPageState }),
+    usePage: () => ({ props: mockPageState, url: mockPageUrl }),
 }));
 import PublicLayout from './PublicLayout';
 
 describe('public navigation', () => {
+    it('shows the contact banner on non-home pages and omits it from home', () => {
+        mockPageUrl = '/en/about';
+        const page = render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        expect(screen.getByRole('heading', { name: 'Connect with Your Council' })).toBeInTheDocument();
+        expect(screen.getByText('Questions about this page? Reach the right team through one enquiry form.')).toBeInTheDocument();
+        expect(within(screen.getByRole('main')).getByRole('link', { name: 'Contact Us' })).toHaveAttribute('href', '/en/contact');
+
+        mockPageUrl = '/en';
+        page.rerender(<PublicLayout><h1>Content</h1></PublicLayout>);
+        expect(screen.queryByRole('heading', { name: 'Connect with Your Council' })).not.toBeInTheDocument();
+    });
     it('opens on mobile and exposes its state', () => {
         render(<PublicLayout><h1>Content</h1></PublicLayout>);
         const menu = screen.getByRole('button', { name: 'Menu' });

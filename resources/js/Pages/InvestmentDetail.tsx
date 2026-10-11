@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero, ConnectBanner } from '../Components/public/PageHeader';
+import { PageHero } from '../Components/public/PageHeader';
 type OpportunityDetail = { slug: string; title: string; sector: string | null; summary: string | null; description: string; location: string | null; opportunity_status: string; document: { slug: string; title: string } | null };
 export default function InvestmentDetail({ opportunity }: { opportunity: OpportunityDetail }) {
     const t = usePublicTranslation();
@@ -15,6 +15,5 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
             {opportunity.document && <div className="about-vision-card" style={{ marginTop: '20px' }}><div><h3>{t('supportingDocument')}</h3><p><Link className="about-page-text-link" href={`/${locale}/documents/${opportunity.document.slug}`}>{opportunity.document.title} <span aria-hidden="true">→</span></Link></p></div></div>}
             <p style={{ marginTop: '20px' }}><Link className="about-page-text-link" href={`/${locale}/contact?context=investment:${opportunity.slug}`}>{t('enquireInvestment')} <span aria-hidden="true">→</span></Link></p>
         </div></section>
-        <ConnectBanner />
     </PublicLayout>;
 }

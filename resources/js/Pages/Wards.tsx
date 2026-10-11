@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { PageHero, ConnectBanner, EmptyState } from '../Components/public/PageHeader';
+import { PageHero, EmptyState } from '../Components/public/PageHeader';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 
 type WardSummary = { slug: string; name: string; description: string | null };
@@ -30,7 +30,6 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                     )}
                 </div>
             </section>
-            <ConnectBanner />
         </PublicLayout>
     );
 }
