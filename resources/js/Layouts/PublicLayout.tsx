@@ -535,12 +535,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <div className="footer-col-nav">
                         <h3 className="footer-heading">{t('ourServices')}</h3>
                         <ul className="footer-link-list">
-                            <li><a href={L("/services")}>{t('waterSupply')}</a></li>
-                            <li><a href={L("/projects")}>{t('roadsInfrastructure')}</a></li>
-                            <li><a href={L("/services")}>{t('healthSanitation')}</a></li>
-                            <li><a href={L("/services")}>{t('environmentalManagement')}</a></li>
-                            <li><a href={L("/investment")}>{t('developmentPlanning')}</a></li>
-                            <li><a href={L("/feedback")}>{t('communityServices')}</a></li>
+                            <li><a href={L("/services/business-centre-servicing")}>{t('waterSupply')}</a></li>
+                            <li><a href={L("/services/roads-and-works")}>{t('roadsInfrastructure')}</a></li>
+                            <li><a href={L("/services/health-services")}>{t('healthSanitation')}</a></li>
+                            <li><a href={L("/services/environmental-protection")}>{t('environmentalManagement')}</a></li>
+                            <li><a href={L("/services/property-management")}>{t('developmentPlanning')}</a></li>
+                            <li><a href={L("/services/welfare-services")}>{t('communityServices')}</a></li>
                         </ul>
                     </div>
 
