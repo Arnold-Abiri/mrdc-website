@@ -1527,12 +1527,12 @@ a.social-pill:hover {
   width: 20px;
   height: 20px;
 }
-.badge-blue { background: #EFF6FF; color: #2563EB; }
-.badge-emerald { background: #ECFDF5; color: #059669; }
-.badge-cyan { background: #E0F2FE; color: #0284C7; }
-.badge-green { background: #F0FDF4; color: #16A34A; }
-.badge-amber { background: #FFFBEB; color: #D97706; }
-.badge-red { background: #FEF2F2; color: #DC2626; }
+.badge-blue { background: rgba(11, 45, 77, 0.08); color: var(--color-civic-navy); }
+.badge-emerald { background: #ECFDF5; color: var(--color-deep-green); }
+.badge-cyan { background: #EAF4F8; color: #0284C7; }
+.badge-green { background: #F0FDF4; color: var(--color-council-green); }
+.badge-amber { background: #FFFBEB; color: #B45309; }
+.badge-red { background: rgba(180, 83, 9, 0.1); color: #B45309; }
 
 .quick-chevron {
   color: #94A3B8;
@@ -1668,14 +1668,14 @@ h3 { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #2563EB;
+  color: var(--color-deep-green);
   font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
   transition: color 0.15s ease, transform 0.15s ease;
 }
 .header-viewall-link:hover {
-  color: var(--color-deep-green);
+  color: var(--color-civic-navy);
   transform: translateX(2px);
 }
 .btn-section-primary {
@@ -1761,12 +1761,12 @@ h3 { margin: 0; }
 .about-icon-badge.badge-gear,
 .about-icon-badge.badge-shield,
 .about-icon-badge.badge-users {
-  background: #EFF6FF;
-  color: #2563EB;
+  background: rgba(11, 45, 77, 0.08);
+  color: var(--color-civic-navy);
 }
 .about-icon-badge.badge-leaf {
   background: #ECFDF5;
-  color: #059669;
+  color: var(--color-deep-green);
 }
 .about-feature-title {
   color: var(--color-civic-navy);
