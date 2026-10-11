@@ -121,10 +121,10 @@ export default function About({
                         <figure className="about-whoweare-figure">
                             <img
                                 src="/images/about/landscape-hills.webp"
-                                alt="Typical landscape in Mutoko District with granite rocks and savanna"
+                                alt="Illustrative granite hill landscape with trees and savanna"
                                 className="about-whoweare-img"
-                                width="660"
-                                height="364"
+                                width="1672"
+                                height="941"
                                 loading="lazy"
                             />
                             <figcaption className="about-whoweare-caption">
@@ -132,7 +132,7 @@ export default function About({
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
                                     <circle cx="12" cy="9" r="2.5" />
                                 </svg>
-                                <span>Typical landscape in Mutoko District, Mashonaland East</span>
+                                <span>Illustrative granite landscape</span>
                             </figcaption>
                         </figure>
                     </div>
@@ -273,9 +273,9 @@ export default function About({
                         <div className="about-history-img-wrap">
                             <img
                                 src="/images/about/history-landscape.webp"
-                                alt="Mutoko historical landscape with ancient baobab tree"
-                                width="502"
-                                height="366"
+                                alt="Illustrative baobab tree in a rocky savanna landscape"
+                                width="1448"
+                                height="1086"
                                 loading="lazy"
                             />
                         </div>
