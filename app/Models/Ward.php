@@ -13,7 +13,7 @@ class Ward extends Model implements TranslatableContent
 
     public const TRANSLATABLE_FIELDS = ['name', 'description', 'boundaries_description'];
 
-    protected $fillable = ['slug', 'name', 'description', 'boundaries_description', 'map_url', 'display_order'];
+    protected $fillable = ['slug', 'name', 'description', 'boundaries_description', 'map_url', 'display_order', 'status', 'verification_status', 'published_at'];
 
     protected function casts(): array
     {

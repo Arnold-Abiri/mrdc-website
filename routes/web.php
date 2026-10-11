@@ -6,6 +6,7 @@ use App\Http\Controllers\MonthlyMetricsExportController;
 use App\Http\Controllers\Public\DepartmentController;
 use App\Http\Controllers\Public\DocumentController;
 use App\Http\Controllers\Public\EditorialController;
+use App\Http\Controllers\Public\FaqController;
 use App\Http\Controllers\Public\GalleryController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\InvestmentController;
@@ -91,6 +92,7 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
 
     Route::get('/transparency', [TransparencyController::class, 'index'])->name('transparency.index');
     Route::get('/rates', [RatesController::class, 'index'])->name('rates.index');
+    Route::get('/faqs', [FaqController::class, 'index'])->name('faqs.index');
 
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/{slug}', [ProjectController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('projects.show');

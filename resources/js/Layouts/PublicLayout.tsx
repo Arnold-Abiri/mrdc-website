@@ -38,6 +38,7 @@ const navigation: NavEntry[] = [
             { label: 'All Services', href: '/services' },
             { label: 'Projects', href: '/projects' },
             { label: 'Rates', href: '/rates' },
+            { label: 'FAQs', href: '/faqs' },
             { label: 'Feedback', href: '/feedback' },
         ],
     },
@@ -529,6 +530,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <li><a href={L("/")}>{t('home')}</a></li>
                             <li><a href={L("/about")}>{t('about')}</a></li>
                             <li><a href={L("/services")}>{t('ourServices')}</a></li>
+                            <li><a href={L("/faqs")}>FAQs</a></li>
                             <li><a href={L("/investment")}>{t('development')}</a></li>
                             <li><a href={L("/tourism")}>{t('tourism')}</a></li>
                             <li><a href={L("/news")}>{t('media')}</a></li>

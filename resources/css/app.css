@@ -2282,8 +2282,8 @@ a:focus-visible, button:focus-visible {
 .about-history-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px;
-  align-items: center;
+  gap: 32px;
+  align-items: start;
 }
 @media (min-width: 840px) {
   .about-history-layout {
@@ -2299,27 +2299,27 @@ a:focus-visible, button:focus-visible {
 }
 .about-history-img-wrap img {
   width: 100%;
-  height: clamp(240px, 35vw, 380px);
+  height: clamp(260px, 35vw, 420px);
   object-fit: cover;
   display: block;
 }
 .about-timeline-tree {
   position: relative;
-  padding-left: 28px;
+  margin-bottom: 28px;
 }
 .about-timeline-tree::before {
   content: '';
   position: absolute;
-  top: 14px;
-  bottom: 14px;
-  left: 92px;
+  top: 10px;
+  bottom: 12px;
+  left: 95px;
   width: 2px;
   background: #D97706;
 }
 .about-timeline-item {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: 16px;
   margin-bottom: 24px;
   position: relative;
 }
@@ -2333,23 +2333,47 @@ a:focus-visible, button:focus-visible {
   color: var(--color-civic-navy);
   text-align: right;
   flex-shrink: 0;
+  line-height: 1.2;
 }
 .about-timeline-node {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #D97706;
   border: 3px solid #FFFFFF;
   box-shadow: 0 0 0 2px #D97706;
   flex-shrink: 0;
-  margin-top: 5px;
+  margin-top: 2px;
   z-index: 2;
 }
 .about-timeline-content {
   flex: 1;
   color: #334155;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.about-history-narrative {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+.about-history-narrative .about-page-copy {
+  margin-bottom: 0;
+}
+.about-history-narrative h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-civic-navy);
+  margin: 0 0 12px;
+}
+.about-history-narrative p {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+.about-history-narrative p:last-child {
+  margin-bottom: 0;
 }
 
 /* 7. Leadership & Governance 4 Cards */

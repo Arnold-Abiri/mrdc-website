@@ -93,14 +93,22 @@ type DynamicBankAccount = {
     purpose: string | null;
 };
 
+type DynamicFaq = {
+    id: number;
+    question: string;
+    answer: string;
+};
+
 export default function Rates({
     page,
     schedules,
     bankAccounts = [],
+    billingFaqs = [],
 }: {
     page: RatesPage;
     schedules: RateSchedule[];
     bankAccounts?: DynamicBankAccount[];
+    billingFaqs?: DynamicFaq[];
 }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -485,17 +493,17 @@ export default function Rates({
                     </p>
 
                     <div className="rates-faq-list" role="region" aria-label={t('faqRegion')}>
-                        {FAQS.map((faq, index) => {
+                        {(billingFaqs.length > 0 ? billingFaqs : FAQS.map((f, i) => ({ id: i, question: t(f.qKey), answer: t(f.aKey) }))).map((faq, index) => {
                             const isOpen = openFaq === index;
                             return (
-                                <div key={index} className={`rates-faq-item ${isOpen ? 'open' : ''}`}>
+                                <div key={faq.id} className={`rates-faq-item ${isOpen ? 'open' : ''}`}>
                                     <button
                                         type="button"
                                         className="rates-faq-trigger"
                                         aria-expanded={isOpen}
                                         onClick={() => setOpenFaq(isOpen ? null : index)}
                                     >
-                                        <span>{t(faq.qKey)}</span>
+                                        <span>{faq.question}</span>
                                         <svg
                                             width="18"
                                             height="18"
@@ -518,12 +526,29 @@ export default function Rates({
                                     </button>
                                     {isOpen && (
                                         <div className="rates-faq-content">
-                                            <p style={{ margin: 0 }}>{t(faq.aKey)}</p>
+                                            <p style={{ margin: 0 }}>{faq.answer}</p>
                                         </div>
                                     )}
                                 </div>
                             );
                         })}
+                    </div>
+
+                    <div style={{ marginTop: 20, marginBottom: 40, textAlign: 'center' }}>
+                        <Link
+                            href={`/${locale}/faqs?category=billing`}
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                color: 'var(--color-council-emerald, #0B8F62)',
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                                fontSize: '0.95rem',
+                            }}
+                        >
+                            View all Council FAQs &rarr;
+                        </Link>
                     </div>
 
                     {/* GAZETTED SCHEDULES */}

@@ -386,7 +386,11 @@ export default function About({
                                 </div>
                             </div>
 
-                            {render(find('history'))}
+                            {find('history').length > 0 && (
+                                <div className="about-history-narrative">
+                                    {render(find('history'))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

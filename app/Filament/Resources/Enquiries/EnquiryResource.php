@@ -42,7 +42,16 @@ class EnquiryResource extends Resource
             TextEntry::make('phone'),
             TextEntry::make('category'),
             TextEntry::make('organisation')->visible(fn (Enquiry $record): bool => $record->organisation !== null),
-            TextEntry::make('context')->label('Origin')->state(fn (Enquiry $record): ?string => $record->context_type ? $record->context_type.':'.$record->context_reference : null)->visible(fn (Enquiry $record): bool => $record->context_type !== null),
+            TextEntry::make('context')->label('Origin / Ward')->state(function (Enquiry $record): ?string {
+                if (! $record->context_type) {
+                    return null;
+                }
+                if ($record->context_type === 'ward') {
+                    return 'Ward: '.str($record->context_reference)->replace('-', ' ')->title();
+                }
+
+                return $record->context_type.':'.$record->context_reference;
+            })->visible(fn (Enquiry $record): bool => $record->context_type !== null),
             TextEntry::make('department_name')->label('Department')->state(fn (Enquiry $record): ?string => $record->department instanceof Department ? $record->department->name : null),
             TextEntry::make('assignee_name')->label('Assigned to')->state(fn (Enquiry $record): ?string => $record->assignee instanceof User ? $record->assignee->name : null),
             TextEntry::make('subject'),
@@ -72,7 +81,7 @@ class EnquiryResource extends Resource
                 TextColumn::make('public_id')->label('Reference')->searchable(),
                 TextColumn::make('subject')->searchable()->limit(50),
                 TextColumn::make('department.name')->label('Department')->sortable(),
-                TextColumn::make('category')->toggleable(),
+                TextColumn::make('category')->badge()->toggleable(),
                 TextColumn::make('context_type')->label('Origin')->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')->badge()->sortable(),
                 TextColumn::make('submitted_at')->dateTime()->sortable(),
@@ -83,6 +92,16 @@ class EnquiryResource extends Resource
                     'in_progress' => 'In progress',
                     'resolved' => 'Resolved',
                     'closed' => 'Closed',
+                ]),
+                SelectFilter::make('category')->label('Category')->options([
+                    'fault_report' => 'Fault Report',
+                    'complaint' => 'Complaint',
+                    'feedback' => 'Feedback',
+                    'general' => 'General',
+                    'services' => 'Services',
+                    'service_enquiry' => 'Service Enquiry',
+                    'investment_enquiry' => 'Investment Enquiry',
+                    'other' => 'Other',
                 ]),
                 SelectFilter::make('department')->label('Department')->relationship('department', 'name'),
             ])

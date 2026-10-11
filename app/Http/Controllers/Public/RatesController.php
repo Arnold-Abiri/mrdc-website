@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\BankAccount;
 use App\Models\Document;
+use App\Models\Faq;
 use App\Models\Page;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -32,10 +33,24 @@ class RatesController extends Controller
                 'purpose',
             ]);
 
+        $billingFaqs = Faq::query()
+            ->with('translations')
+            ->public()
+            ->where('category', 'billing')
+            ->orderBy('display_order')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Faq $faq): array => [
+                'id' => $faq->id,
+                'question' => $faq->translated('question'),
+                'answer' => $faq->translated('answer'),
+            ]);
+
         return Inertia::render('Rates', [
             'page' => $page ? $page->toLocalizedArray(['slug', 'title', 'summary', 'blocks']) : null,
             'schedules' => $schedules,
             'bankAccounts' => $bankAccounts,
+            'billingFaqs' => $billingFaqs,
         ]);
     }
 }

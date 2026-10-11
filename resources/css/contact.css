@@ -62,3 +62,15 @@
 @media (min-width: 760px) { .contact-columns { grid-template-columns: minmax(0, .92fr) minmax(0, 1fr); } .contact-form { grid-template-columns: repeat(2, minmax(0, 1fr)); } .contact-field-full, .contact-submit { grid-column: 1 / -1; } .contact-department-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .contact-link-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (min-width: 1100px) { .contact-columns { grid-template-columns: minmax(0, .92fr) minmax(0, 1fr); } .contact-department-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 @media (max-width: 500px) { .contact-link-grid, .contact-department-grid { grid-template-columns: 1fr; } .contact-page { padding-top: 18px; } .contact-form-heading-icon { display: none; } .contact-form-footer { padding: 16px; } .contact-submit { width: 100%; } }
+
+.fault-mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #e5ece6; padding-bottom: 14px; }
+.fault-tab-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1px solid #d4dfd7; border-radius: 9999px; background: #fff; color: #23453b; font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .16s ease; }
+.fault-tab-btn:hover { background: #f0f7f2; border-color: #076247; }
+.fault-tab-btn[aria-pressed="true"], .fault-tab-btn.active { background: #075d46; color: #fff; border-color: #075d46; box-shadow: 0 4px 10px rgba(7, 93, 70, .2); }
+.fault-emergency-banner { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-radius: 8px; background: #fff8eb; border-left: 4px solid #d97706; color: #92400e; font-size: .86rem; line-height: 1.5; margin-bottom: 18px; }
+.fault-emergency-banner svg { width: 20px; height: 20px; flex-shrink: 0; color: #d97706; margin-top: 1px; }
+.fault-category-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.fault-pill { padding: 6px 13px; font-size: .82rem; font-weight: 650; border-radius: 20px; border: 1px solid #cddcd0; background: #f8faf8; color: #254439; cursor: pointer; transition: all .15s ease; }
+.fault-pill:hover { border-color: #075d46; background: #eef6f0; }
+.fault-pill.selected { background: #075d46; color: #fff; border-color: #075d46; }
+

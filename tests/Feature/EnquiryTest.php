@@ -5,6 +5,7 @@ use App\Domain\Identity\DataScopeAuthorizer;
 use App\Models\Department;
 use App\Models\Enquiry;
 use App\Models\User;
+use App\Models\Ward;
 use Database\Seeders\SecuritySeeder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -176,4 +177,54 @@ test('global enquiry administrator can route and reassign across departments wit
     $metadata = DB::table('audit_events')->where('action', 'enquiries.note_added')->value('metadata');
     expect($metadata)->not->toContain('Private resident information');
     $this->actingAs($staff)->get('/admin/enquiries/'.$enquiry->id)->assertOk();
+});
+
+test('citizen can submit a fault report with ward context and location detail via feedback endpoint', function (): void {
+    $ward = Ward::query()->create([
+        'slug' => 'ward-test-01',
+        'name' => 'Ward 1 Test',
+        'status' => 'published',
+        'verification_status' => 'publishable',
+        'published_at' => now()->subDay(),
+        'display_order' => 1,
+    ]);
+
+    $response = $this->post('/en/feedback', [
+        'name' => 'Resident Tendai',
+        'email' => 'tendai@example.test',
+        'category' => 'fault_report',
+        'subject' => 'Water supply / Borehole issue',
+        'message' => 'The borehole pump has stopped pumping water.',
+        'location_detail' => 'Near Mutoko Mission Clinic gate',
+        'context_type' => 'ward',
+        'context_reference' => 'ward-test-01',
+        'consent_given' => '1',
+    ]);
+
+    $enquiry = Enquiry::query()->sole();
+    $response->assertRedirect('/en/feedback?submitted=1&reference='.substr($enquiry->public_id, 0, 8));
+
+    expect($enquiry->category)->toBe('fault_report')
+        ->and($enquiry->context_type)->toBe('ward')
+        ->and($enquiry->context_reference)->toBe('ward-test-01')
+        ->and($enquiry->message)->toContain('Location / Landmark: Near Mutoko Mission Clinic gate')
+        ->and($enquiry->message)->toContain('The borehole pump has stopped pumping water.')
+        ->and($enquiry->consent_given)->toBeTrue();
+});
+
+test('unregistered or unpublished ward reference is rejected by context resolver', function (): void {
+    $this->post('/en/feedback', [
+        'name' => 'Resident Sarah',
+        'email' => 'sarah@example.test',
+        'category' => 'fault_report',
+        'subject' => 'Road washout',
+        'message' => 'Road bridge washed away by rain.',
+        'context_type' => 'ward',
+        'context_reference' => 'nonexistent-ward',
+        'consent_given' => '1',
+    ])->assertRedirect();
+
+    $enquiry = Enquiry::query()->sole();
+    expect($enquiry->context_type)->toBeNull()
+        ->and($enquiry->context_reference)->toBeNull();
 });

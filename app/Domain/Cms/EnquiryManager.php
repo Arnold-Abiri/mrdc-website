@@ -9,6 +9,7 @@ use App\Models\Enquiry;
 use App\Models\InvestmentOpportunity;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\Ward;
 use App\Notifications\EnquiryWorkflowNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -28,9 +29,9 @@ class EnquiryManager
         'closed' => ['in_progress'],
     ];
 
-    public const CITIZEN_CATEGORIES = ['general', 'services', 'feedback', 'complaint', 'investment_enquiry', 'service_enquiry', 'other'];
+    public const CITIZEN_CATEGORIES = ['general', 'services', 'feedback', 'complaint', 'fault_report', 'investment_enquiry', 'service_enquiry', 'other'];
 
-    public const CONTEXT_TYPES = ['service', 'investment'];
+    public const CONTEXT_TYPES = ['service', 'investment', 'ward'];
 
     public function submit(array $input): Enquiry
     {
@@ -79,6 +80,7 @@ class EnquiryManager
         $exists = match ($type) {
             'service' => Service::query()->public()->where('slug', $reference)->exists(),
             'investment' => InvestmentOpportunity::query()->public()->where('slug', $reference)->exists(),
+            'ward' => Ward::query()->public()->where('slug', $reference)->exists(),
             default => false,
         };
 

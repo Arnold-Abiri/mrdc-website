@@ -63,3 +63,6 @@ export function EmptyState({ title, text }: { title: string; text: string }) {
         </div>
     );
 }
+
+export const PageHeader = PageHero;
+

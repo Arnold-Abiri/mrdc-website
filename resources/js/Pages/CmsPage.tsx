@@ -32,12 +32,15 @@ export default function CmsPage({ page, about, preview }: { page: Page; about?: 
                     {page.blocks.map((block, index) => {
                         if (block.type === 'heading') return <h2 key={index} style={{ marginTop: index === 0 ? 0 : '24px' }}>{block.text}</h2>;
                         if (block.type === 'cta' && block.url?.startsWith('/') && !block.url.startsWith('//')) {
-                            return <p key={index}><a className="about-page-text-link" href={block.url}>{block.text} <span aria-hidden="true">→</span></a></p>;
+                            const localizedUrl = block.url.startsWith(`/${locale}`) ? block.url : `/${locale}${block.url}`;
+                            return <p key={index}><a className="about-page-text-link" href={localizedUrl}>{block.text} <span aria-hidden="true">→</span></a></p>;
                         }
                         if (block.type === 'paragraph') return <div key={index} className="about-page-copy"><p>{block.text}</p></div>;
                         return null;
                     })}
-                    <p style={{ marginTop: '20px' }}><a className="about-page-text-link" href={`/${locale}/contact`}>{t('contactCouncil')} <span aria-hidden="true">→</span></a></p>
+                    {!page.blocks.some(b => b.type === 'cta' && b.url?.includes('contact')) && (
+                        <p style={{ marginTop: '20px' }}><a className="about-page-text-link" href={`/${locale}/contact`}>{t('contactCouncil')} <span aria-hidden="true">→</span></a></p>
+                    )}
                 </article>
             </div></section>
         </PublicLayout>
