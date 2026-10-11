@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale } from '../usePublicTranslation';
 import { formatDate } from '../formatDate';
+import { SourcedText } from '../Components/public/SourceButtons';
 
 type FinancialDocument = {
     slug: string;
@@ -221,9 +222,9 @@ export default function Transparency({
                                         <Link href={`/${locale}/documents/${doc.slug}`}>{doc.title}</Link>
                                     </h3>
 
-                                    <p className="transparency-doc-desc">
-                                        {doc.description ?? 'Official council financial publication released by the Finance Department.'}
-                                    </p>
+                                    <div className="transparency-doc-desc">
+                                        <SourcedText text={doc.description ?? 'Official council financial publication released by the Finance Department.'} />
+                                    </div>
 
                                     <div className="transparency-doc-footer">
                                         <span>

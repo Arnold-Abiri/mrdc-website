@@ -1,4 +1,9 @@
-const SOURCE_PATTERN = /Source:\s*(https?:\/\/[^\s)]+)/gi;
+const SOURCE_PATTERNS = [
+    // `Source: <url>` — direct form.
+    /Source:\s*(https?:\/\/[^\s)]+)/gi,
+    // `Source: <label> (<url>)` — e.g. `Source: Wikimedia Commons (https://…)`.
+    /Source:\s*[^()\n]*?\(\s*(https?:\/\/[^\s)]+)\s*\)/gi,
+];
 
 /**
  * Split trailing `Source: <url>` references out of a body of text.
@@ -9,11 +14,16 @@ export function extractSources(text: string | null | undefined): { body: string;
         return { body: '', sources: [] };
     }
     const sources: string[] = [];
-    const body = text
-        .replace(SOURCE_PATTERN, (_match, url: string) => {
+    let body = text;
+    for (const pattern of SOURCE_PATTERNS) {
+        pattern.lastIndex = 0;
+        body = body.replace(pattern, (_match, url: string) => {
             sources.push(url.replace(/[.,;]+$/, ''));
             return '';
-        })
+        });
+    }
+    body = body
+        .replace(/\(\s*\)/g, '')
         .replace(/\s{2,}/g, ' ')
         .replace(/\s+[.,;]/g, '')
         .trim();

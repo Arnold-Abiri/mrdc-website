@@ -76,9 +76,9 @@ class HomepageSlideManager
     private function validate(array $input): array
     {
         $data = Validator::make($input, [
-            'headline' => ['required', 'string', 'max:255'],
-            'supporting_text' => ['nullable', 'string', 'max:1000'],
-            'cta_label' => ['nullable', 'string', 'max:120'],
+            'headline' => ['required', 'string', 'max:120'],
+            'supporting_text' => ['nullable', 'string', 'max:220'],
+            'cta_label' => ['nullable', 'string', 'max:40'],
             'cta_url' => ['nullable', 'string', 'max:2048'],
             'media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('status', 'active')->where('mime_type', 'like', 'image/%'))],
             'display_order' => ['required', 'integer', 'min:0', 'max:100000'],

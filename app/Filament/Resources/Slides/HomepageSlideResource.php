@@ -36,9 +36,9 @@ class HomepageSlideResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('headline')->required()->maxLength(255),
-            Textarea::make('supporting_text')->maxLength(1000),
-            TextInput::make('cta_label')->maxLength(120),
+            TextInput::make('headline')->required()->maxLength(120)->helperText('Keep under ~70 characters so the hero never wraps past 3 lines.'),
+            Textarea::make('supporting_text')->maxLength(220)->rows(3)->helperText('Keep under ~160 characters so the hero never pushes content below the fold.'),
+            TextInput::make('cta_label')->maxLength(40)->helperText('Short label, e.g. “Our services”.'),
             TextInput::make('cta_url')->maxLength(2048)->helperText('Internal path only, e.g. /services.'),
             Select::make('media_id')->relationship('media', 'title')->searchable()->helperText('Choose an active image. If none is selected, the default hero artwork is used.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),

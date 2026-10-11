@@ -112,6 +112,13 @@ function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
 
 export type HeroSlide = { headline: string; supporting_text: string | null; cta_label: string | null; cta_url: string | null; image_url: string | null };
 
+/** Clamp CMS copy so legacy overlong rows cannot break the hero layout. */
+function clampSlideText(value: string | null, max: number): string | null {
+    if (!value) return value;
+    const text = value.trim();
+    return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+}
+
 export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -122,7 +129,8 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     const [hasFocus, setHasFocus] = useState(false);
     const rotationStopped = isPaused || isHovering || hasFocus;
     const currentIndex = slides.length > 0 ? index % slides.length : 0;
-    const active = slides[currentIndex];
+    const raw = slides[currentIndex];
+    const active = raw ? { ...raw, headline: clampSlideText(raw.headline, 120) ?? '', supporting_text: clampSlideText(raw.supporting_text, 220), cta_label: clampSlideText(raw.cta_label, 40) } : raw;
     const isCouncilWelcome = active?.headline === 'Mutoko Rural District Council';
     const headlineWords = active?.headline.trim().split(/\s+/) ?? [];
     const accentStart = Math.max(1, headlineWords.length - 2);

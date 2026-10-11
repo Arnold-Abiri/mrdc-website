@@ -3444,6 +3444,12 @@ a.social-pill:hover {
   margin: 0 0 14px;
   font-weight: 800;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .hero-heading-white { color: #FFFFFF; }
 .hero-heading-green { color: var(--color-mint-green); }
@@ -3461,6 +3467,35 @@ a.social-pill:hover {
   color: #F1F5F9;
   margin: 0 0 24px;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Long-copy safety net: cards and slide labels never stretch their grid. */
+.news-title, .event-title, .service-card-title, .managed-service-card-body h3 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-summary, .service-card-desc, .managed-service-card-body p, .event-location {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.btn-hero-primary span:first-child, .managed-service-action-link span, .news-readmore span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 22ch;
 }
 .hero-actions {
   display: flex;
