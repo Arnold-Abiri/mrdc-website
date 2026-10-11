@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Slides;
 
 use App\Domain\Cms\HomepageSlideManager;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Slides\Pages\CreateHomepageSlide;
 use App\Filament\Resources\Slides\Pages\EditHomepageSlide;
 use App\Filament\Resources\Slides\Pages\ListHomepageSlides;
@@ -42,6 +43,7 @@ class HomepageSlideResource extends Resource
             Select::make('media_id')->relationship('media', 'title')->searchable()->helperText('Choose an active image. If none is selected, the default hero artwork is used.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),
             Select::make('is_active')->options([1 => 'Active', 0 => 'Inactive'])->required()->helperText('Only active, published slides appear on the public homepage. Saving an edit returns a slide to draft; publish it again after review.'),
+            TranslationFields::make(HomepageSlide::translatableFields()),
         ]);
     }
 

@@ -61,5 +61,14 @@ describe('public navigation', () => {
         // Exactly one search trigger in the header
         expect(searchButtons).toHaveLength(1);
     });
+
+    it('translates primary and submenu links in Shona', () => {
+        mockPageState = { locale: 'sn', localeCsrfToken: 'test-token', topbar_notices: [] };
+        mockPageUrl = '/sn/services';
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        const navigation = within(screen.getByRole('navigation', { name: 'Menyu huru' }));
+        expect(navigation.getByRole('link', { name: 'Peji rekutanga' })).toHaveAttribute('href', '/sn');
+        expect(navigation.getByRole('link', { name: 'Madhipatimendi eKanzuru' })).toHaveAttribute('href', '/sn/departments');
+    });
 });
 

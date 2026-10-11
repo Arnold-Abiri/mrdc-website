@@ -9,9 +9,11 @@ describe('public interface locale fallback', () => {
         expect(normalizeLocale('invalid')).toBe('en');
     });
 
-    it('falls back to English until approved Shona wording is supplied', () => {
+    it('uses draft Shona and Ndebele interface wording', () => {
         expect(translate('en', 'home')).toBe('Home');
-        expect(translate('sn', 'home')).toBe('Home');
-        expect(translate('nd', 'home')).toBe('Home');
+        expect(translate('sn', 'home')).toBe('Peji rekutanga');
+        expect(translate('nd', 'home')).toBe('Ikhaya');
+        expect(translate('sn', 'accessibility')).toBe('Kuwanika');
+        expect(translate('nd', 'accessibility')).toBe('Ukufinyeleleka');
     });
 });

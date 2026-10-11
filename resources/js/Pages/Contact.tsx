@@ -8,11 +8,11 @@ type ContactDepartment = { id: number; name: string; public_name: string | null 
 type EnquiryContext = { type: string; reference: string; title: string } | null;
 
 const CATEGORIES = [
-    { value: 'general', label: 'General Enquiry' },
-    { value: 'services', label: 'Council Services' },
-    { value: 'feedback', label: 'Feedback' },
-    { value: 'complaint', label: 'Complaint' },
-    { value: 'other', label: 'Other' },
+    { value: 'general', label: 'generalEnquiry' },
+    { value: 'services', label: 'councilServices' },
+    { value: 'feedback', label: 'feedback' },
+    { value: 'complaint', label: 'complaint' },
+    { value: 'other', label: 'other' },
 ] as const;
 
 const contactLabels: Record<PublicContact['type'], string> = {
@@ -49,11 +49,11 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
             <div className="about-page-hero-overlay" aria-hidden="true" />
             <div className="container">
                 <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                    <a href={`/${locale}`}>Home</a><span aria-hidden="true">/</span><span aria-current="page">Contact Us</span>
+                    <a href={`/${locale}`}>{t('home')}</a><span aria-hidden="true">/</span><span aria-current="page">{t('contactUs')}</span>
                 </nav>
                 <span className="about-accent-eyebrow">CONTACT US</span>
-                <h1>Contact Mutoko Rural District Council</h1>
-                <p className="about-page-hero-subtitle">Questions, feedback or assistance with local services? We are here to help you reach the right team.</p>
+                <h1>{t('contactHeroTitle')}</h1>
+                <p className="about-page-hero-subtitle">{t('contactHeroDesc')}</p>
             </div>
         </header>
 
@@ -62,7 +62,7 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
                 <section className="contact-columns" aria-label="Contact information and enquiry form">
                     <div className="contact-panel contact-info-col">
                         <span className="contact-eyebrow">GET IN TOUCH</span>
-                        <h2 id="public-contacts-heading">Our Contact Information</h2>
+                        <h2 id="public-contacts-heading">{t('ourContactInformation')}</h2>
                         <p className="contact-intro">Contact the Council through the published channels below, or send an enquiry using the form.</p>
                         {contacts.length > 0 ? <ul className="contact-details-list">{contacts.map((contact, index) => <li key={`${contact.office}-${contact.type}-${index}`}>
                             <span className="contact-detail-icon"><ContactIcon type={contact.type} /></span>
@@ -77,29 +77,29 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
                         <div className="contact-form-heading">
                             <div>
                                 <span className="contact-eyebrow">SEND US A MESSAGE</span>
-                                <h2>Enquiry Form</h2>
-                                <p className="contact-intro">Tell us what you need and the appropriate team will get back to you.</p>
+                                <h2>{t('enquiryForm')}</h2>
+                                <p className="contact-intro">{t('enquiryFormDesc')}</p>
                             </div>
                             <span className="contact-form-heading-icon" aria-hidden="true"><ContactIcon type="email" /></span>
                         </div>
-                        {submitted && <p className="contact-success" role="status">Thank you for contacting Mutoko Rural District Council. Your enquiry has been received.</p>}
+                        {submitted && <p className="contact-success" role="status">{t('enquiryReceived')}</p>}
                         {Object.keys(formErrors).length > 0 && <div className="contact-error-summary" role="alert"><p>Please correct the following:</p><ul>{Object.entries(formErrors).map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
                         {context && <p className="contact-context" role="note">About: <strong>{context.title}</strong></p>}
                         <form className="contact-form" action={`/${locale}/contact`} method="post">
                             <input type="hidden" name="_token" value={csrfToken} />
                             {context && <><input type="hidden" name="context_type" value={context.type} /><input type="hidden" name="context_reference" value={context.reference} /><input type="hidden" name="category" value={context.type === 'investment' ? 'investment_enquiry' : 'service_enquiry'} /></>}
-                            <div className="contact-field"><label htmlFor="contact-name">{t('name')} <span aria-hidden="true">*</span></label><input id="contact-name" name="name" required maxLength={160} autoComplete="name" placeholder="Enter your full name" aria-describedby={formErrors.name ? 'contact-name-error' : undefined} /><FieldError errors={formErrors} field="name" /></div>
-                            <div className="contact-field"><label htmlFor="contact-email">{t('email')} <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" required maxLength={254} autoComplete="email" placeholder="Enter your email address" aria-describedby={formErrors.email ? 'contact-email-error' : undefined} /><FieldError errors={formErrors} field="email" /></div>
-                            <div className="contact-field"><label htmlFor="contact-phone">{t('phoneOptional')}</label><input id="contact-phone" name="phone" type="tel" maxLength={40} autoComplete="tel" placeholder="Enter your phone number" aria-describedby={formErrors.phone ? 'contact-phone-error' : undefined} /><FieldError errors={formErrors} field="phone" /></div>
-                            <div className="contact-field"><label htmlFor="contact-organisation">{t('organisation')}</label><input id="contact-organisation" name="organisation" maxLength={255} autoComplete="organization" placeholder="Organisation, if applicable" /><FieldError errors={formErrors} field="organisation" /></div>
-                            {!context && <div className="contact-field"><label htmlFor="contact-category">{t('category')} <span aria-hidden="true">*</span></label><select id="contact-category" name="category" required defaultValue="" aria-describedby={formErrors.category ? 'contact-category-error' : undefined}><option value="" disabled>Select a category</option>{CATEGORIES.map(category => <option key={category.value} value={category.value}>{category.label}</option>)}</select><FieldError errors={formErrors} field="category" /></div>}
-                            <div className="contact-field"><label htmlFor="contact-subject">{t('subject')} <span aria-hidden="true">*</span></label><input id="contact-subject" name="subject" required maxLength={200} placeholder="Briefly describe your enquiry" aria-describedby={formErrors.subject ? 'contact-subject-error' : undefined} /><FieldError errors={formErrors} field="subject" /></div>
-                            <div className="contact-field contact-field-full"><label htmlFor="contact-message">{t('message')} <span aria-hidden="true">*</span></label><textarea id="contact-message" name="message" required minLength={10} maxLength={5000} rows={6} placeholder="How can we help you?" aria-describedby={formErrors.message ? 'contact-message-error' : undefined} /><FieldError errors={formErrors} field="message" /></div>
+                            <div className="contact-field"><label htmlFor="contact-name">{t('name')} <span aria-hidden="true">*</span></label><input id="contact-name" name="name" required maxLength={160} autoComplete="name" placeholder={t('enterFullName')} aria-describedby={formErrors.name ? 'contact-name-error' : undefined} /><FieldError errors={formErrors} field="name" /></div>
+                            <div className="contact-field"><label htmlFor="contact-email">{t('email')} <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" required maxLength={254} autoComplete="email" placeholder={t('enterEmail')} aria-describedby={formErrors.email ? 'contact-email-error' : undefined} /><FieldError errors={formErrors} field="email" /></div>
+                            <div className="contact-field"><label htmlFor="contact-phone">{t('phoneOptional')}</label><input id="contact-phone" name="phone" type="tel" maxLength={40} autoComplete="tel" placeholder={t('enterPhone')} aria-describedby={formErrors.phone ? 'contact-phone-error' : undefined} /><FieldError errors={formErrors} field="phone" /></div>
+                            <div className="contact-field"><label htmlFor="contact-organisation">{t('organisation')}</label><input id="contact-organisation" name="organisation" maxLength={255} autoComplete="organization" placeholder={t('enterOrganisation')} /><FieldError errors={formErrors} field="organisation" /></div>
+                            {!context && <div className="contact-field"><label htmlFor="contact-category">{t('category')} <span aria-hidden="true">*</span></label><select id="contact-category" name="category" required defaultValue="" aria-describedby={formErrors.category ? 'contact-category-error' : undefined}><option value="" disabled>{t('selectCategory')}</option>{CATEGORIES.map(category => <option key={category.value} value={category.value}>{t(category.label)}</option>)}</select><FieldError errors={formErrors} field="category" /></div>}
+                            <div className="contact-field"><label htmlFor="contact-subject">{t('subject')} <span aria-hidden="true">*</span></label><input id="contact-subject" name="subject" required maxLength={200} placeholder={t('describeEnquiry')} aria-describedby={formErrors.subject ? 'contact-subject-error' : undefined} /><FieldError errors={formErrors} field="subject" /></div>
+                            <div className="contact-field contact-field-full"><label htmlFor="contact-message">{t('message')} <span aria-hidden="true">*</span></label><textarea id="contact-message" name="message" required minLength={10} maxLength={5000} rows={6} placeholder={t('howCanWeHelp')} aria-describedby={formErrors.message ? 'contact-message-error' : undefined} /><FieldError errors={formErrors} field="message" /></div>
                             <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px' }}><label htmlFor="contact-website">{t('website')}</label><input id="contact-website" name="website" tabIndex={-1} autoComplete="off" /></div>
                             <div className="contact-form-footer contact-field-full">
-                                <div className="contact-field contact-consent"><input id="contact-consent" name="consent_given" type="checkbox" value="1" required /><label htmlFor="contact-consent">I understand the council will use these details to respond to my enquiry. <span aria-hidden="true">*</span></label></div>
+                                <div className="contact-field contact-consent"><input id="contact-consent" name="consent_given" type="checkbox" value="1" required /><label htmlFor="contact-consent">{t('consentEnquiry')} <span aria-hidden="true">*</span></label></div>
                                 <p className="contact-privacy-note">{t('enquiryHelp')}</p>
-                                <button className="contact-submit" type="submit">Submit Enquiry <span aria-hidden="true">→</span></button>
+                                <button className="contact-submit" type="submit">{t('sendEnquiry')} <span aria-hidden="true">→</span></button>
                             </div>
                         </form>
                     </div>

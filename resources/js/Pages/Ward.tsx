@@ -11,7 +11,7 @@ export default function Ward({ ward }: { ward: WardContent }) {
     return (
         <PublicLayout>
             <Head title={ward.name} />
-            <PageHero eyebrow="ELECTORAL WARD" title={ward.name} subtitle={ward.description || `Explore information about ${ward.name} and its place in Mutoko District.`} crumb={[{ label: t('wards'), href: `/${locale}/wards` }, { label: ward.name }]} />
+            <PageHero eyebrow={t('electoralWard')} title={ward.name} subtitle={ward.description || t('exploreWard')} crumb={[{ label: t('wards'), href: `/${locale}/wards` }, { label: ward.name }]} />
             <section className="about-page-section">
                 <div className="container">
                     {ward.boundaries_description && (
@@ -23,7 +23,7 @@ export default function Ward({ ward }: { ward: WardContent }) {
                         </div>
                     )}
                     <p style={{ marginTop: '20px' }}>
-                        <Link className="about-page-text-link" href={`/${locale}/wards`}>← Back to wards</Link>
+                        <Link className="about-page-text-link" href={`/${locale}/wards`}>← {t('backWards')}</Link>
                     </p>
                 </div>
             </section>

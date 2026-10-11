@@ -60,6 +60,15 @@ const services = [
     },
 ] as const;
 
+const quickAccessCopy = {
+    services: { title: 'ourServices', description: 'quickServicesDesc' },
+    rates: { title: 'onlineServices', description: 'onlineServicesDesc' },
+    notices: { title: 'publicNotices', description: 'quickNoticesDesc' },
+    tenders: { title: 'tenders', description: 'quickTendersDesc' },
+    vacancies: { title: 'vacancies', description: 'quickVacanciesDesc' },
+    feedback: { title: 'feedback', description: 'quickFeedbackDesc' },
+} as const;
+
 function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
     switch (name) {
         case 'services':
@@ -161,15 +170,15 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                     <div className="hero-content">
                         <div className="hero-eyebrow-pill">
                             <span className="eyebrow-bar" aria-hidden="true" />
-                            <span className="eyebrow-text">WELCOME TO</span>
+                            <span className="eyebrow-text">{t('welcomeTo')}</span>
                         </div>
 
                         <h1 id="hero-title" className="hero-heading">
-                            <span className="hero-heading-white">Mutoko Rural</span>{' '}
-                            <span className="hero-heading-green">District Council</span>
+                            <span className="hero-heading-white">{t('mutokoRural')}</span>{' '}
+                            <span className="hero-heading-green">{t('districtCouncil')}</span>
                         </h1>
 
-                        <p className="hero-statement">People. Development. Sustainable Communities.</p>
+                        <p className="hero-statement">{t('peopleDevelopment')}</p>
 
                         <p className="hero-description">
                             Working with our communities to deliver quality services, promote local development and build a better Mutoko.
@@ -204,11 +213,11 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
 
                         <div className="hero-actions">
                             <a className="btn-hero-primary" href="#services">
-                                <span>Our Services</span>
+                                <span>{t('ourServices')}</span>
                                 <span aria-hidden="true">→</span>
                             </a>
                             <a className="btn-hero-outline" href="#about">
-                                <span>About Council</span>
+                                <span>{t('aboutCouncil')}</span>
                             </a>
                         </div>
                     </div>
@@ -237,14 +246,14 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                     <div className="hero-content" key={currentIndex} aria-live={rotationStopped ? 'polite' : 'off'}>
                     <div className="hero-eyebrow-pill">
                         <span className="eyebrow-bar" aria-hidden="true" />
-                        <span className="eyebrow-text">WELCOME TO</span>
+                        <span className="eyebrow-text">{t('welcomeTo')}</span>
                     </div>
 
                     <h1 id="hero-title" className="hero-heading">
-                        {isCouncilWelcome ? <><span className="hero-heading-white">Mutoko Rural</span>{' '}<span className="hero-heading-green">District Council</span></> : headlineWords.length > 1 ? <><span className="hero-heading-white">{headlineWords.slice(0, accentStart).join(' ')}</span>{' '}<span className="hero-heading-green">{headlineWords.slice(accentStart).join(' ')}</span></> : <span className="hero-heading-white">{active.headline}</span>}
+                        {isCouncilWelcome ? <><span className="hero-heading-white">{t('mutokoRural')}</span>{' '}<span className="hero-heading-green">{t('districtCouncil')}</span></> : headlineWords.length > 1 ? <><span className="hero-heading-white">{headlineWords.slice(0, accentStart).join(' ')}</span>{' '}<span className="hero-heading-green">{headlineWords.slice(accentStart).join(' ')}</span></> : <span className="hero-heading-white">{active.headline}</span>}
                     </h1>
 
-                    {isCouncilWelcome && <p className="hero-statement">People. Development. Sustainable Communities.</p>}
+                    {isCouncilWelcome && <p className="hero-statement">{t('peopleDevelopment')}</p>}
                     {active.supporting_text && <p className="hero-description">{active.supporting_text}</p>}
 
                     <form action={`/${locale}/search`} method="get" role="search" className="hero-search-form">
@@ -275,9 +284,9 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                     </form>
 
                     <div className="hero-actions">
-                        {active.cta_label && active.cta_url ? <a className="btn-hero-primary" href={L(active.cta_url ?? "")}><span>{active.cta_label}</span><span aria-hidden="true">→</span></a> : <a className="btn-hero-primary" href="#services"><span>Our Services</span><span aria-hidden="true">→</span></a>}
+                        {active.cta_label && active.cta_url ? <a className="btn-hero-primary" href={L(active.cta_url ?? "")}><span>{active.cta_label}</span><span aria-hidden="true">→</span></a> : <a className="btn-hero-primary" href="#services"><span>{t('ourServices')}</span><span aria-hidden="true">→</span></a>}
                         <a className="btn-hero-outline" href="#about">
-                            <span>About Council</span>
+                            <span>{t('aboutCouncil')}</span>
                         </a>
                     </div>
                 </div>
@@ -302,10 +311,11 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
 
 export function QuickAccess() {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
-        <section className="quick-access container" id="quick-access" aria-label="Quick Access Services">
-            <h2 className="sr-only">Quick access services</h2>
+        <section className="quick-access container" id="quick-access" aria-label={t('quickAccessServices')}>
+            <h2 className="sr-only">{t('quickAccessServices')}</h2>
             <div className="quick-grid">
                 {services.map(service => (
                     <a className="quick-card" key={service.title} href={L(service.href)}>
@@ -319,8 +329,8 @@ export function QuickAccess() {
                                 </svg>
                             </span>
                         </div>
-                        <h3 className="quick-card-title">{service.title}</h3>
-                        <p className="quick-card-desc">{service.description}</p>
+                        <h3 className="quick-card-title">{t(quickAccessCopy[service.icon].title)}</h3>
+                        <p className="quick-card-desc">{t(quickAccessCopy[service.icon].description)}</p>
                     </a>
                 ))}
             </div>
@@ -329,8 +339,9 @@ export function QuickAccess() {
 }
 
 export function ValuePillars() {
+    const t = usePublicTranslation();
     return (
-        <section className="value-pillars-section" aria-label="Council Values and Strategic Pillars">
+        <section className="value-pillars-section" aria-label={t('sustainableDevelopment')}>
             <div className="container">
                 <div className="value-pillars-grid">
                     <div className="value-pillar-item">
@@ -340,8 +351,8 @@ export function ValuePillars() {
                             </svg>
                         </span>
                         <div className="pillar-text">
-                            <strong>Sustainable Development</strong>
-                            <p>A cleaner, greener and more resilient Mutoko</p>
+                            <strong>{t('sustainableDevelopment')}</strong>
+                            <p>{t('greenerMutoko')}</p>
                         </div>
                     </div>
 
@@ -352,8 +363,8 @@ export function ValuePillars() {
                             </svg>
                         </span>
                         <div className="pillar-text">
-                            <strong>Community Empowerment</strong>
-                            <p>People at the heart of progress</p>
+                            <strong>{t('communityEmpowerment')}</strong>
+                            <p>{t('peopleProgress')}</p>
                         </div>
                     </div>
 
@@ -364,8 +375,8 @@ export function ValuePillars() {
                             </svg>
                         </span>
                         <div className="pillar-text">
-                            <strong>Shared Prosperity</strong>
-                            <p>Opportunities for a better tomorrow</p>
+                            <strong>{t('sharedProsperity')}</strong>
+                            <p>{t('betterTomorrow')}</p>
                         </div>
                     </div>
                 </div>
@@ -408,6 +419,7 @@ function AboutIcon({ name }: { name: AboutPillar['icon'] }) {
 
 export function AboutSection({ aboutHref }: { aboutHref?: string }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="about-section" id="about" aria-labelledby="about-heading">
@@ -428,7 +440,7 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                     </p>
                     <div>
                         <a href={aboutHref ?? L("/about")} className="btn-section-primary">
-                            <span>Learn More</span>
+                            <span>{t('learnMore')}</span>
                             <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -505,6 +517,7 @@ function SafeImage({ src, alt, className, width, height, eager = false, fallback
 }
 
 function NewsCard({ item }: { item: NewsPreview }) {
+    const t = usePublicTranslation();
     return (
         <article className="news-card">
             <div className="news-image">
@@ -532,7 +545,7 @@ function NewsCard({ item }: { item: NewsPreview }) {
                 <p className="news-summary">{item.summary}</p>
                 {item.href && (
                     <a href={item.href} className="news-readmore">
-                        <span>Read More</span>
+                        <span>{t('readMore')}</span>
                         <span aria-hidden="true">→</span>
                     </a>
                 )}
@@ -585,6 +598,7 @@ function EventItem({ item }: { item: EventPreview }) {
 
 export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: { news?: NewsPreview[]; events?: EventPreview[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="updates-section" aria-label="News and events">
@@ -594,9 +608,9 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                         <div>
                             <div className="section-eyebrow-pill">
                                 <span className="eyebrow-bar" aria-hidden="true" />
-                                <span className="eyebrow-text">LATEST NEWS</span>
+                                <span className="eyebrow-text">{t('latestNews')}</span>
                             </div>
-                            <h2 className="section-title">News and Updates</h2>
+                            <h2 className="section-title">{t('newsUpdates')}</h2>
                         </div>
                         <a href={L("/news")} className="header-viewall-link">
                             View All News <span aria-hidden="true">→</span>
@@ -621,9 +635,9 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                         <div>
                             <div className="section-eyebrow-pill">
                                 <span className="eyebrow-bar" aria-hidden="true" />
-                                <span className="eyebrow-text">UPCOMING EVENTS</span>
+                                <span className="eyebrow-text">{t('upcomingEvents')}</span>
                             </div>
-                            <h2 className="section-title">Events Calendar</h2>
+                            <h2 className="section-title">{t('eventsCalendar')}</h2>
                         </div>
                         <a href={L("/meetings")} className="header-viewall-link">
                             View council meetings <span aria-hidden="true">→</span>
@@ -673,6 +687,7 @@ function ServiceIcon({ name }: { name: ServicePreview['icon'] }) {
 
 export function KeyServicesSection({ services = keyServices }: { services?: ServicePreview[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="key-services-section" id="services" aria-labelledby="services-heading">
@@ -681,9 +696,9 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                     <div>
                         <div className="section-eyebrow-pill">
                             <span className="eyebrow-bar" aria-hidden="true" />
-                            <span className="eyebrow-text">OUR SERVICES</span>
+                            <span className="eyebrow-text">{t('ourServices')}</span>
                         </div>
-                        <h2 id="services-heading" className="section-title">Key Services</h2>
+                        <h2 id="services-heading" className="section-title">{t('keyServices')}</h2>
                     </div>
                     <a href={L("/coming-soon?topic=services")} className="header-viewall-link">
                         View All Services <span aria-hidden="true">→</span>
@@ -706,7 +721,7 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                                 <h3 className="service-card-title">{item.title}</h3>
                                 <p className="service-card-desc">{item.description}</p>
                                 <a href={L(item.href)} className="service-card-link">
-                                    <span>Learn More</span>
+                                    <span>{t('learnMore')}</span>
                                     <span aria-hidden="true">→</span>
                                 </a>
                             </div>
@@ -845,10 +860,11 @@ function getServiceDomain(slug: string): { label: string; themeClass: string; ic
 
 export function ManagedHomepageContent({ preview = false, services, documents, departments, notices, contacts = [], officials = [], wardCount = 0, statistics = [], tenders = [], investment = [], projects = [] }: { preview?: boolean; services: ManagedHomepageService[]; documents: ManagedHomepageDocument[]; departments: ManagedHomepageDepartment[]; notices: ManagedHomepageNotice[]; contacts?: ManagedHomepageContact[]; officials?: ManagedHomepageOfficial[]; wardCount?: number; statistics?: ManagedHomepageStatistic[]; tenders?: ManagedHomepageTender[]; investment?: ManagedHomepageInvestment[]; projects?: ManagedHomepageProject[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const P = (type: string, slug: string | number) => preview ? `/preview/${locale}/${type}/${slug}` : L(`/${type}/${slug}`);
     return <>
-        {statistics.length > 0 && <section className="managed-section managed-stats-band" aria-label="District at a glance">
+        {statistics.length > 0 && <section className="managed-section managed-stats-band" aria-label={t('districtGlance')}>
             <div className="container">
                 <dl className="managed-stats-grid">
                     {statistics.slice(0, 4).map(item => <div key={item.label} className="managed-stat">
@@ -867,12 +883,12 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
             <div className="container">
                 <div className="managed-section-header">
                     <div className="managed-header-copy">
-                        <p className="managed-eyebrow">Council services</p>
-                        <h2 id="managed-services-heading">Services that keep Mutoko running</h2>
-                        <p className="managed-subtitle">Water, roads, health, planning and community services delivered across our wards. Start with the services residents use most.</p>
+                        <p className="managed-eyebrow">{t('councilServices')}</p>
+                        <h2 id="managed-services-heading">{t('servicesRunning')}</h2>
+                        <p className="managed-subtitle">{t('servicesRunningDesc')}</p>
                     </div>
                     <a className="managed-viewall-btn" href={L('/services')}>
-                        <span>View all services</span>
+                        <span>{t('viewAllServices')}</span>
                         <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -894,14 +910,14 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                     {item.summary && <p>{item.summary}</p>}
                                 </div>
                                 <div className="managed-service-card-footer">
-                                    <a className="managed-service-action-link" href={P('services', item.slug)} aria-label={`Open ${item.name}`}>
-                                        <span>Access service</span>
+                                    <a className="managed-service-action-link" href={P('services', item.slug)} aria-label={`${t('accessService')}: ${item.name}`}>
+                                        <span>{t('accessService')}</span>
                                         <span aria-hidden="true">→</span>
                                     </a>
                                 </div>
                             </article>
                         );
-                    }) : <p className="managed-empty">Approved services will appear here once published.</p>}
+                    }) : <p className="managed-empty">{t('servicesPending')}</p>}
                 </div>
             </div>
         </section>
@@ -909,30 +925,30 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
             <div className="container">
                 <div className="managed-section-header">
                     <div className="managed-header-copy">
-                        <p className="managed-eyebrow">Public notices</p>
-                        <h2 id="managed-notices-heading">Notices residents should read</h2>
-                        <p className="managed-subtitle">Official announcements, closures, meetings and deadlines from the council.</p>
+                        <p className="managed-eyebrow">{t('notices')}</p>
+                        <h2 id="managed-notices-heading">{t('noticesToRead')}</h2>
+                        <p className="managed-subtitle">{t('noticesToReadDesc')}</p>
                     </div>
                     <a className="managed-viewall-btn" href={L('/notices')}>
-                        <span>View all notices</span>
+                        <span>{t('viewAllNotices')}</span>
                         <span aria-hidden="true">→</span>
                     </a>
                 </div>
                 <div className="managed-notices-grid">
                     {notices.length ? notices.slice(0, 4).map(item => <article key={item.slug} className="managed-notice-card-2026">
                         <div className="managed-notice-card-top">
-                            <span className="managed-notice-tag">Notice</span>
-                            <span className="managed-notice-indicator" aria-hidden="true">Official Bulletin</span>
+                            <span className="managed-notice-tag">{t('notices')}</span>
+                            <span className="managed-notice-indicator" aria-hidden="true">{t('officialBulletin')}</span>
                         </div>
                         <div className="managed-notice-card-body">
                             <h3><a href={P('notices', item.slug)}>{item.title}</a></h3>
                             {item.summary && <p>{item.summary}</p>}
                         </div>
                         <div className="managed-notice-card-footer">
-                            <span className="managed-notice-cta-text">Read Announcement</span>
-                            <a className="managed-row-link" href={P('notices', item.slug)} aria-label={`Read notice: ${item.title}`}>→</a>
+                            <span className="managed-notice-cta-text">{t('readAnnouncement')}</span>
+                            <a className="managed-row-link" href={P('notices', item.slug)} aria-label={`${t('readAnnouncement')}: ${item.title}`}>→</a>
                         </div>
-                    </article>) : <p className="managed-empty">No published notices at this time.</p>}
+                    </article>) : <p className="managed-empty">{t('noticesPending')}</p>}
                 </div>
             </div>
         </section>
@@ -940,12 +956,12 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
             <div className="container">
                 <div className="managed-section-header">
                     <div className="managed-header-copy">
-                        <p className="managed-eyebrow">Document centre</p>
-                        <h2 id="managed-documents-heading">Plans, reports and forms</h2>
-                        <p className="managed-subtitle">Key public documents approved for release by the council.</p>
+                        <p className="managed-eyebrow">{t('documentCentre')}</p>
+                        <h2 id="managed-documents-heading">{t('plansReportsForms')}</h2>
+                        <p className="managed-subtitle">{t('documentsReleaseDesc')}</p>
                     </div>
                     <a className="managed-viewall-btn" href={L('/documents')}>
-                        <span>View document centre</span>
+                        <span>{t('viewDocumentCentre')}</span>
                         <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -961,24 +977,24 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                     <polyline points="10 9 9 9 8 9" />
                                 </svg>
                             </span>
-                            <span className="managed-doc-pill">Approved Public Release</span>
+                            <span className="managed-doc-pill">{t('approvedRelease')}</span>
                         </div>
                         <div className="managed-doc-card-body">
                             <h3><a href={P('documents', item.slug)}>{item.title}</a></h3>
                             {item.description && <p>{item.description}</p>}
                         </div>
                         <div className="managed-doc-card-footer">
-                            <span className="managed-doc-format-tag">PDF Publication</span>
-                            <a className="managed-doc-download-link" href={P('documents', item.slug)} aria-label={`View document ${item.title}`}>
-                                <span>Download / View</span>
+                            <span className="managed-doc-format-tag">{t('pdfPublication')}</span>
+                            <a className="managed-doc-download-link" href={P('documents', item.slug)} aria-label={`${t('viewDocument')}: ${item.title}`}>
+                                <span>{t('downloadView')}</span>
                                 <span aria-hidden="true">→</span>
                             </a>
                         </div>
-                    </article>) : <p className="managed-empty">No published documents at this time.</p>}
+                    </article>) : <p className="managed-empty">{t('documentsPending')}</p>}
                 </div>
             </div>
         </section>
-        <section className="managed-strip" aria-label="Wards, leadership and contact">
+        <section className="managed-strip" aria-label={`${t('wards')}, ${t('leadership')}, ${t('contact')}`}>
             <div className="container managed-strip-grid">
                 <article className="managed-strip-col" aria-labelledby="managed-wards-heading">
                     <div className="managed-strip-header">
@@ -987,12 +1003,12 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                 <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
                             </svg>
                         </div>
-                        <span className="managed-strip-pill">Ward Directory</span>
+                        <span className="managed-strip-pill">{t('wardDirectory')}</span>
                     </div>
-                    <p className="managed-eyebrow">Wards</p>
-                    <h2 id="managed-wards-heading">{wardCount ? `${wardCount} wards` : 'Ward directory'}</h2>
-                    <p>{wardCount ? 'Find your ward, councillor and local services across all rural and urban wards.' : 'Ward profiles are being prepared for publication.'}</p>
-                    <a className="managed-viewall" href={L('/wards')}>Explore our wards <span aria-hidden="true">→</span></a>
+                    <p className="managed-eyebrow">{t('wards')}</p>
+                    <h2 id="managed-wards-heading">{wardCount ? `${wardCount} ${t('wards')}` : t('wardDirectory')}</h2>
+                    <p>{wardCount ? t('wardsGuide') : t('wardsPending')}</p>
+                    <a className="managed-viewall" href={L('/wards')}>{t('exploreWards')} <span aria-hidden="true">→</span></a>
                 </article>
                 <article className="managed-strip-col" aria-labelledby="managed-officials-heading">
                     <div className="managed-strip-header">
@@ -1002,11 +1018,11 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                 <circle cx="9" cy="7" r="4" />
                             </svg>
                         </div>
-                        <span className="managed-strip-pill">Administration</span>
+                        <span className="managed-strip-pill">{t('administration')}</span>
                     </div>
-                    <p className="managed-eyebrow">Leadership</p>
-                    <h2 id="managed-officials-heading">Council leadership</h2>
-                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={P('officials', item.slug)}>{item.name}</a><span className="managed-title-sub"> — {item.title}</span></li>)}</ul> : <p>Leadership profiles are being prepared for publication.</p>}
+                    <p className="managed-eyebrow">{t('leadership')}</p>
+                    <h2 id="managed-officials-heading">{t('councilLeadership')}</h2>
+                    {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={P('officials', item.slug)}>{item.name}</a><span className="managed-title-sub"> — {item.title}</span></li>)}</ul> : <p>{t('leadershipPending')}</p>}
                     <a className="managed-viewall" href={L('/officials')}>View council officials <span aria-hidden="true">→</span></a>
                 </article>
                 <article className="managed-strip-col" aria-labelledby="managed-contact-heading">
@@ -1016,11 +1032,11 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                             </svg>
                         </div>
-                        <span className="managed-strip-pill">Helpdesk</span>
+                        <span className="managed-strip-pill">{t('helpdesk')}</span>
                     </div>
-                    <p className="managed-eyebrow">Contact</p>
-                    <h2 id="managed-contact-heading">Talk to the council</h2>
-                    {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>Use our enquiry form and the team will respond.</p>}
+                    <p className="managed-eyebrow">{t('contact')}</p>
+                    <h2 id="managed-contact-heading">{t('talkCouncil')}</h2>
+                    {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>{t('enquiryPrompt')}</p>}
                     <a className="managed-viewall" href={L('/contact')}>Make an enquiry <span aria-hidden="true">→</span></a>
                 </article>
             </div>

@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Domain\Content\HasTranslations;
+use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class HomepageSlide extends Model
+class HomepageSlide extends Model implements TranslatableContent
 {
+    use HasTranslations;
+
+    public const TRANSLATABLE_FIELDS = ['headline', 'supporting_text', 'cta_label'];
+
     protected $fillable = ['headline', 'supporting_text', 'cta_label', 'cta_url', 'media_id', 'display_order', 'is_active'];
 
     protected function casts(): array

@@ -24,10 +24,10 @@ export default function Project({ project, department, wards, documents, updates
             {project.contact_instructions && <div className="about-vision-card" style={{ marginTop: '20px' }}><div><h3>{t('contactCouncil')}</h3><p>{project.contact_instructions}</p></div></div>}
         </div></section>
         <section className="about-page-section about-page-section-muted"><div className="container">
-            <span className="about-accent-eyebrow">UPDATES</span>
+            <span className="about-accent-eyebrow">{t('projectUpdates')}</span>
             <h2>{t('projectUpdates')}</h2>
             {updates.length === 0 ? <EmptyState title={t('noProjectUpdates')} text={t('projectUpdates')} /> : <div className="about-economic-grid">{updates.map((update, index) => <div key={index} className="about-economic-card"><div className="about-economic-body"><h3>{update.title}</h3><p>{update.update_date}</p>{update.summary && <p>{update.summary}</p>}{update.progress_percent !== null && <p>{t('progress')}: {update.progress_percent}%</p>}</div></div>)}</div>}
-            {documents.length > 0 && <><h2 style={{ marginTop: '24px' }}>{t('relatedDocuments')}</h2><div className="about-focus-grid">{documents.map(document => <Link key={document.slug} href={`/${locale}/documents/${document.slug}`} className="about-focus-card"><h3>{document.title}</h3><span className="about-economic-link">Open document <span aria-hidden="true">→</span></span></Link>)}</div></>}
+            {documents.length > 0 && <><h2 style={{ marginTop: '24px' }}>{t('relatedDocuments')}</h2><div className="about-focus-grid">{documents.map(document => <Link key={document.slug} href={`/${locale}/documents/${document.slug}`} className="about-focus-card"><h3>{document.title}</h3><span className="about-economic-link">{t('openDocument')} <span aria-hidden="true">→</span></span></Link>)}</div></>}
             <p style={{ marginTop: '20px' }}><Link className="about-page-text-link" href={`/${locale}/contact`}>{t('contactCouncil')} <span aria-hidden="true">→</span></Link></p>
         </div></section>
     </PublicLayout>;

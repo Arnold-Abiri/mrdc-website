@@ -16,7 +16,7 @@ export default function Transparency({ documents, categories, years, filters }: 
                 <div className="container">
                     <span className="about-accent-eyebrow">FINANCIAL DISCLOSURE</span>
                     <h2 id="transparency-docs">Financial Documents</h2>
-                    <form method="get" action="/transparency" className="about-vision-card" style={{ marginBottom: '20px' }}>
+                    <form method="get" action={`/${locale}/transparency`} className="about-vision-card" style={{ marginBottom: '20px' }}>
                         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'end' }}>
                             <div>
                                 <label htmlFor="transparency-category">{t('category')}</label>

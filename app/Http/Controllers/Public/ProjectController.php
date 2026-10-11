@@ -28,16 +28,17 @@ class ProjectController extends Controller
             ->when($departmentId, fn ($query) => $query->where('department_id', (int) $departmentId))
             ->when($wardId, fn ($query) => $query->whereHas('wards', fn ($wards) => $wards->where('wards.id', (int) $wardId)))
             ->orderBy('display_order')->orderBy('title')
-            ->get(['slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent']);
+            ->get(['id', 'slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent'])
+            ->map(fn (CouncilProject $project): array => $project->toLocalizedArray(['slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent']));
 
         return Inertia::render('Projects', ['projects' => $projects, 'filters' => ['status' => $status, 'type' => $type, 'department' => $departmentId, 'ward' => $wardId]]);
     }
 
     public function show(string $locale, string $slug): Response
     {
-        $project = CouncilProject::query()->with('translations')->public()->with(['department', 'wards', 'featuredMedia', 'documents' => fn ($query) => $query->public(), 'updates' => fn ($query) => $query->public()->orderByDesc('update_date')])->where('slug', $slug)->firstOrFail();
+        $project = CouncilProject::query()->with('translations')->public()->with(['department.translations', 'wards.translations', 'featuredMedia', 'documents' => fn ($query) => $query->with('translations')->public(), 'updates' => fn ($query) => $query->public()->orderByDesc('update_date')])->where('slug', $slug)->firstOrFail();
         $department = $project->department;
 
-        return Inertia::render('Project', ['project' => [...$project->toLocalizedArray(['slug', 'title', 'project_type', 'location', 'summary', 'description', 'starts_at', 'expected_completed_at', 'completed_at', 'project_status', 'progress_percent', 'contact_instructions']), 'image_url' => $project->featured_media_id ? public_route('managed-media.show', $project->featured_media_id) : null], 'department' => $department instanceof Department ? $department->name : null, 'wards' => $project->wards->map(fn (Ward $ward) => $ward->only(['slug', 'name'])), 'documents' => $project->documents->map(fn (Document $document) => $document->toLocalizedArray(['slug', 'title'])), 'updates' => $project->updates->map(fn ($update) => $update->only(['update_date', 'title', 'summary', 'progress_percent']))]);
+        return Inertia::render('Project', ['project' => [...$project->toLocalizedArray(['slug', 'title', 'project_type', 'location', 'summary', 'description', 'starts_at', 'expected_completed_at', 'completed_at', 'project_status', 'progress_percent', 'contact_instructions']), 'image_url' => $project->featured_media_id ? public_route('managed-media.show', $project->featured_media_id) : null], 'department' => $department instanceof Department ? $department->translated('public_name') : null, 'wards' => $project->wards->map(fn (Ward $ward) => $ward->toLocalizedArray(['slug', 'name'])), 'documents' => $project->documents->map(fn (Document $document) => $document->toLocalizedArray(['slug', 'title'])), 'updates' => $project->updates->map(fn ($update) => $update->only(['update_date', 'title', 'summary', 'progress_percent']))]);
     }
 }

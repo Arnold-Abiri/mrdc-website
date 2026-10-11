@@ -13,7 +13,7 @@ export default function Projects({ projects, filters }: { projects: Project[]; f
         <section className="about-page-section"><div className="container">
             <span className="about-accent-eyebrow">FILTER PROJECTS</span>
             <h2>Find Projects &amp; Programmes</h2>
-            <form method="get" action="/projects" className="about-mandate-grid" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))' }}>
+            <form method="get" action={`/${locale}/projects`} className="about-mandate-grid" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))' }}>
                 <div className="about-mandate-card"><label htmlFor="projects-status"><strong>{t('projectStatus')}</strong></label><select id="projects-status" name="status" defaultValue={filters.status ?? ''}><option value="">{t('clearFilters')}</option><option value="planned">{t('planned')}</option><option value="ongoing">{t('ongoing')}</option><option value="completed">{t('completed')}</option><option value="on_hold">{t('onHold')}</option><option value="cancelled">{t('cancelled')}</option></select></div>
                 <div className="about-mandate-card"><label htmlFor="projects-type"><strong>{t('projectType')}</strong></label><select id="projects-type" name="type" defaultValue={filters.type ?? ''}><option value="">{t('clearFilters')}</option><option value="project">{t('project')}</option><option value="programme">{t('programme')}</option></select><button type="submit" className="btn-ward-dir" style={{ marginTop: '10px' }}><span>{t('filter')}</span><span aria-hidden="true">→</span></button></div>
             </form>

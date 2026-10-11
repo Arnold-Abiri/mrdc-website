@@ -26,6 +26,11 @@ class LocaleController extends Controller
         }
         $target = '/'.implode('/', array_filter($segments, fn ($segment): bool => $segment !== ''));
 
+        $query = $referer !== '' ? parse_url($referer, PHP_URL_QUERY) : null;
+        if (is_string($query) && $query !== '') {
+            $target .= '?'.$query;
+        }
+
         return redirect($target === '/' ? '/'.$data['locale'] : $target);
     }
 }

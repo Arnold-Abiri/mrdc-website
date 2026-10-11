@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Slides\Pages;
 
 use App\Domain\Cms\HomepageSlideManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Slides\HomepageSlideResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateHomepageSlide extends CreateRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = HomepageSlideResource::class;
 
     protected function handleRecordCreation(array $data): Model

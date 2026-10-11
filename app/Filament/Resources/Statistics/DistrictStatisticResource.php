@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Statistics;
 
 use App\Domain\Cms\DistrictStatisticManager;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Statistics\Pages\CreateDistrictStatistic;
 use App\Filament\Resources\Statistics\Pages\EditDistrictStatistic;
 use App\Filament\Resources\Statistics\Pages\ListDistrictStatistics;
@@ -41,6 +42,7 @@ class DistrictStatisticResource extends Resource
             Textarea::make('source_note')->maxLength(255)->helperText('Internal verification note, e.g. 2022 census. Never shown as a production claim without approval.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),
             Select::make('is_active')->options([1 => 'Active', 0 => 'Inactive'])->required(),
+            TranslationFields::make(DistrictStatistic::translatableFields()),
         ]);
     }
 

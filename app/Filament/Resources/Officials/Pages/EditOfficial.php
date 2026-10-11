@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Officials\Pages;
 
 use App\Domain\Cms\OfficialManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Officials\OfficialResource;
 use App\Models\Official;
 use Filament\Resources\Pages\EditRecord;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditOfficial extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = OfficialResource::class;
 
     protected function handleRecordUpdate(Model $record, array $data): Model

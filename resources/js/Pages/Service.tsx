@@ -47,7 +47,7 @@ export default function Service({ service, department, documents = [] }: { servi
                                     <Link key={document.slug} href={`/${locale}/documents/${document.slug}`} className="about-gov-card">
                                         <h3>{document.title}</h3>
                                         <p>{document.category}</p>
-                                        <span className="about-gov-arrow">View document <span aria-hidden="true">→</span></span>
+                                        <span className="about-gov-arrow">{t('viewDocument')} <span aria-hidden="true">→</span></span>
                                     </Link>
                                 ))}
                             </div>

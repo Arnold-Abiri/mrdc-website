@@ -7,13 +7,85 @@ import '../../css/search.css';
 type Result = { type: string; title: string; summary: string | null; url: string; is_review_content: boolean };
 
 const QUICK_ACTIONS = [
-    { label: 'Pay Council Rates', path: '/rates', highlight: true },
-    { label: 'Public Notices', path: '/notices' },
-    { label: 'Council Services', path: '/services' },
-    { label: 'By-laws & Documents', path: '/documents' },
-    { label: 'Wards & Councillors', path: '/wards' },
-    { label: 'Report an Issue', path: '/feedback' },
-];
+    { label: 'payRates', path: '/rates', highlight: true },
+    { label: 'publicNotices', path: '/notices' },
+    { label: 'councilServices', path: '/services' },
+    { label: 'bylawsDocuments', path: '/documents' },
+    { label: 'wardsCouncillors', path: '/wards' },
+    { label: 'reportIssue', path: '/feedback' },
+ ] as const;
+
+const SEARCH_COPY = {
+    en: {
+        payRates: 'Pay Council Rates', publicNotices: 'Public Notices', councilServices: 'Council Services',
+        bylawsDocuments: 'By-laws & Documents', wardsCouncillors: 'Wards & Councillors', reportIssue: 'Report an Issue',
+        directory: 'Municipal directory · Mutoko RDC', searchResults: 'Search results for', findPrompt: 'What can we help you find?',
+        found: 'Official records matching your query:', explore: 'Explore council services, rates, notices, documents, and wards.',
+        quickShortcuts: 'Quick civic shortcuts', searchPlaceholder: 'Search services, rates, wards, by-laws, licences, and notices...',
+        clearQuery: 'Clear query', filterCategory: 'Filter results by category', allResults: 'All Results',
+        matchedRecords: 'Matched Directory Records', results: 'Results', showing: 'Showing', of: 'of',
+        accessResource: 'Access Resource', noMatch: 'No exact match. Try a broader keyword or one of the links below.',
+        ratesPayment: 'View Rates & Payment Details', browseServices: 'Browse All Council Services',
+        directAccess: 'Direct access', browseCore: 'Browse Council Services & Information',
+        chooseDomain: 'Select a department or service to find what you need.',
+        ratesBills: 'Rates, Tariffs & Bill Payments', ratesBillsDesc: 'Council rates, tariffs, and payment channels.',
+        servicesGuide: 'Municipal Services Guide', servicesGuideDesc: 'Roads, clinics, refuse collection, permits, and market stands.',
+        documentsBylaws: 'Official Documents & By-laws', documentsBylawsDesc: 'Council policies, by-laws, reports, and budgets.',
+        noticesAnnouncements: 'Public Notices & Announcements', noticesAnnouncementsDesc: 'Meetings, consultations, tenders, and alerts.',
+        citizenDesk: 'Citizen desk', urgentHelp: 'Need urgent help?', urgentHelpDesc: 'Contact the council or report a service fault.',
+        switchboard: 'Council Switchboard', enquiries: 'Official Enquiries', headquarters: 'Headquarters',
+        submitFeedback: 'Submit Feedback or Report Fault', requested: 'Frequently Requested',
+        paymentAccounts: 'Rates & Payment Accounts', bylawsBudgets: 'Council By-laws & Budgets',
+        findCouncillor: 'Find Your Ward Councillor', procurement: 'Procurement & Tenders',
+        investment: 'Investment & Growth Points', hot: 'Hot',
+    },
+    sn: {
+        payRates: 'Bhadharai mitero yeKanzuru', publicNotices: 'Zviziviso zveveruzhinji', councilServices: 'Mabasa eKanzuru',
+        bylawsDocuments: 'Mitemo nezvinyorwa', wardsCouncillors: 'Mawadhi nemakanzura', reportIssue: 'Taura dambudziko',
+        directory: 'Runyorwa rwemabasa · Mutoko RDC', searchResults: 'Zvawanikwa pakutsvaga', findPrompt: 'Tingakubatsirai kuwana chii?',
+        found: 'Zvinyorwa zveKanzuru zvinoenderana nezvamatsvaga:', explore: 'Ongororai mabasa, mitero, zviziviso, zvinyorwa nemawadhi eKanzuru.',
+        quickShortcuts: 'Zvinongedzo zvinokurumidza', searchPlaceholder: 'Tsvaga mabasa, mitero, mawadhi, mitemo, marezinesi nezviziviso...',
+        clearQuery: 'Bvisa zvatsvaga', filterCategory: 'Sefa zvawanikwa nechikamu', allResults: 'Zvose zvawanikwa',
+        matchedRecords: 'Zvinyorwa zvinoenderana', results: 'Zvawanikwa', showing: 'Kuratidza', of: 'kubva pa',
+        accessResource: 'Vhura mashoko', noMatch: 'Hapana zvanyatsoenderana. Edzai rimwe shoko kana zvinongedzo zviri pazasi.',
+        ratesPayment: 'Ona mitero nemabhadhariro', browseServices: 'Ona mabasa ose eKanzuru',
+        directAccess: 'Kuwana zvakananga', browseCore: 'Ona mabasa nemashoko eKanzuru',
+        chooseDomain: 'Sarudzai dhipatimendi kana basa kuti muwane zvamunoda.',
+        ratesBills: 'Mitero nemabhadhariro', ratesBillsDesc: 'Mitero yeKanzuru nenzira dzekubhadhara.',
+        servicesGuide: 'Gwara remabasa eKanzuru', servicesGuideDesc: 'Migwagwa, makiriniki, marara, mvumo nemisika.',
+        documentsBylaws: 'Zvinyorwa nemitemo yeKanzuru', documentsBylawsDesc: 'Mitemo, mishumo nemabhajeti eKanzuru.',
+        noticesAnnouncements: 'Zviziviso zveveruzhinji', noticesAnnouncementsDesc: 'Misangano, kubvunzana, matenda neziviso.',
+        citizenDesk: 'Rubatsiro rwevagari', urgentHelp: 'Munoda rubatsiro rwechimbichimbi?', urgentHelpDesc: 'Taura neKanzuru kana kuzivisa dambudziko rebasa.',
+        switchboard: 'Nhare huru yeKanzuru', enquiries: 'Mibvunzo yepamutemo', headquarters: 'Hofisi huru',
+        submitFeedback: 'Tumira mhinduro kana dambudziko', requested: 'Zvinowanzotsvakwa',
+        paymentAccounts: 'Mitero nemaakaundi ekubhadhara', bylawsBudgets: 'Mitemo nemabhajeti eKanzuru',
+        findCouncillor: 'Tsvaga kanzura wewadhi yenyu', procurement: 'Kutenga nematenda',
+        investment: 'Kudyara mari nenzvimbo dzebudiriro', hot: 'Chinokosha',
+    },
+    nd: {
+        payRates: 'Khokha imithelo yoMkhandlu', publicNotices: 'Izaziso zomphakathi', councilServices: 'Imisebenzi yoMkhandlu',
+        bylawsDocuments: 'Imithetho lemibhalo', wardsCouncillors: 'Amawadi lamakhansila', reportIssue: 'Bika udaba',
+        directory: 'Uhlu lwemisebenzi · Mutoko RDC', searchResults: 'Okutholakeleyo ekusesheni', findPrompt: 'Singakusiza ukuthola ini?',
+        found: 'Imibhalo yoMkhandlu ehambelana lokusesha kwakho:', explore: 'Hlola imisebenzi, imithelo, izaziso, imibhalo lamawadi oMkhandlu.',
+        quickShortcuts: 'Izixhumanisi ezisheshayo', searchPlaceholder: 'Sesha imisebenzi, imithelo, amawadi, imithetho, amalayisensi lezaziso...',
+        clearQuery: 'Susa okuseshiweyo', filterCategory: 'Hlunga okutholakeleyo ngesigaba', allResults: 'Konke okutholakeleyo',
+        matchedRecords: 'Imibhalo ehambelanayo', results: 'Okutholakeleyo', showing: 'Ukubonisa', of: 'ku',
+        accessResource: 'Vula ulwazi', noMatch: 'Akukho okuhambelana ngqo. Zama elinye ibala kumbe izixhumanisi ezingezansi.',
+        ratesPayment: 'Bona imithelo lokukhokha', browseServices: 'Bona yonke imisebenzi yoMkhandlu',
+        directAccess: 'Ukufinyelela ngqo', browseCore: 'Bona imisebenzi lolwazi loMkhandlu',
+        chooseDomain: 'Khetha umnyango kumbe umsebenzi ukuze uthole okudingayo.',
+        ratesBills: 'Imithelo lokukhokha', ratesBillsDesc: 'Imithelo yoMkhandlu lezindlela zokukhokha.',
+        servicesGuide: 'Umhlahlandlela wemisebenzi yoMkhandlu', servicesGuideDesc: 'Imigwaqo, amakliniki, udoti, izimvumo lezimakethe.',
+        documentsBylaws: 'Imibhalo lemithetho yoMkhandlu', documentsBylawsDesc: 'Imithetho, imibiko lamabhajethi oMkhandlu.',
+        noticesAnnouncements: 'Izaziso zomphakathi', noticesAnnouncementsDesc: 'Imihlangano, ukubonisana, amathenda lezaziso.',
+        citizenDesk: 'Usizo lwezakhamizi', urgentHelp: 'Udinga usizo oluphuthumayo?', urgentHelpDesc: 'Xhumana loMkhandlu kumbe ubike udaba lomsebenzi.',
+        switchboard: 'Ucingo olukhulu loMkhandlu', enquiries: 'Imibuzo esemthethweni', headquarters: 'Ihhovisi elikhulu',
+        submitFeedback: 'Thumela impendulo kumbe ubike udaba', requested: 'Okuvame ukucelwa',
+        paymentAccounts: 'Imithelo lama-akhawunti okukhokha', bylawsBudgets: 'Imithetho lamabhajethi oMkhandlu',
+        findCouncillor: 'Thola ikhansila yewadi yakho', procurement: 'Ukuthenga lamathenda',
+        investment: 'Ukutshala imali lendawo zentuthuko', hot: 'Okuqakathekileyo',
+    },
+} as const;
 
 function SearchIcon({ size = 20 }: { size?: number }) {
     return (
@@ -99,6 +171,11 @@ function TypeIcon({ type }: { type: string }) {
 export default function Search({ query, results }: { query: string; results: Result[] }) {
     const t = usePublicTranslation();
     const locale = usePublicLocale();
+    const copy = SEARCH_COPY[locale];
+    const typeLabel = (type: string): string => {
+        const keys: Record<string, Parameters<typeof t>[0]> = { Page: 'about', Document: 'documents', Service: 'services', Department: 'department', News: 'news', Notice: 'notices', Gallery: 'gallery', Ward: 'wards', Official: 'officials', Tender: 'tenders', Vacancy: 'vacancies', Investment: 'investment', Meeting: 'meetings', Project: 'projects' };
+        return keys[type] ? t(keys[type]) : type;
+    };
     const [selectedType, setSelectedType] = useState('All');
 
     const counts = results.reduce<Record<string, number>>((totals, result) => {
@@ -118,29 +195,29 @@ export default function Search({ query, results }: { query: string; results: Res
                     <div className="about-page-hero-overlay" aria-hidden="true" />
                     <div className="container">
                         <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                            <a href={`/${locale}`}>Home</a>
+                            <a href={`/${locale}`}>{t('home')}</a>
                             <span aria-hidden="true">/</span>
                             <span aria-current="page">{t('search')}</span>
                         </nav>
-                        <span className="about-accent-eyebrow">MUNICIPAL DIRECTORY &bull; MUTOKO RDC</span>
+                        <span className="about-accent-eyebrow">{copy.directory}</span>
                         <h1>
-                            {query ? `Search Results for “${query}”` : 'What can we help you find?'}
+                            {query ? `${copy.searchResults} “${query}”` : copy.findPrompt}
                         </h1>
                         <p className="about-page-hero-subtitle">
                             {query
-                                ? `Found ${results.length} official record${results.length === 1 ? '' : 's'} matching your query across Mutoko Rural District Council.`
-                                : 'Explore council services, verified rates schedules, public notices, official documents, and administrative wards.'}
+                                ? `${copy.found} ${results.length}`
+                                : copy.explore}
                         </p>
 
                         {/* Quick action shortcuts strip */}
-                        <div className="services-quick-strip" aria-label="Quick civic shortcuts">
+                        <div className="services-quick-strip" aria-label={copy.quickShortcuts}>
                             {QUICK_ACTIONS.map(qa => (
                                 <a
                                     key={qa.path}
                                     href={`/${locale}${qa.path}`}
-                                    className={`quick-action-pill ${qa.highlight ? 'highlight' : ''}`}
+                                    className={`quick-action-pill ${'highlight' in qa && qa.highlight ? 'highlight' : ''}`}
                                 >
-                                    <span>{qa.label}</span>
+                                    <span>{copy[qa.label]}</span>
                                     <span className="pill-arrow" aria-hidden="true">&rarr;</span>
                                 </a>
                             ))}
@@ -162,11 +239,11 @@ export default function Search({ query, results }: { query: string; results: Res
                                 type="search"
                                 defaultValue={query}
                                 maxLength={100}
-                                placeholder="Search by service name, rates, ward, by-laws, licences, notices..."
+                                placeholder={copy.searchPlaceholder}
                                 autoComplete="off"
                             />
                             {query && (
-                                <a href={`/${locale}/search`} className="services-search-clear-btn" title="Clear query">
+                                <a href={`/${locale}/search`} className="services-search-clear-btn" title={copy.clearQuery}>
                                     &times;
                                 </a>
                             )}
@@ -177,14 +254,14 @@ export default function Search({ query, results }: { query: string; results: Res
 
                         {/* Category filter pills if results exist */}
                         {results.length > 0 && (
-                            <div className="services-category-filters" role="group" aria-label="Filter results by category">
+                            <div className="services-category-filters" role="group" aria-label={copy.filterCategory}>
                                 <button
                                     type="button"
                                     className={`services-filter-btn ${activeType === 'All' ? 'active' : ''}`}
                                     aria-pressed={activeType === 'All'}
                                     onClick={() => setSelectedType('All')}
                                 >
-                                    <span>All Results</span>
+                                    <span>{copy.allResults}</span>
                                     <span className="filter-count">{results.length}</span>
                                 </button>
                                 {types.map(type => (
@@ -195,7 +272,7 @@ export default function Search({ query, results }: { query: string; results: Res
                                         aria-pressed={activeType === type}
                                         onClick={() => setSelectedType(type)}
                                     >
-                                        <span>{type}</span>
+                                        <span>{typeLabel(type)}</span>
                                         <span className="filter-count">{counts[type]}</span>
                                     </button>
                                 ))}
@@ -211,10 +288,10 @@ export default function Search({ query, results }: { query: string; results: Res
                                 <>
                                     <div className="services-results-meta">
                                         <h2 className="services-results-meta-title">
-                                            {activeType === 'All' ? 'Matched Directory Records' : `${activeType} Results`}
+                                            {activeType === 'All' ? copy.matchedRecords : `${typeLabel(activeType)} ${copy.results}`}
                                         </h2>
                                         <span className="services-results-count-badge">
-                                            Showing {visibleResults.length} of {results.length}
+                                            {copy.showing} {visibleResults.length} {copy.of} {results.length}
                                         </span>
                                     </div>
 
@@ -228,7 +305,7 @@ export default function Search({ query, results }: { query: string; results: Res
                                                         </div>
                                                         <div className="services-item-badges">
                                                             <span className="services-category-badge">
-                                                                {result.type}
+                                                                {typeLabel(result.type)}
                                                             </span>
                                                             {result.is_review_content && (
                                                                 <span className="services-review-badge">
@@ -250,7 +327,7 @@ export default function Search({ query, results }: { query: string; results: Res
 
                                                     <div className="services-item-footer">
                                                         <a href={result.url} className="services-explore-link">
-                                                            <span>Access Resource</span>
+                                                            <span>{copy.accessResource}</span>
                                                             <ArrowRightIcon size={16} />
                                                         </a>
                                                     </div>
@@ -264,14 +341,14 @@ export default function Search({ query, results }: { query: string; results: Res
                                             </div>
                                             <h3>{t('noApprovedResults')}</h3>
                                             <p>
-                                                We couldn’t find an exact match for “<strong>{query}</strong>”. Try a broader keyword, check your spelling, or select one of the civic shortcuts in the directory.
+                                                {copy.noMatch} <strong>{query}</strong>
                                             </p>
                                             <div className="empty-state-actions">
                                                 <a href={`/${locale}/rates`} className="btn-empty-primary">
-                                                    View Rates &amp; Payment Details
+                                                    {copy.ratesPayment}
                                                 </a>
                                                 <a href={`/${locale}/services`} className="btn-empty-secondary">
-                                                    Browse All Council Services
+                                                    {copy.browseServices}
                                                 </a>
                                             </div>
                                         </div>
@@ -281,9 +358,9 @@ export default function Search({ query, results }: { query: string; results: Res
                                 /* When query is blank: show categorized civic directory */
                                 <div className="services-initial-overview">
                                     <div className="services-section-heading">
-                                        <span className="eyebrow-accent">DIRECT ACCESS</span>
-                                        <h2>Browse Core Council Services &amp; Information</h2>
-                                        <p>Select a municipal department or service domain to find what you need.</p>
+                                        <span className="eyebrow-accent">{copy.directAccess}</span>
+                                        <h2>{copy.browseCore}</h2>
+                                        <p>{copy.chooseDomain}</p>
                                     </div>
 
                                     <div className="services-start-grid">
@@ -292,8 +369,8 @@ export default function Search({ query, results }: { query: string; results: Res
                                                 <TypeIcon type="service" />
                                             </div>
                                             <div className="start-guide-info">
-                                                <h4>Rates, Tariffs &amp; Bill Payments</h4>
-                                                <p>Council billing rates, approved tariff schedules, banking accounts &amp; EcoCash channels.</p>
+                                                <h4>{copy.ratesBills}</h4>
+                                                <p>{copy.ratesBillsDesc}</p>
                                             </div>
                                             <span className="start-guide-arrow">&rarr;</span>
                                         </a>
@@ -303,8 +380,8 @@ export default function Search({ query, results }: { query: string; results: Res
                                                 <TypeIcon type="service" />
                                             </div>
                                             <div className="start-guide-info">
-                                                <h4>Municipal Services Guide</h4>
-                                                <p>Roads, clinic healthcare, refuse collection, planning permits &amp; market stands.</p>
+                                                <h4>{copy.servicesGuide}</h4>
+                                                <p>{copy.servicesGuideDesc}</p>
                                             </div>
                                             <span className="start-guide-arrow">&rarr;</span>
                                         </a>
@@ -314,8 +391,8 @@ export default function Search({ query, results }: { query: string; results: Res
                                                 <TypeIcon type="document" />
                                             </div>
                                             <div className="start-guide-info">
-                                                <h4>Official Documents &amp; By-laws</h4>
-                                                <p>Download audited statements, council policies, by-laws, and annual budgets.</p>
+                                                <h4>{copy.documentsBylaws}</h4>
+                                                <p>{copy.documentsBylawsDesc}</p>
                                             </div>
                                             <span className="start-guide-arrow">&rarr;</span>
                                         </a>
@@ -325,8 +402,8 @@ export default function Search({ query, results }: { query: string; results: Res
                                                 <TypeIcon type="notice" />
                                             </div>
                                             <div className="start-guide-info">
-                                                <h4>Public Notices &amp; Announcements</h4>
-                                                <p>Stay updated on stakeholder meetings, public consultations, tenders, and health alerts.</p>
+                                                <h4>{copy.noticesAnnouncements}</h4>
+                                                <p>{copy.noticesAnnouncementsDesc}</p>
                                             </div>
                                             <span className="start-guide-arrow">&rarr;</span>
                                         </a>
@@ -340,66 +417,66 @@ export default function Search({ query, results }: { query: string; results: Res
                             {/* Harare-Style Sticky Assistance Card */}
                             <div className="sidebar-card assistance-card">
                                 <div className="assistance-header">
-                                    <span className="assistance-badge">CITIZEN DESK</span>
-                                    <h3>Need Urgent Help?</h3>
-                                    <p>Contact Mutoko RDC administration or report an infrastructure or billing fault directly.</p>
+                                    <span className="assistance-badge">{copy.citizenDesk}</span>
+                                    <h3>{copy.urgentHelp}</h3>
+                                    <p>{copy.urgentHelpDesc}</p>
                                 </div>
                                 <div className="assistance-body">
                                     <div className="assistance-item">
                                         <span className="assistance-icon">📞</span>
                                         <div>
-                                            <strong>Council Switchboard</strong>
+                                            <strong>{copy.switchboard}</strong>
                                             <a href="tel:+263771592888">+263 771 592 888</a>
                                         </div>
                                     </div>
                                     <div className="assistance-item">
                                         <span className="assistance-icon">✉️</span>
                                         <div>
-                                            <strong>Official Enquiries</strong>
+                                            <strong>{copy.enquiries}</strong>
                                             <a href="mailto:info@mutokordc.co.zw">info@mutokordc.co.zw</a>
                                         </div>
                                     </div>
                                     <div className="assistance-item">
                                         <span className="assistance-icon">📍</span>
                                         <div>
-                                            <strong>Headquarters</strong>
+                                            <strong>{copy.headquarters}</strong>
                                             <span>Stand 366 Mutoko Growth Point, Zimbabwe</span>
                                         </div>
                                     </div>
                                     <a href={`/${locale}/feedback`} className="sidebar-cta-btn">
-                                        Submit Feedback or Report Fault &rarr;
+                                        {copy.submitFeedback} &rarr;
                                     </a>
                                 </div>
                             </div>
 
                             {/* Key Civic Links Card */}
                             <div className="sidebar-card quicklinks-card">
-                                <h3>Frequently Requested</h3>
+                                <h3>{copy.requested}</h3>
                                 <ul className="sidebar-links-list">
                                     <li>
                                         <a href={`/${locale}/rates`} className="sidebar-link-item">
-                                            <span>Rates &amp; Payment Accounts</span>
-                                            <span className="link-tag">Hot</span>
+                                            <span>{copy.paymentAccounts}</span>
+                                            <span className="link-tag">{copy.hot}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a href={`/${locale}/documents`} className="sidebar-link-item">
-                                            <span>Council By-laws &amp; Budgets</span>
+                                            <span>{copy.bylawsBudgets}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a href={`/${locale}/wards`} className="sidebar-link-item">
-                                            <span>Find Your Ward Councillor</span>
+                                            <span>{copy.findCouncillor}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a href={`/${locale}/tenders`} className="sidebar-link-item">
-                                            <span>Procurement &amp; Tenders</span>
+                                            <span>{copy.procurement}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a href={`/${locale}/investment`} className="sidebar-link-item">
-                                            <span>Investment &amp; Growth Points</span>
+                                            <span>{copy.investment}</span>
                                         </a>
                                     </li>
                                 </ul>

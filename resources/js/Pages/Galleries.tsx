@@ -15,12 +15,12 @@ type GalleryCard = {
     cover_alt: string | null;
 };
 
-function formatDate(value: string | null): string {
+function formatDate(value: string | null, locale: string): string {
     if (!value) {
         return '';
     }
     const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    return Number.isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString(locale === 'en' ? 'en-ZW' : `${locale}-ZW`, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
@@ -34,15 +34,15 @@ export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
 
             <section className="about-page-section" aria-labelledby="gallery-list">
                 <div className="container">
-                    <span className="about-accent-eyebrow">PHOTO GALLERY</span>
-                    <h2 id="gallery-list">From around the district</h2>
+                    <span className="about-accent-eyebrow">{t('galleries')}</span>
+                    <h2 id="gallery-list">{t('fromDistrict')}</h2>
 
                     {galleries.length === 0 ? (
                         <EmptyState title={t('noGalleries')} text={t('galleriesDesc')} />
                     ) : (
                         <div className="gallery-albums">
                             {galleries.map(gallery => {
-                                const meta = [formatDate(gallery.album_date), gallery.location].filter(Boolean).join(' · ');
+                                const meta = [formatDate(gallery.album_date, locale), gallery.location].filter(Boolean).join(' · ');
 
                                 return (
                                     <article key={gallery.slug} className={gallery.is_featured ? 'gallery-album is-featured' : 'gallery-album'}>
@@ -58,7 +58,7 @@ export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
                                                     </svg>
                                                 </span>
                                             )}
-                                            {gallery.is_featured && <span className="gallery-album-flag">Featured</span>}
+                                            {gallery.is_featured && <span className="gallery-album-flag">{t('featured')}</span>}
                                             <span className="gallery-album-count">
                                                 <span>{gallery.image_count}</span> {t('photos')}
                                             </span>

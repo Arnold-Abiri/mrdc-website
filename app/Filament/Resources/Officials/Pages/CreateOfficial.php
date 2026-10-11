@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Officials\Pages;
 
 use App\Domain\Cms\OfficialManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Officials\OfficialResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateOfficial extends CreateRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = OfficialResource::class;
 
     protected function handleRecordCreation(array $data): Model

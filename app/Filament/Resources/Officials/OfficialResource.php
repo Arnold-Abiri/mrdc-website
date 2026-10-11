@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Officials;
 
 use App\Domain\Cms\OfficialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Officials\Pages\CreateOfficial;
 use App\Filament\Resources\Officials\Pages\EditOfficial;
 use App\Filament\Resources\Officials\Pages\ListOfficials;
@@ -42,6 +43,7 @@ class OfficialResource extends Resource
             Select::make('photo_media_id')->relationship('photo', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable(),
             Select::make('is_department_head')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Mark the head of the department. Shown on the public department page.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),
+            TranslationFields::make(Official::translatableFields()),
         ]);
     }
 

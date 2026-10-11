@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Domain\Cms\ServiceManager;
+use App\Domain\Cms\WardManager;
 use App\Domain\Content\TranslationManager;
 use App\Models\Service;
 use App\Models\User;
@@ -10,6 +11,7 @@ use Database\Seeders\SecuritySeeder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -49,8 +51,11 @@ class Stage6LocalizationTest extends TestCase
         $this->assertSame('QA mvura', $service->fresh()->translated('name', 'sn'));
         $this->assertSame('Testing only', $service->fresh()->translated('summary', 'sn'));
         $this->assertSame('QA water', $service->fresh()->translated('name', 'nd'));
-        $this->get('/sn/services/qa-water')->assertOk();
-        $this->get('/nd/services/qa-water')->assertOk();
+        $this->get('/sn/services/qa-water')->assertOk()->assertInertia(fn (Assert $page) => $page->where('service.name', 'QA mvura'));
+        $this->get('/nd/services/qa-water')->assertOk()->assertInertia(fn (Assert $page) => $page->where('service.name', 'QA water'));
+        $this->get('/sn/services')->assertOk()->assertInertia(fn (Assert $page) => $page->where('services.0.name', 'QA mvura'));
+        $this->get('/sn')->assertOk()->assertInertia(fn (Assert $page) => $page->where('services.0.name', 'QA mvura'));
+        $this->get('/nd/services')->assertOk()->assertInertia(fn (Assert $page) => $page->where('services.0.name', 'QA water'));
     }
 
     public function test_translation_completeness_tracks_required_fields(): void
@@ -64,6 +69,21 @@ class Stage6LocalizationTest extends TestCase
         $this->assertSame('partial', $status['sn']['status']);
         $this->assertSame(1, $status['sn']['translated']);
         $this->assertSame(count(Service::translatableFields()), $status['sn']['required']);
+    }
+
+    public function test_ward_translations_render_and_can_be_searched_in_shona(): void
+    {
+        $admin = $this->administrator();
+        $manager = app(WardManager::class);
+        $ward = $manager->create($admin, ['slug' => 'qa-ward', 'name' => 'QA ward', 'description' => 'Testing ward', 'display_order' => 0]);
+        app(TranslationManager::class)->saveTranslations($admin, $ward, ['sn' => ['name' => 'Wadhi yokuyedza', 'description' => 'Tsananguro yekuyedza']]);
+        $manager->setVerification($admin, $ward, 'publishable');
+        $manager->setStatus($admin, $ward, 'published');
+
+        $this->get('/sn/wards')->assertOk()->assertInertia(fn (Assert $page) => $page->where('wards.0.name', 'Wadhi yokuyedza'));
+        $this->get('/sn/wards/qa-ward')->assertOk()->assertInertia(fn (Assert $page) => $page->where('ward.description', 'Tsananguro yekuyedza'));
+        $this->get('/sn/search?q=yokuyedza')->assertOk()->assertSee('Wadhi yokuyedza');
+        $this->get('/nd/wards')->assertOk()->assertInertia(fn (Assert $page) => $page->where('wards.0.name', 'QA ward'));
     }
 
     public function test_translations_reject_unknown_locales_fields_and_unauthorized_users(): void

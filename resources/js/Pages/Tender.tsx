@@ -4,6 +4,11 @@ import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 import { PageHero } from '../Components/public/PageHeader';
 
 type TenderDetail = { slug: string; reference: string; title: string; category: string | null; description: string; opens_at: string | null; closes_at: string | null; display_status: string; contact_instructions: string | null; award_status: string; awarded_to: string | null; awarded_at: string | null; award_amount: string | null; award_reference: string | null; award_remarks: string | null; document: { slug: string; title: string } | null };
+const copy = {
+    en: { procurement: 'Procurement', status: 'Status', details: 'Details', category: 'Category', opens: 'Opens', closes: 'Closes', department: 'Responsible department', unavailable: 'This tender is not open for submissions.', open: 'Open', closed: 'Closed', awarded: 'Awarded' },
+    sn: { procurement: 'Kutenga zvinhu nemabasa', status: 'Mamiriro', details: 'Mashoko', category: 'Chikamu', opens: 'Rinovhurwa', closes: 'Rinovharwa', department: 'Dhipatimendi rinotarisira', unavailable: 'Tenda iyi haisi kugamuchira zvikumbiro.', open: 'Rakavhurwa', closed: 'Rakavharwa', awarded: 'Rapihwa' },
+    nd: { procurement: 'Ukuthenga impahla lezinkonzo', status: 'Isimo', details: 'Imininingwane', category: 'Isigaba', opens: 'Livulwa', closes: 'Livalwa', department: 'Ugatsha oluphetheyo', unavailable: 'Leli thenda kalivulelwanga izicelo.', open: 'Livuliwe', closed: 'Livaliwe', awarded: 'Linikiwe' },
+};
 
 export default function Tender({ tender, department }: { tender: TenderDetail; department: string | null }) {
     const t = usePublicTranslation();
@@ -11,18 +16,18 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
     return (
         <PublicLayout>
             <Head title={tender.title} />
-            <PageHero eyebrow="PROCUREMENT" title={tender.title} subtitle={`${tender.reference} \u2014 Status: ${tender.display_status}`} crumb={[{ label: t('tenders'), href: `/${locale}/tenders` }, { label: tender.title }]} />
+            <PageHero eyebrow={copy[locale].procurement} title={tender.title} subtitle={`${tender.reference} \u2014 ${copy[locale].status}: ${copy[locale][tender.display_status as 'open' | 'closed' | 'awarded'] ?? tender.display_status}`} crumb={[{ label: t('tenders'), href: `/${locale}/tenders` }, { label: tender.title }]} />
             <section className="about-page-section" aria-labelledby="tender-detail">
                 <div className="container">
                     <nav className="about-page-breadcrumb" aria-label="Back"><Link href={`/${locale}/tenders`}>\u2190 {t('tenders')}</Link></nav>
                     <div className="about-mandate-grid">
                         <div className="about-mandate-card">
-                            <h3 id="tender-detail">Details</h3>
-                            {tender.category && <p>Category: {tender.category}</p>}
-                            {tender.opens_at && <p>Opens: {tender.opens_at}</p>}
-                            {tender.closes_at && <p>Closes: {tender.closes_at}</p>}
+                            <h3 id="tender-detail">{copy[locale].details}</h3>
+                            {tender.category && <p>{copy[locale].category}: {tender.category}</p>}
+                            {tender.opens_at && <p>{copy[locale].opens}: {tender.opens_at}</p>}
+                            {tender.closes_at && <p>{copy[locale].closes}: {tender.closes_at}</p>}
                             <p>{tender.description}</p>
-                            {department && <p>Responsible department: {department}</p>}
+                            {department && <p>{copy[locale].department}: {department}</p>}
                         </div>
                         {tender.contact_instructions && (
                             <div className="about-mandate-card">
@@ -47,7 +52,7 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
                             </div>
                         )}
                     </div>
-                    {tender.display_status !== 'open' && <p style={{ marginTop: '16px' }}>This tender is not open for submissions.</p>}
+                    {tender.display_status !== 'open' && <p style={{ marginTop: '16px' }}>{copy[locale].unavailable}</p>}
                     <p style={{ marginTop: '16px' }}><Link href={`/${locale}/contact`}>{t('askAboutTender')} \u2192</Link></p>
                 </div>
             </section>

@@ -12,7 +12,7 @@ class InvestmentController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Investment', ['opportunities' => InvestmentOpportunity::query()->with('translations')->public()->orderBy('display_order')->orderBy('title')->get(['slug', 'title', 'sector', 'summary', 'location', 'opportunity_status'])]);
+        return Inertia::render('Investment', ['opportunities' => InvestmentOpportunity::query()->with('translations')->public()->orderBy('display_order')->orderBy('title')->get(['id', 'slug', 'title', 'sector', 'summary', 'location', 'opportunity_status'])->map(fn (InvestmentOpportunity $opportunity): array => $opportunity->toLocalizedArray(['slug', 'title', 'sector', 'summary', 'location', 'opportunity_status']))]);
     }
 
     public function show(string $locale, string $slug): Response

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Statistics\Pages;
 
 use App\Domain\Cms\DistrictStatisticManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Statistics\DistrictStatisticResource;
 use App\Models\DistrictStatistic;
 use Filament\Resources\Pages\EditRecord;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditDistrictStatistic extends EditRecord
 {
+    use HandlesTranslations;
+
     protected static string $resource = DistrictStatisticResource::class;
 
     protected function handleRecordUpdate(Model $record, array $data): Model

@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Domain\Content\HasTranslations;
+use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Official extends Model
+class Official extends Model implements TranslatableContent
 {
+    use HasTranslations;
+
+    public const TRANSLATABLE_FIELDS = ['title', 'biography'];
+
     protected $fillable = ['name', 'title', 'slug', 'biography', 'photo_media_id', 'department_id', 'is_department_head', 'display_order'];
 
     protected function casts(): array

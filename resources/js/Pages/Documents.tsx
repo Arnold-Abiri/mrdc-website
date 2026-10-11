@@ -11,11 +11,11 @@ export default function Documents({ documents, categories, years, filters }: { d
     return (
         <PublicLayout>
             <Head title={t('councilDocuments')} />
-            <PageHero eyebrow="DOCUMENTS" title={t('councilDocuments')} subtitle="Council plans, budgets, minutes and statutory instruments. Key references include the Constitution, local government and land legislation, and the Mutoko Master Plan currently on public exhibition for comment at Stand 366 Mutoko Centre." crumb={[{ label: 'Documents' }]} />
+            <PageHero eyebrow={t('documents')} title={t('councilDocuments')} subtitle={t('documentsDesc')} crumb={[{ label: t('documents') }]} />
             <section className="about-page-section" aria-labelledby="documents-heading">
                 <div className="container">
-                    <span className="about-accent-eyebrow">KEY RESOURCES</span>
-                    <h2 id="documents-heading">Key resources</h2>
+                    <span className="about-accent-eyebrow">{t('keyResources')}</span>
+                    <h2 id="documents-heading">{t('keyResources')}</h2>
                     <div className="about-focus-grid">
                         {RESOURCE_LINKS.map(r => (
                             <div key={r} className="about-focus-card"><h3>{r}</h3></div>

@@ -9,6 +9,14 @@ import { useSiteSettings, whatsappLinkFor, type SiteSettings } from '../useSiteS
 type NavChild = { label: string; href: string };
 type NavEntry = { label: string; href: string; children?: NavChild[] };
 
+const navigationTranslationKeys: Record<string, Parameters<typeof translate>[1]> = {
+    Departments: 'councilDepartments', Officials: 'officials', Wards: 'wards', Meetings: 'meetings',
+    'Financial Transparency': 'transparency', 'All Services': 'services', Projects: 'projects',
+    Rates: 'rates', Feedback: 'feedback', News: 'news', Notices: 'notices', Gallery: 'gallery',
+    Documents: 'documents', Investment: 'investment', Tenders: 'tenders', Vacancies: 'vacancies',
+    Tourism: 'tourism',
+};
+
 const navigation: NavEntry[] = [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },
@@ -60,6 +68,7 @@ type TopbarNotice = { slug: string; title: string; is_urgent?: boolean };
 
 function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
     const locale = normalizeLocale(usePage().props.locale);
+    const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
@@ -67,7 +76,7 @@ function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
     const items: TopbarNotice[] = notices.length > 0 ? notices : [
         {
             slug: 'welcome',
-            title: 'Welcome to Mutoko Rural District Council — People. Development. Sustainable Communities.',
+            title: t('welcomeTicker'),
             is_urgent: false,
         },
     ];
@@ -86,14 +95,14 @@ function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
         <div
             className="topbar-ticker"
             role="region"
-            aria-label="Council Announcements"
+            aria-label={t('councilAnnouncements')}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onFocusCapture={() => setIsPaused(true)}
             onBlurCapture={() => setIsPaused(false)}
         >
             <span className={`topbar-ticker-badge ${active.is_urgent ? 'badge-urgent' : 'badge-notice'}`}>
-                {active.is_urgent ? 'Urgent Alert' : 'Notice'}
+                {active.is_urgent ? t('urgentAlert') : t('noticeSingular')}
             </span>
             <div className="topbar-ticker-content" aria-live="polite" aria-atomic="true">
                 {active.slug !== 'welcome' ? (
@@ -106,12 +115,12 @@ function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
                 )}
             </div>
             {items.length > 1 && (
-                <div className="topbar-ticker-controls" aria-label="Announcement carousel controls">
+                <div className="topbar-ticker-controls" aria-label={t('councilAnnouncements')}>
                     <button
                         type="button"
                         className="topbar-ticker-arrow-btn"
                         onClick={() => setCurrentIndex((prev) => (prev - 1 + items.length) % items.length)}
-                        aria-label="Previous announcement"
+                        aria-label={t('previousAnnouncement')}
                     >
                         ‹
                     </button>
@@ -122,7 +131,7 @@ function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
                         type="button"
                         className="topbar-ticker-arrow-btn"
                         onClick={() => setCurrentIndex((prev) => (prev + 1) % items.length)}
-                        aria-label="Next announcement"
+                        aria-label={t('nextAnnouncement')}
                     >
                         ›
                     </button>
@@ -328,7 +337,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                             <span className="nav-caret" aria-hidden="true">▾</span>
                                             {active && <span className="nav-active-indicator" aria-hidden="true" />}
                                         </a>
-                                        <ul className="nav-dropdown" aria-label={item.label}>
+                                        <ul className="nav-dropdown" aria-label={t(item.label.toLowerCase() as Parameters<typeof translate>[1])}>
                                             {item.children.map(child => {
                                                 const childActive = isPathActive(child.href);
                                                 return (
@@ -338,7 +347,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                                             className={`nav-dropdown-link${childActive ? ' nav-dropdown-link-active' : ''}`}
                                                             aria-current={childActive ? 'page' : undefined}
                                                         >
-                                                            {child.label}
+                                                            {locale !== 'en' && navigationTranslationKeys[child.label] ? t(navigationTranslationKeys[child.label]) : child.label}
                                                         </a>
                                                     </li>
                                                 );
@@ -442,14 +451,14 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </form>
 
                     <div className="search-overlay-hints" aria-label="Search suggestions">
-                        <span className="search-hints-title">Popular searches:</span>
-                        <a className="search-hint" href={L('/rates')}>Rates &amp; Payments</a>
-                        <a className="search-hint" href={L('/services')}>Council Services</a>
-                        <a className="search-hint" href={L('/tenders')}>Tenders &amp; Procurement</a>
-                        <a className="search-hint" href={L('/notices')}>Public Notices</a>
-                        <a className="search-hint" href={L('/documents')}>Documents &amp; By-Laws</a>
-                        <a className="search-hint" href={L('/wards')}>Wards &amp; Councillors</a>
-                        <a className="search-hint" href={L('/feedback')}>Feedback &amp; Faults</a>
+                        <span className="search-hints-title">{t('popularSearches')}</span>
+                        <a className="search-hint" href={L('/rates')}>{t('ratesPayments')}</a>
+                        <a className="search-hint" href={L('/services')}>{t('councilServices')}</a>
+                        <a className="search-hint" href={L('/tenders')}>{t('tendersProcurementShort')}</a>
+                        <a className="search-hint" href={L('/notices')}>{t('publicNotices')}</a>
+                        <a className="search-hint" href={L('/documents')}>{t('documentsBylawsShort')}</a>
+                        <a className="search-hint" href={L('/wards')}>{t('wardsCouncillorsShort')}</a>
+                        <a className="search-hint" href={L('/feedback')}>{t('feedbackFaults')}</a>
                     </div>
                 </div>
             </div>
@@ -578,7 +587,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                     <svg className="footer-contact-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654z" />
                                     </svg>
-                                    <div><p><a href={footerWhatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Council Desk</a></p></div>
+                                    <div><p><a href={footerWhatsapp} target="_blank" rel="noopener noreferrer">{t('whatsappDesk')}</a></p></div>
                                 </div>
                             )}
                             {footerHours && (

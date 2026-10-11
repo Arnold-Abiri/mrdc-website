@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import About from './About';
 import { PageHero } from '../Components/public/PageHeader';
 
@@ -17,6 +17,7 @@ type Page = {
 
 export default function CmsPage({ page, about, preview }: { page: Page; about?: { officials: { slug: string; name: string; title: string; photo_url: string | null }[]; investment: { slug: string; title: string; summary: string | null }[]; pages: string[] } | null; preview?: boolean }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     if (page.slug === 'about-mutoko') return <About page={page} about={about} preview={preview} />;
     return (
         <PublicLayout>
@@ -24,8 +25,8 @@ export default function CmsPage({ page, about, preview }: { page: Page; about?: 
                 {page.meta_description && <meta name="description" content={page.meta_description} />}
                 {preview && <meta name="robots" content="noindex, nofollow" />}
             </Head>
-            <PageHero eyebrow="COUNCIL INFORMATION" title={page.title} subtitle={page.summary || `Find council information about ${page.title}.`} crumb={[{ label: page.title }]} />
-            {page.is_review_content && <div className="container about-page-review" role="note"><strong>Stakeholder review content.</strong> Council approval is required before public publication.</div>}
+            <PageHero eyebrow={t('councilInformation')} title={page.title} subtitle={page.summary || `${t('findCouncilInfo')} ${page.title}.`} crumb={[{ label: page.title }]} />
+            {page.is_review_content && <div className="container about-page-review" role="note"><strong>{t('stakeholderReview')}</strong> {t('stakeholderApproval')}</div>}
             <section className="about-page-section"><div className="container">
                 <article>
                     {page.blocks.map((block, index) => {
@@ -36,7 +37,7 @@ export default function CmsPage({ page, about, preview }: { page: Page; about?: 
                         if (block.type === 'paragraph') return <div key={index} className="about-page-copy"><p>{block.text}</p></div>;
                         return null;
                     })}
-                    <p style={{ marginTop: '20px' }}><a className="about-page-text-link" href={`/${locale}/contact`}>Contact the council <span aria-hidden="true">→</span></a></p>
+                    <p style={{ marginTop: '20px' }}><a className="about-page-text-link" href={`/${locale}/contact`}>{t('contactCouncil')} <span aria-hidden="true">→</span></a></p>
                 </article>
             </div></section>
         </PublicLayout>

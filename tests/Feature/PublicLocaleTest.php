@@ -39,4 +39,11 @@ class PublicLocaleTest extends TestCase
         $this->post('/locale', ['locale' => 'nd'])->assertRedirect()->assertSessionHas('public_locale', 'nd');
         $this->get('/nd')->assertOk()->assertSee('<html lang="nd">', false);
     }
+
+    public function test_switching_language_keeps_search_query(): void
+    {
+        $this->withHeader('Referer', 'http://localhost:8000/en/search?q=water&page=2')
+            ->post('/locale', ['locale' => 'sn'])
+            ->assertRedirect('/sn/search?q=water&page=2');
+    }
 }

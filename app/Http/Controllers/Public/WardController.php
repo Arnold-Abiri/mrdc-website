@@ -11,13 +11,13 @@ class WardController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Wards', ['wards' => Ward::query()->public()->orderBy('display_order')->orderBy('name')->get(['slug', 'name', 'description'])]);
+        return Inertia::render('Wards', ['wards' => Ward::query()->with('translations')->public()->orderBy('display_order')->orderBy('name')->get(['id', 'slug', 'name', 'description'])->map(fn (Ward $ward): array => $ward->toLocalizedArray(['slug', 'name', 'description']))]);
     }
 
     public function show(string $locale, string $slug): Response
     {
-        $ward = Ward::query()->public()->where('slug', $slug)->firstOrFail();
+        $ward = Ward::query()->with('translations')->public()->where('slug', $slug)->firstOrFail();
 
-        return Inertia::render('Ward', ['ward' => $ward->only(['slug', 'name', 'description', 'boundaries_description'])]);
+        return Inertia::render('Ward', ['ward' => $ward->toLocalizedArray(['slug', 'name', 'description', 'boundaries_description'])]);
     }
 }

@@ -1,14 +1,15 @@
 import { Link } from '@inertiajs/react';
-import { usePublicLocale } from '../../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
 
 export function PageHero({ eyebrow, title, subtitle, crumb }: { eyebrow: string; title: string; subtitle?: string; crumb: { label: string; href?: string }[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     return (
         <header className="about-page-hero">
             <div className="about-page-hero-overlay" aria-hidden="true" />
             <div className="container">
                 <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                    <Link href={`/${locale}`}>Home</Link>
+                    <Link href={`/${locale}`}>{t('home')}</Link>
                     {crumb.map((c, i) => (
                         <span key={i} style={{ display: 'contents' }}>
                             <span aria-hidden="true">/</span>
@@ -24,18 +25,19 @@ export function PageHero({ eyebrow, title, subtitle, crumb }: { eyebrow: string;
     );
 }
 
-export function ConnectBanner({ title = 'Connect with Your Council', text = 'Questions about this page? Reach the right team through one enquiry form.' }: { title?: string; text?: string }) {
+export function ConnectBanner({ title, text }: { title?: string; text?: string }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     return (
         <section className="cta-banner-section" aria-labelledby="connect-banner">
             <div className="container cta-banner-container">
                 <div className="cta-text-side">
-                    <h2 id="connect-banner" className="cta-heading">{title}</h2>
-                    <p className="cta-subtext">{text}</p>
+                    <h2 id="connect-banner" className="cta-heading">{title ?? t('connectCouncil')}</h2>
+                    <p className="cta-subtext">{text ?? t('connectCouncilDesc')}</p>
                 </div>
                 <div className="cta-action-side">
                     <Link href={`/${locale}/contact`} className="btn-cta-green">
-                        <span>Contact Us</span>
+                        <span>{t('contactUs')}</span>
                         <span aria-hidden="true">→</span>
                     </Link>
                 </div>

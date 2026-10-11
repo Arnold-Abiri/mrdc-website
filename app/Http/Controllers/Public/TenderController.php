@@ -13,7 +13,7 @@ class TenderController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Tenders', ['tenders' => Tender::query()->with('translations')->public()->orderBy('display_order')->orderBy('title')->get(['slug', 'reference', 'title', 'category', 'closes_at'])->map(fn (Tender $tender): array => [...$tender->toLocalizedArray(['slug', 'reference', 'title', 'category', 'closes_at']), 'display_status' => $tender->displayStatus()])]);
+        return Inertia::render('Tenders', ['tenders' => Tender::query()->with('translations')->public()->orderBy('display_order')->orderBy('title')->get(['id', 'slug', 'reference', 'title', 'category', 'closes_at'])->map(fn (Tender $tender): array => [...$tender->toLocalizedArray(['slug', 'reference', 'title', 'category', 'closes_at']), 'display_status' => $tender->displayStatus()])]);
     }
 
     public function show(string $locale, string $slug): Response

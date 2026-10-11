@@ -4,6 +4,11 @@ import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { PageHero } from '../Components/public/PageHeader';
 type Item = { slug: string; title: string; summary: string | null; body: string; published_at: string | null; expires_at?: string | null; image_url?: string | null; image_alt?: string | null; image_caption?: string | null };
 type DocumentLink = { slug: string; title: string };
+const fallback = {
+    en: { news: 'Read this council news update from Mutoko Rural District Council.', notice: 'Read this official notice from Mutoko Rural District Council.' },
+    sn: { news: 'Verengai nhau idzi dzeKanzuru yeMutoko Rural District.', notice: 'Verengai chiziviso ichi chepamutemo cheKanzuru yeMutoko Rural District.' },
+    nd: { news: 'Bala lezi indaba zoMkhandlu weMutoko Rural District.', notice: 'Bala lesi saziso esisemthethweni soMkhandlu weMutoko Rural District.' },
+};
 export default function EditorialDetail({ type, item, documents }: { type: string; item: Item; documents: DocumentLink[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -18,7 +23,7 @@ export default function EditorialDetail({ type, item, documents }: { type: strin
     return (
         <PublicLayout>
             <SeoHead title={item.title} description={item.summary} image={item.image_url} schema={schema} />
-            <PageHero eyebrow={type.toUpperCase()} title={item.title} subtitle={item.summary || (type === 'News' ? 'Read this council news update from Mutoko Rural District Council.' : 'Read this official notice from Mutoko Rural District Council.')} crumb={[{ label: type, href: base }, { label: item.title }]} />
+            <PageHero eyebrow={type === 'News' ? t('news') : t('notices')} title={item.title} subtitle={item.summary || fallback[locale][type === 'News' ? 'news' : 'notice']} crumb={[{ label: type === 'News' ? t('news') : t('notices'), href: base }, { label: item.title }]} />
             <section className="about-page-section" aria-labelledby="editorial-detail">
                 <div className="container">
                     {item.image_url && <figure><img src={item.image_url} alt={item.image_alt ?? item.title} className="editorial-featured-image" />{item.image_caption && <figcaption>{item.image_caption}</figcaption>}</figure>}
