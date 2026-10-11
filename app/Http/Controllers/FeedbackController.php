@@ -17,7 +17,7 @@ class FeedbackController extends Controller
             'csrfToken' => csrf_token(),
             'submitted' => request()->query('submitted') === '1',
             'reference' => is_string(request()->query('reference')) ? request()->query('reference') : null,
-            'departments' => Department::query()->where('status', 'active')->orderBy('name')->get(['id', 'name']),
+            'departments' => Department::query()->where('status', 'active')->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'public_name']),
         ]);
     }
 
