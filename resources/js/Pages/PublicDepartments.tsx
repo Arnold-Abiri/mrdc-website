@@ -1,16 +1,17 @@
 import { Head, Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 
 type Department = { id: number; public_name: string | null; public_summary: string | null };
 
 type DeptMetadata = {
     category: 'governance' | 'infrastructure' | 'social';
-    badge: string;
+    badgeKey: TranslationKey;
     color: string;
     icon: React.ReactNode;
-    focus: string[];
+    focusKeys: TranslationKey[];
 };
 
 function getDepartmentMeta(name: string): DeptMetadata {
@@ -19,21 +20,21 @@ function getDepartmentMeta(name: string): DeptMetadata {
     if (n.includes('executive') || n.includes('ceo')) {
         return {
             category: 'governance',
-            badge: 'Executive Secretariat',
+            badgeKey: 'deptExecSec',
             color: '#0B2D4D',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
             ),
-            focus: ['Corporate Leadership', 'Council Resolutions', 'Inter-Agency Liaison', '29 Wards Coordination'],
+            focusKeys: ['focusCorpLead', 'focusResolutions', 'focusLiaison', 'focusWardsCoord'],
         };
     }
 
     if (n.includes('financ')) {
         return {
             category: 'social',
-            badge: 'Treasury & Revenue',
+            badgeKey: 'deptTreasury',
             color: '#0B8F62',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -42,28 +43,28 @@ function getDepartmentMeta(name: string): DeptMetadata {
                     <line x1="8" y1="12" x2="16" y2="12" />
                 </svg>
             ),
-            focus: ['Ratepayer Billing', 'Budget Formulation', 'Procurement Support', 'Statutory Financial Audits'],
+            focusKeys: ['focusBilling', 'focusBudget', 'focusProcSupport', 'focusAudits'],
         };
     }
 
     if (n.includes('engineer') || n.includes('works') || n.includes('roads') || n.includes('water')) {
         return {
             category: 'infrastructure',
-            badge: 'Technical Services',
+            badgeKey: 'deptTechnical',
             color: '#D97706',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                 </svg>
             ),
-            focus: ['District Road Networks', 'Boreholes & Piped Water', 'Reticulated Sewer', 'Building Inspections'],
+            focusKeys: ['focusRoads', 'focusBoreholes', 'focusSewer', 'focusBuilding'],
         };
     }
 
     if (n.includes('plan')) {
         return {
             category: 'infrastructure',
-            badge: 'Spatial Planning',
+            badgeKey: 'deptSpatial',
             color: '#0284C7',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -72,28 +73,28 @@ function getDepartmentMeta(name: string): DeptMetadata {
                     <line x1="16" y1="6" x2="16" y2="22" />
                 </svg>
             ),
-            focus: ['Serviced Stands Allocation', 'Commercial Leases', 'Town Planning Schemes', 'Development Control'],
+            focusKeys: ['focusStands', 'focusLeases', 'focusTownPlanning', 'focusDevControl'],
         };
     }
 
     if (n.includes('health') || n.includes('social')) {
         return {
             category: 'social',
-            badge: 'Community Services',
+            badgeKey: 'deptCommunity',
             color: '#059669',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                 </svg>
             ),
-            focus: ['Council Rural Clinics', 'Primary & Secondary Schools', 'Chikondoma Stadium', 'Social Welfare Support'],
+            focusKeys: ['focusClinics', 'focusSchools', 'focusStadium', 'focusWelfare'],
         };
     }
 
     if (n.includes('admin') || n.includes('human')) {
         return {
             category: 'governance',
-            badge: 'Corporate Secretariat',
+            badgeKey: 'deptCorpSec',
             color: '#475569',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -103,14 +104,14 @@ function getDepartmentMeta(name: string): DeptMetadata {
                     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
             ),
-            focus: ['Civic Registry & Records', 'Human Capital Development', 'Mutoko Centre Customer Care', 'Committee Support'],
+            focusKeys: ['focusRegistry', 'focusHR', 'focusCare', 'focusCommittees'],
         };
     }
 
     if (n.includes('audit')) {
         return {
             category: 'governance',
-            badge: 'Statutory Assurance',
+            badgeKey: 'deptAssurance',
             color: '#7C3AED',
             icon: (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -118,13 +119,13 @@ function getDepartmentMeta(name: string): DeptMetadata {
                     <path d="m9 12 2 2 4-4" />
                 </svg>
             ),
-            focus: ['Risk & Internal Controls', 'Statutory Compliance', 'Public Asset Verification', 'Value-for-Money Audits'],
+            focusKeys: ['focusRisk', 'focusCompliance', 'focusAssets', 'focusValue'],
         };
     }
 
     return {
         category: 'governance',
-        badge: 'Council Directorate',
+        badgeKey: 'deptDirectorate',
         color: '#0B2D4D',
         icon: (
             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -132,12 +133,13 @@ function getDepartmentMeta(name: string): DeptMetadata {
                 <path d="M3 9h18M9 21V9" />
             </svg>
         ),
-        focus: ['Public Service Delivery', 'Council Administration'],
+        focusKeys: ['focusDelivery', 'focusAdmin'],
     };
 }
 
 export default function PublicDepartments({ departments }: { departments: Department[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const [query, setQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState<'all' | 'governance' | 'infrastructure' | 'social'>('all');
 
@@ -146,28 +148,28 @@ export default function PublicDepartments({ departments }: { departments: Depart
         return departments.filter((d) => {
             const meta = getDepartmentMeta(d.public_name ?? '');
             const matchesCategory = categoryFilter === 'all' || meta.category === categoryFilter;
-            const matchesQuery = !q || `${d.public_name ?? ''} ${d.public_summary ?? ''} ${meta.focus.join(' ')}`.toLowerCase().includes(q);
+            const matchesQuery = !q || `${d.public_name ?? ''} ${d.public_summary ?? ''} ${meta.focusKeys.join(' ')}`.toLowerCase().includes(q);
             return matchesCategory && matchesQuery;
         });
     }, [departments, query, categoryFilter]);
 
     return (
         <PublicLayout>
-            <Head title="Council Departments & Directorates" />
+            <Head title={t('deptsTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Departments</span>
+                        <span aria-current="page">{t('councilDepartments')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">COUNCIL EXECUTIVE SECRETARIAT · RDC ACT [CAP 29:13]</span>
-                    <h1>Council Directorates &amp; Departments</h1>
+                    <span className="about-accent-eyebrow">{t('deptsEyebrow')}</span>
+                    <h1>{t('deptsTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        Coordinated executive directorates delivering infrastructure, health, water, planning, and revenue services across Mutoko&apos;s 29 administrative wards.
+                        {t('deptsSubtitle')}
                     </p>
                 </div>
             </header>
@@ -179,25 +181,25 @@ export default function PublicDepartments({ departments }: { departments: Depart
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{departments.length}</div>
-                                <div className="about-stat-label">Executive Directorates</div>
+                                <div className="about-stat-label">{t('statExecDirs')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">29</div>
-                                <div className="about-stat-label">Wards Administered</div>
+                                <div className="about-stat-label">{t('statWardsAdmin')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Stand 366</div>
-                                <div className="about-stat-label">Civic Centre Headquarters</div>
+                                <div className="about-stat-num">{t('statStand366')}</div>
+                                <div className="about-stat-label">{t('statCivicCentre')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">100%</div>
-                                <div className="about-stat-label">Public Service Coverage</div>
+                                <div className="about-stat-label">{t('statCoverage')}</div>
                             </div>
                         </div>
                     </div>
@@ -207,42 +209,42 @@ export default function PublicDepartments({ departments }: { departments: Depart
             {/* DIRECTORY SECTION */}
             <section className="about-page-section" aria-labelledby="dept-roster">
                 <div className="container">
-                    <span className="about-accent-eyebrow">EXECUTIVE PORTFOLIOS</span>
-                    <h2 id="dept-roster">Directorates Directory</h2>
+                    <span className="about-accent-eyebrow">{t('execPortfolios')}</span>
+                    <h2 id="dept-roster">{t('dirDirectory')}</h2>
                     <p className="about-page-section-intro">
-                        Each directorate operates under the delegated authority of the Chief Executive Officer and Council Committees to implement developmental bylaws, deliver public infrastructure, and administer social welfare.
+                        {t('deptsIntro')}
                     </p>
 
                     {/* SEARCH & FILTERS */}
                     <div className="dept-search-filter-wrap">
-                        <div className="dept-filter-pills" role="tablist" aria-label="Filter departments by category">
+                        <div className="dept-filter-pills" role="tablist" aria-label={t('filterDepts')}>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${categoryFilter === 'all' ? 'active' : ''}`}
                                 onClick={() => setCategoryFilter('all')}
                             >
-                                All Directorates ({departments.length})
+                                {t('allDirectorates')} ({departments.length})
                             </button>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${categoryFilter === 'governance' ? 'active' : ''}`}
                                 onClick={() => setCategoryFilter('governance')}
                             >
-                                Administration &amp; Governance
+                                {t('adminGov')}
                             </button>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${categoryFilter === 'infrastructure' ? 'active' : ''}`}
                                 onClick={() => setCategoryFilter('infrastructure')}
                             >
-                                Technical &amp; Works
+                                {t('techWorks')}
                             </button>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${categoryFilter === 'social' ? 'active' : ''}`}
                                 onClick={() => setCategoryFilter('social')}
                             >
-                                Social Services &amp; Finance
+                                {t('socialFinance')}
                             </button>
                         </div>
 
@@ -251,13 +253,13 @@ export default function PublicDepartments({ departments }: { departments: Depart
                                 <circle cx="11" cy="11" r="8" />
                                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                             </svg>
-                            <label className="sr-only" htmlFor="dept-search">Search departments by name or service</label>
+                            <label className="sr-only" htmlFor="dept-search">{t('searchDeptsLabel')}</label>
                             <input
                                 id="dept-search"
                                 type="search"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search by name, roads, water, rates..."
+                                placeholder={t('searchDeptsPlaceholder')}
                                 className="dept-search-input"
                             />
                         </div>
@@ -266,7 +268,7 @@ export default function PublicDepartments({ departments }: { departments: Depart
                     {/* RESULTS COUNT */}
                     {query.trim() && (
                         <p style={{ margin: '-16px 0 20px', fontSize: '0.85rem', color: '#64748B' }}>
-                            Showing {filtered.length} of {departments.length} directorates for &ldquo;{query}&rdquo;
+                            {t('showingOf')} {filtered.length} {t('ofDirectorates')} {departments.length} {t('directoratesUnit')} {t('forQuery')} &ldquo;{query}&rdquo;
                         </p>
                     )}
 
@@ -274,7 +276,7 @@ export default function PublicDepartments({ departments }: { departments: Depart
                     {filtered.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
-                                No departments match your search &ldquo;{query}&rdquo;.
+                                {t('noDeptsMatch')} &ldquo;{query}&rdquo;.
                             </p>
                             <button
                                 type="button"
@@ -282,7 +284,7 @@ export default function PublicDepartments({ departments }: { departments: Depart
                                 style={{ marginTop: 12 }}
                                 onClick={() => { setQuery(''); setCategoryFilter('all'); }}
                             >
-                                Clear search filters
+                                {t('clearSearchFilters')}
                             </button>
                         </div>
                     ) : (
@@ -295,24 +297,24 @@ export default function PublicDepartments({ departments }: { departments: Depart
                                             <div className="dept-card-icon" style={{ backgroundColor: meta.color }} aria-hidden="true">
                                                 {meta.icon}
                                             </div>
-                                            <span className="dept-card-badge">{meta.badge}</span>
+                                            <span className="dept-card-badge">{t(meta.badgeKey)}</span>
                                         </div>
 
-                                        <h3 className="dept-card-title">{d.public_name ?? `Department ${d.id}`}</h3>
+                                        <h3 className="dept-card-title">{d.public_name ?? `${t('deptFallbackName')} ${d.id}`}</h3>
                                         <p className="dept-card-summary">
-                                            {d.public_summary ?? 'Statutory terms of reference and service information published by the Council Secretariat.'}
+                                            {d.public_summary ?? t('deptFallbackSummary')}
                                         </p>
 
-                                        {meta.focus.length > 0 && (
+                                        {meta.focusKeys.length > 0 && (
                                             <div className="dept-card-tags">
-                                                {meta.focus.map((tag, idx) => (
-                                                    <span key={idx} className="dept-tag">{tag}</span>
+                                                {meta.focusKeys.map((tag, idx) => (
+                                                    <span key={idx} className="dept-tag">{t(tag)}</span>
                                                 ))}
                                             </div>
                                         )}
 
                                         <div className="dept-card-footer">
-                                            <span>Explore Directorate &amp; Services</span>
+                                            <span>{t('exploreDirServices')}</span>
                                             <span aria-hidden="true">→</span>
                                         </div>
                                     </Link>
@@ -329,25 +331,25 @@ export default function PublicDepartments({ departments }: { departments: Depart
                                 <line x1="12" y1="16" x2="12" y2="12" />
                                 <line x1="12" y1="8" x2="12.01" y2="8" />
                             </svg>
-                            <span>Council Helpdesk &amp; Resident Assistance</span>
+                            <span>{t('helpdeskTitle')}</span>
                         </div>
                         <div className="dept-portal-grid">
                             <Link href={`/${locale}/services`} className="dept-portal-card">
-                                <h4>All Council Services</h4>
-                                <p>Apply for building permits, rate clearances, business licenses, and water connections online.</p>
-                                <span>Browse services catalog →</span>
+                                <h4>{t('allServicesCard')}</h4>
+                                <p>{t('allServicesCardDesc')}</p>
+                                <span>{t('browseCatalog')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/officials`} className="dept-portal-card">
-                                <h4>Appointed Officials &amp; Councillors</h4>
-                                <p>Meet the Council Chairperson, Chief Executive Officer, and your elected Ward Councillors.</p>
-                                <span>View council leadership →</span>
+                                <h4>{t('officialsCard')}</h4>
+                                <p>{t('officialsCardDesc')}</p>
+                                <span>{t('viewLeadership')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/contact`} className="dept-portal-card">
-                                <h4>Mutoko Civic Centre Enquiries</h4>
-                                <p>Visit Stand 366 Mutoko Centre, call our switchboard, or submit a formal resident enquiry.</p>
-                                <span>Get in touch with council →</span>
+                                <h4>{t('civicEnquiries')}</h4>
+                                <p>{t('civicEnquiriesDesc')}</p>
+                                <span>{t('getInTouchCouncil')} →</span>
                             </Link>
                         </div>
                     </div>

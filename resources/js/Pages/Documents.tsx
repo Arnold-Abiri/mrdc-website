@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 import { PageHero } from '../Components/public/PageHeader';
 import { SourcedText } from '../Components/public/SourceButtons';
 
@@ -32,84 +33,36 @@ interface DocumentsProps {
     };
 }
 
-const CATEGORY_LABELS: Record<string, { title: string; desc: string }> = {
-    bylaw: {
-        title: 'By-Laws & Regulations',
-        desc: 'Official municipal statutory instruments, local council by-laws, and regulatory frameworks.',
-    },
-    policy: {
-        title: 'Council Policies',
-        desc: 'Operational and governance policy guidelines adopted by Mutoko Rural District Council.',
-    },
-    budget: {
-        title: 'Budgets & Estimates',
-        desc: 'Annual council revenue projections, capital expenditure estimates, and budget statements.',
-    },
-    financial_statement: {
-        title: 'Financial Statements',
-        desc: 'Audited financial statements, balances, and fiscal transparency reports.',
-    },
-    financial_report: {
-        title: 'Financial Reports',
-        desc: 'Periodic treasury updates and financial progress documentation.',
-    },
-    plan: {
-        title: 'Council Plans & Master Plans',
-        desc: 'Mutoko Master Plan, master plan notices, land-use zoning, and regional spatial guidelines.',
-    },
-    strategic_plan: {
-        title: 'Strategic Plans',
-        desc: 'Multi-year developmental visions, strategic roadmaps, and key council deliverables.',
-    },
-    procurement_plan: {
-        title: 'Procurement Plans & PRAZ Filings',
-        desc: 'Annual procurement plans and public procurement notices published for public accountability.',
-    },
-    awards_register: {
-        title: 'Contract Awards Register',
-        desc: 'Official register of tender and procurement awards issued by Mutoko RDC.',
-    },
-    form: {
-        title: 'Application Forms & Permits',
-        desc: 'Downloadable forms for housing applications, business licensing, billboards, and development permits.',
-    },
-    notice: {
-        title: 'Public Notices & Gazettes',
-        desc: 'Gazetted municipal notices, public inspection announcements, and council resolutions.',
-    },
-    minutes: {
-        title: 'Council Minutes',
-        desc: 'Full Council meeting records, committee minutes, and official proceedings.',
-    },
-    agenda: {
-        title: 'Council Agendas',
-        desc: 'Scheduled meeting orders of business and chamber deliberations.',
-    },
-    schedule: {
-        title: 'Tariff & Fee Schedules',
-        desc: 'Approved tariffs, rating schedules, refuse collection intervals, and service fee structures.',
-    },
-    publication: {
-        title: 'Publications & Bulletins',
-        desc: 'Council newsletters, public information brochures, and citizen engagement digests.',
-    },
-    other: {
-        title: 'General Council Documents',
-        desc: 'Miscellaneous official documentation, declarations, and community resources.',
-    },
+const CATEGORY_LABELS: Record<string, { titleKey: TranslationKey; descKey: TranslationKey }> = {
+    bylaw: { titleKey: 'catBylaw', descKey: 'catBylawDesc' },
+    policy: { titleKey: 'catPolicy', descKey: 'catPolicyDesc' },
+    budget: { titleKey: 'catBudget', descKey: 'catBudgetDesc' },
+    financial_statement: { titleKey: 'catFinStatement', descKey: 'catFinStatementDesc' },
+    financial_report: { titleKey: 'catFinReport', descKey: 'catFinReportDesc' },
+    plan: { titleKey: 'catPlan', descKey: 'catPlanDesc' },
+    strategic_plan: { titleKey: 'catStrategic', descKey: 'catStrategicDesc' },
+    procurement_plan: { titleKey: 'catProcurement', descKey: 'catProcurementDesc' },
+    awards_register: { titleKey: 'catAwards', descKey: 'catAwardsDesc' },
+    form: { titleKey: 'catForm', descKey: 'catFormDesc' },
+    notice: { titleKey: 'catNotice', descKey: 'catNoticeDesc' },
+    minutes: { titleKey: 'catMinutes', descKey: 'catMinutesDesc' },
+    agenda: { titleKey: 'catAgenda', descKey: 'catAgendaDesc' },
+    schedule: { titleKey: 'catSchedule', descKey: 'catScheduleDesc' },
+    publication: { titleKey: 'catPublication', descKey: 'catPublicationDesc' },
+    other: { titleKey: 'catOther', descKey: 'catOtherDesc' },
 };
 
-const STATUTORY_ACTS = [
-    { title: 'Rural District Councils Act [Chapter 29:13]', desc: 'Primary legislation governing council powers, operations and administration in Zimbabwe.' },
-    { title: 'Constitution of Zimbabwe Amendment (No. 20) Act', desc: 'Constitutional provisions on devolution and local government authorities.' },
-    { title: 'Public Procurement & Disposal of Public Assets Act [22:23]', desc: 'Statutory rules governing all tenders and contract awards.' },
-    { title: 'Public Finance Management Act [Chapter 22:19]', desc: 'National standards on financial transparency and council accountability.' },
-    { title: 'Traditional Leaders Act [Chapter 29:17]', desc: 'Collaboration between Mutoko traditional leadership and rural district council.' },
-    { title: 'Mutoko Master Plan (Public Exhibition)', desc: 'Official land development, urban expansion, and environmental management framework.' },
+const STATUTORY_ACTS: { titleKey: TranslationKey; descKey: TranslationKey }[] = [
+    { titleKey: 'statRDC', descKey: 'statRDCDesc' },
+    { titleKey: 'statConstitution', descKey: 'statConstitutionDesc' },
+    { titleKey: 'statProcurement', descKey: 'statProcurementDesc' },
+    { titleKey: 'statFinance', descKey: 'statFinanceDesc' },
+    { titleKey: 'statTraditional', descKey: 'statTraditionalDesc' },
+    { titleKey: 'statMasterPlan', descKey: 'statMasterPlanDesc' },
 ];
 
-function formatDate(dateStr: string | null): string {
-    if (!dateStr) return 'Recent';
+function formatDate(dateStr: string | null, recentLabel = 'Recent'): string {
+    if (!dateStr) return recentLabel;
     try {
         const d = new Date(dateStr);
         if (Number.isNaN(d.getTime())) return dateStr;
@@ -193,9 +146,9 @@ export default function Documents({
 
             {/* Standard MRDC Hero Header matching other views */}
             <PageHero
-                eyebrow="OFFICIAL REPOSITORY · STATUTORY MUNICIPAL RECORDS"
+                eyebrow={t('docEyebrow')}
                 title={t('councilDocuments')}
-                subtitle="Access official municipal by-laws, master plans, financial budgets, audited statements, council minutes, downloadable application forms, and statutory governance publications."
+                subtitle={t('docHeroDesc')}
                 crumb={[{ label: t('documents') }]}
             />
 
@@ -206,25 +159,25 @@ export default function Documents({
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">100%</div>
-                                <div className="about-stat-label">Public Access</div>
+                                <div className="about-stat-label">{t('statPublicAccess')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">{budgetCount} Files</div>
-                                <div className="about-stat-label">Budgets &amp; Finance</div>
+                                <div className="about-stat-num">{budgetCount} {t('statFilesUnit')}</div>
+                                <div className="about-stat-label">{t('statBudgetsFinance')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">{bylawCount} By-Laws</div>
-                                <div className="about-stat-label">Statutes &amp; Rules</div>
+                                <div className="about-stat-num">{bylawCount} {t('statBylawsUnit')}</div>
+                                <div className="about-stat-label">{t('statStatutesRules')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">{plansCount + minutesCount} Records</div>
-                                <div className="about-stat-label">Plans &amp; Minutes</div>
+                                <div className="about-stat-num">{plansCount + minutesCount} {t('statRecordsUnit')}</div>
+                                <div className="about-stat-label">{t('statPlansMinutes')}</div>
                             </div>
                         </div>
                     </div>
@@ -232,7 +185,7 @@ export default function Documents({
             </section>
 
             {/* Interactive Search & Category Filter Bar */}
-            <div className="resources-filter-section" role="region" aria-label="Document filters">
+            <div className="resources-filter-section" role="region" aria-label={t('docFilterRegion')}>
                 <div className="container">
                     <div className="resources-filter-bar">
                         <div className="resources-search-wrapper">
@@ -245,15 +198,15 @@ export default function Documents({
                                 className="resources-search-input"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search documents by keyword, title, or category (e.g. bylaw, budget, master plan, form)..."
-                                aria-label="Search document resources"
+                                placeholder={t('docSearchPlaceholder')}
+                                aria-label={t('docSearchAria')}
                             />
                             {searchQuery && (
                                 <button
                                     type="button"
                                     className="resources-search-clear"
                                     onClick={() => setSearchQuery('')}
-                                    aria-label="Clear search"
+                                    aria-label={t('docClearSearch')}
                                 >
                                     &times;
                                 </button>
@@ -261,7 +214,7 @@ export default function Documents({
                         </div>
 
                         {/* Category filter pills */}
-                        <div className="resources-pills-wrap" role="tablist" aria-label="Document categories">
+                        <div className="resources-pills-wrap" role="tablist" aria-label={t('sideDocCats')}>
                             <button
                                 type="button"
                                 role="tab"
@@ -273,12 +226,12 @@ export default function Documents({
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                     <polyline points="14 2 14 8 20 8" />
                                 </svg>
-                                <span>All Categories</span>
+                                <span>{t('docAllCategories')}</span>
                                 <span className="pill-count">{total_count}</span>
                             </button>
 
                             {displayedFilterCategories.map((catKey) => {
-                                const meta = CATEGORY_LABELS[catKey] || { title: catKey.replace(/_/g, ' ') };
+                                const meta = CATEGORY_LABELS[catKey] || { titleKey: 'catOther' as const, descKey: 'docFallbackDesc' as const };
                                 const count = category_counts[catKey] ?? documents.filter((d) => d.category === catKey).length;
                                 return (
                                     <button
@@ -289,7 +242,7 @@ export default function Documents({
                                         className={`resources-filter-pill${selectedCategory === catKey ? ' active' : ''}`}
                                         onClick={() => setSelectedCategory(catKey)}
                                     >
-                                        <span>{meta.title}</span>
+                                        <span>{t(meta.titleKey)}</span>
                                         {count > 0 && <span className="pill-count">{count}</span>}
                                     </button>
                                 );
@@ -309,12 +262,12 @@ export default function Documents({
                             {(searchQuery || selectedCategory !== 'all' || selectedYear) && (
                                 <div className="resources-active-filters-bar">
                                     <span>
-                                        Showing <strong>{filteredDocuments.length}</strong> {filteredDocuments.length === 1 ? 'document' : 'documents'}
+                                        {t('docShowing')} <strong>{filteredDocuments.length}</strong> {filteredDocuments.length === 1 ? t('docOne') : t('docMany')}
                                         {selectedCategory !== 'all' && (
-                                            <> in <strong>{CATEGORY_LABELS[selectedCategory]?.title || selectedCategory}</strong></>
+                                            <> {t('docIn')} <strong>{selectedCategory !== 'all' && CATEGORY_LABELS[selectedCategory] ? t(CATEGORY_LABELS[selectedCategory].titleKey) : selectedCategory}</strong></>
                                         )}
                                         {searchQuery && (
-                                            <> matching &ldquo;<strong>{searchQuery}</strong>&rdquo;</>
+                                            <> {t('docMatching')} &ldquo;<strong>{searchQuery}</strong>&rdquo;</>
                                         )}
                                     </span>
                                     <button
@@ -326,7 +279,7 @@ export default function Documents({
                                             setSelectedYear('');
                                         }}
                                     >
-                                        Reset all filters
+                                        {t('docResetFilters')}
                                     </button>
                                 </div>
                             )}
@@ -341,9 +294,9 @@ export default function Documents({
                                             <line x1="9" y1="15" x2="15" y2="15" />
                                         </svg>
                                     </div>
-                                    <h3 className="resources-empty-title">No matching documents found</h3>
+                                    <h3 className="resources-empty-title">{t('docNoMatch')}</h3>
                                     <p className="resources-empty-desc">
-                                        We couldn&rsquo;t find any council documents matching your current search or category filter. Try clearing filters or using broader keywords.
+                                        {t('docEmptyDesc')}
                                     </p>
                                     <button
                                         type="button"
@@ -354,7 +307,7 @@ export default function Documents({
                                             setSelectedYear('');
                                         }}
                                     >
-                                        Clear Search Filters
+                                        {t('docClearFilters')}
                                     </button>
                                 </div>
                             ) : (
@@ -362,8 +315,8 @@ export default function Documents({
                                     {activeCategoriesWithDocs.map((categoryKey) => {
                                         const docsInCat = groupedDocuments[categoryKey] || [];
                                         const meta = CATEGORY_LABELS[categoryKey] || {
-                                            title: categoryKey.replace(/_/g, ' ').toUpperCase(),
-                                            desc: 'Official municipal documentation and public publications.',
+                                            titleKey: 'catOther' as const,
+                                            descKey: 'docFallbackDesc' as const,
                                         };
 
                                         return (
@@ -376,12 +329,12 @@ export default function Documents({
                                                             </svg>
                                                         </div>
                                                         <div>
-                                                            <h2 className="resource-category-title">{meta.title}</h2>
-                                                            <p className="resource-category-desc">{meta.desc}</p>
+                                                            <h2 className="resource-category-title">{t(meta.titleKey)}</h2>
+                                                            <p className="resource-category-desc">{t(meta.descKey)}</p>
                                                         </div>
                                                     </div>
                                                     <span className="resource-category-badge">
-                                                        {docsInCat.length} {docsInCat.length === 1 ? 'Document' : 'Documents'}
+                                                        {docsInCat.length} {docsInCat.length === 1 ? t('catOne') : t('catMany')}
                                                     </span>
                                                 </div>
 
@@ -419,7 +372,7 @@ export default function Documents({
                                                                             <line x1="8" y1="2" x2="8" y2="6" />
                                                                             <line x1="3" y1="10" x2="21" y2="10" />
                                                                         </svg>
-                                                                        <span>Published: {formatDate(doc.published_at || doc.reference_date)}</span>
+                                                                        <span>{t('publishedOn')}: {formatDate(doc.published_at || doc.reference_date, t('docRecent'))}</span>
                                                                     </div>
 
                                                                     {doc.department && (
@@ -446,21 +399,21 @@ export default function Documents({
                                                                 <a
                                                                     href={L(`/documents/${doc.slug}/download`)}
                                                                     className="resource-download-btn"
-                                                                    aria-label={`Download ${doc.title}`}
+                                                                    aria-label={`${t('docDownloadFor')} ${doc.title}`}
                                                                 >
                                                                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                                                         <polyline points="7 10 12 15 17 10" />
                                                                         <line x1="12" y1="15" x2="12" y2="3" />
                                                                     </svg>
-                                                                    <span>Download</span>
+                                                                    <span>{t('docDownload')}</span>
                                                                 </a>
                                                                 <Link
                                                                     href={L(`/documents/${doc.slug}`)}
                                                                     className="resource-view-btn"
-                                                                    aria-label={`View details for ${doc.title}`}
+                                                                    aria-label={`${t('docViewDetailsFor')} ${doc.title}`}
                                                                 >
-                                                                    Details
+                                                                    {t('docDetails')}
                                                                 </Link>
                                                             </div>
                                                         </div>
@@ -482,15 +435,15 @@ export default function Documents({
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 className="statutory-title">National Legislation &amp; Statutory Authorities</h3>
-                                        <p className="statutory-desc">Key Acts of Parliament and statutory instruments governing Mutoko Rural District Council mandate.</p>
+                                        <h3 className="statutory-title">{t('statuteTitle')}</h3>
+                                        <p className="statutory-desc">{t('statuteDesc')}</p>
                                     </div>
                                 </div>
                                 <div className="statutory-grid">
                                     {STATUTORY_ACTS.map((act) => (
-                                        <div key={act.title} className="statutory-item">
-                                            <strong className="statutory-item-title">{act.title}</strong>
-                                            <p className="statutory-item-desc">{act.desc}</p>
+                                        <div key={act.titleKey} className="statutory-item">
+                                            <strong className="statutory-item-title">{t(act.titleKey)}</strong>
+                                            <p className="statutory-item-desc">{t(act.descKey)}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -505,16 +458,16 @@ export default function Documents({
                                     <div className="tourism-card-body">
                                         <div className="tourism-badge-row">
                                             <span className="tourism-badge">
-                                                Mutoko Growth Point &amp; District
+                                                {t('spotBadge')}
                                             </span>
                                             <svg className="tourism-compass-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                 <circle cx="12" cy="12" r="10" />
                                                 <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
                                             </svg>
                                         </div>
-                                        <h4 className="tourism-title">Mutoko District Information</h4>
+                                        <h4 className="tourism-title">{t('spotTitle')}</h4>
                                         <p className="tourism-desc">
-                                            Renowned for black granite reserves, thriving commercial horticulture, historical Mutoko Ruins (Ruchera Cave), and active rural community centres.
+                                            {t('spotDesc')}
                                         </p>
 
                                         <div className="tourism-meta-box">
@@ -539,7 +492,7 @@ export default function Documents({
                                                 <line x1="8" y1="2" x2="8" y2="18" />
                                                 <line x1="16" y1="6" x2="16" y2="22" />
                                             </svg>
-                                            <span>Explore Mutoko Heritage &amp; Sites</span>
+                                            <span>{t('spotExplore')}</span>
                                         </a>
                                     </div>
                                 </div>
@@ -553,7 +506,7 @@ export default function Documents({
                                                 <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
                                             </svg>
                                         </div>
-                                        <h4 className="sidebar-card-title">Council Quick Links</h4>
+                                        <h4 className="sidebar-card-title">{t('sideQuickLinks')}</h4>
                                     </div>
                                     <div className="sidebar-links-list">
                                         <a href={L('/rates')} className="sidebar-link-item">
@@ -562,7 +515,7 @@ export default function Documents({
                                                     <rect x="2" y="4" width="20" height="16" rx="2" />
                                                     <line x1="2" y1="10" x2="22" y2="10" />
                                                 </svg>
-                                                <span>Rates &amp; Bill Payment Channels</span>
+                                                <span>{t('sideRates')}</span>
                                             </div>
                                             <span className="sidebar-link-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
@@ -572,7 +525,7 @@ export default function Documents({
                                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M19 12h-2V8h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2v4H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z" />
                                                 </svg>
-                                                <span>Council Public Services</span>
+                                                <span>{t('sideServices')}</span>
                                             </div>
                                             <span className="sidebar-link-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
@@ -582,7 +535,7 @@ export default function Documents({
                                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2z" />
                                                 </svg>
-                                                <span>Active Tenders &amp; Procurement</span>
+                                                <span>{t('sideTenders')}</span>
                                             </div>
                                             <span className="sidebar-link-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
@@ -592,7 +545,7 @@ export default function Documents({
                                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
                                                 </svg>
-                                                <span>29 Wards &amp; Councillors Directory</span>
+                                                <span>{t('sideWards')}</span>
                                             </div>
                                             <span className="sidebar-link-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
@@ -602,7 +555,7 @@ export default function Documents({
                                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
                                                 </svg>
-                                                <span>Public Notices &amp; Gazettes</span>
+                                                <span>{t('sideNotices')}</span>
                                             </div>
                                             <span className="sidebar-link-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
@@ -612,7 +565,7 @@ export default function Documents({
                                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-council-green)' }} aria-hidden="true">
                                                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                                                 </svg>
-                                                <span>Citizen Feedback &amp; Fault Reports</span>
+                                                <span>{t('sideFeedback')}</span>
                                             </div>
                                             <span className="sidebar-link-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
@@ -628,18 +581,18 @@ export default function Documents({
                                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                                             </svg>
                                         </div>
-                                        <h4 className="sidebar-card-title">Document Categories</h4>
+                                        <h4 className="sidebar-card-title">{t('sideDocCats')}</h4>
                                     </div>
                                     <div className="sidebar-links-list">
                                         {[
-                                            { key: 'bylaw', label: 'By-Laws & Regulations' },
-                                            { key: 'budget', label: 'Council Budgets & Estimates' },
-                                            { key: 'financial_statement', label: 'Audited Financial Statements' },
-                                            { key: 'plan', label: 'Mutoko Master Plan' },
-                                            { key: 'minutes', label: 'Council Minutes & Agendas' },
-                                            { key: 'policy', label: 'Governance & Service Policies' },
-                                            { key: 'form', label: 'Application Forms & Permits' },
-                                            { key: 'procurement_plan', label: 'Procurement Plans' },
+                                            { key: 'bylaw', labelKey: 'catBylaw' as TranslationKey },
+                                            { key: 'budget', labelKey: 'catBudget' as TranslationKey },
+                                            { key: 'financial_statement', labelKey: 'catFinStatement' as TranslationKey },
+                                            { key: 'plan', labelKey: 'catPlan' as TranslationKey },
+                                            { key: 'minutes', labelKey: 'catMinutes' as TranslationKey },
+                                            { key: 'policy', labelKey: 'catPolicy' as TranslationKey },
+                                            { key: 'form', labelKey: 'catForm' as TranslationKey },
+                                            { key: 'procurement_plan', labelKey: 'catProcurement' as TranslationKey },
                                         ].map((item) => (
                                             <button
                                                 key={item.key}
@@ -655,7 +608,7 @@ export default function Documents({
                                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                                         <polyline points="14 2 14 8 20 8" />
                                                     </svg>
-                                                    <span>{item.label}</span>
+                                                    <span>{t(item.labelKey)}</span>
                                                 </div>
                                                 <span className="sidebar-category-count">
                                                     {category_counts[item.key] ?? documents.filter((d) => d.category === item.key).length}

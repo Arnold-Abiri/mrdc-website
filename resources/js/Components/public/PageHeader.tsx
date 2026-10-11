@@ -1,14 +1,16 @@
 import { Link } from '@inertiajs/react';
 import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
+import { extractSources, SourceButtons } from './SourceButtons';
 
 export function PageHero({ eyebrow, title, subtitle, crumb }: { eyebrow: string; title: string; subtitle?: string; crumb: { label: string; href?: string }[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
+    const heroCopy = extractSources(subtitle);
     return (
         <header className="about-page-hero">
             <div className="about-page-hero-overlay" aria-hidden="true" />
             <div className="container">
-                <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
+                <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
                     <Link href={`/${locale}`}>{t('home')}</Link>
                     {crumb.map((c, i) => (
                         <span key={i} style={{ display: 'contents' }}>
@@ -19,7 +21,12 @@ export function PageHero({ eyebrow, title, subtitle, crumb }: { eyebrow: string;
                 </nav>
                 <span className="about-accent-eyebrow">{eyebrow}</span>
                 <h1>{title}</h1>
-                {subtitle && <p className="about-page-hero-subtitle">{subtitle}</p>}
+                {heroCopy.body && <p className="about-page-hero-subtitle">{heroCopy.body}</p>}
+                {heroCopy.sources.length > 0 && (
+                    <div className="about-page-hero-sources">
+                        <SourceButtons sources={heroCopy.sources} />
+                    </div>
+                )}
             </div>
         </header>
     );

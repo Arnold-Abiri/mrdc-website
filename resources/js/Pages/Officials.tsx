@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 
 type OfficialSummary = {
     slug: string;
@@ -14,6 +14,7 @@ type OfficialSummary = {
 
 export default function Officials({ officials }: { officials: OfficialSummary[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const [filter, setFilter] = useState<'all' | 'executive' | 'secretariat'>('all');
     const [search, setSearch] = useState('');
 
@@ -36,17 +37,17 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/departments`}>Council</Link>
+                        <Link href={`/${locale}/departments`}>{t('wardsCrumbCouncil')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Officials</span>
+                        <span aria-current="page">{t('officials')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">COUNCIL LEADERSHIP &amp; MANAGEMENT · STAND 366 MUTOKO</span>
-                    <h1>Elected &amp; Appointed Officials</h1>
+                    <span className="about-accent-eyebrow">{t('officialsEyebrow')}</span>
+                    <h1>{t('officialsTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        The political and administrative leadership entrusted with governance, policy formulation, and executive management for Mutoko Rural District Council.
+                        {t('officialsSubtitle')}
                     </p>
                 </div>
             </header>
@@ -58,25 +59,25 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">29</div>
-                                <div className="about-stat-label">Wards Represented</div>
+                                <div className="about-stat-label">{t('statWardsRep')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">1</div>
-                                <div className="about-stat-label">Chief Executive Officer</div>
+                                <div className="about-stat-label">{t('statCeo')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{officials.length}</div>
-                                <div className="about-stat-label">Published Executive Profiles</div>
+                                <div className="about-stat-label">{t('statExecProfiles')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">Cap 29:13</div>
-                                <div className="about-stat-label">Statutory Governance</div>
+                                <div className="about-stat-label">{t('statGovCap')}</div>
                             </div>
                         </div>
                     </div>
@@ -86,35 +87,35 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
             {/* MAIN ROSTER */}
             <section className="about-page-section" aria-labelledby="officials-roster">
                 <div className="container">
-                    <span className="about-accent-eyebrow">DIRECTORY &amp; PORTFOLIOS</span>
-                    <h2 id="officials-roster">Management &amp; Governance Team</h2>
+                    <span className="about-accent-eyebrow">{t('dirPortfolios')}</span>
+                    <h2 id="officials-roster">{t('mgmtTeam')}</h2>
                     <p className="about-page-section-intro">
-                        Full-time directors and appointed officials overseeing technical engineering, fiscal stewardship, town planning, social services, and internal audits.
+                        {t('officialsIntro')}
                     </p>
 
                     {/* SEARCH & FILTERS */}
                     <div className="dept-search-filter-wrap">
-                        <div className="dept-filter-pills" role="tablist" aria-label="Filter officials">
+                        <div className="dept-filter-pills" role="tablist" aria-label={t('filterOfficials')}>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${filter === 'all' ? 'active' : ''}`}
                                 onClick={() => setFilter('all')}
                             >
-                                All Leadership ({officials.length})
+                                {t('allLeadership')} ({officials.length})
                             </button>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${filter === 'executive' ? 'active' : ''}`}
                                 onClick={() => setFilter('executive')}
                             >
-                                Executive Offices
+                                {t('execOffices')}
                             </button>
                             <button
                                 type="button"
                                 className={`dept-filter-btn ${filter === 'secretariat' ? 'active' : ''}`}
                                 onClick={() => setFilter('secretariat')}
                             >
-                                Directorate Heads &amp; Officers
+                                {t('directorateHeads')}
                             </button>
                         </div>
 
@@ -123,13 +124,13 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                 <circle cx="11" cy="11" r="8" />
                                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                             </svg>
-                            <label className="sr-only" htmlFor="official-search">Search officials by name or title</label>
+                            <label className="sr-only" htmlFor="official-search">{t('searchOfficialsLabel')}</label>
                             <input
                                 id="official-search"
                                 type="search"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search by name, engineer, finance..."
+                                placeholder={t('searchOfficialsPlaceholder')}
                                 className="dept-search-input"
                             />
                         </div>
@@ -139,7 +140,7 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                     {filteredOfficials.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
-                                No officials match your search &ldquo;{search}&rdquo;.
+                                {t('noOfficialsMatch')} &ldquo;{search}&rdquo;.
                             </p>
                             <button
                                 type="button"
@@ -147,7 +148,7 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                 style={{ marginTop: 12 }}
                                 onClick={() => { setSearch(''); setFilter('all'); }}
                             >
-                                Clear search filters
+                                {t('clearSearchFilters')}
                             </button>
                         </div>
                     ) : (
@@ -158,18 +159,18 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                         {official.photo_url ? (
                                             <img
                                                 src={official.photo_url}
-                                                alt={`Portrait of ${official.name}`}
+                                                alt={`${t('portraitOf')} ${official.name}`}
                                                 loading="lazy"
                                             />
                                         ) : (
                                             <img
                                                 src="/images/council-crest-light.webp"
-                                                alt="Mutoko Council Crest"
+                                                alt={t('crestFallbackAlt')}
                                                 className="official-crest-fallback"
                                             />
                                         )}
                                         <span className="official-badge-role">
-                                            {official.department ?? 'Executive Office'}
+                                            {official.department ?? t('execOfficeFallback')}
                                         </span>
                                     </div>
 
@@ -180,13 +181,13 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                             <div className="official-profile-dept">{official.department}</div>
                                         )}
                                         <p className="official-profile-bio">
-                                            {official.biography ?? 'Appointed public official serving Mutoko Rural District Council under the Local Government service.'}
+                                            {official.biography ?? t('officialBioFallback')}
                                         </p>
                                         <Link
                                             href={`/${locale}/officials/${official.slug}`}
                                             className="official-profile-action"
                                         >
-                                            <span>View official profile &amp; contacts</span>
+                                            <span>{t('viewOfficialProfile')}</span>
                                             <span aria-hidden="true">→</span>
                                         </Link>
                                     </div>
@@ -204,25 +205,25 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                             </svg>
-                            <span>Council Governance &amp; Ward Administration</span>
+                            <span>{t('govWardAdmin')}</span>
                         </div>
                         <div className="dept-portal-grid">
                             <Link href={`/${locale}/wards`} className="dept-portal-card">
-                                <h4>Find Your Ward &amp; Councillor</h4>
-                                <p>Explore all 29 electoral wards and their local development priorities.</p>
-                                <span>Browse wards directory →</span>
+                                <h4>{t('findWardCouncillor')}</h4>
+                                <p>{t('findWardCouncillorDesc')}</p>
+                                <span>{t('browseWardsDir')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/departments`} className="dept-portal-card">
-                                <h4>Council Directorates</h4>
-                                <p>Review department duties across Engineering, Planning, Social Services, and Finance.</p>
-                                <span>Explore departments →</span>
+                                <h4>{t('councilDirectorates')}</h4>
+                                <p>{t('councilDirectoratesDesc')}</p>
+                                <span>{t('exploreDepartments')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/meetings`} className="dept-portal-card">
-                                <h4>Council Meetings &amp; Agendas</h4>
-                                <p>Check dates for upcoming full council meetings, committees, and public hearings.</p>
-                                <span>View meeting schedule →</span>
+                                <h4>{t('meetingsAgendas')}</h4>
+                                <p>{t('meetingsAgendasDesc')}</p>
+                                <span>{t('viewMeetingSchedule')} →</span>
                             </Link>
                         </div>
                     </div>

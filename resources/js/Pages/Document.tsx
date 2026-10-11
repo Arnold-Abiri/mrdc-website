@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 import { PageHero } from '../Components/public/PageHeader';
-import { SourcedText } from '../Components/public/SourceButtons';
+import { SourcedText, extractSources } from '../Components/public/SourceButtons';
 
 type RelatedDoc = {
     slug: string;
@@ -59,7 +59,7 @@ export default function Document({
             <PageHero
                 eyebrow={`OFFICIAL DOCUMENT · ${formattedCategory}`}
                 title={document.title}
-                subtitle={document.description || `Official municipal document approved for public release by Mutoko Rural District Council.`}
+                subtitle={extractSources(document.description).body || `Official municipal document approved for public release by Mutoko Rural District Council.`}
                 crumb={[
                     { label: t('documents'), href: `/${locale}/documents` },
                     { label: document.title },
@@ -83,10 +83,10 @@ export default function Document({
                                         </div>
                                         <div>
                                             <h2 id="document-specs-heading" className="specs-heading">
-                                                Document Specifications &amp; Metadata
+                                                {t('docSpecsTitle')}
                                             </h2>
                                             <p className="specs-subheading">
-                                                Official release certified for public inspection under the Rural District Councils Act.
+                                                {t('docSpecsDesc')}
                                             </p>
                                         </div>
                                     </div>
@@ -102,11 +102,11 @@ export default function Document({
                                                 <polyline points="7 10 12 15 17 10" />
                                                 <line x1="12" y1="15" x2="12" y2="3" />
                                             </svg>
-                                            <span>Download PDF ({document.file_size || 'Official File'})</span>
+                                            <span>{t('docDownloadPdf')} ({document.file_size || t('docOfficialFile')})</span>
                                         </a>
                                     ) : (
                                         <div className="file-unavailable-badge">
-                                            <span>File Archive in Processing</span>
+                                            <span>{t('docArchiveProcessing')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -114,40 +114,40 @@ export default function Document({
                                 {/* Metadata Grid */}
                                 <div className="specs-metadata-grid">
                                     <div className="spec-meta-item">
-                                        <span className="spec-label">Document Category</span>
+                                        <span className="spec-label">{t('docMetaCategory')}</span>
                                         <strong className="spec-value">{formattedCategory}</strong>
                                     </div>
 
                                     <div className="spec-meta-item">
-                                        <span className="spec-label">File Size</span>
-                                        <strong className="spec-value">{document.file_size || 'PDF Document'}</strong>
+                                        <span className="spec-label">{t('docMetaSize')}</span>
+                                        <strong className="spec-value">{document.file_size || t('docPdfDocument')}</strong>
                                     </div>
 
                                     <div className="spec-meta-item">
-                                        <span className="spec-label">Reference Year</span>
+                                        <span className="spec-label">{t('docMetaYear')}</span>
                                         <strong className="spec-value">
-                                            {document.reference_year ? document.reference_year : (document.reference_date?.slice(0, 4) || 'Current')}
+                                            {document.reference_year ? document.reference_year : (document.reference_date?.slice(0, 4) || t('docCurrent'))}
                                         </strong>
                                     </div>
 
                                     <div className="spec-meta-item">
-                                        <span className="spec-label">Publication Date</span>
-                                        <strong className="spec-value">{formatDate(document.published_at)}</strong>
+                                        <span className="spec-label">{t('docMetaPublished')}</span>
+                                        <strong className="spec-value">{document.published_at ? formatDate(document.published_at) : t('docOfficialRelease')}</strong>
                                     </div>
 
                                     <div className="spec-meta-item">
-                                        <span className="spec-label">Document Version</span>
-                                        <strong className="spec-value">v{document.current_version}.0 (Official)</strong>
+                                        <span className="spec-label">{t('docMetaVersion')}</span>
+                                        <strong className="spec-value">v{document.current_version}.0 ({t('docVersionOfficial')})</strong>
                                     </div>
 
                                     <div className="spec-meta-item">
-                                        <span className="spec-label">Total Citizen Downloads</span>
-                                        <strong className="spec-value">{document.download_count} downloads</strong>
+                                        <span className="spec-label">{t('docMetaDownloads')}</span>
+                                        <strong className="spec-value">{document.download_count} {t('downloadCount')}</strong>
                                     </div>
 
                                     {document.department && (
                                         <div className="spec-meta-item full-width">
-                                            <span className="spec-label">Issuing Department</span>
+                                            <span className="spec-label">{t('docMetaDept')}</span>
                                             <strong className="spec-value">{document.department}</strong>
                                         </div>
                                     )}
@@ -155,7 +155,7 @@ export default function Document({
 
                                 {document.description && (
                                     <div className="specs-synopsis">
-                                        <h3 className="synopsis-title">Official Overview &amp; Synopsis</h3>
+                                        <h3 className="synopsis-title">{t('docOverviewTitle')}</h3>
                                         <div className="synopsis-text"><SourcedText text={document.description} /></div>
                                     </div>
                                 )}
@@ -165,7 +165,7 @@ export default function Document({
                             {related.length > 0 && (
                                 <div className="related-docs-card">
                                     <h3 className="related-docs-title">
-                                        More in {formattedCategory}
+                                        {t('docMoreIn')} {formattedCategory}
                                     </h3>
                                     <div className="related-docs-list">
                                         {related.map((rel) => (
@@ -199,17 +199,17 @@ export default function Document({
                                                 <polyline points="14 2 14 8 20 8" />
                                             </svg>
                                         </div>
-                                        <h4 className="sidebar-card-title">Document Repository</h4>
+                                        <h4 className="sidebar-card-title">{t('docSidebarTitle')}</h4>
                                     </div>
                                     <div className="sidebar-card-body">
                                         <p className="sidebar-card-text">
-                                            Need another council document, by-law, or financial report? Return to the main document portal.
+                                            {t('docSidebarDesc')}
                                         </p>
                                         <Link
                                             href={L('/documents')}
                                             className="btn-tourism-explore w-full text-center"
                                         >
-                                            &larr; Back to Document Portal
+                                            &larr; {t('docBackToPortal')}
                                         </Link>
                                     </div>
                                 </div>
@@ -223,14 +223,14 @@ export default function Document({
                                                 <line x1="12" y1="17" x2="12.01" y2="17" />
                                             </svg>
                                         </div>
-                                        <h4 className="sidebar-card-title">Enquiries &amp; Public Records</h4>
+                                        <h4 className="sidebar-card-title">{t('docEnquiriesTitle')}</h4>
                                     </div>
                                     <div className="sidebar-card-body sidebar-card-text">
                                         <p>
-                                            For gazetted inquiries, archived records, or certified copies of council by-laws, contact the Registry Office.
+                                            {t('docEnquiriesDesc')}
                                         </p>
                                         <div className="sidebar-registry-box">
-                                            <p className="sidebar-registry-title">Council Registry</p>
+                                            <p className="sidebar-registry-title">{t('docRegistry')}</p>
                                             <p>registry@mutokordc.gov.zw</p>
                                             <p>+263 77 240 5683</p>
                                         </div>

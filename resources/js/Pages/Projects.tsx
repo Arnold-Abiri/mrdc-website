@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 
 type Project = {
     slug: string;
@@ -12,12 +13,12 @@ type Project = {
     progress_percent: number | null;
 };
 
-const statusLabels: Record<string, { label: string; class: string }> = {
-    planned: { label: 'Planned / Tender Stage', class: 'project-status-planned' },
-    ongoing: { label: 'Active Implementation', class: 'project-status-ongoing' },
-    completed: { label: 'Commissioned & Completed', class: 'project-status-completed' },
-    on_hold: { label: 'On Hold / Reprioritised', class: 'project-status-on_hold' },
-    cancelled: { label: 'Cancelled', class: 'project-status-on_hold' },
+const statusLabels: Record<string, { labelKey: TranslationKey; class: string }> = {
+    planned: { labelKey: 'statusPlanned' as TranslationKey, class: 'project-status-planned' },
+    ongoing: { labelKey: 'statusOngoing' as TranslationKey, class: 'project-status-ongoing' },
+    completed: { labelKey: 'statusCompleted' as TranslationKey, class: 'project-status-completed' },
+    on_hold: { labelKey: 'statusOnHold' as TranslationKey, class: 'project-status-on_hold' },
+    cancelled: { labelKey: 'statusCancelled' as TranslationKey, class: 'project-status-on_hold' },
 };
 
 export default function Projects({
@@ -28,26 +29,27 @@ export default function Projects({
     filters: { status: string | null; type: string | null; department: string | null; ward: string | null };
 }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
 
     return (
         <PublicLayout>
-            <Head title="Council Capital Projects & Infrastructure Tracking" />
+            <Head title={t('projHeadTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/services`}>Services</Link>
+                        <Link href={`/${locale}/services`}>{t('services')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Projects</span>
+                        <span aria-current="page">{t('projects')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">CAPITAL CIVIL WORKS · DEVOLUTION &amp; PSIP FUNDING</span>
-                    <h1>District Capital Projects &amp; Infrastructure</h1>
+                    <span className="about-accent-eyebrow">{t('projEyebrow')}</span>
+                    <h1>{t('projTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        Tracking construction of clinics, road gravelling, piped water schemes, classroom blocks, and marketplace upgrades across Mutoko District.
+                        {t('projSubtitle')}
                     </p>
                 </div>
             </header>
@@ -58,26 +60,26 @@ export default function Projects({
                     <div className="about-stats-flex">
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Devolution</div>
-                                <div className="about-stat-label">Intergovernmental Grants</div>
+                                <div className="about-stat-num">{t('statDevolution')}</div>
+                                <div className="about-stat-label">{t('statIntergov')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">29 Wards</div>
-                                <div className="about-stat-label">Equitable Distribution</div>
+                                <div className="about-stat-num">{t('stat29Wards')}</div>
+                                <div className="about-stat-label">{t('statEquitable')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{projects.length}</div>
-                                <div className="about-stat-label">Active &amp; Tracked Projects</div>
+                                <div className="about-stat-label">{t('statTracked')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">WADCO</div>
-                                <div className="about-stat-label">Community Prioritised</div>
+                                <div className="about-stat-num">{t('statWadcoShort')}</div>
+                                <div className="about-stat-label">{t('statCommunityPrior')}</div>
                             </div>
                         </div>
                     </div>
@@ -87,17 +89,17 @@ export default function Projects({
             {/* MAIN PROJECTS LIST */}
             <section className="about-page-section" aria-labelledby="projects-heading">
                 <div className="container">
-                    <span className="about-accent-eyebrow">INFRASTRUCTURE REPOSITORY</span>
-                    <h2 id="projects-heading">Capital Development Tracker</h2>
+                    <span className="about-accent-eyebrow">{t('repoEyebrow')}</span>
+                    <h2 id="projects-heading">{t('repoTitle')}</h2>
                     <p className="about-page-section-intro">
-                        Council implements capital works through internally generated revenues, Zimbabwe National Water Authority (ZINWA), ERRP-II road rehabilitation, and devolution funding.
+                        {t('repoIntro')}
                     </p>
 
                     {/* FILTER TOOLBAR */}
                     <form method="get" action={`/${locale}/projects`} className="transparency-filter-bar">
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexGrow: 1, minWidth: 200 }}>
                             <label htmlFor="projects-status" style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-civic-navy)' }}>
-                                Project Status
+                                {t('filterStatus')}
                             </label>
                             <select
                                 id="projects-status"
@@ -105,17 +107,17 @@ export default function Projects({
                                 defaultValue={filters.status ?? ''}
                                 style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid var(--color-border)', fontSize: '0.88rem' }}
                             >
-                                <option value="">All Statuses</option>
-                                <option value="ongoing">Active Implementation</option>
-                                <option value="completed">Commissioned &amp; Completed</option>
-                                <option value="planned">Planned / Procurement Stage</option>
-                                <option value="on_hold">On Hold</option>
+                                <option value="">{t('filterAllStatuses')}</option>
+                                <option value="ongoing">{t('statusOngoing')}</option>
+                                <option value="completed">{t('filterCommissioned')}</option>
+                                <option value="planned">{t('filterPlanned')}</option>
+                                <option value="on_hold">{t('filterOnHold')}</option>
                             </select>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 180 }}>
                             <label htmlFor="projects-type" style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-civic-navy)' }}>
-                                Programme Scope
+                                {t('filterScope')}
                             </label>
                             <select
                                 id="projects-type"
@@ -123,9 +125,9 @@ export default function Projects({
                                 defaultValue={filters.type ?? ''}
                                 style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid var(--color-border)', fontSize: '0.88rem' }}
                             >
-                                <option value="">All Scopes</option>
-                                <option value="project">Capital Project</option>
-                                <option value="programme">District Programme</option>
+                                <option value="">{t('filterAllScopes')}</option>
+                                <option value="project">{t('filterCapital')}</option>
+                                <option value="programme">{t('filterProgramme')}</option>
                             </select>
                         </div>
 
@@ -135,7 +137,7 @@ export default function Projects({
                                 className="btn-mandate-action"
                                 style={{ padding: '9px 18px', fontSize: '0.86rem' }}
                             >
-                                Filter Projects
+                                {t('filterProjectsBtn')}
                             </button>
                             {(filters.status || filters.type) && (
                                 <Link
@@ -143,7 +145,7 @@ export default function Projects({
                                     className="dept-filter-btn"
                                     style={{ padding: '9px 14px', textDecoration: 'none' }}
                                 >
-                                    Reset
+                                    {t('resetLink')}
                                 </Link>
                             )}
                         </div>
@@ -153,7 +155,7 @@ export default function Projects({
                     {projects.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
-                                No capital projects match the selected criteria.
+                                {t('noProjectsMatch')}
                             </p>
                         </div>
                     ) : (
@@ -172,7 +174,7 @@ export default function Projects({
                                     >
                                         <div className="project-card-top">
                                             <span className={`project-status-pill ${statusConfig.class}`}>
-                                                {statusConfig.label}
+                                                {t(statusConfig.labelKey)}
                                             </span>
                                             {project.location && (
                                                 <span className="project-card-location">
@@ -188,13 +190,13 @@ export default function Projects({
                                         <h3 className="project-card-title">{project.title}</h3>
 
                                         <p className="project-card-summary">
-                                            {project.summary ?? 'Statutory public sector civil works project implemented under Council Engineering & Works.'}
+                                            {project.summary ?? t('projSummaryFallback')}
                                         </p>
 
                                         {project.progress_percent !== null && (
                                             <div className="project-progress-wrapper">
                                                 <div className="project-progress-labels">
-                                                    <span>Civil Progress</span>
+                                                    <span>{t('civilProgress')}</span>
                                                     <span>{progress}%</span>
                                                 </div>
                                                 <div className="project-progress-bar-bg">
@@ -207,7 +209,7 @@ export default function Projects({
                                         )}
 
                                         <div className="dept-card-footer">
-                                            <span>View Project Timeline &amp; Costing</span>
+                                            <span>{t('viewTimeline')}</span>
                                             <span aria-hidden="true">→</span>
                                         </div>
                                     </Link>
@@ -224,25 +226,25 @@ export default function Projects({
                                 <line x1="12" y1="16" x2="12" y2="12" />
                                 <line x1="12" y1="8" x2="12.01" y2="8" />
                             </svg>
-                            <span>Procurement &amp; Development Oversight</span>
+                            <span>{t('portalProcurement')}</span>
                         </div>
                         <div className="dept-portal-grid">
                             <Link href={`/${locale}/tenders`} className="dept-portal-card">
-                                <h4>Open Tenders &amp; Bidding</h4>
-                                <p>Apply for municipal civil construction and material supply contracts.</p>
-                                <span>View tender opportunities →</span>
+                                <h4>{t('portalTenders')}</h4>
+                                <p>{t('portalTendersDesc')}</p>
+                                <span>{t('portalTendersLink')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/transparency`} className="dept-portal-card">
-                                <h4>Devolution Fund Disclosures</h4>
-                                <p>Review financial grants received and audited expenditure accounts.</p>
-                                <span>Inspect financial reports →</span>
+                                <h4>{t('portalDevolution')}</h4>
+                                <p>{t('portalDevolutionDesc')}</p>
+                                <span>{t('portalDevolutionLink')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/feedback`} className="dept-portal-card">
-                                <h4>Project Feedback &amp; Suggestions</h4>
-                                <p>Report on project execution quality or submit ward development proposals.</p>
-                                <span>Submit project feedback →</span>
+                                <h4>{t('portalProjFeedback')}</h4>
+                                <p>{t('portalProjFeedbackDesc')}</p>
+                                <span>{t('portalProjFeedbackLink')} →</span>
                             </Link>
                         </div>
                     </div>

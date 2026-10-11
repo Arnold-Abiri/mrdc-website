@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 import { useSiteSettings } from '../useSiteSettings';
 import { EmptyState } from '../Components/public/PageHeader';
 import { formatDate } from '../formatDate';
@@ -19,12 +20,12 @@ type Vacancy = {
     department: string | null;
 };
 
-const employmentLabels: Record<string, string> = {
-    full_time: 'Full-time',
-    part_time: 'Part-time',
-    contract: 'Contract',
-    temporary: 'Temporary',
-    internship: 'Industrial Attachment',
+const employmentLabels: Record<string, TranslationKey> = {
+    full_time: 'empFullTime',
+    part_time: 'empPartTime',
+    contract: 'empContract',
+    temporary: 'empTemporary',
+    internship: 'empInternship',
 };
 
 export function daysRemaining(closesAt: string | null): number | null {
@@ -41,6 +42,7 @@ export function daysRemaining(closesAt: string | null): number | null {
 }
 
 function VacancyCardModern({ vacancy, locale }: { vacancy: Vacancy; locale: string }) {
+    const t = usePublicTranslation();
     const remaining = vacancy.is_open ? daysRemaining(vacancy.closes_at) : null;
     const isUrgent = remaining !== null && remaining <= 5 && remaining >= 0;
 
@@ -48,7 +50,7 @@ function VacancyCardModern({ vacancy, locale }: { vacancy: Vacancy; locale: stri
         <article className="vacancy-card-modern">
             <div className="vacancy-top-pills">
                 <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    {vacancy.grade && <span className="vacancy-pill-grade">Grade {vacancy.grade}</span>}
+                    {vacancy.grade && <span className="vacancy-pill-grade">{t('grade')} {vacancy.grade}</span>}
                     {vacancy.department && (
                         <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-deep-green)', background: 'rgba(11, 143, 98, 0.1)', padding: '3px 8px', borderRadius: '6px' }}>
                             {vacancy.department}
@@ -56,7 +58,7 @@ function VacancyCardModern({ vacancy, locale }: { vacancy: Vacancy; locale: stri
                     )}
                 </div>
                 <span className="vacancy-pill-type">
-                    {vacancy.employment_type && employmentLabels[vacancy.employment_type] ? employmentLabels[vacancy.employment_type] : 'Full-time'}
+                    {vacancy.employment_type && employmentLabels[vacancy.employment_type] ? t(employmentLabels[vacancy.employment_type]) : t('empFullTime')}
                 </span>
             </div>
 
@@ -97,13 +99,13 @@ function VacancyCardModern({ vacancy, locale }: { vacancy: Vacancy; locale: stri
                     </svg>
                     {vacancy.is_open
                         ? vacancy.closes_at
-                            ? `Closes ${formatDate(vacancy.closes_at, locale)}${remaining !== null ? ` (${remaining}d left)` : ''}`
-                            : 'Open for applications'
-                        : vacancy.closes_at ? `Closed ${formatDate(vacancy.closes_at, locale)}` : 'Applications closed'}
+                            ? `${t('closesOn')} ${formatDate(vacancy.closes_at, locale)}${remaining !== null ? ` (${remaining}${t('dayUnit')} ${t('daysLeft')})` : ''}`
+                            : t('openForApplications')
+                        : vacancy.closes_at ? `${t('closedOn')} ${formatDate(vacancy.closes_at, locale)}` : t('applicationsClosed')}
                 </span>
 
                 <Link href={`/${locale}/vacancies/${vacancy.slug}`} className="vacancy-view-cta">
-                    <span>View Opening</span>
+                    <span>{t('viewOpening')}</span>
                     <span aria-hidden="true">→</span>
                 </Link>
             </div>
@@ -154,14 +156,14 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                     <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
                         <Link href={`/${locale}`}>Home</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/investment`}>Opportunities</Link>
+                        <Link href={`/${locale}/investment`}>{t('opportunities')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Careers &amp; Vacancies</span>
+                        <span aria-current="page">{t('careersCrumb')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">PUBLIC SERVICE CAREERS · MUTOKO RDC</span>
-                    <h1>Join the Team Building Mutoko</h1>
+                    <span className="about-accent-eyebrow">{t('careersEyebrow')}</span>
+                    <h1>{t('careersTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        Explore active public service job openings, technical specifications, and professional opportunities across Mutoko Rural District Council departments.
+                        {t('careersSubtitle')}
                     </p>
                 </div>
             </header>
@@ -173,25 +175,25 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{openCount}</div>
-                                <div className="about-stat-label">Active Vacancies</div>
+                                <div className="about-stat-label">{t('statActiveVacancies')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{departments.length || '6'}</div>
-                                <div className="about-stat-label">Hiring Departments</div>
+                                <div className="about-stat-label">{t('statHiringDepts')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Stand 366</div>
-                                <div className="about-stat-label">Civic Headquarters</div>
+                                <div className="about-stat-num">{t('statStand366')}</div>
+                                <div className="about-stat-label">{t('statCivicHq')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Open</div>
-                                <div className="about-stat-label">Student Attachments</div>
+                                <div className="about-stat-num">{t('statOpen')}</div>
+                                <div className="about-stat-label">{t('statStudentAttach')}</div>
                             </div>
                         </div>
                     </div>
@@ -212,9 +214,9 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                                 </svg>
                             </div>
                             <div>
-                                <h3 className="attachment-banner-title">Student &amp; Graduate Industrial Attachment</h3>
+                                <h3 className="attachment-banner-title">{t('attachTitle')}</h3>
                                 <p className="attachment-banner-desc">
-                                    Are you a student from a polytechnic, vocational training centre (such as Tabudirira VTC), or university seeking industrial attachment or work-study placement? Submit your institutional attachment letter directly to council human resources.
+                                    {t('attachDesc')}
                                 </p>
                             </div>
                         </div>
@@ -222,7 +224,7 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                             href={`mailto:${recruitmentEmail}?subject=Application%20for%20Industrial%20Attachment%20Placement`}
                             className="attachment-banner-btn"
                         >
-                            <span>Apply for Attachment</span>
+                            <span>{t('attachApply')}</span>
                             <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -230,9 +232,9 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                     {/* HEADER CONTROL BAR WITH CONFIGURABLE APPLICATION EMAIL */}
                     <div className="vacancies-header-card">
                         <div>
-                            <span className="about-accent-eyebrow">JOB VACANCIES</span>
+                            <span className="about-accent-eyebrow">{t('jobVacanciesEyebrow')}</span>
                             <h2 id="vacancies-list" style={{ margin: 0, fontSize: '1.5rem', color: 'var(--color-civic-navy)', fontWeight: 800 }}>
-                                Active Job Postings ({openCount})
+                                {t('activePostings')} ({openCount})
                             </h2>
                         </div>
                         <div className="vacancies-contact-badge">
@@ -240,29 +242,29 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                                 <rect width="20" height="16" x="2" y="4" rx="2" />
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                             </svg>
-                            <span>Applications: <strong><a href={`mailto:${recruitmentEmail}`} style={{ color: 'inherit', textDecoration: 'none' }}>{recruitmentEmail}</a></strong></span>
+                            <span>{t('applicationsLabel')}: <strong><a href={`mailto:${recruitmentEmail}`} style={{ color: 'inherit', textDecoration: 'none' }}>{recruitmentEmail}</a></strong></span>
                         </div>
                     </div>
 
                     {vacancies.length === 0 ? (
-                        <EmptyState title="No vacancies published" text="No vacancies are published at this time. Please check back later or send an inquiry." />
+                        <EmptyState title={t('noVacanciesTitle')} text={t('noVacanciesDesc')} />
                     ) : (
                         <>
                             {/* SEARCH & FILTER BAR */}
-                            <form className="about-filter-bar" onSubmit={(event) => event.preventDefault()} aria-label="Filter vacancies">
+                            <form className="about-filter-bar" onSubmit={(event) => event.preventDefault()} aria-label={t('filterVacancies')}>
                                 <label>
-                                    Search
+                                    {t('searchLabel')}
                                     <input
                                         type="search"
                                         value={query}
                                         onChange={(event) => setQuery(event.target.value)}
-                                        placeholder="Search by title, grade, or reference..."
+                                        placeholder={t('searchVacancyPlaceholder')}
                                     />
                                 </label>
                                 <label>
-                                    Department
+                                    {t('department')}
                                     <select value={department} onChange={(event) => setDepartment(event.target.value)}>
-                                        <option value="all">All departments</option>
+                                        <option value="all">{t('allDepartments')}</option>
                                         {departments.map((name) => (
                                             <option key={name} value={name}>{name}</option>
                                         ))}
@@ -274,18 +276,18 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                                         checked={showClosed}
                                         onChange={(event) => setShowClosed(event.target.checked)}
                                     />
-                                    Show closed adverts
+                                    {t('showClosed')}
                                 </label>
                             </form>
 
                             {filtered.length === 0 ? (
-                                <EmptyState title="No matching vacancies" text="Try clearing your search terms or choosing a different department." />
+                                <EmptyState title={t('noMatchVacanciesTitle')} text={t('noMatchVacanciesDesc')} />
                             ) : (
                                 <>
                                     {openVacancies.length > 0 && (
                                         <div style={{ marginBottom: '36px' }}>
                                             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-civic-navy)', margin: '0 0 16px' }}>
-                                                Now Hiring ({openVacancies.length})
+                                                {t('nowHiring')} ({openVacancies.length})
                                             </h3>
                                             <div className="vacancies-modern-grid">
                                                 {openVacancies.map((vacancy) => (
@@ -298,7 +300,7 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
                                     {closedVacancies.length > 0 && (
                                         <div style={{ marginBottom: '36px' }}>
                                             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#64748B', margin: '0 0 16px' }}>
-                                                Archived / Closed Openings ({closedVacancies.length})
+                                                {t('archivedClosed')} ({closedVacancies.length})
                                             </h3>
                                             <div className="vacancies-modern-grid">
                                                 {closedVacancies.map((vacancy) => (
@@ -312,15 +314,15 @@ export default function Vacancies({ vacancies }: { vacancies: Vacancy[] }) {
 
                             {/* APPLICATION GUIDELINES */}
                             <div className="rates-guidance-card" style={{ marginTop: '24px' }}>
-                                <h3>Application Guidelines &amp; Equal Opportunity Notice</h3>
+                                <h3>{t('guidelinesTitle')}</h3>
                                 <p>
-                                    Interested candidates must submit a typed application letter, detailed curriculum vitae (CV) with at least three (3) contactable professional referees, and certified copies of academic and professional qualifications.
+                                    {t('guidelinesP1')}
                                 </p>
                                 <p>
-                                    Applications can be hand-delivered in a sealed envelope marked with the post title to the <strong>Chief Executive Officer, Mutoko Rural District Council, Stand 366 Mutoko Centre</strong>, or emailed to <strong><a href={`mailto:${recruitmentEmail}`} style={{ color: 'var(--color-deep-green)' }}>{recruitmentEmail}</a></strong>.
+                                    {t('guidelinesP2a')} <strong>Chief Executive Officer, Mutoko Rural District Council, Stand 366 Mutoko Centre</strong>, {t('guidelinesP2b')} <strong><a href={`mailto:${recruitmentEmail}`} style={{ color: 'var(--color-deep-green)' }}>{recruitmentEmail}</a></strong>.
                                 </p>
                                 <p style={{ margin: 0, fontWeight: 700, color: 'var(--color-civic-navy)' }}>
-                                    Mutoko Rural District Council is an Equal Opportunity Employer. Qualified female candidates and persons with disabilities are strongly encouraged to apply.
+                                    {t('guidelinesP3')}
                                 </p>
                             </div>
                         </>

@@ -1,3 +1,5 @@
+import { usePublicTranslation } from '../../usePublicTranslation';
+
 const SOURCE_PATTERNS = [
     // `Source: <url>` — direct form.
     /Source:\s*(https?:\/\/[^\s)]+)/gi,
@@ -56,6 +58,7 @@ function hostname(url: string): string {
 }
 
 export function SourceButtons({ sources }: { sources: string[] }) {
+    const t = usePublicTranslation();
     const unique = [...new Set(sources)];
 
     if (unique.length === 0) {
@@ -84,7 +87,7 @@ export function SourceButtons({ sources }: { sources: string[] }) {
                         textDecoration: 'none',
                     }}
                 >
-                    <span>View Source: {hostname(url)}</span>
+                    <span>{t('viewSource')}: {hostname(url)}</span>
                     <span aria-hidden="true">↗</span>
                 </a>
             ))}

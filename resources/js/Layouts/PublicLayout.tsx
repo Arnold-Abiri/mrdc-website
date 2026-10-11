@@ -237,12 +237,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <TopbarTicker notices={topbarNotices} />
 
                     <div className="utility-actions">
-                        <a href={L('/contact')} className="utility-location" title="Council Headquarters location and directions">
+                        <a href={L('/contact')} className="utility-location" title={t('locationTitle')}>
                             <svg className="utility-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
                                 <circle cx="12" cy="9" r="2.5" />
                             </svg>
-                            <span>Mutoko, Mashonaland East, Zimbabwe</span>
+                            <span>{t('locationShort')}</span>
                         </a>
 
                         <AccessibilitySettings />
@@ -422,7 +422,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
                 <div className="search-overlay-box">
                     <div className="search-overlay-label">
-                        Search Mutoko Rural District Council
+                        {t('searchOverlayTitle')}
                     </div>
 
                     <form className="search-overlay-form" action={`/${locale}/search`} method="get" role="search">
@@ -437,7 +437,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             id="search-overlay-input"
                             type="search"
                             name="q"
-                            placeholder="Search services, notices, tenders, wards, documents..."
+                            placeholder={t('searchOverlayPlaceholder')}
                             autoComplete="off"
                             aria-label={t('searchCouncilPages')}
                         />
@@ -450,7 +450,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         </button>
                     </form>
 
-                    <div className="search-overlay-hints" aria-label="Search suggestions">
+                    <div className="search-overlay-hints" aria-label={t('searchSuggestions')}>
                         <span className="search-hints-title">{t('popularSearches')}</span>
                         <a className="search-hint" href={L('/rates')}>{t('ratesPayments')}</a>
                         <a className="search-hint" href={L('/services')}>{t('councilServices')}</a>
@@ -558,9 +558,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                         footerAddress.split('\n').filter(line => line.trim() && line.trim().toLowerCase() !== 'mutoko rural district council').map((line, index) => <p key={index} className="footer-contact-subline">{line}</p>)
                                     ) : (
                                         <>
-                                            <p className="footer-contact-subline">Council Headquarters, Stand 114</p>
-                                            <p className="footer-contact-subline">Mutoko Growth Point, Mashonaland East</p>
-                                            <p className="footer-contact-subline">Zimbabwe</p>
+                                            <p className="footer-contact-subline">{t('hqAddress')}</p>
+                                            <p className="footer-contact-subline">{t('addressRegion')}</p>
+                                            <p className="footer-contact-subline">{t('addressCountry')}</p>
                                         </>
                                     )}
                                 </div>

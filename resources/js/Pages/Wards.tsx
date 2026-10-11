@@ -1,12 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 
 type WardSummary = { slug: string; name: string; description: string | null };
 
 export default function Wards({ wards }: { wards: WardSummary[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const [search, setSearch] = useState('');
 
     const filteredWards = useMemo(() => {
@@ -17,23 +18,23 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
 
     return (
         <PublicLayout>
-            <Head title="Council Wards (1–29) & Electoral Boundaries" />
+            <Head title={t('wardsTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/departments`}>Council</Link>
+                        <Link href={`/${locale}/departments`}>{t('wardsCrumbCouncil')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Wards</span>
+                        <span aria-current="page">{t('wards')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">ELECTORAL &amp; ADMINISTRATIVE BOUNDARIES · MUTOKO DISTRICT</span>
-                    <h1>Council Wards Directory</h1>
+                    <span className="about-accent-eyebrow">{t('wardsEyebrow')}</span>
+                    <h1>{t('wardsTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        29 administrative wards representing rural communal lands, resettlement schemes, and the Mutoko Centre commercial growth point under local democratic governance.
+                        {t('wardsSubtitle')}
                     </p>
                 </div>
             </header>
@@ -45,25 +46,25 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">29</div>
-                                <div className="about-stat-label">Electoral Wards</div>
+                                <div className="about-stat-label">{t('statElectoralWards')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">100%</div>
-                                <div className="about-stat-label">WADCO Representation</div>
+                                <div className="about-stat-label">{t('statWadco')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Devolution</div>
-                                <div className="about-stat-label">Decentralised Budgeting</div>
+                                <div className="about-stat-num">{t('statDevolution')}</div>
+                                <div className="about-stat-label">{t('statDecentralised')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Stand 366</div>
-                                <div className="about-stat-label">Central Coordination Office</div>
+                                <div className="about-stat-num">{t('statStand366')}</div>
+                                <div className="about-stat-label">{t('statCentralOffice')}</div>
                             </div>
                         </div>
                     </div>
@@ -73,20 +74,20 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
             {/* MAIN WARDS SECTION */}
             <section className="about-page-section" aria-labelledby="wards-heading">
                 <div className="container">
-                    <span className="about-accent-eyebrow">COMMUNITY DIRECTORY</span>
-                    <h2 id="wards-heading">Find Your Local Ward</h2>
+                    <span className="about-accent-eyebrow">{t('dirCommunity')}</span>
+                    <h2 id="wards-heading">{t('findYourWard')}</h2>
                     <p className="about-page-section-intro">
-                        Select your ward to see its elected councillor, public clinics, primary and secondary schools, community boreholes, and developmental priorities submitted through Ward Development Committees (WADCOs).
+                        {t('wardsIntro')}
                     </p>
 
                     {/* SEARCH HEADER */}
                     <div className="wards-lookup-header">
                         <div>
                             <h3 style={{ margin: '0 0 4px', fontSize: '1.05rem', fontWeight: 800, color: 'var(--color-civic-navy)' }}>
-                                Ward Filter &amp; Search
+                                {t('wardFilterSearch')}
                             </h3>
                             <p style={{ margin: 0, fontSize: '0.86rem', color: '#64748B' }}>
-                                Search by ward number or community keyword (e.g. &ldquo;Ward 5&rdquo;, &ldquo;Ward 12&rdquo;)
+                                {t('wardSearchHint')}
                             </p>
                         </div>
 
@@ -95,13 +96,13 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                                 <circle cx="11" cy="11" r="8" />
                                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                             </svg>
-                            <label className="sr-only" htmlFor="ward-search">Search wards</label>
+                            <label className="sr-only" htmlFor="ward-search">{t('wardSearchLabel')}</label>
                             <input
                                 id="ward-search"
                                 type="search"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search wards (e.g. Ward 1)..."
+                                placeholder={t('wardSearchPlaceholder')}
                                 className="dept-search-input"
                             />
                         </div>
@@ -111,7 +112,7 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                     {filteredWards.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
-                                No wards match your search &ldquo;{search}&rdquo;.
+                                {t('wardNoMatch')} &ldquo;{search}&rdquo;.
                             </p>
                             <button
                                 type="button"
@@ -119,7 +120,7 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                                 style={{ marginTop: 12 }}
                                 onClick={() => setSearch('')}
                             >
-                                Clear search
+                                {t('wardClearSearch')}
                             </button>
                         </div>
                     ) : (
@@ -136,17 +137,17 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                                             <line x1="8" y1="2" x2="8" y2="18" />
                                             <line x1="16" y1="6" x2="16" y2="22" />
                                         </svg>
-                                        <span>Mutoko District</span>
+                                        <span>{t('wardDistrictBadge')}</span>
                                     </div>
 
                                     <h3 className="ward-card-title">{ward.name}</h3>
 
                                     <p className="ward-card-desc">
-                                        {ward.description ?? 'Local developmental priorities, ward councillor representation, and community infrastructure.'}
+                                        {ward.description ?? t('wardCardFallback')}
                                     </p>
 
                                     <div className="ward-card-link">
-                                        <span>Explore Ward Profile</span>
+                                        <span>{t('wardExploreProfile')}</span>
                                         <span aria-hidden="true">→</span>
                                     </div>
                                 </Link>
@@ -162,25 +163,25 @@ export default function Wards({ wards }: { wards: WardSummary[] }) {
                                 <line x1="12" y1="16" x2="12" y2="12" />
                                 <line x1="12" y1="8" x2="12.01" y2="8" />
                             </svg>
-                            <span>Ward Participation &amp; Council Interaction</span>
+                            <span>{t('wardPortalTitle')}</span>
                         </div>
                         <div className="dept-portal-grid">
                             <Link href={`/${locale}/officials`} className="dept-portal-card">
-                                <h4>Elected Ward Councillors</h4>
-                                <p>Meet the political leaders representing your ward in full council sessions.</p>
-                                <span>View councillor directory →</span>
+                                <h4>{t('portalCouncillors')}</h4>
+                                <p>{t('portalCouncillorsDesc')}</p>
+                                <span>{t('portalCouncillorsLink')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/meetings`} className="dept-portal-card">
-                                <h4>Full Council &amp; Ward Hearings</h4>
-                                <p>Review statutory meeting dates, public budget consultations, and minutes.</p>
-                                <span>Check meeting dates →</span>
+                                <h4>{t('portalHearings')}</h4>
+                                <p>{t('portalHearingsDesc')}</p>
+                                <span>{t('portalHearingsLink')} →</span>
                             </Link>
 
                             <Link href={`/${locale}/contact`} className="dept-portal-card">
-                                <h4>Report a Local Community Issue</h4>
-                                <p>Submit road repairs, borehole faults, or local clinic enquiries directly to council.</p>
-                                <span>Contact council helpdesk →</span>
+                                <h4>{t('portalIssue')}</h4>
+                                <p>{t('portalIssueDesc')}</p>
+                                <span>{t('portalIssueLink')} →</span>
                             </Link>
                         </div>
                     </div>

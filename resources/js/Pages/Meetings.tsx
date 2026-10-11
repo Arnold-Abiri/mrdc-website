@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { formatDate } from '../formatDate';
 
 type Meeting = {
@@ -42,6 +42,7 @@ function parseDateParts(dateStr: string | null): { month: string; day: string; y
 
 export default function Meetings({ meetings }: { meetings: Meeting[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const [tab, setTab] = useState<'all' | 'full' | 'committee'>('all');
 
     const filteredMeetings = useMemo(() => {
@@ -60,17 +61,17 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
             <header className="about-page-hero">
                 <div className="about-page-hero-overlay" aria-hidden="true" />
                 <div className="container">
-                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
-                        <Link href={`/${locale}`}>Home</Link>
+                    <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
+                        <Link href={`/${locale}`}>{t('home')}</Link>
                         <span aria-hidden="true">/</span>
-                        <Link href={`/${locale}/departments`}>Council</Link>
+                        <Link href={`/${locale}/departments`}>{t('wardsCrumbCouncil')}</Link>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page">Meetings</span>
+                        <span aria-current="page">{t('meetings')}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">STATUTORY GOVERNANCE · RDC ACT [CAP 29:13]</span>
-                    <h1>Council Meetings &amp; Public Hearings</h1>
+                    <span className="about-accent-eyebrow">{t('meetingsEyebrow')}</span>
+                    <h1>{t('meetingsTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        Official schedules, agendas, and adopted minutes for Full Council sessions, Standing Committees, and Ward Budget consultations at Stand 366 Mutoko Centre.
+                        {t('meetingsSubtitle')}
                     </p>
                 </div>
             </header>
@@ -81,26 +82,26 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                     <div className="about-stats-flex">
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Ordinary</div>
-                                <div className="about-stat-label">Monthly Sessions</div>
+                                <div className="about-stat-num">{t('statOrdinary')}</div>
+                                <div className="about-stat-label">{t('statMonthly')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Open</div>
-                                <div className="about-stat-label">To Accredited Public</div>
+                                <div className="about-stat-num">{t('statOpen')}</div>
+                                <div className="about-stat-label">{t('statAccredited')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">{meetings.length}</div>
-                                <div className="about-stat-label">Scheduled / Recorded</div>
+                                <div className="about-stat-label">{t('statScheduledRecorded')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
-                                <div className="about-stat-num">Chambers</div>
-                                <div className="about-stat-label">Mutoko Centre Venue</div>
+                                <div className="about-stat-num">{t('statChambers')}</div>
+                                <div className="about-stat-label">{t('statVenue')}</div>
                             </div>
                         </div>
                     </div>
@@ -110,10 +111,10 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
             {/* MAIN SESSIONS */}
             <section className="about-page-section" aria-labelledby="meetings-heading">
                 <div className="container">
-                    <span className="about-accent-eyebrow">CALENDAR &amp; RESOLUTIONS</span>
-                    <h2 id="meetings-heading">Council Deliberation Schedule</h2>
+                    <span className="about-accent-eyebrow">{t('meetingsCalendarEyebrow')}</span>
+                    <h2 id="meetings-heading">{t('meetingsCalendarTitle')}</h2>
                     <p className="about-page-section-intro">
-                        Full Council meetings are statutory sessions held in the Council Chambers where elected Ward Councillors debate resolutions, approve committee reports, and enact local bylaws.
+                        {t('meetingsCalendarDesc')}
                     </p>
 
                     {/* TABS */}
@@ -123,21 +124,21 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                             className={`meetings-tab-btn ${tab === 'all' ? 'active' : ''}`}
                             onClick={() => setTab('all')}
                         >
-                            All Sessions ({meetings.length})
+                            {t('allSessions')} ({meetings.length})
                         </button>
                         <button
                             type="button"
                             className={`meetings-tab-btn ${tab === 'full' ? 'active' : ''}`}
                             onClick={() => setTab('full')}
                         >
-                            Full Council Sessions
+                            {t('fullCouncilSessions')}
                         </button>
                         <button
                             type="button"
                             className={`meetings-tab-btn ${tab === 'committee' ? 'active' : ''}`}
                             onClick={() => setTab('committee')}
                         >
-                            Committees &amp; Hearings
+                            {t('committeesHearings')}
                         </button>
                     </div>
 
@@ -145,7 +146,7 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                     {filteredMeetings.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
-                                No council meetings are currently listed under this category.
+                                {t('noMeetingsCat')}
                             </p>
                         </div>
                     ) : (
@@ -159,7 +160,7 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                                 return (
                                     <article key={meeting.id} className="meeting-event-card">
                                         <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexGrow: 1 }}>
-                                            <div className="meeting-date-badge" aria-label={`Scheduled for ${formatDate(meeting.scheduled_date, locale)}`}>
+                                            <div className="meeting-date-badge" aria-label={`${t('scheduledFor')} ${formatDate(meeting.scheduled_date, locale)}`}>
                                                 <span className="meeting-date-month">{dateParts.month}</span>
                                                 <span className="meeting-date-day">{dateParts.day}</span>
                                                 <span className="meeting-date-year">{dateParts.year}</span>
@@ -167,7 +168,7 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
 
                                             <div className="meeting-info-col">
                                                 <span className="meeting-type-tag">
-                                                    {meetingTypeLabels[meeting.meeting_type] ?? 'Council Session'}
+                                                    {meetingTypeLabels[meeting.meeting_type] ?? t('councilSessionFallback')}
                                                 </span>
                                                 <h3 className="meeting-event-title">
                                                     <Link href={`/${locale}/meetings/${meeting.id}`}>{meeting.title}</Link>

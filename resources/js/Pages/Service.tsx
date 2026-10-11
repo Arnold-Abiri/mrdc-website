@@ -14,7 +14,7 @@ export default function Service({ service, department, documents = [] }: { servi
             <Head title={service.seo_title || service.name}>
                 {service.meta_description && <meta name="description" content={service.meta_description} />}
             </Head>
-            <PageHero eyebrow="SERVICE GUIDE" title={service.name} subtitle={service.summary || service.description || `Find information about ${service.name} and how to access this council service.`} crumb={[{ label: t('services'), href: `/${locale}/services` }, { label: service.name }]} />
+            <PageHero eyebrow={t('serviceGuideEyebrow')} title={service.name} subtitle={service.summary || service.description || `${t('serviceFindInfo')} ${service.name} ${t('serviceFindInfoTail')}`} crumb={[{ label: t('services'), href: `/${locale}/services` }, { label: service.name }]} />
             <section className="about-page-section" aria-label={service.name}>
                 <div className="container">
                     {service.description && <p className="about-page-lead">{service.description}</p>}

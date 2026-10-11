@@ -12,6 +12,7 @@ import {
 } from '../../fixtures/home';
 import { useEffect, useState } from 'react';
 import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
+import type { TranslationKey } from '../../localization';
 import { useSiteSettings, whatsappLinkFor } from '../../useSiteSettings';
 import { EmergencyAlertCard } from './EmergencyAlertCard';
 
@@ -169,7 +170,7 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                 width="1983"
                 height="793"
                 eager
-                alt="Scenic Mutoko landscape showing rocky kopje mountains, green valley and Mutoko town center"
+                alt={t('scenicHeroAlt')}
             />
             <div className="hero-shade" />
 
@@ -189,7 +190,7 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                         <p className="hero-statement">{t('peopleDevelopment')}</p>
 
                         <p className="hero-description">
-                            Working with our communities to deliver quality services, promote local development and build a better Mutoko.
+                            {t('heroFallbackDesc')}
                         </p>
 
                         <form action={`/${locale}/search`} method="get" role="search" className="hero-search-form">
@@ -425,6 +426,13 @@ function AboutIcon({ name }: { name: AboutPillar['icon'] }) {
     }
 }
 
+const pillarCopy: Record<AboutPillar['icon'], { title: TranslationKey; description: TranslationKey }> = {
+    gear: { title: 'pillarLocationTitle', description: 'pillarLocationDesc' },
+    users: { title: 'pillarCommunitiesTitle', description: 'pillarCommunitiesDesc' },
+    shield: { title: 'pillarMissionTitle', description: 'pillarMissionDesc' },
+    leaf: { title: 'pillarVisionTitle', description: 'pillarVisionDesc' },
+};
+
 export function AboutSection({ aboutHref }: { aboutHref?: string }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -435,16 +443,16 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                 <div className="about-intro">
                     <div className="section-eyebrow-pill">
                         <span className="eyebrow-bar" aria-hidden="true" />
-                        <span className="eyebrow-text">ABOUT US</span>
+                        <span className="eyebrow-text">{t('aboutEyebrow')}</span>
                     </div>
                     <h2 id="about-heading" className="about-heading">
-                        A Vibrant and Prosperous Mutoko
+                        {t('aboutHeading')}
                     </h2>
                     <p className="about-description">
-                        Mutoko Rural District Council covers 428,916 hectares, 143km north-east of Harare on the Harare–Nyamapanda highway and 90km from the Mozambique border. We serve 29 wards plus a women's quota and the Mutoko Town Board.
+                        {t('aboutDesc1')}
                     </p>
                     <p className="about-description">
-                        Our mission is to provide quality, sustainable services with our communities. Our vision is a prosperous Mutoko by 2030.
+                        {t('aboutDesc2')}
                     </p>
                     <div>
                         <a href={aboutHref ?? L("/about")} className="btn-section-primary">
@@ -456,13 +464,13 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
 
                 <div className="about-features-grid">
                     {aboutPillars.map(pillar => (
-                        <div key={pillar.title} className="about-feature-card">
+                        <div key={pillar.icon} className="about-feature-card">
                             <span className={`about-icon-badge badge-${pillar.icon}`}>
                                 <AboutIcon name={pillar.icon} />
                             </span>
                             <div className="about-feature-text">
-                                <h3 className="about-feature-title">{pillar.title}</h3>
-                                <p className="about-feature-desc">{pillar.description}</p>
+                                <h3 className="about-feature-title">{t(pillarCopy[pillar.icon].title)}</h3>
+                                <p className="about-feature-desc">{t(pillarCopy[pillar.icon].description)}</p>
                             </div>
                         </div>
                     ))}
@@ -471,7 +479,7 @@ export function AboutSection({ aboutHref }: { aboutHref?: string }) {
                 <div className="about-image-wrapper">
                     <SafeImage
                         src="/images/home/welcome-sign.webp"
-                        alt="Welcome to Mutoko road entrance"
+                        alt={t('aboutImageAlt')}
                         className="about-image"
                         width="1313"
                         height="1198"
@@ -507,17 +515,19 @@ function EmptyPreview({ type, title, description }: { type: 'news' | 'events'; t
     );
 }
 
-function SafeImage({ src, alt, className, width, height, eager = false, fallbackLabel = 'Image currently unavailable' }: { src: string; alt: string; className?: string; width?: number | string; height?: number | string; eager?: boolean; fallbackLabel?: string }) {
+function SafeImage({ src, alt, className, width, height, eager = false, fallbackLabel }: { src: string; alt: string; className?: string; width?: number | string; height?: number | string; eager?: boolean; fallbackLabel?: string }) {
+    const t = usePublicTranslation();
+    const label = fallbackLabel ?? t('imageUnavailable');
     const [broken, setBroken] = useState(false);
     if (broken || !src) {
         return (
-            <span className={`img-fallback${className ? ` ${className}-fallback` : ''}`} role="img" aria-label={`${fallbackLabel}: ${alt}`}>
+            <span className={`img-fallback${className ? ` ${className}-fallback` : ''}`} role="img" aria-label={`${label}: ${alt}`}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <circle cx="9" cy="9" r="2" />
                     <path d="m21 15-3.5-3.5a1.5 1.5 0 0 0-2 0L6 21" />
                 </svg>
-                <span>{fallbackLabel}</span>
+                <span>{label}</span>
             </span>
         );
     }
@@ -530,8 +540,8 @@ function NewsCard({ item }: { item: NewsPreview }) {
         <article className="news-card">
             <div className="news-image">
                 {item.image && <SafeImage src={item.image} alt={item.imageAlt ?? item.title} width="480" height="270" />}
-                {item.imageCaption === 'Editorial illustration.' && <span className="news-image-label">Editorial illustration</span>}
-                {!item.image && <span className="img-fallback img-fallback-icon" role="img" aria-label={`No image available for ${item.title}`}>
+                {item.imageCaption === 'Editorial illustration.' && <span className="news-image-label">{t('editorialIllustration')}</span>}
+                {!item.image && <span className="img-fallback img-fallback-icon" role="img" aria-label={`${t('noImageFor')} ${item.title}`}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <rect x="3" y="3" width="18" height="18" rx="2" />
                         <circle cx="9" cy="9" r="2" />
@@ -596,7 +606,7 @@ function EventItem({ item }: { item: EventPreview }) {
                 )}
                 {item.href && (
                     <a href={item.href} className="event-link">
-                        Event details
+                        {t('eventDetailsLink')}
                     </a>
                 )}
             </div>
@@ -609,7 +619,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
     const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
-        <section className="updates-section" aria-label="News and events">
+        <section className="updates-section" aria-label={t('newsEvents')}>
             <div className="container updates-grid">
                 <div className="news-panel">
                     <div className="section-header-row">
@@ -621,11 +631,11 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             <h2 className="section-title">{t('newsUpdates')}</h2>
                         </div>
                         <a href={L("/news")} className="header-viewall-link">
-                            View All News <span aria-hidden="true">→</span>
+                            {t('viewAllNews')} <span aria-hidden="true">→</span>
                         </a>
                     </div>
                     <p className="section-subtext">
-                        Stay informed about the latest developments, announcements and initiatives from Mutoko Rural District Council.
+                        {t('newsSectionDesc')}
                     </p>
                     {news.length ? (
                         <div className="news-grid">
@@ -634,7 +644,7 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             ))}
                         </div>
                     ) : (
-                        <EmptyPreview type="news" title="No news published yet" description="Approved council news will appear here when available." />
+                        <EmptyPreview type="news" title={t('noNewsYet')} description={t('noNewsYetDesc')} />
                     )}
                 </div>
 
@@ -648,14 +658,14 @@ export function NewsAndEvents({ news = newsPreviews, events = eventPreviews }: {
                             <h2 className="section-title">{t('eventsCalendar')}</h2>
                         </div>
                         <a href={L("/meetings")} className="header-viewall-link">
-                            View council meetings <span aria-hidden="true">→</span>
+                            {t('viewMeetingsLink')} <span aria-hidden="true">→</span>
                         </a>
                     </div>
                     <div className="events-list">
                         {events.length ? (
                             events.map(item => <EventItem item={item} key={`${item.day}-${item.title}`} />)
                         ) : (
-                            <EmptyPreview type="events" title="No upcoming meetings scheduled" description="Meeting dates, agendas and minutes are published here once confirmed." />
+                            <EmptyPreview type="events" title={t('noMeetingsYet')} description={t('noMeetingsYetDesc')} />
                         )}
                     </div>
                 </div>
@@ -693,6 +703,17 @@ function ServiceIcon({ name }: { name: ServicePreview['icon'] }) {
     }
 }
 
+const keyServiceCopy: Record<string, { title: TranslationKey; description: TranslationKey }> = {
+    education: { title: 'svcEducationTitle', description: 'svcEducationDesc' },
+    environment: { title: 'svcEnvironmentTitle', description: 'svcEnvironmentDesc' },
+    roads: { title: 'svcRoadsTitle', description: 'svcRoadsDesc' },
+    health: { title: 'svcHealthTitle', description: 'svcHealthDesc' },
+    water: { title: 'svcWaterTitle', description: 'svcWaterDesc' },
+    business: { title: 'svcBusinessTitle', description: 'svcBusinessDesc' },
+    property: { title: 'svcPropertyTitle', description: 'svcPropertyDesc' },
+    recreation: { title: 'svcRecreationTitle', description: 'svcRecreationDesc' },
+};
+
 export function KeyServicesSection({ services = keyServices }: { services?: ServicePreview[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -709,11 +730,11 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                         <h2 id="services-heading" className="section-title">{t('keyServices')}</h2>
                     </div>
                     <a href={L("/coming-soon?topic=services")} className="header-viewall-link">
-                        View All Services <span aria-hidden="true">→</span>
+                        {t('viewAllServicesLink')} <span aria-hidden="true">→</span>
                     </a>
                 </div>
                 <p className="section-subtext">
-                    From education and health to roads, water, business centres, property and recreation at Chikondoma Stadium — services that improve daily life across all 29 wards.
+                    {t('keyServicesDesc')}
                 </p>
 
                 <div className="services-grid">
@@ -726,8 +747,8 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                                 </div>
                             </div>
                             <div className="service-card-body">
-                                <h3 className="service-card-title">{item.title}</h3>
-                                <p className="service-card-desc">{item.description}</p>
+                                <h3 className="service-card-title">{t(keyServiceCopy[item.id]?.title ?? 'keyServices')}</h3>
+                                <p className="service-card-desc">{keyServiceCopy[item.id] ? t(keyServiceCopy[item.id].description) : ''}</p>
                                 <a href={L(item.href)} className="service-card-link">
                                     <span>{t('learnMore')}</span>
                                     <span aria-hidden="true">→</span>
@@ -823,44 +844,44 @@ function StatIcon({ name }: { name: string | null }) {
     }
 }
 
-function getServiceDomain(slug: string): { label: string; themeClass: string; iconPath: string } {
+function getServiceDomain(slug: string): { labelKey: 'domainWater' | 'domainRoads' | 'domainHealth' | 'domainEnvironment' | 'domainLand' | 'domainCivic'; themeClass: string; iconPath: string } {
     if (slug.includes('water') || slug.includes('sanitation')) {
         return {
-            label: 'Water & Utilities',
+            labelKey: 'domainWater',
             themeClass: 'service-theme-water',
             iconPath: 'M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z',
         };
     }
     if (slug.includes('road') || slug.includes('works') || slug.includes('transport')) {
         return {
-            label: 'Infrastructure',
+            labelKey: 'domainRoads',
             themeClass: 'service-theme-roads',
             iconPath: 'M4 19L19 4M8 20l4-8 4-8M12 22V2',
         };
     }
     if (slug.includes('health') || slug.includes('clinic')) {
         return {
-            label: 'Public Health',
+            labelKey: 'domainHealth',
             themeClass: 'service-theme-health',
             iconPath: 'M22 12h-4l-3 9L9 3l-3 9H2',
         };
     }
     if (slug.includes('environment') || slug.includes('waste')) {
         return {
-            label: 'Environment',
+            labelKey: 'domainEnvironment',
             themeClass: 'service-theme-environment',
             iconPath: 'M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12A10 10 0 0 1 12 2zm0 4a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6z',
         };
     }
     if (slug.includes('property') || slug.includes('stand') || slug.includes('housing') || slug.includes('business')) {
         return {
-            label: 'Land & Planning',
+            labelKey: 'domainLand',
             themeClass: 'service-theme-land',
             iconPath: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
         };
     }
     return {
-        label: 'Ward Delivery',
+        labelKey: 'domainCivic',
         themeClass: 'service-theme-civic',
         iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
     };
@@ -911,7 +932,7 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                                             <path d={domain.iconPath} />
                                         </svg>
                                     </span>
-                                    <span className="managed-service-tag">{domain.label}</span>
+                                    <span className="managed-service-tag">{t(domain.labelKey)}</span>
                                 </div>
                                 <div className="managed-service-card-body">
                                     <h3><a href={P('services', item.slug)}>{item.name}</a></h3>
@@ -1031,7 +1052,7 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     <p className="managed-eyebrow">{t('leadership')}</p>
                     <h2 id="managed-officials-heading">{t('councilLeadership')}</h2>
                     {officials.length ? <ul className="managed-mini-list">{officials.slice(0, 3).map(item => <li key={item.slug}><a href={P('officials', item.slug)}>{item.name}</a><span className="managed-title-sub"> — {item.title}</span></li>)}</ul> : <p>{t('leadershipPending')}</p>}
-                    <a className="managed-viewall" href={L('/officials')}>View council officials <span aria-hidden="true">→</span></a>
+                    <a className="managed-viewall" href={L('/officials')}>{t('viewOfficials')} <span aria-hidden="true">→</span></a>
                 </article>
                 <article className="managed-strip-col" aria-labelledby="managed-contact-heading">
                     <div className="managed-strip-header">
@@ -1045,7 +1066,7 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
                     <p className="managed-eyebrow">{t('contact')}</p>
                     <h2 id="managed-contact-heading">{t('talkCouncil')}</h2>
                     {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>{t('enquiryPrompt')}</p>}
-                    <a className="managed-viewall" href={L('/contact')}>Make an enquiry <span aria-hidden="true">→</span></a>
+                    <a className="managed-viewall" href={L('/contact')}>{t('makeEnquiry')} <span aria-hidden="true">→</span></a>
                 </article>
             </div>
         </section>
@@ -1054,13 +1075,14 @@ export function ManagedHomepageContent({ preview = false, services, documents, d
 
 export function DevelopmentSection() {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="dev-banner-section" id="development" aria-labelledby="dev-heading">
             <div className="dev-banner-bg">
                 <img
                     src="/images/home/dev-background.webp"
-                    alt="Scenic Mutoko landscape development"
+                    alt={t('devImageAlt')}
                     className="dev-banner-image"
                     loading="lazy"
                 />
@@ -1071,17 +1093,17 @@ export function DevelopmentSection() {
                 <div className="dev-banner-content">
                     <div className="section-eyebrow-pill">
                         <span className="eyebrow-bar" aria-hidden="true" />
-                        <span className="eyebrow-text">DEVELOPMENT</span>
+                        <span className="eyebrow-text">{t('devEyebrow')}</span>
                     </div>
                     <h2 id="dev-heading" className="dev-banner-heading">
-                        Building a Better Mutoko
+                        {t('devHeading')}
                     </h2>
                     <p className="dev-banner-description">
-                        We are implementing strategic projects and initiatives to promote economic growth, improve infrastructure and create opportunities for all our communities.
+                        {t('devDesc')}
                     </p>
                     <div>
                         <a href={L("/coming-soon?topic=projects")} className="btn-section-primary">
-                            <span>Explore Development</span>
+                            <span>{t('exploreDevelopment')}</span>
                             <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -1092,8 +1114,16 @@ export function DevelopmentSection() {
     );
 }
 
+const tourismCopy: Record<string, { title: TranslationKey; tag: TranslationKey }> = {
+    'Nyamurora Mountains': { title: 'tourNyamuroraTitle', tag: 'tourNyamuroraTag' },
+    'Cultural Heritage': { title: 'tourHeritageTitle', tag: 'tourHeritageTag' },
+    'Scenic Landscapes': { title: 'tourScenicTitle', tag: 'tourScenicTag' },
+    'Community Experiences': { title: 'tourCommunityTitle', tag: 'tourCommunityTag' },
+};
+
 export function TourismSection({ destinations = tourismDestinations }: { destinations?: TourismPreview[] }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="tourism-section" id="tourism" aria-labelledby="tourism-heading">
@@ -1102,30 +1132,30 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
                     <div>
                         <div className="section-eyebrow-pill">
                             <span className="eyebrow-bar" aria-hidden="true" />
-                            <span className="eyebrow-text">TOURISM</span>
+                            <span className="eyebrow-text">{t('tourismEyebrow')}</span>
                         </div>
-                        <h2 id="tourism-heading" className="section-title">Discover Mutoko</h2>
+                        <h2 id="tourism-heading" className="section-title">{t('discoverMutoko')}</h2>
                     </div>
                     <a href={L("/coming-soon?topic=tourism")} className="header-viewall-link">
-                        Explore Tourism <span aria-hidden="true">→</span>
+                        {t('exploreTourism')} <span aria-hidden="true">→</span>
                     </a>
                 </div>
                 <p className="section-subtext">
-                    Explore the natural beauty, rich culture and unique attractions that make Mutoko a special destination.
+                    {t('tourismSectionDesc')}
                 </p>
 
                 <div className="tourism-grid">
                     {destinations.map(item => (
                         <a key={item.title} href={L(item.href)} className="tourism-card">
-                            <img src={item.image} alt={item.title} loading="lazy" className="tourism-card-image" />
+                            <img src={item.image} alt={tourismCopy[item.title] ? t(tourismCopy[item.title].title) : item.title} loading="lazy" className="tourism-card-image" />
                             <div className="tourism-card-gradient" />
                             <div className="tourism-card-content">
-                                <h3 className="tourism-card-title">{item.title}</h3>
+                                <h3 className="tourism-card-title">{tourismCopy[item.title] ? t(tourismCopy[item.title].title) : item.title}</h3>
                                 <div className="tourism-tag-row">
                                     <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
                                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
                                     </svg>
-                                    <span>{item.tag}</span>
+                                    <span>{tourismCopy[item.title] ? t(tourismCopy[item.title].tag) : item.tag}</span>
                                 </div>
                             </div>
                         </a>
@@ -1137,15 +1167,15 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
 }
 
 type DirectoryLink = {
-    label: string;
+    labelKey: TranslationKey;
     href: string;
-    desc: string;
-    badge?: string;
+    descKey: TranslationKey;
+    badgeKey?: TranslationKey;
 };
 
 type DirectoryGroup = {
-    title: string;
-    blurb: string;
+    titleKey: TranslationKey;
+    blurbKey: TranslationKey;
     icon: 'council' | 'services' | 'records' | 'growth';
     links: DirectoryLink[];
 };
@@ -1186,50 +1216,51 @@ function DirectoryIcon({ icon }: { icon: DirectoryGroup['icon'] }) {
 
 export function ExploreDirectory() {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => `/${locale}${path}`;
     const groups: DirectoryGroup[] = [
         {
-            title: 'Your Council',
-            blurb: 'Leadership, ward representatives & governance.',
+            titleKey: 'dirYourCouncil',
+            blurbKey: 'dirYourCouncilDesc',
             icon: 'council',
             links: [
-                { label: 'Departments', href: '/departments', desc: 'Council directorates & roles' },
-                { label: 'Officials', href: '/officials', desc: 'Executive leadership team' },
-                { label: 'Wards', href: '/wards', desc: 'Find your councillor & clinic', badge: '29 Wards' },
-                { label: 'Meetings', href: '/meetings', desc: 'Agendas, dates & minutes', badge: 'Public' },
-                { label: 'Financial Transparency', href: '/transparency', desc: 'Audits, budgets & procurement', badge: 'Audited' },
+                { labelKey: 'councilDepartments', href: '/departments', descKey: 'linkDeptDesc' },
+                { labelKey: 'officials', href: '/officials', descKey: 'linkOfficialsDesc' },
+                { labelKey: 'wards', href: '/wards', descKey: 'linkWardsDesc', badgeKey: 'badgeWards' },
+                { labelKey: 'meetings', href: '/meetings', descKey: 'linkMeetingsDesc', badgeKey: 'badgePublic' },
+                { labelKey: 'transparency', href: '/transparency', descKey: 'linkTransparencyDesc', badgeKey: 'badgeAudited' },
             ],
         },
         {
-            title: 'Services & Rates',
-            blurb: 'Essential public delivery, accounts & utilities.',
+            titleKey: 'dirServicesRates',
+            blurbKey: 'dirServicesRatesDesc',
             icon: 'services',
             links: [
-                { label: 'All Services', href: '/services', desc: 'Water, roads, health & civil registry' },
-                { label: 'Projects', href: '/projects', desc: 'Community infrastructure works', badge: 'Active' },
-                { label: 'Rates & Accounts', href: '/rates', desc: 'Tariffs, billing & payment advice', badge: 'Pay Rates' },
-                { label: 'Feedback Desk', href: '/feedback', desc: 'Submit enquiry or report faults', badge: '24/7' },
+                { labelKey: 'services', href: '/services', descKey: 'linkServicesDesc' },
+                { labelKey: 'projects', href: '/projects', descKey: 'linkProjectsDesc', badgeKey: 'badgeActive' },
+                { labelKey: 'ratesAccounts', href: '/rates', descKey: 'linkRatesDesc', badgeKey: 'badgePayRates' },
+                { labelKey: 'feedbackDesk', href: '/feedback', descKey: 'linkFeedbackDesc', badgeKey: 'feedbackAnytime' },
             ],
         },
         {
-            title: 'News & Records',
-            blurb: 'Public notices, regulatory by-laws & gazettes.',
+            titleKey: 'dirNewsRecords',
+            blurbKey: 'dirNewsRecordsDesc',
             icon: 'records',
             links: [
-                { label: 'Official News', href: '/news', desc: 'Press releases & district updates' },
-                { label: 'Public Notices', href: '/notices', desc: 'Statutory consultations & notices', badge: 'Official' },
-                { label: 'Documents & By-Laws', href: '/documents', desc: 'Master plans, policies & forms', badge: 'PDF' },
+                { labelKey: 'news', href: '/news', descKey: 'linkNewsDesc' },
+                { labelKey: 'publicNotices', href: '/notices', descKey: 'linkNoticesDesc', badgeKey: 'badgeOfficial' },
+                { labelKey: 'documentsBylaws', href: '/documents', descKey: 'linkDocsDesc', badgeKey: 'badgePdf' },
             ],
         },
         {
-            title: 'Grow With Us',
-            blurb: 'Economic investments, procurement & tourism.',
+            titleKey: 'dirGrow',
+            blurbKey: 'dirGrowDesc',
             icon: 'growth',
             links: [
-                { label: 'Investment Opportunities', href: '/investment', desc: 'Granite, solar, agro-processing', badge: 'Invest' },
-                { label: 'Tenders & Procurement', href: '/tenders', desc: 'Open expressions of interest', badge: 'Open' },
-                { label: 'Council Vacancies', href: '/vacancies', desc: 'Public service careers' },
-                { label: 'Discover Mutoko', href: '/tourism', desc: 'Heritage, landscapes & culture' },
+                { labelKey: 'investmentOpportunities', href: '/investment', descKey: 'linkInvestDesc', badgeKey: 'badgeInvest' },
+                { labelKey: 'tendersProcurement', href: '/tenders', descKey: 'linkTendersDesc', badgeKey: 'badgeOpen' },
+                { labelKey: 'councilVacancies', href: '/vacancies', descKey: 'linkVacanciesDesc' },
+                { labelKey: 'discoverMutoko', href: '/tourism', descKey: 'linkTourismDesc' },
             ],
         },
     ];
@@ -1240,33 +1271,33 @@ export function ExploreDirectory() {
                 <div className="explore-header-center">
                     <div className="section-eyebrow-pill">
                         <span className="eyebrow-bar" aria-hidden="true" />
-                        <span className="eyebrow-text">CIVIC DIRECTORY</span>
+                        <span className="eyebrow-text">{t('dirEyebrow')}</span>
                     </div>
-                    <h2 id="explore-heading" className="section-title">Everything in council, one glance</h2>
-                    <p className="section-subtext">Direct pathways to council administration, rate payments, public documents and business opportunities.</p>
+                    <h2 id="explore-heading" className="section-title">{t('dirHeading')}</h2>
+                    <p className="section-subtext">{t('dirDesc')}</p>
                 </div>
                 <div className="explore-grid">
                     {groups.map(group => (
-                        <article key={group.title} className="explore-card">
+                        <article key={group.titleKey} className="explore-card">
                             <div className="explore-card-header">
                                 <div className="explore-card-icon-wrap" aria-hidden="true">
                                     <DirectoryIcon icon={group.icon} />
                                 </div>
                                 <div className="explore-card-heading-box">
-                                    <h3>{group.title}</h3>
-                                    <p className="explore-blurb">{group.blurb}</p>
+                                    <h3>{t(group.titleKey)}</h3>
+                                    <p className="explore-blurb">{t(group.blurbKey)}</p>
                                 </div>
                             </div>
                             <ul className="explore-link-list">
                                 {group.links.map(link => (
-                                    <li key={link.label}>
+                                    <li key={link.labelKey}>
                                         <a href={L(link.href)} className="explore-link-row">
                                             <div className="explore-link-content">
                                                 <div className="explore-label-wrap">
-                                                    <span className="explore-link-label">{link.label}</span>
-                                                    {link.badge && <span className="explore-micro-badge">{link.badge}</span>}
+                                                    <span className="explore-link-label">{t(link.labelKey)}</span>
+                                                    {link.badgeKey && <span className="explore-micro-badge">{t(link.badgeKey)}</span>}
                                                 </div>
-                                                <span className="explore-link-desc">{link.desc}</span>
+                                                <span className="explore-link-desc">{t(link.descKey)}</span>
                                             </div>
                                             <span className="explore-link-arrow" aria-hidden="true">›</span>
                                         </a>
@@ -1283,21 +1314,22 @@ export function ExploreDirectory() {
 
 export function CtaBanner() {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     return (
         <section className="cta-banner-section" aria-labelledby="cta-heading">
             <div className="container cta-banner-container">
                 <div className="cta-text-side">
                     <h2 id="cta-heading" className="cta-heading">
-                        Partner with Us for a Better Mutoko
+                        {t('ctaHeading')}
                     </h2>
                     <p className="cta-subtext">
-                        Whether you are a community member, investor, development partner or visitor, we invite you to join us in building a prosperous and sustainable Mutoko.
+                        {t('ctaDesc')}
                     </p>
                 </div>
                 <div className="cta-action-side">
                     <a href={L("/contact")} className="btn-cta-green">
-                        <span>Get in Touch</span>
+                        <span>{t('getInTouch')}</span>
                         <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -1321,7 +1353,7 @@ export function CitizenFeedbackBanner() {
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                             </svg>
-                            <span>Citizen Participation &amp; Social Accountability</span>
+                            <span>{t('citizenPill')}</span>
                         </div>
                         <h2 id="feedback-callout-heading">{t('reportIssueTitle')}</h2>
                         <p>{t('reportIssueDesc')}</p>
@@ -1335,7 +1367,7 @@ export function CitizenFeedbackBanner() {
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
                                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                             </svg>
-                            <span>WhatsApp Council Desk</span>
+                            <span>{t('whatsappDesk')}</span>
                         </a>
                     </div>
                 </div>
@@ -1346,25 +1378,26 @@ export function CitizenFeedbackBanner() {
 
 
 export function FeatureCallouts() {
-    const features = [
+    const t = usePublicTranslation();
+    const features: { number: string; titleKey: TranslationKey; descriptionKey: TranslationKey; image: string; position: string }[] = [
         {
             number: '01',
-            title: 'Invest in Mutoko',
-            description: 'Investment information will be available after council review.',
+            titleKey: 'featureInvestTitle',
+            descriptionKey: 'featureInvestDesc',
             image: '/images/feature-invest-development.webp',
             position: 'center',
         },
         {
             number: '02',
-            title: 'Explore Our Tourism',
-            description: 'Approved visitor information and local imagery will be added here.',
+            titleKey: 'featureTourismTitle',
+            descriptionKey: 'featureTourismDesc',
             image: '/images/feature-tourism-development.webp',
             position: '65% center',
         },
         {
             number: '03',
-            title: 'Engage With Us',
-            description: 'Find ways to stay informed and participate in council matters.',
+            titleKey: 'featureEngageTitle',
+            descriptionKey: 'featureEngageDesc',
             image: '/images/feature-engage-development.webp',
             position: '62% center',
         },
@@ -1374,22 +1407,22 @@ export function FeatureCallouts() {
             <div className="container">
                 <div className="section-heading">
                     <div>
-                        <p className="eyebrow">Discover more</p>
-                        <h2 id="features-heading">Mutoko at a glance</h2>
+                        <p className="eyebrow">{t('featureEyebrow')}</p>
+                        <h2 id="features-heading">{t('featureHeading')}</h2>
                     </div>
                 </div>
                 <div className="feature-grid">
                     {features.map(feature => (
-                        <article className="feature-card" key={feature.title}>
+                        <article className="feature-card" key={feature.titleKey}>
                             <img src={feature.image} alt="" width="1100" height="619" loading="lazy" style={{ objectPosition: feature.position }} />
                             <div className="feature-overlay" />
                             <div className="feature-content">
-                                <span className="feature-number">{feature.number} / Explore</span>
+                                <span className="feature-number">{feature.number} / {t('featureExplore')}</span>
                                 <div>
-                                    <h3>{feature.title}</h3>
-                                    <p>{feature.description}</p>
+                                    <h3>{t(feature.titleKey)}</h3>
+                                    <p>{t(feature.descriptionKey)}</p>
                                     <span className="feature-cta">
-                                        Details coming soon <span aria-hidden="true">→</span>
+                                        {t('featureSoon')} <span aria-hidden="true">→</span>
                                     </span>
                                 </div>
                             </div>

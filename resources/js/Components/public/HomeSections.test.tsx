@@ -94,7 +94,7 @@ describe('homepage sections', () => {
 
     it('renders the about us section with core pillars and welcome image', () => {
         render(<AboutSection />);
-        expect(screen.getByText('A Vibrant and Prosperous Mutoko')).toBeInTheDocument();
+        expect(screen.getByText('A Prosperous Mutoko')).toBeInTheDocument();
         expect(screen.getByText('Our Location')).toBeInTheDocument();
         expect(screen.getByText('Our Communities')).toBeInTheDocument();
         expect(screen.getByText('Our Mission')).toBeInTheDocument();

@@ -101,8 +101,15 @@
                             </svg>
                         </div>
                         <div class="mrdc-dash-weather-info">
-                            <div class="mrdc-weather-temp">22°C <small class="text-xs text-slate-300 font-normal">· Mutoko</small></div>
-                            <div class="mrdc-weather-desc">Mashonaland East · Mostly sunny</div>
+                            <div class="mrdc-weather-temp">
+                                @if ($weather['temperature'] !== null)
+                                    {{ $weather['temperature'] }}°C
+                                @else
+                                    Weather unavailable
+                                @endif
+                                <small class="text-xs text-slate-300 font-normal">· {{ $weather['location'] ?? 'Mutoko' }}</small>
+                            </div>
+                            <div class="mrdc-weather-desc">{{ $weather['region'] ?? 'Mashonaland East' }} · {{ $weather['description'] ?? 'Weather unavailable' }}</div>
                         </div>
                     </div>
                 </div>

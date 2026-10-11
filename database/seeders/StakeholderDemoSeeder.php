@@ -209,16 +209,18 @@ class StakeholderDemoSeeder extends Seeder
                 $record->fill([
                     'name' => sprintf('Ward %d', $i),
                     'description' => sprintf('Ward %d of Mutoko Rural District Council. Councillor information, local facilities and meeting updates will be listed on this page.', $i),
-                    'boundaries_description' => 'Ward boundary information will be shown here.',
+                    'boundaries_description' => sprintf('Ward %d is one of the 29 electoral wards of Mutoko Rural District Council, delimited by the Zimbabwe Electoral Commission. Each ward elects a councillor to full council and is served through village assemblies and ward development committees. To confirm the villages, service centres and facilities in this ward, contact the council registry or use the enquiry form on this website.', $i),
                 ]);
                 $record->save();
             }
         }
         // Seeder-owned copy sync for ward placeholders (numbered from slug).
-        foreach (Ward::query()->where('slug', 'like', 'ward-%')->get(['id', 'slug']) as $ward) {
+        foreach (Ward::query()->where('slug', 'like', 'ward-%')->get(['id', 'slug', 'description', 'boundaries_description']) as $ward) {
             if (preg_match('/ward-(\d+)/', (string) $ward->slug, $m)) {
                 $ward->description = sprintf('Ward %d of Mutoko Rural District Council. Councillor information, local facilities and meeting updates will be listed on this page.', (int) $m[1]);
-                $ward->boundaries_description = 'Ward boundary information will be shown here.';
+                if ($ward->boundaries_description === 'Ward boundary information will be shown here.') {
+                    $ward->boundaries_description = sprintf('Ward %d is one of the 29 electoral wards of Mutoko Rural District Council, delimited by the Zimbabwe Electoral Commission. Each ward elects a councillor to full council and is served through village assemblies and ward development committees. To confirm the villages, service centres and facilities in this ward, contact the council registry or use the enquiry form on this website.', (int) $m[1]);
+                }
                 $ward->save();
             }
         }

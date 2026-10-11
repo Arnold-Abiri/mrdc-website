@@ -11,6 +11,8 @@ use App\Filament\Resources\Tenders\TenderResource;
 use App\Filament\Resources\Vacancies\VacancyResource;
 use Filament\Pages\Dashboard;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class CouncilDashboard extends Dashboard
 {
@@ -146,8 +148,71 @@ class CouncilDashboard extends Dashboard
         });
 
         $approvals = $editorialApprovals;
+        $weather = $this->getWeather();
 
-        return compact('news', 'meetings', 'documents', 'projects', 'enquiries', 'approvals', 'metrics', 'contentTypes', 'months');
+        return compact('news', 'meetings', 'documents', 'projects', 'enquiries', 'approvals', 'metrics', 'contentTypes', 'months', 'weather');
+    }
+
+    private function getWeather(): array
+    {
+        return Cache::remember('council_dashboard_weather', 1800, function (): array {
+            try {
+                $response = Http::acceptJson()->timeout(5)->get('https://api.open-meteo.com/v1/forecast', [
+                    'latitude' => -17.4136,
+                    'longitude' => 32.2133,
+                    'current' => 'temperature_2m,weather_code',
+                    'timezone' => 'auto',
+                    'forecast_days' => 1,
+                ]);
+
+                if (! $response->successful()) {
+                    return [
+                        'temperature' => null,
+                        'location' => 'Mutoko',
+                        'region' => 'Mashonaland East',
+                        'description' => 'Weather unavailable',
+                    ];
+                }
+
+                $current = $response->json('current', []);
+                $code = (int) ($current['weather_code'] ?? 0);
+
+                return [
+                    'temperature' => isset($current['temperature_2m']) ? (int) round((float) $current['temperature_2m']) : null,
+                    'location' => 'Mutoko',
+                    'region' => 'Mashonaland East',
+                    'description' => $this->weatherDescription($code),
+                ];
+            } catch (\Throwable) {
+                return [
+                    'temperature' => null,
+                    'location' => 'Mutoko',
+                    'region' => 'Mashonaland East',
+                    'description' => 'Weather unavailable',
+                ];
+            }
+        });
+    }
+
+    private function weatherDescription(int $code): string
+    {
+        return match ($code) {
+            0 => 'Clear sky',
+            1 => 'Mostly clear',
+            2 => 'Partly cloudy',
+            3 => 'Overcast',
+            45, 48 => 'Foggy',
+            51, 53, 55 => 'Drizzle',
+            56, 57 => 'Freezing drizzle',
+            61, 63, 65 => 'Rain showers',
+            66, 67 => 'Freezing rain',
+            71, 73, 75, 77 => 'Snowfall',
+            80, 81, 82 => 'Rain showers',
+            85, 86 => 'Snow showers',
+            95 => 'Thunderstorm',
+            96, 99 => 'Thunderstorm with hail',
+            default => 'Mostly sunny',
+        };
     }
 
     private function records(string $resource, callable $callback): Collection

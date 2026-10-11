@@ -1,6 +1,7 @@
 import { Head, usePage } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
+import type { TranslationKey } from '../localization';
 import '../../css/contact.css';
 
 type PublicContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
@@ -15,11 +16,11 @@ const CATEGORIES = [
     { value: 'other', label: 'other' },
 ] as const;
 
-const contactLabels: Record<PublicContact['type'], string> = {
-    phone: 'Telephone',
-    email: 'Email',
-    physical_address: 'Visit the Council',
-    postal_address: 'Postal address',
+const contactLabels: Record<PublicContact['type'], TranslationKey> = {
+    phone: 'contactTypePhone',
+    email: 'contactTypeEmail',
+    physical_address: 'contactTypeVisit',
+    postal_address: 'contactTypePostal',
 };
 
 function ContactIcon({ type }: { type: PublicContact['type'] }) {
@@ -48,10 +49,10 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
         <header className="about-page-hero contact-hero">
             <div className="about-page-hero-overlay" aria-hidden="true" />
             <div className="container">
-                <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
+                <nav className="about-page-breadcrumb" aria-label={t('breadcrumb')}>
                     <a href={`/${locale}`}>{t('home')}</a><span aria-hidden="true">/</span><span aria-current="page">{t('contactUs')}</span>
                 </nav>
-                <span className="about-accent-eyebrow">CONTACT US</span>
+                <span className="about-accent-eyebrow">{t('contactHeroEyebrow')}</span>
                 <h1>{t('contactHeroTitle')}</h1>
                 <p className="about-page-hero-subtitle">{t('contactHeroDesc')}</p>
             </div>
@@ -61,30 +62,30 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
             <div className="container">
                 <section className="contact-columns" aria-label="Contact information and enquiry form">
                     <div className="contact-panel contact-info-col">
-                        <span className="contact-eyebrow">GET IN TOUCH</span>
+                        <span className="contact-eyebrow">{t('contactGetInTouch')}</span>
                         <h2 id="public-contacts-heading">{t('ourContactInformation')}</h2>
-                        <p className="contact-intro">Contact the Council through the published channels below, or send an enquiry using the form.</p>
+                        <p className="contact-intro">{t('contactIntro')}</p>
                         {contacts.length > 0 ? <ul className="contact-details-list">{contacts.map((contact, index) => <li key={`${contact.office}-${contact.type}-${index}`}>
                             <span className="contact-detail-icon"><ContactIcon type={contact.type} /></span>
-                            <div><strong>{contactLabels[contact.type]}</strong><span className="contact-office">{contact.office}</span>
+                            <div><strong>{t(contactLabels[contact.type])}</strong><span className="contact-office">{contact.office}</span>
                                 {contact.type === 'email' ? <a href={`mailto:${contact.value}`}>{contact.value}</a> : contact.type === 'phone' ? <a href={`tel:${contact.value.replace(/\s+/g, '')}`}>{contact.value}</a> : <span>{contact.value}</span>}
                             </div>
-                        </li>)}</ul> : <div className="contact-empty"><span className="contact-detail-icon"><ContactIcon type="email" /></span><p>Official contact details are being verified for publication. Please use the enquiry form and the council team will respond.</p></div>}
-                        <div className="contact-info-note"><strong>Need help choosing a department?</strong><p>Send us the details and we will route your enquiry to the appropriate team.</p></div>
+                        </li>)}</ul> : <div className="contact-empty"><span className="contact-detail-icon"><ContactIcon type="email" /></span><p>{t('contactEmptyVerify')}</p></div>}
+                        <div className="contact-info-note"><strong>{t('contactHelpDept')}</strong><p>{t('contactHelpDeptDesc')}</p></div>
                     </div>
 
                     <div className="contact-panel contact-form-col" id="enquiry-form">
                         <div className="contact-form-heading">
                             <div>
-                                <span className="contact-eyebrow">SEND US A MESSAGE</span>
+                                <span className="contact-eyebrow">{t('contactSendMessage')}</span>
                                 <h2>{t('enquiryForm')}</h2>
                                 <p className="contact-intro">{t('enquiryFormDesc')}</p>
                             </div>
                             <span className="contact-form-heading-icon" aria-hidden="true"><ContactIcon type="email" /></span>
                         </div>
                         {submitted && <p className="contact-success" role="status">{t('enquiryReceived')}</p>}
-                        {Object.keys(formErrors).length > 0 && <div className="contact-error-summary" role="alert"><p>Please correct the following:</p><ul>{Object.entries(formErrors).map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
-                        {context && <p className="contact-context" role="note">About: <strong>{context.title}</strong></p>}
+                        {Object.keys(formErrors).length > 0 && <div className="contact-error-summary" role="alert"><p>{t('contactCorrectFollowing')}</p><ul>{Object.entries(formErrors).map(([field, message]) => <li key={field}>{message}</li>)}</ul></div>}
+                        {context && <p className="contact-context" role="note">{t('contactAboutPrefix')}: <strong>{context.title}</strong></p>}
                         <form className="contact-form" action={`/${locale}/contact`} method="post">
                             <input type="hidden" name="_token" value={csrfToken} />
                             {context && <><input type="hidden" name="context_type" value={context.type} /><input type="hidden" name="context_reference" value={context.reference} /><input type="hidden" name="category" value={context.type === 'investment' ? 'investment_enquiry' : 'service_enquiry'} /></>}
@@ -106,13 +107,13 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
                 </section>
 
                 {departments.length > 0 && <section className="contact-departments" aria-labelledby="contact-departments-heading">
-                    <div className="contact-section-heading"><div><span className="contact-eyebrow">CONTACT THE RIGHT TEAM</span><h2 id="contact-departments-heading">Council Departments</h2><p>For a departmental matter, select the relevant team in your enquiry.</p></div><a href={`/${locale}/departments`}>View all departments <span aria-hidden="true">→</span></a></div>
-                    <ul className="contact-department-grid">{departments.map(department => <li key={department.id}><span className="contact-department-mark" aria-hidden="true">{(department.public_name ?? department.name).charAt(0)}</span><strong>{department.public_name ?? department.name}</strong><span>Contact through the enquiry form <span aria-hidden="true">→</span></span></li>)}</ul>
+                    <div className="contact-section-heading"><div><span className="contact-eyebrow">{t('contactRightTeam')}</span><h2 id="contact-departments-heading">{t('councilDepartments')}</h2><p>{t('contactDeptDesc')}</p></div><a href={`/${locale}/departments`}>{t('contactViewAllDepts')} <span aria-hidden="true">→</span></a></div>
+                    <ul className="contact-department-grid">{departments.map(department => <li key={department.id}><span className="contact-department-mark" aria-hidden="true">{(department.public_name ?? department.name).charAt(0)}</span><strong>{department.public_name ?? department.name}</strong><span>{t('contactThroughForm')} <span aria-hidden="true">→</span></span></li>)}</ul>
                 </section>}
 
                 <section className="contact-quick-links" aria-labelledby="contact-links-heading">
-                    <div className="contact-section-heading"><div><span className="contact-eyebrow">LOOKING FOR SOMETHING SPECIFIC?</span><h2 id="contact-links-heading">Quick Links</h2><p>Find information and services across the Council website.</p></div></div>
-                    <div className="contact-link-grid"><a href={`/${locale}/services`}>Council Services <span aria-hidden="true">→</span></a><a href={`/${locale}/notices`}>Public Notices <span aria-hidden="true">→</span></a><a href={`/${locale}/documents`}>Documents and Downloads <span aria-hidden="true">→</span></a><a href={`/${locale}/wards`}>Wards Directory <span aria-hidden="true">→</span></a></div>
+                    <div className="contact-section-heading"><div><span className="contact-eyebrow">{t('contactLookingFor')}</span><h2 id="contact-links-heading">{t('quickLinks')}</h2><p>{t('contactQuickLinksDesc')}</p></div></div>
+                    <div className="contact-link-grid"><a href={`/${locale}/services`}>{t('councilServices')} <span aria-hidden="true">→</span></a><a href={`/${locale}/notices`}>{t('publicNotices')} <span aria-hidden="true">→</span></a><a href={`/${locale}/documents`}>{t('linkDocsDownloads')} <span aria-hidden="true">→</span></a><a href={`/${locale}/wards`}>{t('linkWardsDirectory')} <span aria-hidden="true">→</span></a></div>
                 </section>
             </div>
         </main>

@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicLocale } from '../usePublicTranslation';
+import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { SourcedText } from '../Components/public/SourceButtons';
 
 type OpportunityDetail = {
@@ -16,6 +16,7 @@ type OpportunityDetail = {
 
 export default function InvestmentDetail({ opportunity }: { opportunity: OpportunityDetail }) {
     const locale = usePublicLocale();
+    const t = usePublicTranslation();
 
     return (
         <PublicLayout>
@@ -56,11 +57,11 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
                                 {opportunity.document && (
                                     <div style={{ marginTop: '24px', padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '10px' }}>
                                         <h4 style={{ margin: '0 0 6px', fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-civic-navy)' }}>
-                                            Supporting Prospectus &amp; Feasibility
+                                            {t('supportingProspectus')}
                                         </h4>
                                         <p style={{ margin: 0, fontSize: '0.88rem' }}>
                                             <Link href={`/${locale}/documents/${opportunity.document.slug}`} className="about-page-text-link">
-                                                Download {opportunity.document.title} <span aria-hidden="true">→</span>
+                                                {t('downloadAction')} {opportunity.document.title} <span aria-hidden="true">→</span>
                                             </Link>
                                         </p>
                                     </div>
@@ -69,23 +70,23 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
                         </div>
 
                         <aside className="about-summary-card" aria-label="Opportunity parameters">
-                            <h3>Investment Summary</h3>
+                            <h3>{t('investmentSummary')}</h3>
                             <dl>
                                 {opportunity.sector && (
                                     <>
-                                        <dt>Sector</dt>
+                                        <dt>{t('sector')}</dt>
                                         <dd>{opportunity.sector}</dd>
                                     </>
                                 )}
-                                <dt>Status</dt>
+                                <dt>{t('statusLabel')}</dt>
                                 <dd style={{ textTransform: 'capitalize' }}>{opportunity.opportunity_status}</dd>
                                 {opportunity.location && (
                                     <>
-                                        <dt>Location</dt>
+                                        <dt>{t('locationLabel')}</dt>
                                         <dd>{opportunity.location}</dd>
                                     </>
                                 )}
-                                <dt>Jurisdiction</dt>
+                                <dt>{t('jurisdiction')}</dt>
                                 <dd>Mutoko RDC (Stand 366)</dd>
                             </dl>
 
@@ -95,7 +96,7 @@ export default function InvestmentDetail({ opportunity }: { opportunity: Opportu
                                     className="rates-pop-btn-primary"
                                     style={{ width: '100%', justifyContent: 'center' }}
                                 >
-                                    <span>Submit Expression of Interest</span>
+                                    <span>{t('submitEoi')}</span>
                                     <span aria-hidden="true">→</span>
                                 </Link>
                             </p>

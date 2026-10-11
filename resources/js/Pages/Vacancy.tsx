@@ -38,12 +38,12 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
     return (
         <PublicLayout>
             <SeoHead title={vacancy.title} description={vacancy.description} schema={vacancy.is_open ? schema : null} />
-            <PageHero eyebrow="CAREERS" title={vacancy.title} subtitle={`${vacancy.grade ? `${vacancy.grade} — ` : ''}${vacancy.is_open ? 'Open for applications' : 'Applications closed'}`} crumb={[{ label: t('vacancies'), href: `/${locale}/vacancies` }, { label: vacancy.title }]} />
+            <PageHero eyebrow="CAREERS" title={vacancy.title} subtitle={`${vacancy.grade ? `${vacancy.grade} — ` : ''}${vacancy.is_open ? t('openForApplications') : t('applicationsClosed')}`} crumb={[{ label: t('vacancies'), href: `/${locale}/vacancies` }, { label: vacancy.title }]} />
             <section className="about-page-section" aria-labelledby="vacancy-detail">
                 <div className="container">
                     <nav className="about-page-breadcrumb" aria-label="Back"><Link href={`/${locale}/vacancies`}>← {t('vacancies')}</Link></nav>
                     <p className="about-card-badges" aria-label="Advert details">
-                        <span className={`about-badge ${vacancy.is_open ? 'about-badge-open' : 'about-badge-closed'}`}>{vacancy.is_open ? 'Open' : 'Closed'}</span>
+                        <span className={`about-badge ${vacancy.is_open ? 'about-badge-open' : 'about-badge-closed'}`}>{vacancy.is_open ? t('openStatus') : t('closedStatus')}</span>
                         {vacancy.grade && <span className="about-badge">{vacancy.grade}</span>}
                         {vacancy.employment_type && employmentTypes[vacancy.employment_type] && <span className="about-badge">{t(employmentTypes[vacancy.employment_type] as 'contract')}</span>}
                         {department && <span className="about-badge">{department}</span>}
@@ -59,10 +59,10 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                     <div className="about-detail-layout">
                         <div className="about-detail-main">
                             <div className="about-mandate-card">
-                                <h3 id="vacancy-detail">Position overview</h3>
+                                <h3 id="vacancy-detail">{t('positionOverview')}</h3>
                                 <p>{vacancy.description}</p>
-                                {department && <p>Department: {department}</p>}
-                                {vacancy.opens_at && <p>Opens: {formatDate(vacancy.opens_at, locale)}</p>}
+                                {department && <p>{t('department')}: {department}</p>}
+                                {vacancy.opens_at && <p>{t('opensOn')}: {formatDate(vacancy.opens_at, locale)}</p>}
                             </div>
                             {responsibilities.length > 0 && (
                                 <div className="about-mandate-card">
@@ -80,7 +80,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                                 <div className="about-mandate-card">
                                     <h3>{t('howToApply')}</h3>
                                     <p style={{ whiteSpace: 'pre-line' }}>{vacancy.application_instructions}</p>
-                                    {vacancy.is_open && <p><a className="btn-connect-gold" href={applyHref}>Apply via email →</a></p>}
+                                    {vacancy.is_open && <p><a className="btn-connect-gold" href={applyHref}>{t('applyViaEmail')} →</a></p>}
                                 </div>
                             )}
                             {vacancy.document && (
@@ -91,21 +91,21 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                             )}
                         </div>
                         <aside className="about-summary-card" aria-label="Application summary">
-                            <h3>Application summary</h3>
+                            <h3>{t('applicationSummary')}</h3>
                             <dl>
-                                {department && <><dt>Department</dt><dd>{department}</dd></>}
+                                {department && <><dt>{t('department')}</dt><dd>{department}</dd></>}
                                 {vacancy.employment_type && employmentTypes[vacancy.employment_type] && <><dt>{t('employmentType')}</dt><dd>{t(employmentTypes[vacancy.employment_type] as 'contract')}</dd></>}
-                                {vacancy.grade && <><dt>Grade</dt><dd>{vacancy.grade}</dd></>}
+                                {vacancy.grade && <><dt>{t('grade')}</dt><dd>{vacancy.grade}</dd></>}
                                 {vacancy.reference && <><dt>{t('reference')}</dt><dd>{vacancy.reference}</dd></>}
-                                {vacancy.closes_at && <><dt>Closing date</dt><dd>{formatDate(vacancy.closes_at, locale)}</dd></>}
-                                <dt>Email</dt><dd><a href={applyHref}>{recruitmentEmail}</a></dd>
+                                {vacancy.closes_at && <><dt>{t('closingDate')}</dt><dd>{formatDate(vacancy.closes_at, locale)}</dd></>}
+                                <dt>{t('email')}</dt><dd><a href={applyHref}>{recruitmentEmail}</a></dd>
                             </dl>
                             {vacancy.is_open ? (
-                                <p><a className="btn-connect-gold" href={applyHref}>Apply now →</a> <button type="button" className="about-print-btn" onClick={() => window.print()}>Print / Save PDF</button></p>
+                                <p><a className="btn-connect-gold" href={applyHref}>{t('applyNow')} →</a> <button type="button" className="about-print-btn" onClick={() => window.print()}>{t('printSavePdf')}</button></p>
                             ) : (
-                                <p>This advert is closed. Browse other openings below.</p>
+                                <p>{t('advertClosedBrowse')}</p>
                             )}
-                            <p className="about-share-row">Share:
+                            <p className="about-share-row">{t('shareLabel')}:
                                 <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noreferrer">LinkedIn</a>
                                 <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(vacancy.title)}&url=${encodeURIComponent(pageUrl)}`} target="_blank" rel="noreferrer">X</a>
                                 <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`${vacancy.title}: ${pageUrl}`)}`} target="_blank" rel="noreferrer">WhatsApp</a>
@@ -115,12 +115,12 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                     {related.length > 0 && (
                         <section className="about-related-section" aria-labelledby="other-openings">
                             <span className="about-accent-eyebrow">CAREERS</span>
-                            <h2 id="other-openings">Other openings</h2>
+                            <h2 id="other-openings">{t('otherOpenings')}</h2>
                             <div className="about-focus-grid about-focus-grid-3">
                                 {related.map((item) => (
                                     <Link key={item.slug} href={`/${locale}/vacancies/${item.slug}`} className="about-focus-card">
                                         <h3>{item.title}</h3>
-                                        <p>{item.department ? `${item.department} — ` : ''}{item.is_open ? 'Open' : 'Closed'}{item.closes_at ? `, closes ${formatDate(item.closes_at, locale)}` : ''}</p>
+                                        <p>{item.department ? `${item.department} — ` : ''}{item.is_open ? t('openStatus') : t('closedStatus')}{item.closes_at ? `, closes ${formatDate(item.closes_at, locale)}` : ''}</p>
                                     </Link>
                                 ))}
                             </div>
