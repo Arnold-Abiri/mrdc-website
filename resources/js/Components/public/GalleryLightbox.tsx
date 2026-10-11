@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { usePublicTranslation } from '../../usePublicTranslation';
+import { extractSources, SourceButtons } from './SourceButtons';
 
 export type GalleryImage = {
     url: string;
@@ -170,7 +171,12 @@ export default function GalleryLightbox({ images, index, onClose, onIndexChange 
                     src={current.url}
                     alt={current.alt}
                 />
-                {current.caption && <figcaption className="gallery-lightbox-caption">{current.caption}</figcaption>}
+                {current.caption && (
+                    <figcaption className="gallery-lightbox-caption">
+                        <span>{extractSources(current.caption).body}</span>
+                        <SourceButtons sources={extractSources(current.caption).sources} />
+                    </figcaption>
+                )}
             </figure>
 
             <button type="button" className="gallery-lightbox-nav gallery-lightbox-next" onClick={() => go(index + 1)} aria-label={t('nextImage')} disabled={count < 2}>

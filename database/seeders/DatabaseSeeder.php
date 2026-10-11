@@ -21,10 +21,13 @@ class DatabaseSeeder extends Seeder
         $this->call(Stage5TourismSeeder::class);
         $this->call(CapitalProjectSeeder::class);
         $this->call(FinancialDisclosureSeeder::class);
+        $this->call(InvestmentProspectusSeeder::class);
         $this->call(VacancySeeder::class);
+        $this->call(TenderSeeder::class);
         $this->call(Stage7PrivacySeeder::class);
         $this->call(CouncilTeamSeeder::class);
         $this->call(GallerySeeder::class);
         $this->call(EmergencyNoticeSeeder::class);
+        $this->call(BankAccountSeeder::class);
     }
 }

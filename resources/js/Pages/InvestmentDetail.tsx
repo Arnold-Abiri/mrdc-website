@@ -1,19 +1,109 @@
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
-import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
-import { PageHero } from '../Components/public/PageHeader';
-type OpportunityDetail = { slug: string; title: string; sector: string | null; summary: string | null; description: string; location: string | null; opportunity_status: string; document: { slug: string; title: string } | null };
+import { usePublicLocale } from '../usePublicTranslation';
+import { SourcedText } from '../Components/public/SourceButtons';
+
+type OpportunityDetail = {
+    slug: string;
+    title: string;
+    sector: string | null;
+    summary: string | null;
+    description: string;
+    location: string | null;
+    opportunity_status: string;
+    document: { slug: string; title: string } | null;
+};
+
 export default function InvestmentDetail({ opportunity }: { opportunity: OpportunityDetail }) {
-    const t = usePublicTranslation();
     const locale = usePublicLocale();
-    return <PublicLayout>
-        <Head title={opportunity.title} />
-        <PageHero eyebrow="INVESTMENT" title={opportunity.title} subtitle={`${opportunity.sector ? `${opportunity.sector} — ` : ''}${opportunity.opportunity_status}${opportunity.location ? ` — ${opportunity.location}` : ''}`} crumb={[{ label: t('investment'), href: `/${locale}/investment` }, { label: opportunity.title }]} />
-        <section className="about-page-section"><div className="container">
-            {opportunity.summary && <p className="about-page-lead">{opportunity.summary}</p>}
-            <div className="about-page-copy"><p>{opportunity.description}</p></div>
-            {opportunity.document && <div className="about-vision-card" style={{ marginTop: '20px' }}><div><h3>{t('supportingDocument')}</h3><p><Link className="about-page-text-link" href={`/${locale}/documents/${opportunity.document.slug}`}>{opportunity.document.title} <span aria-hidden="true">→</span></Link></p></div></div>}
-            <p style={{ marginTop: '20px' }}><Link className="about-page-text-link" href={`/${locale}/contact?context=investment:${opportunity.slug}`}>{t('enquireInvestment')} <span aria-hidden="true">→</span></Link></p>
-        </div></section>
-    </PublicLayout>;
+
+    return (
+        <PublicLayout>
+            <Head title={`${opportunity.title} | Investment Opportunity`} />
+
+            {/* HERO */}
+            <header className="about-page-hero">
+                <div className="about-page-hero-overlay" aria-hidden="true" />
+                <div className="container">
+                    <nav className="about-page-breadcrumb" aria-label="Breadcrumb">
+                        <Link href={`/${locale}`}>Home</Link>
+                        <span aria-hidden="true">/</span>
+                        <Link href={`/${locale}/investment`}>Investment</Link>
+                        <span aria-hidden="true">/</span>
+                        <span aria-current="page">{opportunity.title}</span>
+                    </nav>
+                    <span className="about-accent-eyebrow">
+                        {opportunity.sector ? `${opportunity.sector.toUpperCase()} · ` : ''}MUTOKO RDC
+                    </span>
+                    <h1>{opportunity.title}</h1>
+                    <p className="about-page-hero-subtitle">
+                        {opportunity.summary ?? 'Strategic economic development and private sector partnership opportunity in Mutoko District.'}
+                    </p>
+                </div>
+            </header>
+
+            {/* MAIN CONTENT */}
+            <section className="about-page-section" aria-labelledby="opportunity-detail">
+                <div className="container">
+                    <div className="about-detail-layout">
+                        <div className="about-mandate-grid">
+                            <article className="rates-guidance-card">
+                                <h3 id="opportunity-detail">Project &amp; Investment Overview</h3>
+                                <div style={{ fontSize: '0.98rem', lineHeight: 1.7, color: '#334155' }}>
+                                    <SourcedText text={opportunity.description} />
+                                </div>
+
+                                {opportunity.document && (
+                                    <div style={{ marginTop: '24px', padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '10px' }}>
+                                        <h4 style={{ margin: '0 0 6px', fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-civic-navy)' }}>
+                                            Supporting Prospectus &amp; Feasibility
+                                        </h4>
+                                        <p style={{ margin: 0, fontSize: '0.88rem' }}>
+                                            <Link href={`/${locale}/documents/${opportunity.document.slug}`} className="about-page-text-link">
+                                                Download {opportunity.document.title} <span aria-hidden="true">→</span>
+                                            </Link>
+                                        </p>
+                                    </div>
+                                )}
+                            </article>
+                        </div>
+
+                        <aside className="about-summary-card" aria-label="Opportunity parameters">
+                            <h3>Investment Summary</h3>
+                            <dl>
+                                {opportunity.sector && (
+                                    <>
+                                        <dt>Sector</dt>
+                                        <dd>{opportunity.sector}</dd>
+                                    </>
+                                )}
+                                <dt>Status</dt>
+                                <dd style={{ textTransform: 'capitalize' }}>{opportunity.opportunity_status}</dd>
+                                {opportunity.location && (
+                                    <>
+                                        <dt>Location</dt>
+                                        <dd>{opportunity.location}</dd>
+                                    </>
+                                )}
+                                <dt>Jurisdiction</dt>
+                                <dd>Mutoko RDC (Stand 366)</dd>
+                            </dl>
+
+                            <p style={{ marginTop: '20px' }}>
+                                <Link
+                                    href={`/${locale}/contact?context=investment:${opportunity.slug}`}
+                                    className="rates-pop-btn-primary"
+                                    style={{ width: '100%', justifyContent: 'center' }}
+                                >
+                                    <span>Submit Expression of Interest</span>
+                                    <span aria-hidden="true">→</span>
+                                </Link>
+                            </p>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+        </PublicLayout>
+    );
 }
+

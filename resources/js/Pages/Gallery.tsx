@@ -4,6 +4,7 @@ import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { EmptyState, PageHero } from '../Components/public/PageHeader';
 import GalleryLightbox, { type GalleryImage } from '../Components/public/GalleryLightbox';
+import { extractSources, SourcedText, SourceButtons } from '../Components/public/SourceButtons';
 
 type GalleryDetail = {
     slug: string;
@@ -43,7 +44,7 @@ export default function Gallery({ gallery, images }: { gallery: GalleryDetail; i
             <section className="about-page-section" aria-labelledby="gallery-detail">
                 <div className="container">
                     {gallery.summary && <p className="about-page-lead">{gallery.summary}</p>}
-                    {gallery.description && <div className="gallery-detail-copy"><p>{gallery.description}</p></div>}
+                    {gallery.description && <div className="gallery-detail-copy"><SourcedText text={gallery.description} /></div>}
 
                     <div className="gallery-detail-head">
                         <span className="about-accent-eyebrow">ALBUM</span>
@@ -70,7 +71,7 @@ export default function Gallery({ gallery, images }: { gallery: GalleryDetail; i
                                                 <line x1="8" y1="11" x2="14" y2="11" />
                                             </svg>
                                         </span>
-                                        {image.caption && <span className="gallery-tile-caption">{image.caption}</span>}
+                                        {image.caption && <span className="gallery-tile-caption">{extractSources(image.caption).body}</span>}
                                     </button>
                                 </li>
                             ))}

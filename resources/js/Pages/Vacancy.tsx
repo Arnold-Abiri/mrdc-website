@@ -2,13 +2,14 @@ import { Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { SeoHead } from '../Seo';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
+import { useSiteSettings } from '../useSiteSettings';
 import { PageHero } from '../Components/public/PageHeader';
 import { daysRemaining } from './Vacancies';
+import { formatDate } from '../formatDate';
 
 type VacancyDetail = { slug: string; title: string; grade: string | null; reference: string | null; employment_type: string | null; description: string; responsibilities: string | null; requirements: string | null; opens_at: string | null; closes_at: string | null; is_open: boolean; application_instructions: string | null; document: { slug: string; title: string } | null };
 type RelatedVacancy = { slug: string; title: string; grade: string | null; closes_at: string | null; is_open: boolean; department: string | null };
 const employmentTypes: Record<string, string> = { full_time: 'fullTime', part_time: 'partTime', contract: 'contract', temporary: 'temporary', internship: 'internship' };
-const RECRUITMENT_EMAIL = 'recruitment@mutokordc.co.zw';
 
 function toListItems(text: string): string[] {
     return text.split('\n').map((line) => line.replace(/^[•\-*)\d.\s]+/, '').trim()).filter((line) => line !== '');
@@ -17,11 +18,15 @@ function toListItems(text: string): string[] {
 export default function Vacancy({ vacancy, department, related = [] }: { vacancy: VacancyDetail; department: string | null; related?: RelatedVacancy[] }) {
     const t = usePublicTranslation();
     const locale = usePublicLocale();
+    const settings = useSiteSettings();
+    const recruitmentEmail = settings.recruitment_email?.trim() || 'recruitment@mutokordc.co.zw';
+
     const remaining = vacancy.is_open ? daysRemaining(vacancy.closes_at) : null;
     const responsibilities = vacancy.responsibilities ? toListItems(vacancy.responsibilities) : [];
     const requirements = vacancy.requirements ? toListItems(vacancy.requirements) : [];
     const pageUrl = `https://www.mutokordc.co.zw/${locale}/vacancies/${vacancy.slug}`;
-    const applyHref = `mailto:${RECRUITMENT_EMAIL}?subject=${encodeURIComponent(`Application for ${vacancy.title}${vacancy.reference ? ` - ${vacancy.reference}` : ''}`)}`;
+    const applyHref = `mailto:${recruitmentEmail}?subject=${encodeURIComponent(`Application for ${vacancy.title}${vacancy.reference ? ` - ${vacancy.reference}` : ''}`)}`;
+
     const schema = {
         '@context': 'https://schema.org',
         '@type': 'JobPosting',
@@ -47,8 +52,8 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                     {vacancy.closes_at && (
                         <p className={`about-closing-banner ${vacancy.is_open ? '' : 'about-closing-banner-closed'}`} role="status">
                             {vacancy.is_open
-                                ? remaining !== null ? `Closing date: ${vacancy.closes_at} — ${remaining} day${remaining === 1 ? '' : 's'} remaining to apply` : `Closing date: ${vacancy.closes_at}`
-                                : `Applications closed on ${vacancy.closes_at}`}
+                                ? remaining !== null ? `Closing date: ${formatDate(vacancy.closes_at, locale)} — ${remaining} day${remaining === 1 ? '' : 's'} remaining to apply` : `Closing date: ${formatDate(vacancy.closes_at, locale)}`
+                                : `Applications closed on ${formatDate(vacancy.closes_at, locale)}`}
                         </p>
                     )}
                     <div className="about-detail-layout">
@@ -57,7 +62,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                                 <h3 id="vacancy-detail">Position overview</h3>
                                 <p>{vacancy.description}</p>
                                 {department && <p>Department: {department}</p>}
-                                {vacancy.opens_at && <p>Opens: {vacancy.opens_at}</p>}
+                                {vacancy.opens_at && <p>Opens: {formatDate(vacancy.opens_at, locale)}</p>}
                             </div>
                             {responsibilities.length > 0 && (
                                 <div className="about-mandate-card">
@@ -92,8 +97,8 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                                 {vacancy.employment_type && employmentTypes[vacancy.employment_type] && <><dt>{t('employmentType')}</dt><dd>{t(employmentTypes[vacancy.employment_type] as 'contract')}</dd></>}
                                 {vacancy.grade && <><dt>Grade</dt><dd>{vacancy.grade}</dd></>}
                                 {vacancy.reference && <><dt>{t('reference')}</dt><dd>{vacancy.reference}</dd></>}
-                                {vacancy.closes_at && <><dt>Closing date</dt><dd>{vacancy.closes_at}</dd></>}
-                                <dt>Email</dt><dd><a href={applyHref}>{RECRUITMENT_EMAIL}</a></dd>
+                                {vacancy.closes_at && <><dt>Closing date</dt><dd>{formatDate(vacancy.closes_at, locale)}</dd></>}
+                                <dt>Email</dt><dd><a href={applyHref}>{recruitmentEmail}</a></dd>
                             </dl>
                             {vacancy.is_open ? (
                                 <p><a className="btn-connect-gold" href={applyHref}>Apply now →</a> <button type="button" className="about-print-btn" onClick={() => window.print()}>Print / Save PDF</button></p>
@@ -114,7 +119,7 @@ export default function Vacancy({ vacancy, department, related = [] }: { vacancy
                                 {related.map((item) => (
                                     <Link key={item.slug} href={`/${locale}/vacancies/${item.slug}`} className="about-focus-card">
                                         <h3>{item.title}</h3>
-                                        <p>{item.department ? `${item.department} — ` : ''}{item.is_open ? 'Open' : 'Closed'}{item.closes_at ? `, closes ${item.closes_at}` : ''}</p>
+                                        <p>{item.department ? `${item.department} — ` : ''}{item.is_open ? 'Open' : 'Closed'}{item.closes_at ? `, closes ${formatDate(item.closes_at, locale)}` : ''}</p>
                                     </Link>
                                 ))}
                             </div>

@@ -25,12 +25,22 @@ export default function PublicDepartment({ department, head, officials = [], ser
                         <Link href={`/${locale}/departments`}>Departments</Link><span aria-hidden="true">/</span>
                         <span aria-current="page">{name}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">CITY DIRECTORATE · MUTOKO RDC</span>
+                    <span className="about-accent-eyebrow">COUNCIL DIRECTORATE · MUTOKO RDC</span>
                     <h1>{name}</h1>
                     <p className="about-page-hero-subtitle">{department.public_summary || `Learn about the work, services and contact information for ${name}.`}</p>
-                    <p style={{ marginTop: 12 }}>
-                        {head ? <>Led by <Link className="about-page-text-link" href={`/${locale}/officials/${head.slug}`} style={{ color: '#fff' }}>{head.name}</Link> — {head.title}</> : 'Department leadership to be announced.'}
-                        {contacts[0] && <> · {contacts[0].value}</>}
+                    <p style={{ marginTop: 12, color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.92rem' }}>
+                        {head ? (
+                            <>
+                                <strong>Directorate Leadership:</strong>{' '}
+                                <Link className="about-page-text-link" href={`/${locale}/officials/${head.slug}`} style={{ color: '#FCD34D', textDecoration: 'underline' }}>
+                                    {head.name}
+                                </Link>{' '}
+                                — {head.title}
+                            </>
+                        ) : (
+                            'Directorate leadership appointed by Council Secretariat.'
+                        )}
+                        {contacts[0] && <> · <span style={{ opacity: 0.9 }}>{contacts[0].value}</span></>}
                     </p>
                 </div>
             </header>

@@ -14,6 +14,7 @@ return new class extends Migration
         ['key' => 'whatsapp_number', 'label' => 'WhatsApp council desk number', 'group' => 'Contact', 'type' => 'phone', 'value' => ''],
         ['key' => 'phone', 'label' => 'Public phone number', 'group' => 'Contact', 'type' => 'phone', 'value' => ''],
         ['key' => 'email', 'label' => 'Public email address', 'group' => 'Contact', 'type' => 'email', 'value' => ''],
+        ['key' => 'recruitment_email', 'label' => 'Recruitment & careers email', 'group' => 'Contact', 'type' => 'email', 'value' => 'recruitment@mutokordc.co.zw'],
         ['key' => 'physical_address', 'label' => 'Physical address', 'group' => 'Contact', 'type' => 'textarea', 'value' => "Mutoko Rural District Council\nMutoko, Mashonaland East\nZimbabwe"],
         ['key' => 'office_hours', 'label' => 'Office hours', 'group' => 'Contact', 'type' => 'text', 'value' => ''],
         ['key' => 'facebook_url', 'label' => 'Facebook URL', 'group' => 'Social', 'type' => 'url', 'value' => ''],

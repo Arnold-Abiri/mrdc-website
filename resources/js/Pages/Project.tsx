@@ -3,6 +3,7 @@ import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 import { PageHero, EmptyState } from '../Components/public/PageHeader';
 import { formatDate } from '../formatDate';
+import { SourcedText } from '../Components/public/SourceButtons';
 type Ward = { slug: string; name: string };
 type LinkedDocument = { slug: string; title: string };
 type Update = { update_date: string | null; title: string; summary: string | null; progress_percent: number | null };
@@ -21,7 +22,7 @@ export default function Project({ project, department, wards, documents, updates
                 <div className="about-mandate-card"><h3>{t('timeline')}</h3><p>{t('startsAt')}: {formatDate(project.starts_at, locale) || '—'} — {t('expectedCompletion')}: {formatDate(project.expected_completed_at, locale) || '—'}{project.completed_at ? ` — ${t('completedAt')}: ${formatDate(project.completed_at, locale)}` : ''}</p>{project.progress_percent !== null && <p>{t('progress')}: {project.progress_percent}%</p>}</div>
                 <div className="about-mandate-card"><h3>{t('location')}</h3><p>{project.location ?? '—'}</p>{department && <p>{t('department')}: {department}</p>}{wards.length > 0 && <p>{t('wards')}: {wards.map(ward => ward.name).join(', ')}</p>}</div>
             </div>
-            <div className="about-page-copy" style={{ marginTop: '20px' }}><p>{project.description}</p></div>
+            <div className="about-page-copy" style={{ marginTop: '20px' }}><SourcedText text={project.description} /></div>
             {project.contact_instructions && <div className="about-vision-card" style={{ marginTop: '20px' }}><div><h3>{t('contactCouncil')}</h3><p>{project.contact_instructions}</p></div></div>}
         </div></section>
         <section className="about-page-section about-page-section-muted"><div className="container">

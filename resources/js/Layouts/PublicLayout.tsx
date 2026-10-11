@@ -523,8 +523,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         <h3 className="footer-heading">{t('quickLinks')}</h3>
                         <ul className="footer-link-list">
                             <li><a href={L("/")}>{t('home')}</a></li>
-                            <li><a href={L("/#about")}>{t('about')}</a></li>
-                            <li><a href={L("/#services")}>{t('ourServices')}</a></li>
+                            <li><a href={L("/about")}>{t('about')}</a></li>
+                            <li><a href={L("/services")}>{t('ourServices')}</a></li>
                             <li><a href={L("/investment")}>{t('development')}</a></li>
                             <li><a href={L("/tourism")}>{t('tourism')}</a></li>
                             <li><a href={L("/news")}>{t('media')}</a></li>
