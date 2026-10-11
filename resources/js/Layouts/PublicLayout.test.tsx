@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-let mockPageState: { locale: string; localeCsrfToken: string; topbar_notices: { slug: string; title: string; is_urgent: boolean }[] } = { locale: 'en', localeCsrfToken: 'test-token', topbar_notices: [] };
+let mockPageState: { locale: string; localeCsrfToken: string; topbar_notices: { slug: string; title: string; is_urgent: boolean }[]; site_settings?: Record<string, string | null> } = { locale: 'en', localeCsrfToken: 'test-token', topbar_notices: [] };
 let mockPageUrl = '/en';
 
 vi.mock('@inertiajs/react', async (importOriginal) => ({
@@ -41,6 +41,20 @@ describe('public navigation', () => {
         expect(screen.queryByText('info@mutokordc.gov.zw')).not.toBeInTheDocument();
     });
 
+    it('uses the configured council logo in the public header and footer', () => {
+        mockPageState = {
+            locale: 'en',
+            localeCsrfToken: 'test-token',
+            topbar_notices: [],
+            site_settings: { logo_media_id: '42' },
+        };
+
+        const { container } = render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        const logos = container.querySelectorAll('.identity-logo-img, .footer-logo-img');
+        expect(logos).toHaveLength(2);
+        logos.forEach((logo) => expect(logo).toHaveAttribute('src', '/en/managed-media/42'));
+    });
+
     it('renders published notices in the topbar ticker when provided', () => {
         mockPageState = {
             locale: 'en',
@@ -71,4 +85,3 @@ describe('public navigation', () => {
         expect(navigation.getByRole('link', { name: 'Madhipatimendi eKanzuru' })).toHaveAttribute('href', '/sn/departments');
     });
 });
-

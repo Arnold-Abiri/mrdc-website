@@ -9,6 +9,7 @@ use App\Models\Gallery;
 use App\Models\HomepageSlide;
 use App\Models\Media;
 use App\Models\Official;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +25,8 @@ class MediaController extends Controller
         $isPublishedProjectImage = CouncilProject::query()->with('translations')->public()->where('featured_media_id', $media->id)->exists();
         $isPublishedGalleryImage = Gallery::query()->public()->where(fn ($query) => $query->where('cover_media_id', $media->id)->orWhereHas('media', fn ($images) => $images->where('media.id', $media->id)))->exists();
         $isPreviewGalleryImage = session('preview_authorized') === true && Gallery::query()->whereIn('status', ['draft', 'published'])->where(fn ($query) => $query->where('cover_media_id', $media->id)->orWhereHas('media', fn ($images) => $images->where('media.id', $media->id)))->exists();
-        abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage || $isPreviewSlideImage || $isPublishedProjectImage || $isPublishedGalleryImage || $isPreviewGalleryImage, 404);
+        $isSiteLogo = SiteSetting::query()->where('key', 'logo_media_id')->where('value', (string) $media->id)->exists();
+        abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage || $isPreviewSlideImage || $isPublishedProjectImage || $isPublishedGalleryImage || $isPreviewGalleryImage || $isSiteLogo, 404);
         abort_unless(Storage::disk(config('cms.media_disk'))->exists($media->storage_path), 404);
 
         return Storage::disk(config('cms.media_disk'))->response($media->storage_path, 'image', [

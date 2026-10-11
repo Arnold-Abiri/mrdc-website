@@ -148,6 +148,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const settings: SiteSettings = useSiteSettings();
+    const logoMediaId = settings.logo_media_id?.trim();
+    const logoUrl = logoMediaId && /^\d+$/.test(logoMediaId)
+        ? L(`/managed-media/${logoMediaId}`)
+        : '/images/council-crest-light.webp';
     const footerPhone = settings.phone?.trim() || null;
     const footerEmail = settings.email?.trim() || null;
     const footerAddress = settings.physical_address?.trim() || null;
@@ -266,7 +270,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 <div className="container header-inner">
                     <a className="identity" href={L("/")} aria-label={t('councilHome')}>
                         <img
-                            src="/images/council-crest-light.webp"
+                            src={logoUrl}
                             alt={t('brandingAlt')}
                             className="identity-logo-img"
                             width="48"
@@ -474,7 +478,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <div className="footer-col-about">
                         <a className="footer-brand" href={L('/')} aria-label={t('councilHome')}>
                             <img
-                                src="/images/council-crest-light.webp"
+                                src={logoUrl}
                                 alt=""
                                 aria-hidden="true"
                                 className="footer-logo-img"

@@ -7,6 +7,8 @@ use App\Filament\Resources\SiteSettings\Pages\ListSiteSettings;
 use App\Models\SiteSetting;
 use BackedEnum;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -15,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class SiteSettingResource extends Resource
 {
@@ -35,10 +38,25 @@ class SiteSettingResource extends Resource
         return $schema->components([
             TextInput::make('label')->disabled()->dehydrated(false),
             TextInput::make('key')->disabled()->dehydrated(false),
+            Placeholder::make('logo_preview')
+                ->label('Current logo preview')
+                ->content(fn (?SiteSetting $record): HtmlString|string => $record?->key === 'logo_media_id' && ctype_digit((string) $record->value)
+                    ? new HtmlString('<img src="'.e(public_route('managed-media.show', (int) $record->value)).'" alt="Current council logo" style="max-height: 100px; max-width: 280px; object-fit: contain;">')
+                    : 'No logo uploaded; the default crest is in use.')
+                ->html()
+                ->visible(fn (?SiteSetting $record): bool => $record?->key === 'logo_media_id'),
+            FileUpload::make('logo_file')
+                ->label('Upload new logo')
+                ->image()
+                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                ->storeFiles(false)
+                ->maxSize(config('cms.max_upload_kb'))
+                ->helperText('Upload a JPEG, PNG, or WebP image. The preview updates when you select a file.')
+                ->visible(fn (?SiteSetting $record): bool => $record?->key === 'logo_media_id'),
             TextInput::make('value')
                 ->label('Value')
                 ->maxLength(2000)
-                ->visible(fn (?SiteSetting $record): bool => $record === null || $record->type !== 'textarea')
+                ->visible(fn (?SiteSetting $record): bool => $record === null || ! in_array($record->type, ['textarea', 'image'], true))
                 ->helperText(fn (?SiteSetting $record): ?string => $record?->key === 'whatsapp_number' ? 'Digits only, e.g. 263771234567. Used for the WhatsApp Council Desk button.' : null),
             Textarea::make('value_textarea')
                 ->label('Value')
@@ -56,10 +74,14 @@ class SiteSettingResource extends Resource
             ->columns([
                 TextColumn::make('group')->badge()->sortable(),
                 TextColumn::make('label')->searchable(),
-                TextColumn::make('value')->limit(60)->searchable(),
+                TextColumn::make('value')->limit(60)->searchable()->state(
+                    fn (SiteSetting $record): string => $record->key === 'logo_media_id'
+                        ? ($record->value ? 'Logo configured' : 'Using default crest')
+                        : ($record->value ?? '')
+                ),
             ])
             ->filters([
-                SelectFilter::make('group')->options(['Contact' => 'Contact', 'Social' => 'Social']),
+                SelectFilter::make('group')->options(['Branding' => 'Branding', 'Contact' => 'Contact', 'Social' => 'Social']),
             ])
             ->recordActions([EditAction::make()])
             ->paginated(false);
