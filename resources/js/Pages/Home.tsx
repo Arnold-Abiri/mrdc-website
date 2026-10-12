@@ -50,7 +50,7 @@ export default function Home({ services, documents, departments, news, notices, 
                 <meta name="description" content="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." />
                 {preview && <meta name="robots" content="noindex, nofollow" />}
             </Head>
-            <SeoHead title="Mutoko Rural District Council" description="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." type="website" schema={organizationSchema()} />
+            <SeoHead title="Mutoko Rural District Council" description="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." type="website" image={slides[0]?.image_url ?? undefined} schema={organizationSchema()} />
                 {preview && <div className="preview-banner" role="note"><p><strong>Stakeholder review preview.</strong> Content on this preview is pending council approval. This is not the public website.</p></div>}
                 <Hero slides={slides} />
                 <QuickAccess />

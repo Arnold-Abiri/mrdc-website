@@ -26,6 +26,10 @@ export function SeoHead({ title, description, image, type = 'article', schema = 
             <meta property="og:type" content={type} />
             <meta property="og:site_name" content="Mutoko Rural District Council" />
             {image && <meta property="og:image" content={image} />}
+            <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+            <meta name="twitter:title" content={title} />
+            {description && <meta name="twitter:description" content={description} />}
+            {image && <meta name="twitter:image" content={image} />}
             {schema && <script type="application/ld+json">{JSON.stringify(schema)}</script>}
         </Head>
     );
