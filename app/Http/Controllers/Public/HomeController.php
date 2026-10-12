@@ -48,7 +48,7 @@ class HomeController extends Controller
             'slides' => HomepageSlide::query()->with('translations')->public()->orderBy('display_order')->get(['id', 'headline', 'supporting_text', 'cta_label', 'cta_url', 'media_id'])->map(function (HomepageSlide $slide): array {
                 $media = $slide->media_id ? Media::query()->where('id', $slide->media_id)->where('status', 'active')->first() : null;
 
-                return [...$slide->toLocalizedArray(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null];
+                return [...$slide->toLocalizedArray(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null, 'image_alt' => $media?->translated('alt_text'), 'image_caption' => $media?->translated('caption')];
             }),
             'meetings' => CouncilMeeting::query()->with('translations')->public()->where('meeting_status', 'scheduled')->orderBy('scheduled_date')->orderBy('display_order')->limit(3)->get(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'agenda_document_id', 'minutes_document_id'])->map(fn (CouncilMeeting $meeting): array => [
                 ...$meeting->toLocalizedArray(['title', 'venue']),

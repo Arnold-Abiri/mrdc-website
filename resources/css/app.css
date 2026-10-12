@@ -6055,6 +6055,8 @@ h3 { margin: 0; }
 .hero { height: clamp(560px, 54vh, 620px); min-height: 0; isolation: isolate; }
 .hero-image { object-position: 62% center; }
 .hero--managed .hero-image { animation: hero-image-enter 850ms ease-out both; }
+.hero-image-credit { position: absolute; z-index: 3; right: 20px; top: 16px; margin: 0; padding: 5px 9px; border-radius: 5px; background: rgba(4, 22, 37, 0.72); color: #fff; font-size: 0.72rem; }
+.hero-image-credit a { color: #fff; text-decoration: underline; }
 .hero-shade {
   background: linear-gradient(90deg, rgba(4, 22, 37, 0.93) 0%, rgba(4, 22, 37, 0.78) 37%, rgba(4, 22, 37, 0.27) 76%, rgba(4, 22, 37, 0.2) 100%),
     linear-gradient(0deg, rgba(4, 22, 37, 0.74), transparent 30%);

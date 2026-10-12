@@ -15,6 +15,7 @@ import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslatio
 import type { TranslationKey } from '../../localization';
 import { useSiteSettings, whatsappLinkFor } from '../../useSiteSettings';
 import { EmergencyAlertCard } from './EmergencyAlertCard';
+import { extractSources } from './SourceButtons';
 
 const services = [
     {
@@ -111,7 +112,7 @@ function QuickIcon({ name }: { name: typeof services[number]['icon'] }) {
     }
 }
 
-export type HeroSlide = { headline: string; supporting_text: string | null; cta_label: string | null; cta_url: string | null; image_url: string | null };
+export type HeroSlide = { headline: string; supporting_text: string | null; cta_label: string | null; cta_url: string | null; image_url: string | null; image_alt?: string | null; image_caption?: string | null };
 
 /** Clamp CMS copy so legacy overlong rows cannot break the hero layout. */
 function clampSlideText(value: string | null, max: number): string | null {
@@ -132,6 +133,7 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
     const currentIndex = slides.length > 0 ? index % slides.length : 0;
     const raw = slides[currentIndex];
     const active = raw ? { ...raw, headline: clampSlideText(raw.headline, 120) ?? '', supporting_text: clampSlideText(raw.supporting_text, 220), cta_label: clampSlideText(raw.cta_label, 40) } : raw;
+    const imageCredit = extractSources(active?.image_caption);
     const isCouncilWelcome = active?.headline === 'Mutoko Rural District Council';
     const headlineWords = active?.headline.trim().split(/\s+/) ?? [];
     const accentStart = Math.max(1, headlineWords.length - 2);
@@ -246,9 +248,11 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                 width="1983"
                 height="793"
                 eager
-                alt={isCouncilWelcome ? 'Scenic Mutoko landscape showing rocky kopje mountains, green valley and Mutoko town center' : active.headline}
+                alt={active.image_alt || active.headline}
             />
             <div className="hero-shade" />
+
+            {imageCredit.body && <p className="hero-image-credit">{imageCredit.body}{imageCredit.sources[0] && <> · <a href={imageCredit.sources[0]} target="_blank" rel="noopener noreferrer">Image source</a></>}</p>}
 
             <div className="container hero-container">
                 <div className="hero-main-row">

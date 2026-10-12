@@ -115,7 +115,7 @@ class PreviewTest extends TestCase
             ->component('Home', false)
             ->has('slides', 3)
             ->where('slides.1.image_url', $draftImageUrl));
-        $this->get($draftImageUrl)->assertOk()->assertHeader('Content-Type', 'image/webp');
+        $this->get($draftImageUrl)->assertOk()->assertHeader('Content-Type', 'image/jpeg');
     }
 
     public function test_reseeding_does_not_replace_edited_slides(): void

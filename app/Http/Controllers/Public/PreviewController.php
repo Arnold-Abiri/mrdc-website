@@ -54,7 +54,7 @@ class PreviewController extends Controller
             'slides' => HomepageSlide::query()->with('translations')->whereIn('status', ['draft', 'published'])->where('is_active', true)->orderBy('display_order')->get(['id', 'headline', 'supporting_text', 'cta_label', 'cta_url', 'media_id'])->map(function (HomepageSlide $slide): array {
                 $media = $slide->media_id ? Media::query()->where('id', $slide->media_id)->where('status', 'active')->first() : null;
 
-                return [...$slide->toLocalizedArray(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null];
+                return [...$slide->toLocalizedArray(['headline', 'supporting_text', 'cta_label', 'cta_url']), 'image_url' => $media ? public_route('managed-media.show', $media->id) : null, 'image_alt' => $media?->translated('alt_text'), 'image_caption' => $media?->translated('caption')];
             }),
             'meetings' => CouncilMeeting::query()->with('translations')->whereIn('status', ['draft', 'published'])->where('meeting_status', 'scheduled')->orderBy('scheduled_date')->orderBy('display_order')->limit(3)->get(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue'])->map(fn (CouncilMeeting $meeting): array => $meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue'])),
         ]);

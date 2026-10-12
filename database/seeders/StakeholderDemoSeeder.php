@@ -287,9 +287,10 @@ class StakeholderDemoSeeder extends Seeder
                 'cta_url' => '/services',
             ],
             [
-                'source' => 'public/images/home/dev-background.webp',
-                'path' => 'slides/demo-development.webp',
-                'alt' => 'Mutoko rural landscape earmarked for development',
+                'source' => 'public/images/tourism/tere-ruin-mutoko-original.jpg',
+                'path' => 'slides/demo-development.jpg',
+                'alt' => 'Stone walls at the Tere Ruins near Mutoko',
+                'caption' => 'Photo: Robert Stewart Burrett, CC BY-SA 4.0. Source: https://commons.wikimedia.org/wiki/File:Tere_Ruin_Mutoko.jpg',
                 'headline' => 'Roads, Water and Growth Points',
                 'supporting_text' => 'The council maintains rural access, services business centres and programmes rehabilitation where funding allows.',
                 'cta_label' => 'See development priorities',
@@ -317,11 +318,12 @@ class StakeholderDemoSeeder extends Seeder
                     [
                         'title' => $slide['headline'],
                         'alt_text' => $slide['alt'],
+                        'caption' => $slide['caption'] ?? null,
                         'original_filename' => basename($slide['path']),
-                        'mime_type' => 'image/webp',
+                        'mime_type' => mime_content_type(base_path($slide['source'])),
                         'size' => Storage::disk(config('cms.media_disk', 'local'))->size($slide['path']),
-                        'width' => 1983,
-                        'height' => 793,
+                        'width' => getimagesize(base_path($slide['source']))[0],
+                        'height' => getimagesize(base_path($slide['source']))[1],
                         'status' => 'active',
                     ]
                 );
