@@ -247,7 +247,8 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
                 src={active.image_url ?? '/images/hero-clean.webp'}
                 width="1983"
                 height="793"
-                eager
+                eager={currentIndex === 0}
+                sizes="100vw"
                 alt={active.image_alt || active.headline}
             />
             <div className="hero-shade" />
@@ -519,7 +520,15 @@ function EmptyPreview({ type, title, description }: { type: 'news' | 'events'; t
     );
 }
 
-function SafeImage({ src, alt, className, width, height, eager = false, fallbackLabel }: { src: string; alt: string; className?: string; width?: number | string; height?: number | string; eager?: boolean; fallbackLabel?: string }) {
+function responsiveSrcSet(src: string): string | undefined {
+    if (!src || src.startsWith('data:') || !src.includes('/managed-media/')) {
+        return undefined;
+    }
+    const separator = src.includes('?') ? '&' : '?';
+    return [640, 1024, 1600].map(width => `${src}${separator}w=${width} ${width}w`).join(', ');
+}
+
+function SafeImage({ src, alt, className, width, height, eager = false, sizes, fallbackLabel }: { src: string; alt: string; className?: string; width?: number | string; height?: number | string; eager?: boolean; sizes?: string; fallbackLabel?: string }) {
     const t = usePublicTranslation();
     const label = fallbackLabel ?? t('imageUnavailable');
     const [broken, setBroken] = useState(false);
@@ -535,7 +544,8 @@ function SafeImage({ src, alt, className, width, height, eager = false, fallback
             </span>
         );
     }
-    return <img className={className} src={src} alt={alt} width={width} height={height} fetchPriority={eager ? 'high' : undefined} loading={eager ? undefined : 'lazy'} onError={() => setBroken(true)} />;
+    const srcSet = eager ? responsiveSrcSet(src) : undefined;
+    return <img className={className} src={src} srcSet={srcSet} sizes={srcSet ? (sizes ?? '100vw') : undefined} alt={alt} width={width} height={height} fetchPriority={eager ? 'high' : undefined} loading={eager ? 'eager' : 'lazy'} decoding={eager ? 'sync' : 'async'} onError={() => setBroken(true)} />;
 }
 
 function NewsCard({ item }: { item: NewsPreview }) {

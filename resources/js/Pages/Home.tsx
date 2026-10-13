@@ -49,6 +49,7 @@ export default function Home({ services, documents, departments, news, notices, 
             <Head title="Mutoko Rural District Council">
                 <meta name="description" content="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." />
                 {preview && <meta name="robots" content="noindex, nofollow" />}
+                {slides[0]?.image_url && <link rel="preload" as="image" href={slides[0].image_url} imageSrcSet={`${slides[0].image_url}?w=640 640w, ${slides[0].image_url}?w=1024 1024w, ${slides[0].image_url}?w=1600 1600w`} imageSizes="100vw" fetchPriority="high" />}
             </Head>
             <SeoHead title="Mutoko Rural District Council" description="Mutoko Rural District Council — local government services, public notices, news, documents, wards and development across Mutoko District, Mashonaland East, Zimbabwe." type="website" image={slides[0]?.image_url ?? undefined} schema={organizationSchema()} />
                 {preview && <div className="preview-banner" role="note"><p><strong>Stakeholder review preview.</strong> Content on this preview is pending council approval. This is not the public website.</p></div>}

@@ -3077,7 +3077,7 @@ a:focus-visible, button:focus-visible {
   flex-shrink: 0;
 }
 .topbar-ticker-badge.badge-notice {
-  background: var(--color-council-green);
+  background: var(--color-deep-green);
   color: #FFFFFF;
 }
 .topbar-ticker-badge.badge-urgent {
@@ -6071,8 +6071,8 @@ h3 { margin: 0; }
 .hero-description { max-width: 57ch; font-size: clamp(1rem, 1.2vw, 1.12rem); line-height: 1.65; color: #E7EEF2; margin-bottom: 22px; }
 .hero-actions { flex-direction: row; flex-wrap: wrap; gap: 12px; }
 .btn-hero-primary, .btn-hero-outline { min-height: 52px; padding-inline: 25px; border-radius: 10px; transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
-.btn-hero-primary { background: #0B9465; box-shadow: 0 12px 26px rgba(2, 27, 22, 0.22); }
-.btn-hero-primary:hover { background: #0AA875; transform: translateY(-2px); }
+.btn-hero-primary { background: #075D46; box-shadow: 0 12px 26px rgba(2, 27, 22, 0.22); }
+.btn-hero-primary:hover { background: #064E3B; transform: translateY(-2px); }
 .btn-hero-outline { background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.75); }
 .btn-hero-outline:hover { transform: translateY(-2px); }
 .hero-carousel-controls { width: 100%; margin-top: auto; padding-top: 20px; display: flex; align-items: center; gap: 22px; }

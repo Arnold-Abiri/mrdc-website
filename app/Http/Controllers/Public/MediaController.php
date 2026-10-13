@@ -11,11 +11,14 @@ use App\Models\Media;
 use App\Models\Official;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MediaController extends Controller
 {
-    public function show(string $locale, Media $media): Response
+    private const RESPONSIVE_WIDTHS = [640, 1024, 1600];
+
+    public function show(Request $request, string $locale, Media $media): Response
     {
         abort_unless($media->status === 'active' && str_starts_with($media->mime_type, 'image/'), 404);
         $isPublishedOfficialPhoto = Official::query()->public()->where('photo_media_id', $media->id)->exists();
@@ -29,11 +32,117 @@ class MediaController extends Controller
         abort_unless($isPublishedOfficialPhoto || $isPublishedEditorialImage || $isPublishedSlideImage || $isPreviewSlideImage || $isPublishedProjectImage || $isPublishedGalleryImage || $isPreviewGalleryImage || $isSiteLogo, 404);
         abort_unless(Storage::disk(config('cms.media_disk'))->exists($media->storage_path), 404);
 
-        return Storage::disk(config('cms.media_disk'))->response($media->storage_path, 'image', [
-            'Content-Type' => $media->mime_type,
+        $disk = Storage::disk(config('cms.media_disk'));
+        $width = (int) $request->query('w', 0);
+        $path = $media->storage_path;
+        $mime = $media->mime_type;
+
+        if ($width > 0 && str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml' && $mime !== 'image/gif') {
+            $width = $this->nearestWidth($width);
+            $variant = $this->responsiveVariant($disk, $media, $width);
+            if ($variant !== null) {
+                $path = $variant;
+            }
+        }
+
+        $lastModified = $disk->lastModified($path);
+        $etag = sprintf('"%s-%s"', $media->id, md5($path.$lastModified));
+
+        $response = $disk->response($path, 'image', [
+            'Content-Type' => $mime,
             'X-Content-Type-Options' => 'nosniff',
             'Content-Security-Policy' => "default-src 'none'; sandbox",
-            'Cache-Control' => 'private, no-store',
         ], 'inline');
+
+        $response->setPublic();
+        $response->setMaxAge(31536000);
+        $response->setImmutable();
+        $response->setEtag($etag);
+        $response->setLastModified(\DateTimeImmutable::createFromFormat('U', (string) $lastModified) ?: null);
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
+        return $response;
+    }
+
+    private function nearestWidth(int $requested): int
+    {
+        $nearest = self::RESPONSIVE_WIDTHS[0];
+        foreach (self::RESPONSIVE_WIDTHS as $candidate) {
+            if ($candidate >= $requested) {
+                return $candidate;
+            }
+            $nearest = $candidate;
+        }
+
+        return $nearest;
+    }
+
+    /**
+     * Build (once) and cache a downscaled variant of the image using GD.
+     *
+     * @return string|null storage path of the variant, or null when resizing is not possible.
+     */
+    private function responsiveVariant(object $disk, Media $media, int $width): ?string
+    {
+        if (! function_exists('imagecreatefromstring') || ! function_exists('imagescale')) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($media->storage_path, PATHINFO_EXTENSION));
+        $variant = sprintf('responsive/%d-w%d.%s', $media->id, $width, $extension === '' ? 'webp' : $extension);
+
+        if ($disk->exists($variant)) {
+            return $variant;
+        }
+
+        try {
+            $original = $disk->get($media->storage_path);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        $source = @imagecreatefromstring($original);
+        if ($source === false) {
+            return null;
+        }
+
+        $originalWidth = imagesx($source);
+        if ($originalWidth <= $width) {
+            imagedestroy($source);
+
+            return null;
+        }
+
+        $scaled = imagescale($source, $width);
+        imagedestroy($source);
+        if ($scaled === false) {
+            return null;
+        }
+
+        ob_start();
+        $mime = $media->mime_type;
+        if ($mime === 'image/png') {
+            imagepng($scaled, null, 6);
+        } elseif ($mime === 'image/jpeg') {
+            imagejpeg($scaled, null, 82);
+        } elseif ($mime === 'image/webp' && function_exists('imagewebp')) {
+            imagewebp($scaled, null, 82);
+        } else {
+            imagejpeg($scaled, null, 82);
+            $variant = preg_replace('/\.[a-z0-9]+$/i', '.jpg', $variant) ?? $variant;
+        }
+        $encoded = (string) ob_get_clean();
+        imagedestroy($scaled);
+
+        if ($encoded === '') {
+            return null;
+        }
+
+        $disk->put($variant, $encoded);
+
+        return $variant;
     }
 }
