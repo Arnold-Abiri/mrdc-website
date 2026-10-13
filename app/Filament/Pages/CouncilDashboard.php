@@ -146,14 +146,14 @@ class CouncilDashboard extends Dashboard
                     'projects' => $monthlyProjects->filter(fn ($item): bool => $item->published_at?->format('Y-m') === $key)->count(),
                     'meetings' => $monthlyMeetings->filter(fn ($item): bool => $item->published_at?->format('Y-m') === $key)->count(),
                 ];
-            });
+            })->all();
 
             return compact('metrics', 'contentTypes', 'months');
         });
 
         $metrics = $aggregates['metrics'];
         $contentTypes = $aggregates['contentTypes'];
-        $months = $aggregates['months'];
+        $months = collect($aggregates['months']);
 
         $approvals = $editorialApprovals;
         $weather = $this->getWeather();
