@@ -30,6 +30,25 @@ describe('public navigation', () => {
         expect(screen.getByRole('button', { name: 'Close menu' })).toHaveAttribute('aria-expanded', 'true');
     });
 
+    it('opens one mobile submenu at a time', () => {
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        fireEvent.click(screen.getByRole('button', { name: 'Menu' }));
+
+        const council = screen.getByRole('button', { name: 'Council' });
+        const services = screen.getByRole('button', { name: 'Services' });
+        expect(council).toHaveAttribute('aria-expanded', 'false');
+        expect(services).toHaveAttribute('aria-expanded', 'false');
+
+        fireEvent.click(council);
+        expect(council).toHaveAttribute('aria-expanded', 'true');
+        expect(document.getElementById('nav-submenu-council')).toHaveClass('is-open');
+
+        fireEvent.click(services);
+        expect(council).toHaveAttribute('aria-expanded', 'false');
+        expect(services).toHaveAttribute('aria-expanded', 'true');
+        expect(document.getElementById('nav-submenu-council')).not.toHaveClass('is-open');
+    });
+
     it('renders council branding and contact utility details', () => {
         render(<PublicLayout><h1>Content</h1></PublicLayout>);
         const logo = screen.getByAltText('Mutoko Rural District Council crest');

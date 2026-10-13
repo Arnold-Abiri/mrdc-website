@@ -164,6 +164,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         settings.youtube_url?.trim() ? { href: settings.youtube_url.trim(), label: 'YouTube', path: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' } : null,
     ].filter((entry): entry is { href: string; label: string; path: string } => entry !== null);
     const [open, setOpen] = useState(false);
+    const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
     // Dynamic current path detection without locale prefix
     const currentUrl = page.url || '/';
@@ -305,7 +306,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             type="button"
                             aria-expanded={open}
                             aria-controls="primary-navigation"
-                            onClick={() => setOpen(!open)}
+                            onClick={() => { setOpen(!open); setOpenSubmenu(null); }}
                         >
                             {open ? t('closeMenu') : t('menu')}
                             <span className="menu-lines" aria-hidden="true">☰</span>
@@ -330,11 +331,12 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             }
 
                             if (item.children) {
+                                const submenuOpen = openSubmenu === item.label;
                                 return (
                                     <div key={item.label} className="nav-group">
                                         <a
                                             href={L(item.href)}
-                                            className={`nav-item nav-parent${active ? ' nav-item-active' : ''}`}
+                                            className={`nav-item nav-parent nav-parent-desktop${active ? ' nav-item-active' : ''}`}
                                             aria-haspopup="true"
                                             aria-current={isPathActive(item.href) ? 'page' : undefined}
                                         >
@@ -342,7 +344,17 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                             <span className="nav-caret" aria-hidden="true">▾</span>
                                             {active && <span className="nav-active-indicator" aria-hidden="true" />}
                                         </a>
-                                        <ul className="nav-dropdown" aria-label={t(item.label.toLowerCase() as Parameters<typeof translate>[1])}>
+                                        <button
+                                            type="button"
+                                            className={`nav-item nav-parent nav-parent-mobile${active ? ' nav-item-active' : ''}`}
+                                            aria-expanded={submenuOpen}
+                                            aria-controls={`nav-submenu-${item.label.toLowerCase()}`}
+                                            onClick={() => setOpenSubmenu(submenuOpen ? null : item.label)}
+                                        >
+                                            <span>{t(item.label.toLowerCase() as Parameters<typeof translate>[1])}</span>
+                                            <span className="nav-caret" aria-hidden="true">▾</span>
+                                        </button>
+                                        <ul id={`nav-submenu-${item.label.toLowerCase()}`} className={`nav-dropdown${submenuOpen ? ' is-open' : ''}`} aria-label={t(item.label.toLowerCase() as Parameters<typeof translate>[1])}>
                                             {item.children.map(child => {
                                                 const childActive = isPathActive(child.href);
                                                 return (
