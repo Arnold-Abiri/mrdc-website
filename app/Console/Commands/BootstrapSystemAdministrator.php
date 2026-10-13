@@ -32,7 +32,7 @@ class BootstrapSystemAdministrator extends Command
         $name = $this->option('name') ?: $this->ask('Name');
         $email = $this->option('email') ?: $this->ask('Email');
         $password = $this->secret('Password');
-        $values = Validator::make(compact('name', 'email', 'password'), ['name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255', 'unique:users,email'], 'password' => ['required', Password::min(16)->mixedCase()->numbers()->symbols()]])->validate();
+        $values = Validator::make(compact('name', 'email', 'password'), ['name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255', 'unique:users,email'], 'password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()]])->validate();
         DB::transaction(function () use ($values): void {
             $role = Role::findByName('System Administrator', 'web');
             $user = User::create(['name' => $values['name'], 'email' => strtolower(trim($values['email'])), 'password' => Hash::make($values['password'])]);
