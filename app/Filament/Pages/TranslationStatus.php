@@ -54,7 +54,7 @@ class TranslationStatus extends FilamentPage
 
     protected static \UnitEnum|string|null $navigationGroup = 'Content';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $title = 'Translation status';
 

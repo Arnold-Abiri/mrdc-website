@@ -18,7 +18,7 @@ class TenderCompliance extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Services & Development';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $title = 'Tender compliance';
 

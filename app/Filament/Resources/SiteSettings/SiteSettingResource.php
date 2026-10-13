@@ -26,9 +26,9 @@ class SiteSettingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Content Management';
+    protected static \UnitEnum|string|null $navigationGroup = 'Administration';
 
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Site settings';
 

@@ -52,10 +52,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(PanelsRenderHook::GLOBAL_SEARCH_AFTER, fn () => view('filament.components.admin-topbar-actions'))
             ->renderHook(PanelsRenderHook::USER_MENU_AFTER, fn () => view('filament.components.admin-topbar-user'))
             ->navigationGroups([
+                NavigationGroup::make('Public Enquiries')->collapsible(),
                 NavigationGroup::make('Content')->collapsible(),
                 NavigationGroup::make('Council')->collapsible(),
                 NavigationGroup::make('Services & Development')->collapsible(),
-                NavigationGroup::make('Public Enquiries')->collapsible(),
                 NavigationGroup::make('Reports & Monitoring')->collapsible(),
                 NavigationGroup::make('Administration')->collapsible(),
             ])

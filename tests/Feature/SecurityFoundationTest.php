@@ -8,18 +8,22 @@ use App\Domain\Identity\DepartmentManager;
 use App\Domain\Identity\RoleManager;
 use App\Domain\Identity\UserManager;
 use App\Filament\Pages\Profile;
+use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Models\AuditEvent;
 use App\Models\Department;
 use App\Models\User;
 use Database\Seeders\SecuritySeeder;
 use Filament\Auth\Pages\Login;
+use Filament\Notifications\Notification;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\TestCase;
 
 class SecurityFoundationTest extends TestCase
@@ -138,6 +142,40 @@ class SecurityFoundationTest extends TestCase
         $this->assertSame('new@example.com', $user->email);
         $this->assertDatabaseHas('audit_events', ['actor_id' => $admin->id, 'action' => 'user.created', 'subject_id' => (string) $user->id]);
         $this->assertStringNotContainsString($user->password, AuditEvent::query()->latest('id')->firstOrFail()->toJson());
+    }
+
+    public function test_user_creation_explains_when_mail_is_not_configured(): void
+    {
+        $admin = $this->administrator();
+        config(['mail.default' => 'log']);
+
+        Livewire::actingAs($admin)
+            ->test(CreateUser::class)
+            ->fillForm(['name' => 'New Staff', 'email' => 'new@example.com'])
+            ->call('create')
+            ->assertNotified('User not created');
+
+        $this->assertDatabaseMissing('users', ['email' => 'new@example.com']);
+    }
+
+    public function test_user_creation_explains_when_mail_service_reaches_its_limit(): void
+    {
+        $admin = $this->administrator();
+        Password::shouldReceive('sendResetLink')
+            ->once()
+            ->andThrow(new TransportException('The email limit is reached.'));
+
+        Livewire::actingAs($admin)
+            ->test(CreateUser::class)
+            ->fillForm(['name' => 'New Staff', 'email' => 'new@example.com'])
+            ->call('create')
+            ->assertNotified(Notification::make()
+                ->title('User not created')
+                ->body('The email service has reached its sending limit. Ask an administrator to restore mail delivery, then try again.')
+                ->danger()
+                ->persistent());
+
+        $this->assertDatabaseMissing('users', ['email' => 'new@example.com']);
     }
 
     public function test_global_and_own_scopes_filter_users_and_direct_urls(): void

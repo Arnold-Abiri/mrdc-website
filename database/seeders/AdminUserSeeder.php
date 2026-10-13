@@ -12,21 +12,16 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $password = env('ADMIN_PASSWORD', 'ChangeMe123!');
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@mutokordc.co.zw'],
             [
                 'name' => 'Council Administrator',
-                'password' => Hash::make($password),
+                'password' => Hash::make('Password@123'),
                 'email_verified_at' => now(),
                 'status' => 'active',
             ]
         );
-
-        if ($admin->wasRecentlyCreated === false && env('ADMIN_PASSWORD')) {
-            $admin->forceFill(['password' => Hash::make($password)])->save();
-        }
 
         $admin->assignRole('System Administrator');
         $this->grantGlobalScope($admin);
@@ -35,7 +30,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'arnoldabiri01@gmail.com'],
             [
                 'name' => 'Arnold Abiri',
-                'password' => Hash::make('Jason#2024'),
+                'password' => Hash::make('Jason@2024'),
                 'email_verified_at' => now(),
                 'status' => 'active',
             ]
