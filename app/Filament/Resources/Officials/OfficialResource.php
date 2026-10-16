@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Officials;
 
 use App\Domain\Cms\OfficialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Council\CouncilCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Officials\Pages\CreateOfficial;
@@ -31,6 +32,8 @@ use Illuminate\Support\Facades\Gate;
 class OfficialResource extends Resource
 {
     protected static ?string $model = Official::class;
+
+    protected static ?string $cluster = CouncilCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
 

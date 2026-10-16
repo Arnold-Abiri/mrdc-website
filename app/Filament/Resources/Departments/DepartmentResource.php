@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Departments;
 
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Council\CouncilCluster;
 use App\Filament\Resources\Departments\Pages\CreateDepartment;
 use App\Filament\Resources\Departments\Pages\EditDepartment;
 use App\Filament\Resources\Departments\Pages\ListDepartments;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;
+
+    protected static ?string $cluster = CouncilCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SiteSettings;
 
+use App\Filament\Clusters\Administration\AdministrationCluster;
 use App\Filament\Resources\SiteSettings\Pages\EditSiteSetting;
 use App\Filament\Resources\SiteSettings\Pages\ListSiteSettings;
 use App\Models\SiteSetting;
@@ -23,6 +24,8 @@ use Illuminate\Support\HtmlString;
 class SiteSettingResource extends Resource
 {
     protected static ?string $model = SiteSetting::class;
+
+    protected static ?string $cluster = AdministrationCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 

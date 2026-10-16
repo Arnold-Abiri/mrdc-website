@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects;
 
 use App\Domain\Cms\CouncilProjectManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Projects\Pages\CreateCouncilProject;
@@ -32,6 +33,8 @@ use Illuminate\Support\Facades\Gate;
 class CouncilProjectResource extends Resource
 {
     protected static ?string $model = CouncilProject::class;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 

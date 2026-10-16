@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PublicContacts;
 
 use App\Domain\Cms\PublicContactManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Enquiries\EnquiriesCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\PublicContacts\Pages\CreatePublicContact;
 use App\Filament\Resources\PublicContacts\Pages\EditPublicContact;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Gate;
 class PublicContactResource extends Resource
 {
     protected static ?string $model = PublicContact::class;
+
+    protected static ?string $cluster = EnquiriesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhone;
 

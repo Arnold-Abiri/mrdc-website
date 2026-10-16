@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Documents;
 
 use App\Domain\Cms\DocumentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Documents\Pages\CreateDocument;
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Gate;
 class DocumentResource extends Resource
 {
     protected static ?string $model = Document::class;
+
+    protected static ?string $cluster = ContentCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 

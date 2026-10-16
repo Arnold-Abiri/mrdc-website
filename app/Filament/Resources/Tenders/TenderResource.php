@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Tenders;
 
 use App\Domain\Cms\TenderManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Tenders\Pages\CreateTender;
@@ -31,6 +32,8 @@ use Illuminate\Support\Facades\Gate;
 class TenderResource extends Resource
 {
     protected static ?string $model = Tender::class;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 

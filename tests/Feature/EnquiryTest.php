@@ -49,7 +49,7 @@ test('visitor can submit an enquiry without controlling staff fields or reading 
         ->and($enquiry->public_id)->not->toBeEmpty();
     $this->get('/en/contact/'.$enquiry->public_id)->assertNotFound();
     $this->get('/en/enquiries')->assertNotFound();
-    $this->get('/admin/enquiries')->assertRedirect();
+    $this->get('/admin/enquiries/enquiries')->assertRedirect();
 });
 
 test('invalid and bot submissions are rejected', function (): void {
@@ -78,8 +78,8 @@ test('department scope applies to enquiry lists, direct records and administrati
     expect($scoped)->toContain($own->id)->not->toContain($other->id);
     expect($actor->can('view', $own))->toBeTrue()->and($actor->can('view', $other))->toBeFalse();
     expect($actor->can('update', $other))->toBeFalse();
-    $this->actingAs($actor)->get('/admin/enquiries/'.$own->id)->assertOk();
-    $this->actingAs($actor)->get('/admin/enquiries/'.$other->id)->assertNotFound();
+    $this->actingAs($actor)->get('/admin/enquiries/enquiries/'.$own->id)->assertOk();
+    $this->actingAs($actor)->get('/admin/enquiries/enquiries/'.$other->id)->assertNotFound();
     $manager = app(EnquiryManager::class);
     $manager->setStatus($actor, $own, 'in_progress');
     expect($own->fresh()->status)->toBe('in_progress');
@@ -176,7 +176,7 @@ test('global enquiry administrator can route and reassign across departments wit
     expect($staff->can('view', $enquiry->fresh()))->toBeTrue();
     $metadata = DB::table('audit_events')->where('action', 'enquiries.note_added')->value('metadata');
     expect($metadata)->not->toContain('Private resident information');
-    $this->actingAs($staff)->get('/admin/enquiries/'.$enquiry->id)->assertOk();
+    $this->actingAs($staff)->get('/admin/enquiries/enquiries/'.$enquiry->id)->assertOk();
 });
 
 test('citizen can submit a fault report with ward context and location detail via feedback endpoint', function (): void {

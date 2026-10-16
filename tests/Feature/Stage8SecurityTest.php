@@ -42,13 +42,13 @@ class Stage8SecurityTest extends TestCase
     public function test_guest_disabled_and_limited_users_are_denied_admin_and_reports(): void
     {
         $this->administrator();
-        $this->get('/admin/analytics-dashboard')->assertRedirect('/admin/login');
-        $this->get('/admin/audit-report')->assertRedirect('/admin/login');
-        $this->get('/admin/system-health')->assertRedirect('/admin/login');
+        $this->get('/admin/reports/analytics-dashboard')->assertRedirect('/admin/login');
+        $this->get('/admin/reports/audit-report')->assertRedirect('/admin/login');
+        $this->get('/admin/reports/system-health')->assertRedirect('/admin/login');
         $disabled = User::factory()->create(['status' => 'disabled']);
         $this->assertFalse($disabled->canAccessPanel(filament()->getPanel('admin')));
         $limited = User::factory()->create();
-        $this->actingAs($limited)->get('/admin/analytics-dashboard')->assertForbidden();
+        $this->actingAs($limited)->get('/admin/reports/analytics-dashboard')->assertForbidden();
         $this->actingAs($limited)->get('/admin/reports/audit-export')->assertForbidden();
     }
 

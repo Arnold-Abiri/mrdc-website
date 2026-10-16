@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Galleries;
 
 use App\Domain\Cms\GalleryManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Galleries\Pages\CreateGallery;
 use App\Filament\Resources\Galleries\Pages\EditGallery;
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Gate;
 class GalleryResource extends Resource
 {
     protected static ?string $model = Gallery::class;
+
+    protected static ?string $cluster = ContentCluster::class;
 
     protected static ?string $recordTitleAttribute = 'title';
 

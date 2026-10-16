@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Domain\Cms\TenderManager;
+use App\Filament\Clusters\Services\ServicesCluster;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -12,6 +13,8 @@ use Filament\Support\Icons\Heroicon;
  */
 class TenderCompliance extends Page
 {
+    protected static ?string $cluster = ServicesCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
     protected static ?string $navigationLabel = 'Tender compliance';

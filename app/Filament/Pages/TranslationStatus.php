@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Domain\Content\TranslationManager;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Resources\Departments\DepartmentResource;
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Filament\Resources\Editorial\EditorialItemResource;
@@ -48,6 +49,8 @@ use Illuminate\Support\Facades\Cache;
 
 class TranslationStatus extends FilamentPage
 {
+    protected static ?string $cluster = ContentCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
     protected static ?string $navigationLabel = 'Translation status';

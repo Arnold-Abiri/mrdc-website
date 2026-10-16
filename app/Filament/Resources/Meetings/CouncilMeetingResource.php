@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Meetings;
 
 use App\Domain\Cms\CouncilMeetingManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Council\CouncilCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Meetings\Pages\CreateCouncilMeeting;
 use App\Filament\Resources\Meetings\Pages\EditCouncilMeeting;
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\Gate;
 class CouncilMeetingResource extends Resource
 {
     protected static ?string $model = CouncilMeeting::class;
+
+    protected static ?string $cluster = CouncilCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 

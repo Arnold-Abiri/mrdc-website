@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Investment;
 
 use App\Domain\Cms\InvestmentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Investment\Pages\CreateInvestmentOpportunity;
@@ -29,6 +30,8 @@ use Illuminate\Support\Facades\Gate;
 class InvestmentOpportunityResource extends Resource
 {
     protected static ?string $model = InvestmentOpportunity::class;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
 

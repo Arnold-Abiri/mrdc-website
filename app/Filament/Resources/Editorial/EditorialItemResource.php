@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Editorial;
 
 use App\Domain\Cms\EditorialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Editorial\Pages\CreateEditorialItem;
@@ -32,6 +33,8 @@ use Illuminate\Support\Facades\Gate;
 class EditorialItemResource extends Resource
 {
     protected static ?string $model = EditorialItem::class;
+
+    protected static ?string $cluster = ContentCluster::class;
 
     protected static ?string $recordTitleAttribute = 'title';
 

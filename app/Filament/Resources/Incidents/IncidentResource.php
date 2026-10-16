@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Incidents;
 
+use App\Filament\Clusters\Enquiries\EnquiriesCluster;
 use App\Filament\Resources\Incidents\Pages\CreateIncident;
 use App\Filament\Resources\Incidents\Pages\EditIncident;
 use App\Filament\Resources\Incidents\Pages\ListIncidents;
@@ -21,6 +22,8 @@ use Filament\Tables\Table;
 class IncidentResource extends Resource
 {
     protected static ?string $model = Incident::class;
+
+    protected static ?string $cluster = EnquiriesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 

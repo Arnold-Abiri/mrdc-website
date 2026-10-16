@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ErrorEvents;
 
+use App\Filament\Clusters\Reports\ReportsCluster;
 use App\Filament\Resources\ErrorEvents\Pages\ListErrorEvents;
 use App\Filament\Resources\ErrorEvents\Pages\ViewErrorEvent;
 use App\Models\ErrorEvent;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Gate;
 class ErrorEventResource extends Resource
 {
     protected static ?string $model = ErrorEvent::class;
+
+    protected static ?string $cluster = ReportsCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
 

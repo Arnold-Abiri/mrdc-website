@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Clusters\Reports\ReportsCluster;
 use BackedEnum;
 use Filament\Pages\Page as FilamentPage;
 use Filament\Support\Icons\Heroicon;
@@ -11,6 +12,8 @@ use Throwable;
 
 class SystemHealth extends FilamentPage
 {
+    protected static ?string $cluster = ReportsCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
     protected static ?string $navigationLabel = 'System health';

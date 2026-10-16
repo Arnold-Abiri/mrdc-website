@@ -20,12 +20,12 @@ class IncidentPolicy
 
     public function create(User $actor): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'incidents.create', null, $actor->id);
     }
 
     public function update(User $actor, Incident $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'incidents.update', null, $model->recorded_by ?? null);
     }
 
     public function delete(User $actor, Incident $model): bool

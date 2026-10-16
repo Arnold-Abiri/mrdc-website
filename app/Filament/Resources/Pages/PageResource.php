@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Pages;
 
 use App\Domain\Cms\PageManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Pages\Pages\CreatePage;
 use App\Filament\Resources\Pages\Pages\EditPage;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Gate;
 class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
+
+    protected static ?string $cluster = ContentCluster::class;
 
     protected static ?string $recordTitleAttribute = 'title';
 

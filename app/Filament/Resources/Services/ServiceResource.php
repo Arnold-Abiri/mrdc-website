@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Services;
 
 use App\Domain\Cms\ServiceManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Services\Pages\CreateService;
@@ -29,6 +30,8 @@ use Illuminate\Support\Facades\Gate;
 class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
 

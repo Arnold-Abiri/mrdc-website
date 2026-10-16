@@ -97,14 +97,14 @@ class Stage7MonitoringTest extends TestCase
     public function test_reporting_pages_require_authorization(): void
     {
         $admin = $this->administrator();
-        $this->actingAs($admin)->get('/admin/analytics-dashboard')->assertOk();
-        $this->actingAs($admin)->get('/admin/audit-report')->assertOk();
-        $this->actingAs($admin)->get('/admin/system-health')->assertOk();
-        $this->actingAs($admin)->get('/admin/monthly-report')->assertOk();
+        $this->actingAs($admin)->get('/admin/reports/analytics-dashboard')->assertOk();
+        $this->actingAs($admin)->get('/admin/reports/audit-report')->assertOk();
+        $this->actingAs($admin)->get('/admin/reports/system-health')->assertOk();
+        $this->actingAs($admin)->get('/admin/reports/monthly-report')->assertOk();
         $limited = User::factory()->create();
-        $this->actingAs($limited)->get('/admin/analytics-dashboard')->assertForbidden();
-        $this->actingAs($limited)->get('/admin/audit-report')->assertForbidden();
-        $this->actingAs($limited)->get('/admin/system-health')->assertForbidden();
+        $this->actingAs($limited)->get('/admin/reports/analytics-dashboard')->assertForbidden();
+        $this->actingAs($limited)->get('/admin/reports/audit-report')->assertForbidden();
+        $this->actingAs($limited)->get('/admin/reports/system-health')->assertForbidden();
         $this->actingAs($limited)->get('/admin/reports/audit-export')->assertForbidden();
     }
 

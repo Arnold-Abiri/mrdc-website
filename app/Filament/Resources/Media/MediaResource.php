@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Media;
 
 use App\Domain\Cms\MediaManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Media\Pages\CreateMedia;
 use App\Filament\Resources\Media\Pages\EditMedia;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Gate;
 class MediaResource extends Resource
 {
     protected static ?string $model = Media::class;
+
+    protected static ?string $cluster = ContentCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Vacancies;
 
 use App\Domain\Cms\VacancyManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Vacancies\Pages\CreateVacancy;
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Gate;
 class VacancyResource extends Resource
 {
     protected static ?string $model = Vacancy::class;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectUpdates;
 
 use App\Domain\Cms\ProjectUpdateManager;
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\ProjectUpdates\Pages\CreateProjectUpdate;
 use App\Filament\Resources\ProjectUpdates\Pages\EditProjectUpdate;
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Gate;
 class ProjectUpdateResource extends Resource
 {
     protected static ?string $model = ProjectUpdate::class;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingUp;
 

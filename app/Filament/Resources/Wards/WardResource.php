@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Wards;
 
 use App\Domain\Cms\WardManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Council\CouncilCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Wards\Pages\CreateWard;
 use App\Filament\Resources\Wards\Pages\EditWard;
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\Gate;
 class WardResource extends Resource
 {
     protected static ?string $model = Ward::class;
+
+    protected static ?string $cluster = CouncilCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMap;
 

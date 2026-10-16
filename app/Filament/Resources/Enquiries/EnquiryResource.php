@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Enquiries;
 
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Enquiries\EnquiriesCluster;
 use App\Filament\Resources\Enquiries\Pages\ListEnquiries;
 use App\Filament\Resources\Enquiries\Pages\ViewEnquiry;
 use App\Models\Department;
@@ -22,6 +23,8 @@ use Illuminate\Database\Eloquent\Builder;
 class EnquiryResource extends Resource
 {
     protected static ?string $model = Enquiry::class;
+
+    protected static ?string $cluster = EnquiriesCluster::class;
 
     protected static ?string $recordTitleAttribute = 'subject';
 

@@ -38,7 +38,7 @@ async function signIn(page: import('@playwright/test').Page): Promise<void> {
 
 test('journey 1: manager opens M&E dashboard and changes period', async ({ page }) => {
     await signIn(page);
-    await page.goto('/admin/analytics-dashboard');
+    await page.goto('/admin/reports/analytics-dashboard');
     await expect(page.getByRole('heading', { name: 'Monitoring & Evaluation' })).toBeVisible();
     await page.locator('select[name="period"]').selectOption('last_7');
     await page.getByRole('button', { name: 'Apply' }).click();
@@ -48,7 +48,7 @@ test('journey 1: manager opens M&E dashboard and changes period', async ({ page 
 
 test('journey 2: manager filters the audit report', async ({ page }) => {
     await signIn(page);
-    await page.goto('/admin/audit-report');
+    await page.goto('/admin/reports/audit-report');
     await expect(page.getByRole('heading', { name: 'Audit report' })).toBeVisible();
     await page.locator('input[name="action"]').fill('auth.login');
     await page.getByRole('button', { name: 'Filter' }).click();
@@ -57,7 +57,7 @@ test('journey 2: manager filters the audit report', async ({ page }) => {
 
 test('journey 3: operations user views system health', async ({ page }) => {
     await signIn(page);
-    await page.goto('/admin/system-health');
+    await page.goto('/admin/reports/system-health');
     await expect(page.getByRole('heading', { name: 'System health' })).toBeVisible();
     await expect(page.getByText('Healthy').first()).toBeVisible();
 });

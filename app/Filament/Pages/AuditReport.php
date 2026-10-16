@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Clusters\Reports\ReportsCluster;
 use App\Models\AuditEvent;
 use BackedEnum;
 use Filament\Pages\Page as FilamentPage;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AuditReport extends FilamentPage
 {
+    protected static ?string $cluster = ReportsCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     protected static ?string $navigationLabel = 'Audit report';

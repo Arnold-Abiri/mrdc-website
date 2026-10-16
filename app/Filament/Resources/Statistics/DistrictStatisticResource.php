@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Statistics;
 
 use App\Domain\Cms\DistrictStatisticManager;
+use App\Filament\Clusters\Council\CouncilCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Statistics\Pages\CreateDistrictStatistic;
 use App\Filament\Resources\Statistics\Pages\EditDistrictStatistic;
@@ -23,6 +24,8 @@ use Filament\Tables\Table;
 class DistrictStatisticResource extends Resource
 {
     protected static ?string $model = DistrictStatistic::class;
+
+    protected static ?string $cluster = CouncilCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users;
 
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Filament\Clusters\Administration\AdministrationCluster;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
+
+    protected static ?string $cluster = AdministrationCluster::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 

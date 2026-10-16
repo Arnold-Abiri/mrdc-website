@@ -69,7 +69,7 @@ class Stage3AdversarialTest extends TestCase
     public function test_guest_cannot_enter_admin_or_read_private_resource_identifiers(): void
     {
         $this->get('/en')->assertHeader('Content-Security-Policy', "frame-ancestors 'self'");
-        $this->get('/admin/media')->assertRedirect('/admin/login');
+        $this->get('/admin/content/media')->assertRedirect('/admin/login');
         $this->get('/en/managed-media/999999')->assertNotFound();
         $this->get('/en/documents/private-draft')->assertNotFound();
         $this->get('/en/pages/private-draft')->assertNotFound();

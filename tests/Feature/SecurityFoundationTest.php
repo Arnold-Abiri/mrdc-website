@@ -50,12 +50,12 @@ class SecurityFoundationTest extends TestCase
         $event->subject_type = User::class;
         $event->subject_id = (string) $admin->id;
         $event->save();
-        foreach (['/admin/users/'.$admin->id, '/admin/roles/'.Role::findByName('System Administrator')->id, '/admin/departments/'.$department->id, '/admin/audit-events/'.$event->id] as $url) {
+        foreach (['/admin/administration/users/'.$admin->id, '/admin/administration/roles/'.Role::findByName('System Administrator')->id, '/admin/council/departments/'.$department->id, '/admin/reports/audit-events/'.$event->id] as $url) {
             $this->get($url)->assertRedirect('/admin/login');
         }
         $ordinary = User::factory()->create();
         $this->actingAs($ordinary);
-        foreach (['/admin/users/'.$admin->id, '/admin/roles/'.Role::findByName('System Administrator')->id, '/admin/departments/'.$department->id, '/admin/audit-events/'.$event->id] as $url) {
+        foreach (['/admin/administration/users/'.$admin->id, '/admin/administration/roles/'.Role::findByName('System Administrator')->id, '/admin/council/departments/'.$department->id, '/admin/reports/audit-events/'.$event->id] as $url) {
             $this->get($url)->assertForbidden();
         }
     }
@@ -124,7 +124,7 @@ class SecurityFoundationTest extends TestCase
         $this->assertTrue($scope->allows($owner, 'departments.view', $a->id, null));
         $this->assertFalse($scope->allows($owner, 'departments.view', $b->id, null));
         $this->assertSame([$a->id], $scope->apply(Department::query(), $owner, 'departments.view', 'id', 'id')->pluck('id')->all());
-        $this->actingAs($owner)->get('/admin/departments/'.$b->id)->assertNotFound();
+        $this->actingAs($owner)->get('/admin/council/departments/'.$b->id)->assertNotFound();
     }
 
     public function test_audit_writer_redacts_sensitive_metadata(): void
@@ -190,7 +190,7 @@ class SecurityFoundationTest extends TestCase
         $this->assertTrue($scope->allows($reviewer, 'users.view', null, $reviewer->id));
         $this->assertFalse($scope->allows($reviewer, 'users.view', null, $other->id));
         $this->assertSame([$reviewer->id], $scope->apply(User::query(), $reviewer, 'users.view', 'department_id', 'id')->pluck('id')->all());
-        $this->actingAs($reviewer)->get('/admin/users/'.$other->id)->assertNotFound();
+        $this->actingAs($reviewer)->get('/admin/administration/users/'.$other->id)->assertNotFound();
         app(UserManager::class)->assignRole($admin, $reviewer, $role, 'global');
         $this->assertTrue($scope->allows($reviewer, 'users.view', null, $other->id));
         $this->assertCount(3, $scope->apply(User::query(), $reviewer, 'users.view', 'department_id', 'id')->get());
@@ -216,13 +216,13 @@ class SecurityFoundationTest extends TestCase
     {
         $admin = $this->administrator();
         $this->actingAs($admin);
-        $this->get('/admin/audit-events/create')->assertNotFound();
+        $this->get('/admin/reports/audit-events/create')->assertNotFound();
         $event = new AuditEvent;
         $event->action = 'test';
         $event->subject_type = User::class;
         $event->subject_id = (string) $admin->id;
         $event->save();
-        $this->get('/admin/audit-events/'.$event->id.'/edit')->assertNotFound();
+        $this->get('/admin/reports/audit-events/'.$event->id.'/edit')->assertNotFound();
         $this->assertFalse($admin->can('update', $event));
         $this->assertFalse($admin->can('delete', $event));
     }
@@ -246,7 +246,7 @@ class SecurityFoundationTest extends TestCase
     public function test_system_administrator_role_edit_url_is_denied(): void
     {
         $admin = $this->administrator();
-        $this->actingAs($admin)->get('/admin/roles/'.Role::findByName('System Administrator')->id.'/edit')->assertForbidden();
+        $this->actingAs($admin)->get('/admin/administration/roles/'.Role::findByName('System Administrator')->id.'/edit')->assertForbidden();
     }
 
     public function test_seed_is_idempotent_and_creates_no_accounts(): void

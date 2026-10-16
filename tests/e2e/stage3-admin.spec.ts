@@ -43,7 +43,7 @@ test.afterAll(() => {
 });
 
 test('administrator signs in and creates a draft managed contact', async ({ page }) => {
-    await page.goto('/admin/public-contacts/create');
+    await page.goto('/admin/enquiries/public-contacts/create');
     await expect(page).toHaveURL(/\/admin\/login/);
     await page.locator('input[type="email"]').fill(email);
     await page.locator('input[type="password"]').fill(password);
@@ -61,7 +61,7 @@ test('administrator signs in and creates a draft managed contact', async ({ page
         page.getByRole('button', { name: 'Save changes' }).click(),
     ]);
     await expect(page.getByLabel('Office')).toHaveValue(`${office} edited`);
-    await page.goto('/admin/public-contacts');
+    await page.goto('/admin/enquiries/public-contacts');
     const row = page.getByRole('row').filter({ hasText: `${office} edited` });
     await expect(row).toContainText('draft');
     await row.getByRole('button', { name: 'Verify' }).click();
@@ -72,7 +72,7 @@ test('administrator signs in and creates a draft managed contact', async ({ page
     await expect(row).toContainText('published');
     await page.goto('/');
     await expect(page.getByText(contactEmail)).toBeVisible();
-    await page.goto('/admin/public-contacts');
+    await page.goto('/admin/enquiries/public-contacts');
     const publishedRow = page.getByRole('row').filter({ hasText: `${office} edited` });
     await publishedRow.getByRole('button', { name: 'Unpublish' }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
@@ -89,7 +89,7 @@ test('disabled administrator cannot authenticate to Filament', async ({ page }) 
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/login$/);
-    await page.goto('/admin/public-contacts');
+    await page.goto('/admin/enquiries/public-contacts');
     await expect(page).toHaveURL(/\/admin\/login$/);
 });
 
@@ -103,7 +103,7 @@ test('administrator publishes and withdraws services, wards, officials, news, an
 
     const suffix = randomBytes(5).toString('hex');
     const imageTitle = `QA image ${suffix}`;
-    await page.goto('/admin/media/create');
+    await page.goto('/admin/content/media/create');
     await page.locator('input[type="file"]').setInputFiles({
         name: 'qa-image.png', mimeType: 'image/png',
         buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/pWQAAAAASUVORK5CYII=', 'base64'),
@@ -169,7 +169,7 @@ test('administrator creates, restores, verifies, publishes, and withdraws a CMS 
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/pages/create');
+    await page.goto('/admin/content/pages/create');
     await page.locator('[id="form.title"]').fill(title);
     await page.locator('[id="form.slug"]').fill(slug);
     await page.locator('[id="form.summary"]').fill('Development-only CMS summary');
@@ -195,7 +195,7 @@ test('administrator creates, restores, verifies, publishes, and withdraws a CMS 
     ]);
     await expect(restoreModal.locator('.fi-modal-window')).toBeHidden();
     await expect(page.locator('[id="form.summary"]')).toHaveValue('Development-only CMS summary');
-    await page.goto('/admin/pages');
+    await page.goto('/admin/content/pages');
     const row = page.getByRole('row').filter({ hasText: title });
     await expect(row).toContainText('draft');
     await row.getByRole('button', { name: 'Mark publishable' }).click();
@@ -207,7 +207,7 @@ test('administrator creates, restores, verifies, publishes, and withdraws a CMS 
     await page.goto(`/pages/${slug}`);
     await expect(page.getByRole('heading', { level: 1 })).toContainText(title);
     await expect(page.getByText('Development-only CMS summary')).toBeVisible();
-    await page.goto('/admin/pages');
+    await page.goto('/admin/content/pages');
     const publishedRow = page.getByRole('row').filter({ hasText: title });
     await publishedRow.getByRole('button', { name: 'Unpublish' }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
@@ -222,7 +222,7 @@ test('administrator creates, restores, verifies, publishes, and withdraws a CMS 
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
     expect((await page.goto(editUrl))?.status()).toBe(403);
-    await page.goto('/admin/pages');
+    await page.goto('/admin/content/pages');
     const forbiddenStatus = await page.evaluate(async ({ url, body }) => {
         const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
         const response = await fetch(url, {
@@ -246,7 +246,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/media/create');
+    await page.goto('/admin/content/media/create');
     await page.locator('input[type="file"]').setInputFiles({
         name: 'qa-document.pdf', mimeType: 'application/pdf',
         buffer: Buffer.from('%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF'),
@@ -255,7 +255,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.locator('[id="form.title"]').fill(mediaTitle);
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/media\/\d+\/edit$/);
-    await page.goto('/admin/documents/create');
+    await page.goto('/admin/content/documents/create');
     await page.locator('[id="form.title"]').fill(title);
     await page.locator('[id="form.slug"]').fill(slug);
     await page.getByLabel('Category').selectOption('other');
@@ -264,7 +264,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.getByRole('option', { name: mediaTitle }).click();
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/documents\/\d+\/edit$/);
-    await page.goto('/admin/documents');
+    await page.goto('/admin/content/documents');
     const row = page.getByRole('row').filter({ hasText: title });
     await row.getByRole('button', { name: 'Verify' }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
@@ -276,7 +276,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     expect(download.status()).toBe(200);
     expect(download.headers()['content-type']).toContain('application/pdf');
     expect((await download.body()).toString()).toContain('%PDF-1.4');
-    await page.goto('/admin/media/create');
+    await page.goto('/admin/content/media/create');
     await page.locator('input[type="file"]').setInputFiles({
         name: 'replacement.pdf', mimeType: 'application/pdf',
         buffer: Buffer.from('%PDF-1.5\n1 0 obj\n<</Title (Replacement)>>\nendobj\n%%EOF'),
@@ -288,7 +288,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await expect(page).toHaveURL(/\/admin\/media\/\d+\/edit$/);
     const replacementMediaId = page.url().match(/\/media\/(\d+)\/edit$/)?.[1];
     expect(replacementMediaId).toBeTruthy();
-    await page.goto('/admin/documents');
+    await page.goto('/admin/content/documents');
     await page.getByRole('row').filter({ hasText: title }).getByRole('link', { name: title }).click();
     const documentEditUrl = page.url();
     await page.getByLabel('Media').click();
@@ -302,7 +302,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.reload();
     await expect(page.getByLabel('Media')).toContainText(replacementTitle);
     expect((await page.request.get(`/documents/${slug}/download`)).status()).toBe(404);
-    await page.goto('/admin/documents');
+    await page.goto('/admin/content/documents');
     const replacementRow = page.getByRole('row').filter({ hasText: title });
     await expect(replacementRow).toContainText('draft');
     await replacementRow.getByRole('button', { name: 'Verify' }).click();
@@ -315,19 +315,19 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     const replacedDownload = await page.request.get(`/documents/${slug}/download`);
     expect(replacedDownload.status()).toBe(200);
     expect((await replacedDownload.body()).toString()).toContain('Replacement');
-    await page.goto('/admin/media/create');
+    await page.goto('/admin/content/media/create');
     await page.locator('input[type="file"]').setInputFiles({ name: 'invalid.pdf', mimeType: 'application/pdf', buffer: Buffer.from('<?php echo 1;') });
     await page.locator('[id="form.title"]').fill('Invalid replacement');
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/media\/create$/);
     expect((await (await page.request.get(`/documents/${slug}/download`)).body()).toString()).toContain('Replacement');
-    await page.goto('/admin/documents');
+    await page.goto('/admin/content/documents');
     const publishedRow = page.getByRole('row').filter({ hasText: title });
     await publishedRow.getByRole('button', { name: 'Unpublish' }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
     await expect(publishedRow).toContainText('unpublished');
     expect((await page.request.get(`/documents/${slug}/download`)).status()).toBe(404);
-    await page.goto('/admin/documents');
+    await page.goto('/admin/content/documents');
     await page.getByRole('row').filter({ hasText: title }).getByRole('link', { name: title }).click();
     await page.locator('[id="form.description"]').fill('Updated development-only document');
     await page.getByRole('button', { name: 'Save changes' }).click();
@@ -339,7 +339,7 @@ test('administrator uploads a PDF and publishes then withdraws a document', asyn
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
     expect((await page.goto(documentEditUrl))?.status()).toBe(403);
-    await page.goto('/admin/pages');
+    await page.goto('/admin/content/pages');
     const forbiddenReplacement = await page.evaluate(async ({ url, body }) => {
         const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
         const response = await fetch(url, {
@@ -362,7 +362,7 @@ test('administrator creates and publishes an authoritative department profile', 
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/departments/create');
+    await page.goto('/admin/council/departments/create');
     await page.locator('[id="form.name"]').fill(name);
     await page.locator('[id="form.code"]').fill(`QA${suffix}`);
     await page.locator('[id="form.public_name"]').fill(name);
@@ -372,7 +372,7 @@ test('administrator creates and publishes an authoritative department profile', 
     await expect(page).toHaveURL(/\/admin\/departments\/\d+$/);
     const id = page.url().match(/\/departments\/(\d+)$/)?.[1];
     expect(id).toBeTruthy();
-    await page.goto('/admin/departments');
+    await page.goto('/admin/council/departments');
     const row = page.getByRole('row').filter({ hasText: name });
     await row.getByRole('button', { name: /verify public/i }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
@@ -382,7 +382,7 @@ test('administrator creates and publishes an authoritative department profile', 
     await expect(row).toContainText('published');
     await page.goto(`/departments/${id}`);
     await expect(page.getByRole('heading', { level: 1 })).toContainText(name);
-    await page.goto('/admin/departments');
+    await page.goto('/admin/council/departments');
     const publishedRow = page.getByRole('row').filter({ hasText: name });
     await publishedRow.getByRole('button', { name: 'Unpublish public', exact: true }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
@@ -411,21 +411,21 @@ test('resident enquiry is routed, assigned, noted, and moved through staff workf
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/enquiries');
+    await page.goto('/admin/enquiries/enquiries');
     await page.getByRole('row').filter({ hasText: subject }).getByRole('link').first().click();
     await expect(page.getByText(subject)).toBeVisible();
     await page.getByRole('button', { name: 'Route to department' }).click();
     await page.getByRole('dialog').getByRole('combobox', { name: /Department/ }).selectOption({ label: departmentName });
     await page.getByRole('dialog').getByRole('button', { name: 'Submit' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();
-    await page.goto('/admin/enquiries');
+    await page.goto('/admin/enquiries/enquiries');
     await page.getByRole('row').filter({ hasText: subject }).getByRole('link').first().click();
     await expect(page.getByText(departmentName)).toBeVisible();
     await page.getByRole('button', { name: 'Assign staff' }).click();
     await page.getByRole('dialog').getByRole('combobox', { name: /Staff member/ }).selectOption({ label: staffName });
     await page.getByRole('dialog').getByRole('button', { name: 'Submit' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();
-    await page.goto('/admin/enquiries');
+    await page.goto('/admin/enquiries/enquiries');
     await page.getByRole('row').filter({ hasText: subject }).getByRole('link').first().click();
     await expect(page.getByText(staffName)).toBeVisible();
     await page.getByRole('button', { name: 'Assign staff' }).click();
@@ -459,13 +459,13 @@ test('resident enquiry is routed, assigned, noted, and moved through staff workf
     await page.getByRole('dialog').getByRole('textbox', { name: /Note/ }).fill('QA internal note only');
     await page.getByRole('dialog').getByRole('button', { name: 'Submit' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();
-    await page.goto('/admin/enquiries');
+    await page.goto('/admin/enquiries/enquiries');
     await page.getByRole('row').filter({ hasText: subject }).getByRole('link').first().click();
     await expect(page.getByText('QA internal note only')).toBeVisible();
     await page.getByRole('button', { name: 'Mark in progress' }).click();
     await page.getByRole('button', { name: 'Confirm' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();
-    await page.goto('/admin/enquiries');
+    await page.goto('/admin/enquiries/enquiries');
     await expect(async () => {
         await page.reload();
         await expect(page.getByRole('row').filter({ hasText: subject })).toContainText('in_progress');
@@ -502,7 +502,7 @@ test('media form rejects an executable upload and keeps its file required', asyn
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/media/create');
+    await page.goto('/admin/content/media/create');
     await page.locator('input[type="file"]').setInputFiles({
         name: 'payload.php', mimeType: 'application/x-php', buffer: Buffer.from('<?php echo 1;'),
     });
@@ -522,7 +522,7 @@ test('administrator edits media metadata and archives a published image', async 
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/media/create');
+    await page.goto('/admin/content/media/create');
     await page.locator('input[type="file"]').setInputFiles({
         name: 'archive-image.png', mimeType: 'image/png',
         buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/pWQAAAAASUVORK5CYII=', 'base64'),
@@ -545,7 +545,7 @@ test('administrator edits media metadata and archives a published image', async 
     await expect(page.locator('[id="form.caption"]')).toHaveValue('Updated council image caption');
     artisan(`$official = new App\\Models\\Official(["slug" => "${slug}", "name" => "QA media official ${suffix}", "title" => "QA title", "photo_media_id" => ${mediaId}, "display_order" => 0]); $official->forceFill(["status" => "published", "verification_status" => "publishable", "published_at" => now()])->save();`);
     expect((await page.request.get(`/managed-media/${mediaId}`)).status()).toBe(200);
-    await page.goto('/admin/media');
+    await page.goto('/admin/content/media');
     const row = page.getByRole('row').filter({ hasText: title });
     await row.getByRole('button', { name: 'Archive' }).click();
     const [mediaArchiveRequest] = await Promise.all([
@@ -563,7 +563,7 @@ test('administrator edits media metadata and archives a published image', async 
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
     expect((await page.goto(`/admin/media/${mediaId}/edit`))?.status()).toBe(403);
-    await page.goto('/admin/pages');
+    await page.goto('/admin/content/pages');
     for (const request of [mediaUpdateRequest, mediaArchiveRequest]) {
         const status = await page.evaluate(async ({ url, body }) => {
             const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
@@ -608,7 +608,7 @@ test('page form rejects required-field, invalid state, and duplicate slug manipu
     await page.locator('input[type="password"]').fill(password);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
-    await page.goto('/admin/pages/create');
+    await page.goto('/admin/content/pages/create');
     await page.locator('[id="form.slug"]').fill(slug);
     await page.getByLabel('Type').selectOption('paragraph');
     await page.getByLabel('Text').fill('QA validation body');
@@ -630,8 +630,8 @@ test('page form rejects required-field, invalid state, and duplicate slug manipu
     await page.getByLabel('Type').selectOption('paragraph');
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/pages\/\d+\/edit$/);
-    expect((await page.goto('/admin/pages/not-an-id/edit'))?.status()).toBe(404);
-    await page.goto('/admin/pages/create');
+    expect((await page.goto('/admin/content/pages/not-an-id/edit'))?.status()).toBe(404);
+    await page.goto('/admin/content/pages/create');
     await page.locator('[id="form.title"]').fill('Duplicate slug attempt');
     await page.locator('[id="form.slug"]').fill(slug);
     await page.getByLabel('Type').selectOption('paragraph');
@@ -649,9 +649,9 @@ test('panel user without contact permission cannot open the resource URL', async
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
     for (const path of [
-        '/admin/pages', '/admin/media', '/admin/documents', '/admin/departments',
-        '/admin/services', '/admin/editorial/editorial-items', '/admin/wards',
-        '/admin/officials', '/admin/public-contacts', '/admin/enquiries',
+        '/admin/content/pages', '/admin/content/media', '/admin/content/documents', '/admin/council/departments',
+        '/admin/services/services', '/admin/content/editorial/editorial-items', '/admin/council/wards',
+        '/admin/council/officials', '/admin/enquiries/public-contacts', '/admin/enquiries/enquiries',
     ]) {
         const response = await page.goto(path);
         expect(response?.status(), path).toBe(403);

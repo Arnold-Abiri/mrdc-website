@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BankAccounts;
 
+use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Resources\BankAccounts\Pages\CreateBankAccount;
 use App\Filament\Resources\BankAccounts\Pages\EditBankAccount;
 use App\Filament\Resources\BankAccounts\Pages\ListBankAccounts;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 class BankAccountResource extends Resource
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
+
+    protected static ?string $cluster = ServicesCluster::class;
 
     protected static \UnitEnum|string|null $navigationGroup = 'Services & Development';
 

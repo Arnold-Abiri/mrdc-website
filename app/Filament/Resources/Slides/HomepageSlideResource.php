@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Slides;
 
 use App\Domain\Cms\HomepageSlideManager;
+use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Slides\Pages\CreateHomepageSlide;
 use App\Filament\Resources\Slides\Pages\EditHomepageSlide;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Gate;
 class HomepageSlideResource extends Resource
 {
     protected static ?string $model = HomepageSlide::class;
+
+    protected static ?string $cluster = ContentCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AuditEvents;
 
+use App\Filament\Clusters\Reports\ReportsCluster;
 use App\Filament\Resources\AuditEvents\Pages\ListAuditEvents;
 use App\Filament\Resources\AuditEvents\Pages\ViewAuditEvent;
 use App\Filament\Resources\AuditEvents\Schemas\AuditEventInfolist;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 class AuditEventResource extends Resource
 {
     protected static ?string $model = AuditEvent::class;
+
+    protected static ?string $cluster = ReportsCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

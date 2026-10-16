@@ -3,12 +3,15 @@
 namespace App\Filament\Pages;
 
 use App\Domain\Analytics\AnalyticsReporter;
+use App\Filament\Clusters\Reports\ReportsCluster;
 use BackedEnum;
 use Filament\Pages\Page as FilamentPage;
 use Filament\Support\Icons\Heroicon;
 
 class AnalyticsDashboard extends FilamentPage
 {
+    protected static ?string $cluster = ReportsCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static ?string $navigationLabel = 'M&E dashboard';

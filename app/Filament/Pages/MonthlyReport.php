@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Domain\Analytics\AnalyticsReporter;
+use App\Filament\Clusters\Reports\ReportsCluster;
 use App\Models\ErrorEvent;
 use App\Models\Incident;
 use BackedEnum;
@@ -11,6 +12,8 @@ use Filament\Support\Icons\Heroicon;
 
 class MonthlyReport extends FilamentPage
 {
+    protected static ?string $cluster = ReportsCluster::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentChartBar;
 
     protected static ?string $navigationLabel = 'Monthly report';
