@@ -1084,9 +1084,8 @@ body:has(.mrdc-auth-page) .fi-simple-main {
     position: relative;
     margin-left: 1.35rem;
     padding-left: 1.25rem;
-    border-left: 1px solid rgb(255 255 255 / 0.18);
+    border-left: 1px solid rgb(255 255 255 / 0.22);
 }
-html:not(.dark) .fi-sidebar-group-items { border-left-color: rgb(0 0 0 / 0.15); }
 .fi-sidebar-group-items .fi-sidebar-item { position: relative; }
 .fi-sidebar-group-items .fi-sidebar-item::before {
     content: '';
@@ -1096,9 +1095,8 @@ html:not(.dark) .fi-sidebar-group-items { border-left-color: rgb(0 0 0 / 0.15); 
     width: 7px; height: 7px;
     translate: -3.5px -50%;
     border-radius: 9999px;
-    background: rgb(255 255 255 / 0.45);
+    background: rgb(255 255 255 / 0.5);
 }
-html:not(.dark) .fi-sidebar-group-items .fi-sidebar-item::before { background: rgb(0 0 0 / 0.3); }
 .fi-sidebar-group-items .fi-sidebar-item .fi-sidebar-item-btn {
     border-radius: 0.65rem;
     font-weight: 500;
