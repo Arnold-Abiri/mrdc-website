@@ -1,21 +1,3 @@
-@php
-    use App\Filament\Pages\CouncilDashboard;
-    use Filament\Facades\Filament;
-
-    $dashboardUrl = CouncilDashboard::getUrl();
-    $isDashboardActive = request()->routeIs(Filament::getCurrentPanel()->generateRouteName('pages.dashboard'));
-@endphp
-
-<ul class="fi-dashboard-standalone -mx-2 mb-1 flex flex-col px-2">
-    <x-filament-panels::sidebar.item
-        :active="$isDashboardActive"
-        icon="heroicon-o-home"
-        :url="$dashboardUrl"
-    >
-        {{ CouncilDashboard::getNavigationLabel() }}
-    </x-filament-panels::sidebar.item>
-</ul>
-
 <div class="fi-modules-header flex items-center justify-between px-3 pt-2 pb-1 text-sm font-semibold">
     <span class="flex items-center gap-2 opacity-80">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
