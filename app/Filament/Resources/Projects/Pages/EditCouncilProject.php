@@ -7,6 +7,7 @@ use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Projects\CouncilProjectResource;
 use App\Models\CouncilProject;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,5 +25,12 @@ class EditCouncilProject extends EditRecord
         $data = $this->attachInlineFeaturedImage($data, $data['title'] ?? $record->title);
 
         return app(CouncilProjectManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

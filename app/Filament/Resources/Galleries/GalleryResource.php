@@ -13,6 +13,9 @@ use App\Models\Gallery;
 use App\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -110,13 +113,18 @@ class GalleryResource extends Resource
             SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived']),
             SelectFilter::make('verification_status')->options(['demo' => 'Demo', 'verified' => 'Verified', 'publishable' => 'Publishable']),
             SelectFilter::make('is_featured')->label('Featured')->options([1 => 'Featured', 0 => 'Standard']),
-        ])->recordActions([
+        ])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->label('Mark publishable')->authorize(fn (Gallery $record): bool => Gate::allows('verify', $record))->visible(fn (Gallery $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Gallery $record) => app(GalleryManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Gallery $record): bool => Gate::allows('publish', $record))->visible(fn (Gallery $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Gallery $record) => app(GalleryManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Gallery $record): bool => Gate::allows('publish', $record))->visible(fn (Gallery $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Gallery $record) => app(GalleryManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Gallery $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Gallery $record) => app(GalleryManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

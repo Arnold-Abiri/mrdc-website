@@ -13,6 +13,9 @@ use App\Filament\Resources\Investment\Pages\ListInvestmentOpportunities;
 use App\Models\InvestmentOpportunity;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
@@ -67,13 +70,18 @@ class InvestmentOpportunityResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('sector'), TextColumn::make('opportunity_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('opportunity_status')->options(['open' => 'Open', 'prospecting' => 'Prospecting', 'committed' => 'Committed', 'closed' => 'Closed']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('sector'), TextColumn::make('opportunity_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('opportunity_status')->options(['open' => 'Open', 'prospecting' => 'Prospecting', 'committed' => 'Committed', 'closed' => 'Closed']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (InvestmentOpportunity $record): bool => Gate::allows('verify', $record))->visible(fn (InvestmentOpportunity $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (InvestmentOpportunity $record) => app(InvestmentManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (InvestmentOpportunity $record): bool => Gate::allows('publish', $record))->visible(fn (InvestmentOpportunity $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (InvestmentOpportunity $record) => app(InvestmentManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (InvestmentOpportunity $record): bool => Gate::allows('publish', $record))->visible(fn (InvestmentOpportunity $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (InvestmentOpportunity $record) => app(InvestmentManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (InvestmentOpportunity $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (InvestmentOpportunity $record) => app(InvestmentManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

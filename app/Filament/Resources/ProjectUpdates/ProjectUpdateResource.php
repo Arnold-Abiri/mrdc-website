@@ -11,6 +11,9 @@ use App\Filament\Resources\ProjectUpdates\Pages\ListProjectUpdates;
 use App\Models\ProjectUpdate;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -53,11 +56,16 @@ class ProjectUpdateResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('project.title')->label('Project')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('update_date')->date(), TextColumn::make('status')->badge()])->recordActions([
+        return $table->columns([TextColumn::make('project.title')->label('Project')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('update_date')->date(), TextColumn::make('status')->badge()])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('publish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->visible(fn (ProjectUpdate $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->visible(fn (ProjectUpdate $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getPages(): array

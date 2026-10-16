@@ -30,6 +30,6 @@ class MediaPolicy
 
     public function delete(User $actor, Media $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'media.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

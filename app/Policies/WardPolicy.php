@@ -40,6 +40,6 @@ class WardPolicy
 
     public function delete(User $actor, Ward $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'wards.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

@@ -11,6 +11,9 @@ use App\Filament\Resources\Statistics\Pages\ListDistrictStatistics;
 use App\Models\DistrictStatistic;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -51,10 +54,15 @@ class DistrictStatisticResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('label')->searchable(), TextColumn::make('value'), TextColumn::make('unit'), TextColumn::make('is_active')->badge()])->recordActions([
+        return $table->columns([TextColumn::make('label')->searchable(), TextColumn::make('value'), TextColumn::make('unit'), TextColumn::make('is_active')->badge()])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('toggle')->requiresConfirmation()->action(fn (DistrictStatistic $record) => app(DistrictStatisticManager::class)->update(auth()->user(), $record, [...$record->only(['label', 'value', 'unit', 'icon', 'source_note', 'display_order']), 'is_active' => ! $record->is_active])),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getPages(): array

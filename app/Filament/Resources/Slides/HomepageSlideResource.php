@@ -11,6 +11,9 @@ use App\Filament\Resources\Slides\Pages\ListHomepageSlides;
 use App\Models\HomepageSlide;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -82,11 +85,16 @@ class HomepageSlideResource extends Resource
             TextColumn::make('status')->badge(),
             TextColumn::make('is_active')->badge(),
             TextColumn::make('display_order'),
-        ])->recordActions([
+        ])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('publish')->authorize(fn (HomepageSlide $record): bool => Gate::allows('publish', $record))->visible(fn (HomepageSlide $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (HomepageSlide $record) => app(HomepageSlideManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (HomepageSlide $record): bool => Gate::allows('publish', $record))->visible(fn (HomepageSlide $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (HomepageSlide $record) => app(HomepageSlideManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getPages(): array

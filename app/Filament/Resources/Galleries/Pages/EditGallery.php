@@ -6,6 +6,7 @@ use App\Domain\Cms\GalleryManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Galleries\GalleryResource;
 use App\Models\Gallery;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditGallery extends EditRecord
         abort_unless($record instanceof Gallery, 404);
 
         return app(GalleryManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

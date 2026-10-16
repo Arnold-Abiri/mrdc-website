@@ -40,6 +40,6 @@ class EnquiryPolicy
 
     public function delete(User $actor, Enquiry $enquiry): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'enquiries.delete', $enquiry->department_id, null);
     }
 }

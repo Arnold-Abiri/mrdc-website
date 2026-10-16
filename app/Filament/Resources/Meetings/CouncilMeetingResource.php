@@ -12,6 +12,9 @@ use App\Filament\Resources\Meetings\Pages\ListCouncilMeetings;
 use App\Models\CouncilMeeting;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -59,13 +62,18 @@ class CouncilMeetingResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('meeting_type')->badge(), TextColumn::make('scheduled_date')->date(), TextColumn::make('meeting_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('meeting_type')->options(['full_council' => 'Full council', 'committee' => 'Committee', 'special' => 'Special', 'public_hearing' => 'Public hearing']), SelectFilter::make('meeting_status')->options(['scheduled' => 'Scheduled', 'completed' => 'Completed', 'postponed' => 'Postponed', 'cancelled' => 'Cancelled'])])->recordActions([
+        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('meeting_type')->badge(), TextColumn::make('scheduled_date')->date(), TextColumn::make('meeting_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('meeting_type')->options(['full_council' => 'Full council', 'committee' => 'Committee', 'special' => 'Special', 'public_hearing' => 'Public hearing']), SelectFilter::make('meeting_status')->options(['scheduled' => 'Scheduled', 'completed' => 'Completed', 'postponed' => 'Postponed', 'cancelled' => 'Cancelled'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('verify', $record))->visible(fn (CouncilMeeting $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilMeeting $record): bool => $record->status !== 'published')->disabled(fn (CouncilMeeting $record): bool => $record->verification_status !== 'publishable')->tooltip(fn (CouncilMeeting $record): ?string => $record->verification_status !== 'publishable' ? 'Verify this meeting before publishing it.' : null)->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilMeeting $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (CouncilMeeting $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilMeeting $record) => app(CouncilMeetingManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

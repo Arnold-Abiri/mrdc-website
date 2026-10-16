@@ -13,6 +13,9 @@ use App\Filament\Resources\Services\Pages\ListServices;
 use App\Models\Service;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
@@ -63,13 +66,18 @@ class ServiceResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('name')->searchable(), TextColumn::make('department.name'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->recordActions([
+        return $table->columns([TextColumn::make('name')->searchable(), TextColumn::make('department.name'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (Service $record): bool => Gate::allows('verify', $record))->visible(fn (Service $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

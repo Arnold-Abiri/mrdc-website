@@ -8,6 +8,9 @@ use App\Filament\Resources\Incidents\Pages\EditIncident;
 use App\Filament\Resources\Incidents\Pages\ListIncidents;
 use App\Models\Incident;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -58,9 +61,14 @@ class IncidentResource extends Resource
             TextColumn::make('status')->badge(),
         ])->filters([
             SelectFilter::make('status')->options(['open' => 'Open', 'monitoring' => 'Monitoring', 'resolved' => 'Resolved']),
-        ])->defaultSort('started_at', 'desc')->recordActions([
+        ])->defaultSort('started_at', 'desc')->recordActions([DeleteAction::make(),
             EditAction::make(),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getPages(): array

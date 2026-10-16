@@ -40,6 +40,6 @@ class DistrictStatisticPolicy
 
     public function delete(User $actor, DistrictStatistic $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'statistics.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

@@ -13,6 +13,9 @@ use App\Filament\Resources\Projects\Pages\ListCouncilProjects;
 use App\Models\CouncilProject;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -98,13 +101,18 @@ class CouncilProjectResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('project_type')->badge(), TextColumn::make('project_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled']), SelectFilter::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])])->recordActions([
+        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('project_type')->badge(), TextColumn::make('project_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled']), SelectFilter::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (CouncilProject $record): bool => Gate::allows('verify', $record))->visible(fn (CouncilProject $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilProject $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilProject $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

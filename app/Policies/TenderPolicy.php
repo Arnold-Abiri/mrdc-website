@@ -45,6 +45,6 @@ class TenderPolicy
 
     public function delete(User $actor, Tender $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

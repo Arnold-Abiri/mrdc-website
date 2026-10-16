@@ -6,6 +6,7 @@ use App\Domain\Cms\VacancyManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Vacancies\VacancyResource;
 use App\Models\Vacancy;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditVacancy extends EditRecord
         abort_unless($record instanceof Vacancy, 404);
 
         return app(VacancyManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

@@ -12,6 +12,9 @@ use App\Filament\Resources\Wards\Pages\ListWards;
 use App\Models\Ward;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -43,13 +46,18 @@ class WardResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('name')->searchable(), TextColumn::make('slug')->searchable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+        return $table->columns([TextColumn::make('name')->searchable(), TextColumn::make('slug')->searchable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (Ward $record): bool => Gate::allows('verify', $record))->visible(fn (Ward $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->visible(fn (Ward $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->visible(fn (Ward $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Ward $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Ward $record) => app(WardManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

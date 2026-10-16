@@ -13,6 +13,9 @@ use App\Filament\Resources\Editorial\Pages\ListEditorialItems;
 use App\Models\EditorialItem;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -79,7 +82,7 @@ class EditorialItemResource extends Resource
             ->emptyStateHeading('No stories yet')
             ->emptyStateDescription('Create your first news article or notice — it will appear here once saved as a draft.')
             ->emptyStateIcon(Heroicon::OutlinedNewspaper)
-            ->columns([TextColumn::make('title')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('category')->searchable()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('published_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+            ->columns([TextColumn::make('title')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('category')->searchable()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('published_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
                 EditAction::make(),
                 Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
                 Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),
@@ -93,6 +96,11 @@ class EditorialItemResource extends Resource
                 }),
                 Action::make('unpublish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
                 Action::make('archive')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'archived')),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

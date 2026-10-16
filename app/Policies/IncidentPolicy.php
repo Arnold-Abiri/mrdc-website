@@ -30,6 +30,6 @@ class IncidentPolicy
 
     public function delete(User $actor, Incident $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'incidents.delete', null, $model->recorded_by ?? null);
     }
 }

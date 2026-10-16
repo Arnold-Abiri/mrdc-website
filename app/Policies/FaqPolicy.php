@@ -30,6 +30,6 @@ class FaqPolicy
 
     public function delete(User $actor, Faq $model): bool
     {
-        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'faqs.update', $model->department_id ?? null, $model->created_by ?? null);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'faqs.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

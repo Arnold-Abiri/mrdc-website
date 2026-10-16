@@ -13,6 +13,9 @@ use App\Filament\Resources\Documents\Pages\ListDocuments;
 use App\Models\Document;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -83,14 +86,19 @@ class DocumentResource extends Resource
             TextColumn::make('title')->searchable(), TextColumn::make('category')->badge(),
             TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(),
             TextColumn::make('published_at')->dateTime(),
-        ])->recordActions([
+        ])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('replace')->label('Replace file')->authorize(fn (Document $record): bool => Gate::allows('update', $record))->schema([Select::make('media_id')->label('Replacement PDF')->relationship('media', 'title')->searchable()->required()->helperText('The previous file is preserved as a version; the replacement returns the document to draft for review.')])->action(fn (Document $record, array $data) => app(DocumentManager::class)->replace(auth()->user(), $record, (int) $data['media_id'])),
             Action::make('verify')->authorize(fn (Document $record): bool => Gate::allows('verify', $record))->visible(fn (Document $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->visible(fn (Document $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->visible(fn (Document $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

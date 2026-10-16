@@ -40,6 +40,6 @@ class ServicePolicy
 
     public function delete(User $actor, Service $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'services.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

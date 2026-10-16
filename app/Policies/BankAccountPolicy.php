@@ -30,6 +30,6 @@ class BankAccountPolicy
 
     public function delete(User $actor, BankAccount $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'bank_accounts.delete', null, $actor->id);
     }
 }

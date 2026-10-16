@@ -40,6 +40,6 @@ class EditorialItemPolicy
 
     public function delete(User $actor, EditorialItem $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'editorial.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

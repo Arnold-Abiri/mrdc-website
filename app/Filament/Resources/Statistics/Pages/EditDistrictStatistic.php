@@ -6,6 +6,7 @@ use App\Domain\Cms\DistrictStatisticManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Statistics\DistrictStatisticResource;
 use App\Models\DistrictStatistic;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditDistrictStatistic extends EditRecord
         abort_unless($record instanceof DistrictStatistic, 404);
 
         return app(DistrictStatisticManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

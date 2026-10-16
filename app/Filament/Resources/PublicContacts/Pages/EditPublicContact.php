@@ -6,6 +6,7 @@ use App\Domain\Cms\PublicContactManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\PublicContacts\PublicContactResource;
 use App\Models\PublicContact;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditPublicContact extends EditRecord
         abort_unless($record instanceof PublicContact, 404);
 
         return app(PublicContactManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

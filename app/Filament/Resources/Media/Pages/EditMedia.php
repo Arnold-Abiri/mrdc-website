@@ -6,6 +6,7 @@ use App\Domain\Cms\MediaManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Media\MediaResource;
 use App\Models\Media;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditMedia extends EditRecord
         abort_unless($record instanceof Media, 404);
 
         return app(MediaManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

@@ -13,6 +13,9 @@ use App\Filament\Resources\Tenders\Pages\ListTenders;
 use App\Models\Tender;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -74,13 +77,18 @@ class TenderResource extends Resource
             ->emptyStateHeading('No tenders yet')
             ->emptyStateDescription('Create your first tender — drafts stay hidden until published.')
             ->emptyStateIcon(Heroicon::OutlinedClipboardDocumentList)
-            ->columns([TextColumn::make('reference')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('lifecycle_status')->badge(), TextColumn::make('award_status')->badge()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('closes_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+            ->columns([TextColumn::make('reference')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('lifecycle_status')->badge(), TextColumn::make('award_status')->badge()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('closes_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
                 EditAction::make(),
                 Action::make('verify')->authorize(fn (Tender $record): bool => Gate::allows('verify', $record))->visible(fn (Tender $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setVerification(auth()->user(), $record, 'publishable')),
                 Action::make('publish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'published')),
                 Action::make('unpublish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
                 Action::make('archive')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'archived')),
                 Action::make('award')->label('Record award')->authorize(fn (Tender $record): bool => Gate::allows('award', $record))->schema([Select::make('award_status')->options(['none' => 'None', 'pending' => 'Pending', 'awarded' => 'Awarded'])->required(), TextInput::make('awarded_to')->maxLength(255)->helperText('Awarded contractor/supplier. Only approved public information.'), DatePicker::make('awarded_at'), TextInput::make('award_amount')->numeric()->helperText('Approved published amount only; leave empty if not published.'), TextInput::make('award_reference')->maxLength(60), Select::make('award_document_id')->relationship('document', 'title')->searchable(), Textarea::make('award_remarks')->maxLength(5000)])->action(fn (Tender $record, array $data) => app(TenderManager::class)->recordAward(auth()->user(), $record, $data)),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

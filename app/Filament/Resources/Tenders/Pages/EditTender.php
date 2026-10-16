@@ -6,6 +6,7 @@ use App\Domain\Cms\TenderManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Tenders\TenderResource;
 use App\Models\Tender;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditTender extends EditRecord
         abort_unless($record instanceof Tender, 404);
 
         return app(TenderManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

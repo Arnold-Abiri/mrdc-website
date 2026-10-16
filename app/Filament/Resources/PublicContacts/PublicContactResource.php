@@ -12,6 +12,9 @@ use App\Filament\Resources\PublicContacts\Pages\ListPublicContacts;
 use App\Models\PublicContact;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -46,13 +49,18 @@ class PublicContactResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('office')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('department.name'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(), TextColumn::make('is_public')->formatStateUsing(fn (bool $state): string => $state ? 'Public' : 'Private')->badge()])->filters([SelectFilter::make('type')->options(['phone' => 'Phone', 'email' => 'Email', 'physical_address' => 'Physical address', 'postal_address' => 'Postal address']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+        return $table->columns([TextColumn::make('office')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('department.name'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(), TextColumn::make('is_public')->formatStateUsing(fn (bool $state): string => $state ? 'Public' : 'Private')->badge()])->filters([SelectFilter::make('type')->options(['phone' => 'Phone', 'email' => 'Email', 'physical_address' => 'Physical address', 'postal_address' => 'Postal address']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (PublicContact $record): bool => Gate::allows('verify', $record))->visible(fn (PublicContact $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (PublicContact $record) => app(PublicContactManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (PublicContact $record): bool => Gate::allows('publish', $record))->visible(fn (PublicContact $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (PublicContact $record) => app(PublicContactManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (PublicContact $record): bool => Gate::allows('publish', $record))->visible(fn (PublicContact $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (PublicContact $record) => app(PublicContactManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (PublicContact $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (PublicContact $record) => app(PublicContactManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

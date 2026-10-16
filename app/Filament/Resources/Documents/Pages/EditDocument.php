@@ -7,6 +7,7 @@ use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Models\Document;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,5 +31,12 @@ class EditDocument extends EditRecord
         );
 
         return app(DocumentManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

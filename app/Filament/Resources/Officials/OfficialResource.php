@@ -13,6 +13,9 @@ use App\Filament\Resources\Officials\Pages\ListOfficials;
 use App\Models\Official;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -92,13 +95,18 @@ class OfficialResource extends Resource
             TextColumn::make('department.name'),
             TextColumn::make('status')->badge(),
             TextColumn::make('verification_status')->badge(),
-        ])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+        ])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (Official $record): bool => Gate::allows('verify', $record))->visible(fn (Official $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Official $record): bool => Gate::allows('publish', $record))->visible(fn (Official $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Official $record): bool => Gate::allows('publish', $record))->visible(fn (Official $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Official $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

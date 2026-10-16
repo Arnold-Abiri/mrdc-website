@@ -12,6 +12,9 @@ use App\Filament\Resources\Media\Pages\ListMedia;
 use App\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -55,11 +58,16 @@ class MediaResource extends Resource
             TextColumn::make('title')->searchable(), TextColumn::make('mime_type'), TextColumn::make('size'),
             TextColumn::make('status')->badge(), TextColumn::make('created_at')->dateTime(),
             TextColumn::make('alt_text')->label('Alt text')->state(fn (Media $record): string => str_starts_with($record->mime_type, 'image/') ? ($record->alt_text !== null && trim($record->alt_text) !== '' ? 'Provided' : 'Missing') : 'N/A')->badge()->color(fn (string $state): string => $state === 'Missing' ? 'danger' : ($state === 'Provided' ? 'success' : 'gray')),
-        ])->recordActions([
+        ])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('archive')->authorize(fn (Media $record): bool => Gate::allows('update', $record))
                 ->requiresConfirmation()->action(fn (Media $record) => app(MediaManager::class)->archive(auth()->user(), $record)),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

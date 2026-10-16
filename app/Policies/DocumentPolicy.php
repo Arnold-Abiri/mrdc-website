@@ -40,6 +40,6 @@ class DocumentPolicy
 
     public function delete(User $actor, Document $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'documents.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

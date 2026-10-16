@@ -12,6 +12,9 @@ use App\Filament\Resources\Pages\Pages\ListPages;
 use App\Models\Page;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -64,7 +67,7 @@ class PageResource extends Resource
             TextColumn::make('status')->badge(),
             TextColumn::make('verification_status')->badge(),
             TextColumn::make('published_at')->dateTime(),
-        ])->recordActions([
+        ])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('publish')->authorize(fn (Page $record): bool => Gate::allows('publish', $record))
                 ->visible(fn (Page $record): bool => $record->status !== 'published')
@@ -80,7 +83,12 @@ class PageResource extends Resource
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('archive')->authorize(fn (Page $record): bool => Gate::allows('publish', $record))
                 ->requiresConfirmation()->action(fn (Page $record) => app(PageManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder

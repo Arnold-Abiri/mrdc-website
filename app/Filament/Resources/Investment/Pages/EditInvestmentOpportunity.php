@@ -6,6 +6,7 @@ use App\Domain\Cms\InvestmentManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Investment\InvestmentOpportunityResource;
 use App\Models\InvestmentOpportunity;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ class EditInvestmentOpportunity extends EditRecord
         abort_unless($record instanceof InvestmentOpportunity, 404);
 
         return app(InvestmentManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

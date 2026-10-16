@@ -35,6 +35,6 @@ class HomepageSlidePolicy
 
     public function delete(User $actor, HomepageSlide $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'slides.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

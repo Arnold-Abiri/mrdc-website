@@ -8,6 +8,7 @@ use App\Filament\Resources\Pages\PageResource;
 use App\Models\Page;
 use App\Models\PageRevision;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ class EditPage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            DeleteAction::make(),
             Action::make('restoreRevision')
                 ->label('Restore revision')
                 ->authorize(fn (): bool => auth()->user()?->can('update', $this->record) ?? false)

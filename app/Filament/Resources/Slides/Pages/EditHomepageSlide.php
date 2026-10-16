@@ -7,6 +7,7 @@ use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Slides\HomepageSlideResource;
 use App\Models\HomepageSlide;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,5 +32,12 @@ class EditHomepageSlide extends EditRecord
         );
 
         return app(HomepageSlideManager::class)->update(auth()->user(), $record, $data);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

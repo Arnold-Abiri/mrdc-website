@@ -40,6 +40,6 @@ class InvestmentOpportunityPolicy
 
     public function delete(User $actor, InvestmentOpportunity $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'investment.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

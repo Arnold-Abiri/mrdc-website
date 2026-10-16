@@ -40,6 +40,6 @@ class OfficialPolicy
 
     public function delete(User $actor, Official $model): bool
     {
-        return false;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'officials.delete', $model->department_id ?? null, $model->created_by ?? null);
     }
 }

@@ -13,6 +13,9 @@ use App\Filament\Resources\Vacancies\Pages\ListVacancies;
 use App\Models\Vacancy;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\MarkdownEditor;
@@ -70,13 +73,18 @@ class VacancyResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('grade'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(), TextColumn::make('closes_at')->date()])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([
+        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('grade'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(), TextColumn::make('closes_at')->date()])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (Vacancy $record): bool => Gate::allows('verify', $record))->visible(fn (Vacancy $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
             Action::make('archive')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ]);
+        ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getEloquentQuery(): Builder
