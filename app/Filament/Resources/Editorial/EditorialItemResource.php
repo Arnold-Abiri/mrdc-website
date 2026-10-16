@@ -101,6 +101,18 @@ class EditorialItemResource extends Resource
         return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery(), auth()->user(), 'editorial.view', 'department_id', 'created_by');
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getEloquentQuery()->where('status', 'draft')->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
     public static function getPages(): array
     {
         return ['index' => ListEditorialItems::route('/'), 'create' => CreateEditorialItem::route('/create'), 'edit' => EditEditorialItem::route('/{record}/edit')];

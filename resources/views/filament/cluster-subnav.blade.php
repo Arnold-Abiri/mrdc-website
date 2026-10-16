@@ -28,6 +28,8 @@
                             'url' => $child->getUrl(),
                             'active' => $child->isActive(),
                             'badge' => $child->getBadge(),
+                            'badgeColor' => $child->getBadgeColor(),
+                            'icon' => $child->getIcon(),
                         ];
                     }
                     break 2;
@@ -46,13 +48,20 @@
             @foreach($subnavItems as $link)
                 <a href="{{ $link['url'] }}"
                    @class([
-                       'shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition',
-                       'bg-primary-600 text-white' => $link['active'],
-                       'text-gray-600 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-white/10' => !$link['active'],
+                       'flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition',
+                       'bg-primary-50 text-primary-700' => $link['active'],
+                       'text-gray-500 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-white/10' => !$link['active'],
                    ])>
+                    @if(!empty($link['icon']))
+                        <x-filament::icon :icon="$link['icon']" class="h-5 w-5" />
+                    @endif
                     {{ $link['label'] }}
                     @if(!empty($link['badge']))
-                        <span class="ml-1 rounded-full bg-white/20 px-1.5 text-[11px]">{{ $link['badge'] }}</span>
+                        <span @class([
+                            'rounded px-1.5 py-0.5 text-[11px] font-semibold',
+                            'bg-orange-100 text-amber-800' => $link['active'],
+                            'bg-amber-50 text-amber-700' => !$link['active'],
+                        ])>{{ $link['badge'] }}</span>
                     @endif
                 </a>
             @endforeach

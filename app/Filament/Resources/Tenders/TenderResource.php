@@ -89,6 +89,18 @@ class TenderResource extends Resource
         return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery(), auth()->user(), 'tenders.view', 'department_id', 'created_by');
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getEloquentQuery()->where('lifecycle_status', 'open')->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'info';
+    }
+
     public static function getPages(): array
     {
         return ['index' => ListTenders::route('/'), 'create' => CreateTender::route('/create'), 'edit' => EditTender::route('/{record}/edit')];

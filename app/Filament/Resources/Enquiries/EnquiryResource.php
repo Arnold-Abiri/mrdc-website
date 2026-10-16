@@ -116,6 +116,18 @@ class EnquiryResource extends Resource
         return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery(), auth()->user(), 'enquiries.view', 'department_id', null);
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getEloquentQuery()->where('status', 'new')->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
     public static function getPages(): array
     {
         return [
