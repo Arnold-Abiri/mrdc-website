@@ -13,32 +13,32 @@ class GalleryPolicy
         return $actor->status === 'active' && $actor->can('galleries.view');
     }
 
-    public function view(User $actor, Gallery $gallery): bool
+    public function view(User $actor, Gallery $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'galleries.view', $gallery->department_id, $gallery->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'galleries.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('galleries.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'galleries.create', null, $actor->id);
     }
 
-    public function update(User $actor, Gallery $gallery): bool
+    public function update(User $actor, Gallery $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'galleries.update', $gallery->department_id, $gallery->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'galleries.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Gallery $gallery): bool
+    public function publish(User $actor, Gallery $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'galleries.publish', $gallery->department_id, $gallery->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'galleries.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Gallery $gallery): bool
+    public function verify(User $actor, Gallery $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'galleries.verify', $gallery->department_id, $gallery->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'galleries.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Gallery $gallery): bool
+    public function delete(User $actor, Gallery $model): bool
     {
         return false;
     }

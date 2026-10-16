@@ -13,32 +13,32 @@ class EditorialItemPolicy
         return $actor->status === 'active' && $actor->can('editorial.view');
     }
 
-    public function view(User $actor, EditorialItem $item): bool
+    public function view(User $actor, EditorialItem $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'editorial.view', $item->department_id, $item->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'editorial.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('editorial.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'editorial.create', null, $actor->id);
     }
 
-    public function update(User $actor, EditorialItem $item): bool
+    public function update(User $actor, EditorialItem $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'editorial.update', $item->department_id, $item->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'editorial.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, EditorialItem $item): bool
+    public function publish(User $actor, EditorialItem $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'editorial.publish', $item->department_id, $item->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'editorial.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, EditorialItem $item): bool
+    public function verify(User $actor, EditorialItem $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'editorial.verify', $item->department_id, $item->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'editorial.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, EditorialItem $item): bool
+    public function delete(User $actor, EditorialItem $model): bool
     {
         return false;
     }

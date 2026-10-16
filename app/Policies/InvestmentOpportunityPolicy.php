@@ -13,32 +13,32 @@ class InvestmentOpportunityPolicy
         return $actor->status === 'active' && $actor->can('investment.view');
     }
 
-    public function view(User $actor, InvestmentOpportunity $opportunity): bool
+    public function view(User $actor, InvestmentOpportunity $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'investment.view', $opportunity->department_id, $opportunity->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'investment.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('investment.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'investment.create', null, $actor->id);
     }
 
-    public function update(User $actor, InvestmentOpportunity $opportunity): bool
+    public function update(User $actor, InvestmentOpportunity $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'investment.update', $opportunity->department_id, $opportunity->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'investment.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, InvestmentOpportunity $opportunity): bool
+    public function publish(User $actor, InvestmentOpportunity $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'investment.publish', $opportunity->department_id, $opportunity->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'investment.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, InvestmentOpportunity $opportunity): bool
+    public function verify(User $actor, InvestmentOpportunity $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'investment.verify', $opportunity->department_id, $opportunity->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'investment.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, InvestmentOpportunity $opportunity): bool
+    public function delete(User $actor, InvestmentOpportunity $model): bool
     {
         return false;
     }

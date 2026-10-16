@@ -13,32 +13,32 @@ class CouncilMeetingPolicy
         return $actor->status === 'active' && $actor->can('meetings.view');
     }
 
-    public function view(User $actor, CouncilMeeting $meeting): bool
+    public function view(User $actor, CouncilMeeting $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'meetings.view', $meeting->department_id, $meeting->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'meetings.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('meetings.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'meetings.create', null, $actor->id);
     }
 
-    public function update(User $actor, CouncilMeeting $meeting): bool
+    public function update(User $actor, CouncilMeeting $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'meetings.update', $meeting->department_id, $meeting->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'meetings.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, CouncilMeeting $meeting): bool
+    public function publish(User $actor, CouncilMeeting $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'meetings.publish', $meeting->department_id, $meeting->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'meetings.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, CouncilMeeting $meeting): bool
+    public function verify(User $actor, CouncilMeeting $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'meetings.verify', $meeting->department_id, $meeting->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'meetings.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, CouncilMeeting $meeting): bool
+    public function delete(User $actor, CouncilMeeting $model): bool
     {
         return false;
     }

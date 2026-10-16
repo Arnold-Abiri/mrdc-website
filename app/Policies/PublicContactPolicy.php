@@ -13,32 +13,32 @@ class PublicContactPolicy
         return $actor->status === 'active' && $actor->can('contacts.view');
     }
 
-    public function view(User $actor, PublicContact $contact): bool
+    public function view(User $actor, PublicContact $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'contacts.view', $contact->department_id, $contact->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'contacts.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('contacts.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'contacts.create', null, $actor->id);
     }
 
-    public function update(User $actor, PublicContact $contact): bool
+    public function update(User $actor, PublicContact $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'contacts.update', $contact->department_id, $contact->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'contacts.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, PublicContact $contact): bool
+    public function publish(User $actor, PublicContact $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'contacts.publish', $contact->department_id, $contact->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'contacts.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, PublicContact $contact): bool
+    public function verify(User $actor, PublicContact $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'contacts.verify', $contact->department_id, $contact->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'contacts.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, PublicContact $contact): bool
+    public function delete(User $actor, PublicContact $model): bool
     {
         return false;
     }

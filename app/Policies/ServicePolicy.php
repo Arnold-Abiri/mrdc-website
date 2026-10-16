@@ -13,32 +13,32 @@ class ServicePolicy
         return $actor->status === 'active' && $actor->can('services.view');
     }
 
-    public function view(User $actor, Service $service): bool
+    public function view(User $actor, Service $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'services.view', $service->department_id, $service->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'services.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('services.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'services.create', null, $actor->id);
     }
 
-    public function update(User $actor, Service $service): bool
+    public function update(User $actor, Service $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'services.update', $service->department_id, $service->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'services.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Service $service): bool
+    public function publish(User $actor, Service $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'services.publish', $service->department_id, $service->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'services.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Service $service): bool
+    public function verify(User $actor, Service $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'services.verify', $service->department_id, $service->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'services.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Service $service): bool
+    public function delete(User $actor, Service $model): bool
     {
         return false;
     }

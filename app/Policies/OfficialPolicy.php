@@ -13,32 +13,32 @@ class OfficialPolicy
         return $actor->status === 'active' && $actor->can('officials.view');
     }
 
-    public function view(User $actor, Official $official): bool
+    public function view(User $actor, Official $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'officials.view', $official->department_id, $official->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'officials.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('officials.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'officials.create', null, $actor->id);
     }
 
-    public function update(User $actor, Official $official): bool
+    public function update(User $actor, Official $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'officials.update', $official->department_id, $official->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'officials.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Official $official): bool
+    public function publish(User $actor, Official $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'officials.publish', $official->department_id, $official->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'officials.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Official $official): bool
+    public function verify(User $actor, Official $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'officials.verify', $official->department_id, $official->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'officials.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Official $official): bool
+    public function delete(User $actor, Official $model): bool
     {
         return false;
     }

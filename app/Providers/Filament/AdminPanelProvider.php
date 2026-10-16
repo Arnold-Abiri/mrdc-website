@@ -8,6 +8,7 @@ use App\Filament\Pages\Auth\PasswordReset\ResetPassword;
 use App\Filament\Pages\CouncilDashboard;
 use App\Filament\Pages\Profile;
 use App\Filament\Widgets\MyTasksWidget;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -68,6 +69,11 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 MyTasksWidget::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make()
+                    ->navigationGroup('Administration')
+                    ->navigationSort(2),
             ])
             ->middleware([
                 EncryptCookies::class,

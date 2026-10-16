@@ -14,12 +14,12 @@ class UserPolicy
 
     public function view(User $actor, User $subject): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'users.view', $subject->department_id, $subject->id);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.view', $subject->department_id, $subject->id);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.create', null, null);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.create', null, $actor->id);
     }
 
     public function update(User $actor, User $subject): bool
@@ -29,12 +29,12 @@ class UserPolicy
 
     public function disable(User $actor, User $subject): bool
     {
-        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.disable', $subject->department_id, $subject->id) && $actor->id !== $subject->id;
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.disable', $subject->department_id, $subject->id);
     }
 
     public function assignRoles(User $actor, User $subject): bool
     {
-        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.assign_roles', null, null) && $actor->hasRole('System Administrator');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'users.assign_roles', $subject->department_id, $subject->id) && $actor->hasRole('System Administrator');
     }
 
     public function delete(User $actor, User $subject): bool

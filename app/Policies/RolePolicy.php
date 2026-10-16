@@ -10,7 +10,7 @@ class RolePolicy
 {
     public function viewAny(User $actor): bool
     {
-        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'roles.view', null, null);
+        return $actor->status === 'active' && $actor->can('roles.view');
     }
 
     public function view(User $actor, Role $role): bool

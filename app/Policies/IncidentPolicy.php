@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Models\Incident;
 use App\Models\User;
 
@@ -12,22 +13,22 @@ class IncidentPolicy
         return $actor->status === 'active' && $actor->can('system-health.view');
     }
 
-    public function view(User $actor, Incident $incident): bool
+    public function view(User $actor, Incident $model): bool
     {
-        return $actor->status === 'active' && $actor->can('system-health.view');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'system-health.view', null, null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('system-health.view');
+        return false;
     }
 
-    public function update(User $actor, Incident $incident): bool
+    public function update(User $actor, Incident $model): bool
     {
-        return $actor->status === 'active' && $actor->can('system-health.view');
+        return false;
     }
 
-    public function delete(User $actor, Incident $incident): bool
+    public function delete(User $actor, Incident $model): bool
     {
         return false;
     }

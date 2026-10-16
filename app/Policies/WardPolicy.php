@@ -13,32 +13,32 @@ class WardPolicy
         return $actor->status === 'active' && $actor->can('wards.view');
     }
 
-    public function view(User $actor, Ward $ward): bool
+    public function view(User $actor, Ward $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'wards.view', null, $ward->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'wards.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('wards.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'wards.create', null, $actor->id);
     }
 
-    public function update(User $actor, Ward $ward): bool
+    public function update(User $actor, Ward $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'wards.update', null, $ward->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'wards.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Ward $ward): bool
+    public function publish(User $actor, Ward $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'wards.publish', null, $ward->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'wards.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Ward $ward): bool
+    public function verify(User $actor, Ward $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'wards.verify', null, $ward->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'wards.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Ward $ward): bool
+    public function delete(User $actor, Ward $model): bool
     {
         return false;
     }

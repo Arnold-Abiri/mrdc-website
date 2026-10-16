@@ -13,32 +13,32 @@ class PagePolicy
         return $actor->status === 'active' && $actor->can('pages.view');
     }
 
-    public function view(User $actor, Page $page): bool
+    public function view(User $actor, Page $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'pages.view', $page->department_id, $page->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'pages.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('pages.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'pages.create', null, $actor->id);
     }
 
-    public function update(User $actor, Page $page): bool
+    public function update(User $actor, Page $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'pages.update', $page->department_id, $page->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'pages.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Page $page): bool
+    public function publish(User $actor, Page $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'pages.publish', $page->department_id, $page->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'pages.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Page $page): bool
+    public function verify(User $actor, Page $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'pages.verify', $page->department_id, $page->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'pages.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Page $page): bool
+    public function delete(User $actor, Page $model): bool
     {
         return false;
     }

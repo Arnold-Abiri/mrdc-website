@@ -13,32 +13,32 @@ class VacancyPolicy
         return $actor->status === 'active' && $actor->can('vacancies.view');
     }
 
-    public function view(User $actor, Vacancy $vacancy): bool
+    public function view(User $actor, Vacancy $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.view', $vacancy->department_id, $vacancy->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('vacancies.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.create', null, $actor->id);
     }
 
-    public function update(User $actor, Vacancy $vacancy): bool
+    public function update(User $actor, Vacancy $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.update', $vacancy->department_id, $vacancy->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Vacancy $vacancy): bool
+    public function publish(User $actor, Vacancy $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.publish', $vacancy->department_id, $vacancy->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Vacancy $vacancy): bool
+    public function verify(User $actor, Vacancy $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.verify', $vacancy->department_id, $vacancy->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'vacancies.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Vacancy $vacancy): bool
+    public function delete(User $actor, Vacancy $model): bool
     {
         return false;
     }

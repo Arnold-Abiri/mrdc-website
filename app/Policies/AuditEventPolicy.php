@@ -10,12 +10,12 @@ class AuditEventPolicy
 {
     public function viewAny(User $actor): bool
     {
-        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'audit.view', null, null);
+        return $actor->status === 'active' && $actor->can('audit.view');
     }
 
     public function view(User $actor, AuditEvent $event): bool
     {
-        return $this->viewAny($actor);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'audit.view', null, null);
     }
 
     public function create(User $actor): bool

@@ -13,37 +13,37 @@ class TenderPolicy
         return $actor->status === 'active' && $actor->can('tenders.view');
     }
 
-    public function view(User $actor, Tender $tender): bool
+    public function view(User $actor, Tender $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.view', $tender->department_id, $tender->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('tenders.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.create', null, $actor->id);
     }
 
-    public function update(User $actor, Tender $tender): bool
+    public function update(User $actor, Tender $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.update', $tender->department_id, $tender->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function publish(User $actor, Tender $tender): bool
+    public function publish(User $actor, Tender $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.publish', $tender->department_id, $tender->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.publish', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function verify(User $actor, Tender $tender): bool
+    public function verify(User $actor, Tender $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.verify', $tender->department_id, $tender->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.verify', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function award(User $actor, Tender $tender): bool
+    public function award(User $actor, Tender $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'tenders.award', $tender->department_id, $tender->created_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'tenders.award', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Tender $tender): bool
+    public function delete(User $actor, Tender $model): bool
     {
         return false;
     }

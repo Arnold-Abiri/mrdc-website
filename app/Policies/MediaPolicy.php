@@ -13,22 +13,22 @@ class MediaPolicy
         return $actor->status === 'active' && $actor->can('media.view');
     }
 
-    public function view(User $actor, Media $media): bool
+    public function view(User $actor, Media $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'media.view', $media->department_id, $media->uploaded_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'media.view', $model->department_id ?? null, $model->created_by ?? null);
     }
 
     public function create(User $actor): bool
     {
-        return $actor->status === 'active' && $actor->can('media.create');
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'media.create', null, $actor->id);
     }
 
-    public function update(User $actor, Media $media): bool
+    public function update(User $actor, Media $model): bool
     {
-        return app(DataScopeAuthorizer::class)->allows($actor, 'media.update', $media->department_id, $media->uploaded_by);
+        return $actor->status === 'active' && app(DataScopeAuthorizer::class)->allows($actor, 'media.update', $model->department_id ?? null, $model->created_by ?? null);
     }
 
-    public function delete(User $actor, Media $media): bool
+    public function delete(User $actor, Media $model): bool
     {
         return false;
     }
