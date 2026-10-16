@@ -984,3 +984,144 @@ body:has(.mrdc-auth-page) .fi-simple-main {
     box-shadow: 0 0 0 3px rgba(11, 143, 98, 0.18) !important;
 }
 
+
+/* === Portal design: gradient stat cards === */
+.fi-wi-stats-overview-stat {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem !important;
+    padding: 1.5rem !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.fi-wi-stats-overview-stat::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.fi-wi-stats-overview-stat:has(.fi-color-success),
+.fi-wi-stats-overview-stat:has([data-color="success"]) {
+    background: linear-gradient(to bottom right, #10b981, #0d9488) !important;
+    box-shadow: 0 20px 25px -5px rgba(6, 78, 59, 0.2) !important;
+}
+
+.fi-wi-stats-overview-stat:has(.fi-color-danger),
+.fi-wi-stats-overview-stat:has([data-color="danger"]) {
+    background: linear-gradient(to bottom right, #f43f5e, #dc2626) !important;
+    box-shadow: 0 20px 25px -5px rgba(127, 29, 29, 0.2) !important;
+}
+
+.fi-wi-stats-overview-stat:has(.fi-color-warning),
+.fi-wi-stats-overview-stat:has([data-color="warning"]) {
+    background: linear-gradient(to bottom right, #fbbf24, #f97316) !important;
+    box-shadow: 0 20px 25px -5px rgba(124, 45, 18, 0.2) !important;
+}
+
+.fi-wi-stats-overview-stat:has(.fi-color-info),
+.fi-wi-stats-overview-stat:has([data-color="info"]) {
+    background: linear-gradient(to bottom right, #3b82f6, #4f46e5) !important;
+    box-shadow: 0 20px 25px -5px rgba(30, 58, 138, 0.2) !important;
+}
+
+.fi-wi-stats-overview-stat:has(.fi-color-primary),
+.fi-wi-stats-overview-stat:has([data-color="primary"]) {
+    background: linear-gradient(to bottom right, #0b8f62, #075d46) !important;
+    box-shadow: 0 20px 25px -5px rgba(7, 93, 70, 0.25) !important;
+}
+
+.fi-wi-stats-overview-stat:has(.fi-color-gray),
+.fi-wi-stats-overview-stat:not(:has(.fi-color-success)):not(:has(.fi-color-danger)):not(:has(.fi-color-warning)):not(:has(.fi-color-info)):not(:has(.fi-color-primary)) {
+    background: linear-gradient(to bottom right, #3f3f46, #18181b) !important;
+    box-shadow: 0 20px 25px -5px rgba(24, 24, 27, 0.2) !important;
+}
+
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-label {
+    color: rgba(255, 255, 255, 0.96) !important;
+}
+
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-value {
+    color: white !important;
+    font-size: 2.25rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.025em !important;
+    font-feature-settings: 'tnum';
+}
+
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-weight: 500 !important;
+}
+
+.fi-wi-stats-overview-stat-label-ctn > .fi-icon,
+.fi-wi-stats-overview-stat-description-ctn > .fi-icon {
+    color: rgba(255, 255, 255, 0.95) !important;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+/* === Portal design: page transition === */
+.fi-main {
+    animation: mrdcFadeIn 0.3s ease-out;
+}
+
+@keyframes mrdcFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* === Portal design: modules timeline sidebar === */
+.fi-sidebar-nav { padding-inline: 0.75rem; }
+.fi-sidebar-group-items {
+    position: relative;
+    margin-left: 1.35rem;
+    padding-left: 1.25rem;
+    border-left: 1px solid rgb(255 255 255 / 0.18);
+}
+html:not(.dark) .fi-sidebar-group-items { border-left-color: rgb(0 0 0 / 0.15); }
+.fi-sidebar-group-items .fi-sidebar-item { position: relative; }
+.fi-sidebar-group-items .fi-sidebar-item::before {
+    content: '';
+    position: absolute;
+    left: -1.25rem;
+    top: 50%;
+    width: 7px; height: 7px;
+    translate: -3.5px -50%;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.45);
+}
+html:not(.dark) .fi-sidebar-group-items .fi-sidebar-item::before { background: rgb(0 0 0 / 0.3); }
+.fi-sidebar-group-items .fi-sidebar-item .fi-sidebar-item-btn {
+    border-radius: 0.65rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* === Portal design: compact empty state === */
+.fi-ta-empty-state {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+
+.fi-ta-empty-state-icon {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    margin-bottom: 0.5rem !important;
+    opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fi-main {
+        animation: none !important;
+    }
+}
