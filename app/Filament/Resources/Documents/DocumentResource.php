@@ -5,8 +5,10 @@ namespace App\Filament\Resources\Documents;
 use App\Domain\Cms\DocumentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Content\ContentCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\PreviewHelper;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
+use App\Filament\Concerns\TranslationStatusColumn;
 use App\Filament\Resources\Documents\Pages\CreateDocument;
 use App\Filament\Resources\Documents\Pages\EditDocument;
 use App\Filament\Resources\Documents\Pages\ListDocuments;
@@ -51,12 +53,7 @@ class DocumentResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(160)
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Suggested from the title; you can edit it.'),
+                    ->afterStateUpdated(SlugField::autoFillHook()),
                 Textarea::make('description')->maxLength(5000)->columnSpanFull(),
                 Select::make('category')->options(collect(Document::CATEGORIES)->mapWithKeys(fn (string $category): array => [$category => ucwords(str_replace('_', ' ', $category))])->all())->required(),
                 Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
@@ -76,6 +73,7 @@ class DocumentResource extends Resource
                     ->searchable()
                     ->helperText('Required if no file is uploaded above.'),
             ])->columns(2),
+            SlugField::make('title'),
             TranslationFields::make(Document::translatableFields()),
         ]);
     }
@@ -83,10 +81,36 @@ class DocumentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('title')->searchable(), TextColumn::make('category')->badge(),
-            TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(),
-            TextColumn::make('published_at')->dateTime(),
-        ])->recordActions([DeleteAction::make(),
+            TextColumn::make('title')->searchable(),
+            TextColumn::make('category')->badge(),
+            TextColumn::make('file_size')
+                ->label('Size')
+                ->state(function (Document $record): string {
+                    $bytes = $record->media?->size ?? 0;
+                    if ($bytes >= 1048576) {
+                        return number_format($bytes / 1048576, 1).' MB';
+                    }
+                    if ($bytes >= 1024) {
+                        return number_format($bytes / 1024, 0).' KB';
+                    }
+
+                    return $bytes > 0 ? $bytes.' B' : '-';
+                })
+                ->badge()
+                ->color('gray')
+                ->toggleable(),
+            TextColumn::make('download_count')
+                ->label('Downloads')
+                ->numeric()
+                ->sortable()
+                ->toggleable(),
+            TextColumn::make('status')->badge(),
+            TextColumn::make('verification_status')->badge(),
+            TranslationStatusColumn::make(),
+            TextColumn::make('published_at')->dateTime()->sortable(),
+        ])->recordActions([
+            PreviewHelper::makePreviewAction(),
+            DeleteAction::make(),
             EditAction::make(),
             Action::make('replace')->label('Replace file')->authorize(fn (Document $record): bool => Gate::allows('update', $record))->schema([Select::make('media_id')->label('Replacement PDF')->relationship('media', 'title')->searchable()->required()->helperText('The previous file is preserved as a version; the replacement returns the document to draft for review.')])->action(fn (Document $record, array $data) => app(DocumentManager::class)->replace(auth()->user(), $record, (int) $data['media_id'])),
             Action::make('verify')->authorize(fn (Document $record): bool => Gate::allows('verify', $record))->visible(fn (Document $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setVerification(auth()->user(), $record, 'publishable')),
@@ -103,7 +127,7 @@ class DocumentResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery(), auth()->user(), 'documents.view', 'department_id', 'created_by');
+        return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery()->with('media'), auth()->user(), 'documents.view', 'department_id', 'created_by');
     }
 
     public static function getPages(): array

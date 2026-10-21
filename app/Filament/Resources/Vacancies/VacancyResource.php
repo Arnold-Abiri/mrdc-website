@@ -5,8 +5,10 @@ namespace App\Filament\Resources\Vacancies;
 use App\Domain\Cms\VacancyManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\PreviewHelper;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
+use App\Filament\Concerns\TranslationStatusColumn;
 use App\Filament\Resources\Vacancies\Pages\CreateVacancy;
 use App\Filament\Resources\Vacancies\Pages\EditVacancy;
 use App\Filament\Resources\Vacancies\Pages\ListVacancies;
@@ -52,12 +54,7 @@ class VacancyResource extends Resource
                 ->required()
                 ->maxLength(255)
                 ->live(onBlur: true)
-                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
-            TextInput::make('slug')
-                ->required()
-                ->maxLength(160)
-                ->unique(ignoreRecord: true)
-                ->helperText('Suggested from title; you can edit it.'),
+                ->afterStateUpdated(SlugField::autoFillHook()),
             TextInput::make('grade')->maxLength(60),
             TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
             Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
@@ -68,18 +65,31 @@ class VacancyResource extends Resource
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Downloadable vacancy advert.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
+            SlugField::make('title'),
             TranslationFields::make(Vacancy::translatableFields()), ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('grade'), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge(), TextColumn::make('closes_at')->date()])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
-            EditAction::make(),
-            Action::make('verify')->authorize(fn (Vacancy $record): bool => Gate::allows('verify', $record))->visible(fn (Vacancy $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-            Action::make('archive')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'archived')),
-        ])
+        return $table
+            ->columns([
+                TextColumn::make('title')->searchable(),
+                TextColumn::make('grade'),
+                TextColumn::make('status')->badge(),
+                TextColumn::make('verification_status')->badge(),
+                TranslationStatusColumn::make(),
+                TextColumn::make('closes_at')->date(),
+            ])
+            ->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])
+            ->recordActions([
+                PreviewHelper::makePreviewAction(),
+                DeleteAction::make(),
+                EditAction::make(),
+                Action::make('verify')->authorize(fn (Vacancy $record): bool => Gate::allows('verify', $record))->visible(fn (Vacancy $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                Action::make('publish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'published')),
+                Action::make('unpublish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                Action::make('archive')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'archived')),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

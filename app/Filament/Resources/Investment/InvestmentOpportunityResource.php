@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Investment;
 use App\Domain\Cms\InvestmentManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Investment\Pages\CreateInvestmentOpportunity;
 use App\Filament\Resources\Investment\Pages\EditInvestmentOpportunity;
@@ -51,12 +51,7 @@ class InvestmentOpportunityResource extends Resource
                 ->required()
                 ->maxLength(255)
                 ->live(onBlur: true)
-                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
-            TextInput::make('slug')
-                ->required()
-                ->maxLength(160)
-                ->unique(ignoreRecord: true)
-                ->helperText('Suggested from title; you can edit it.'),
+                ->afterStateUpdated(SlugField::autoFillHook()),
             TextInput::make('sector')->maxLength(60)->helperText('e.g. Solar energy, Mining, Horticulture.'),
             Textarea::make('summary')->maxLength(1000),
             MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not state financial returns.'),
@@ -65,6 +60,7 @@ class InvestmentOpportunityResource extends Resource
             Select::make('document_id')->relationship('document', 'title')->searchable(),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
+            SlugField::make('title'),
             TranslationFields::make(InvestmentOpportunity::translatableFields()), ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Vacancies\Pages;
 
 use App\Domain\Cms\VacancyManager;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Vacancies\VacancyResource;
 use App\Models\Vacancy;
 use Filament\Actions\DeleteAction;
@@ -26,6 +27,7 @@ class EditVacancy extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
         ];
     }

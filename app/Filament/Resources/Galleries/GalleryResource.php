@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Galleries;
 use App\Domain\Cms\GalleryManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Content\ContentCluster;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Galleries\Pages\CreateGallery;
 use App\Filament\Resources\Galleries\Pages\EditGallery;
@@ -54,8 +55,11 @@ class GalleryResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255),
-            TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true)->helperText('Lowercase letters, numbers and single hyphens, e.g. ward-5-road-rehabilitation.'),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(SlugField::autoFillHook()),
             Textarea::make('summary')->maxLength(500)->helperText('Short line shown on the gallery card.'),
             Textarea::make('description')->maxLength(20000)->helperText('Plain text only; HTML is not rendered.'),
             TextInput::make('location')->maxLength(255),
@@ -94,6 +98,7 @@ class GalleryResource extends Resource
                 ->required(),
             Select::make('is_featured')->options([1 => 'Yes', 0 => 'No'])->default(0)->required()->helperText('Featured galleries appear first on the public gallery page.'),
             TextInput::make('display_order')->numeric()->default(0)->required(),
+            SlugField::make('title'),
             TranslationFields::make(Gallery::translatableFields()),
         ]);
     }

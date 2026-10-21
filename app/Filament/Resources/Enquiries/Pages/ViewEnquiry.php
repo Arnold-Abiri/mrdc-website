@@ -10,6 +10,7 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Gate;
 
@@ -29,6 +30,27 @@ class ViewEnquiry extends ViewRecord
             Action::make('note')->label('Add internal note')->authorize(fn (): bool => Gate::allows('update', $this->record))
                 ->form([Textarea::make('body')->label('Note')->required()->maxLength(5000)])
                 ->action(fn (array $data) => app(EnquiryManager::class)->addNote(auth()->user(), $this->enquiry(), $data['body'])),
+            Action::make('notify_citizen')
+                ->label('Send Update to Citizen')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('primary')
+                ->authorize(fn (): bool => Gate::allows('update', $this->record))
+                ->form([
+                    Textarea::make('message')
+                        ->label('Official Officer Response / Update Note')
+                        ->placeholder('Explain current progress, actions taken, or steps required from the citizen...')
+                        ->rows(5)
+                        ->required()
+                        ->maxLength(5000)
+                        ->helperText('This message will be emailed directly to '.$this->enquiry()->email.' along with the reference number and current status.'),
+                ])
+                ->action(function (array $data): void {
+                    app(EnquiryManager::class)->notifyCitizen(auth()->user(), $this->enquiry(), $data['message']);
+                    Notification::make()
+                        ->title('Notification dispatched to citizen')
+                        ->success()
+                        ->send();
+                }),
             Action::make('in_progress')->label('Mark in progress')->authorize(fn (): bool => Gate::allows('update', $this->record))
                 ->requiresConfirmation()->action(fn () => app(EnquiryManager::class)->setStatus(auth()->user(), $this->enquiry(), 'in_progress')),
             Action::make('resolved')->label('Resolve')->authorize(fn (): bool => Gate::allows('update', $this->record))

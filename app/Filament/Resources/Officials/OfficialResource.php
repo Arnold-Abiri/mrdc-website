@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Officials;
 use App\Domain\Cms\OfficialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Council\CouncilCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Officials\Pages\CreateOfficial;
 use App\Filament\Resources\Officials\Pages\EditOfficial;
@@ -52,13 +52,8 @@ class OfficialResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
+                    ->afterStateUpdated(SlugField::autoFillHook()),
                 TextInput::make('title')->label('Position / Role Title')->required()->maxLength(255),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(160)
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Suggested from name; you can edit it.'),
                 Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
                 Select::make('is_department_head')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Mark the head of the department. Shown on the public department page.'),
                 TextInput::make('display_order')->numeric()->default(0)->required(),
@@ -82,6 +77,7 @@ class OfficialResource extends Resource
                     ->searchable()
                     ->helperText('Active photo from media library.'),
             ])->columns(2),
+            SlugField::make('name'),
             TranslationFields::make(Official::translatableFields()),
         ]);
     }

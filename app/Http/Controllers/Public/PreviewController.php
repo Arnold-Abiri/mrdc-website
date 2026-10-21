@@ -18,6 +18,7 @@ use App\Models\Page;
 use App\Models\PublicContact;
 use App\Models\Service;
 use App\Models\Tender;
+use App\Models\Vacancy;
 use App\Models\Ward;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -88,6 +89,8 @@ class PreviewController extends Controller
             'investment' => $this->previewInvestment($slug),
             'meetings' => $this->previewMeeting($slug),
             'galleries' => $this->previewGallery($slug),
+            'tenders' => $this->previewTender($slug),
+            'vacancies' => $this->previewVacancy($slug),
             default => abort(404),
         };
     }
@@ -192,6 +195,41 @@ class PreviewController extends Controller
                 'is_review_content' => true,
             ],
             'images' => $images->values(),
+        ]);
+    }
+
+    private function previewTender(string $slug): Response
+    {
+        $tender = Tender::query()->with('translations')->with(['document', 'department.translations', 'department'])->where('slug', $slug)->firstOrFail();
+        $document = $tender->document;
+
+        return Inertia::render('Tender', [
+            'preview' => true,
+            'tender' => [
+                ...$tender->toLocalizedArray(['slug', 'reference', 'title', 'category', 'description', 'opens_at', 'closes_at', 'contact_instructions', 'award_status', 'awarded_to', 'awarded_at', 'award_amount', 'award_reference', 'award_remarks']),
+                'display_status' => $tender->displayStatus(),
+                'document' => $document instanceof Document ? $document->toLocalizedArray(['slug', 'title']) : null,
+                'is_review_content' => true,
+            ],
+            'department' => $tender->department instanceof Department ? $tender->department->translated('public_name') : null,
+        ]);
+    }
+
+    private function previewVacancy(string $slug): Response
+    {
+        $vacancy = Vacancy::query()->with('translations')->with(['document', 'department.translations', 'department'])->where('slug', $slug)->firstOrFail();
+        $document = $vacancy->document;
+
+        return Inertia::render('Vacancy', [
+            'preview' => true,
+            'vacancy' => [
+                ...$vacancy->toLocalizedArray(['slug', 'title', 'grade', 'reference', 'employment_type', 'description', 'responsibilities', 'requirements', 'opens_at', 'closes_at', 'application_instructions']),
+                'is_open' => $vacancy->isOpen(),
+                'document' => $document instanceof Document ? $document->toLocalizedArray(['slug', 'title']) : null,
+                'is_review_content' => true,
+            ],
+            'department' => $vacancy->department instanceof Department ? $vacancy->department->translated('public_name') : null,
+            'related' => [],
         ]);
     }
 }

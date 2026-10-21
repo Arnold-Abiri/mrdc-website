@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Enquiries;
 
+use App\Domain\Cms\EnquiryManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Enquiries\EnquiriesCluster;
 use App\Filament\Resources\Enquiries\Pages\ListEnquiries;
@@ -10,9 +11,11 @@ use App\Models\Department;
 use App\Models\Enquiry;
 use App\Models\User;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -113,6 +116,16 @@ class EnquiryResource extends Resource
             ])
             ->defaultSort('submitted_at', 'desc')->recordUrl(fn (Enquiry $record): string => static::getUrl('view', ['record' => $record]))
             ->recordActions([
+                ViewAction::make(),
+                Action::make('quickResolve')
+                    ->label('Resolve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(fn (Enquiry $record): bool => ! in_array($record->status, ['resolved', 'closed'], true))
+                    ->action(function (Enquiry $record): void {
+                        app(EnquiryManager::class)->setStatus(auth()->user(), $record, 'resolved');
+                    }),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

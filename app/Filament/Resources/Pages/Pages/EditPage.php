@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Pages\Pages;
 
 use App\Domain\Cms\PageManager;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Pages\PageResource;
 use App\Models\Page;
 use App\Models\PageRevision;
@@ -22,6 +23,7 @@ class EditPage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
             Action::make('restoreRevision')
                 ->label('Restore revision')

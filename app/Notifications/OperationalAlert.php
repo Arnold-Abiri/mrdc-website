@@ -25,8 +25,10 @@ class OperationalAlert extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject($this->subject)
+            ->subject($this->subject.' - '.config('mail.from.name', 'Mutoko Rural District Council'))
+            ->greeting('Hello!')
             ->line($this->summary)
-            ->line('Open the council administration panel, System health, for details.');
+            ->line('Open the council administration panel, System health, for details.')
+            ->salutation("Regards,\n".config('mail.from.name', 'Mutoko Rural District Council'));
     }
 }

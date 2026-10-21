@@ -4,6 +4,7 @@ namespace App\Domain\Cms;
 
 use App\Domain\Identity\AuditWriter;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Mail\EnquiryStatusUpdated;
 use App\Models\Department;
 use App\Models\Enquiry;
 use App\Models\InvestmentOpportunity;
@@ -14,6 +15,7 @@ use App\Notifications\EnquiryWorkflowNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -195,5 +197,31 @@ class EnquiryManager
             $enquiry->notes()->create(['author_id' => $actor->id, 'body' => $data['body']]);
             app(AuditWriter::class)->record($actor, 'enquiries.note_added', $enquiry);
         });
+    }
+
+    public function notifyCitizen(User $actor, Enquiry $enquiry, ?string $message = null): void
+    {
+        Gate::forUser($actor)->authorize('update', $enquiry);
+
+        $validated = Validator::make(['message' => $message], [
+            'message' => ['nullable', 'string', 'max:5000'],
+        ])->validate();
+
+        $note = $validated['message'] ?? null;
+
+        // If officer provided a note, also record it as an internal note
+        if (! empty($note)) {
+            $this->addNote($actor, $enquiry, "[Citizen Notification Sent]:\n".$note);
+        }
+
+        try {
+            Mail::to($enquiry->email)->send(new EnquiryStatusUpdated($enquiry, $note));
+            app(AuditWriter::class)->record($actor, 'enquiries.citizen_notified', $enquiry, [
+                'recipient' => $enquiry->email,
+                'status' => $enquiry->status,
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 }

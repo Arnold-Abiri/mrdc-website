@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Filament\Resources\Enquiries\EnquiryResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -23,11 +24,16 @@ class EnquiryWorkflowNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $adminUrl = EnquiryResource::getUrl('index');
+
         return (new MailMessage)
-            ->subject('Council enquiry workflow update')
+            ->subject('Enquiry Workflow Notification - '.$this->publicId)
+            ->greeting('Hello!')
             ->line('An enquiry requires staff attention.')
             ->line('Reference: '.$this->publicId)
             ->line('Update: '.$this->event)
-            ->line('Open the council administration panel to review it.');
+            ->action('Review in Admin Panel', $adminUrl)
+            ->line('Open the council administration panel to review it.')
+            ->salutation("Regards,\n".config('mail.from.name', 'Mutoko Rural District Council'));
     }
 }

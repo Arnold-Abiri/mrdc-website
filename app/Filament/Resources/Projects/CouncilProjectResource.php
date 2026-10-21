@@ -5,8 +5,9 @@ namespace App\Filament\Resources\Projects;
 use App\Domain\Cms\CouncilProjectManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
+use App\Filament\Resources\Projects\CouncilProjectResource\RelationManagers\UpdatesRelationManager;
 use App\Filament\Resources\Projects\Pages\CreateCouncilProject;
 use App\Filament\Resources\Projects\Pages\EditCouncilProject;
 use App\Filament\Resources\Projects\Pages\ListCouncilProjects;
@@ -55,12 +56,7 @@ class CouncilProjectResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(160)
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Suggested from title; you can edit it.'),
+                    ->afterStateUpdated(SlugField::autoFillHook()),
                 Select::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])->required(),
                 Select::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled'])->required(),
                 TextInput::make('location')->maxLength(255),
@@ -95,6 +91,7 @@ class CouncilProjectResource extends Resource
             Section::make('Associated Documents')->schema([
                 Select::make('documents')->multiple()->relationship('documents', 'title')->searchable()->helperText('Optional documents linked to this project.'),
             ]),
+            SlugField::make('title'),
             TranslationFields::make(CouncilProject::translatableFields()),
         ]);
     }
@@ -118,6 +115,13 @@ class CouncilProjectResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery(), auth()->user(), 'projects.view', 'department_id', 'created_by');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            UpdatesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

@@ -5,8 +5,10 @@ namespace App\Filament\Resources\Editorial;
 use App\Domain\Cms\EditorialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Content\ContentCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\PreviewHelper;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
+use App\Filament\Concerns\TranslationStatusColumn;
 use App\Filament\Resources\Editorial\Pages\CreateEditorialItem;
 use App\Filament\Resources\Editorial\Pages\EditEditorialItem;
 use App\Filament\Resources\Editorial\Pages\ListEditorialItems;
@@ -52,10 +54,13 @@ class EditorialItemResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Story')->description('The headline, text and classification. The web address is suggested from the title.')->schema([
+            Section::make('Story')->description('The headline, text and classification.')->schema([
                 Select::make('type')->options(['news' => 'News', 'notice' => 'Notice'])->required(),
-                TextInput::make('title')->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
-                TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true)->helperText('Suggested from the title; you can edit it.'),
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(SlugField::autoFillHook()),
                 Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('One or two sentences shown on listing cards and search results.'),
                 MarkdownEditor::make('body')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Headings, bold, lists and links only — scripts and embeds are stripped on the public site.'),
                 TextInput::make('category')->maxLength(60), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
@@ -73,7 +78,9 @@ class EditorialItemResource extends Resource
                 TextInput::make('seo_title')->maxLength(255), TextInput::make('meta_description')->maxLength(320),
                 TextInput::make('display_order')->numeric()->default(0)->required(),
             ])->columns(2),
-            TranslationFields::make(EditorialItem::translatableFields()), ]);
+            SlugField::make('title'),
+            TranslationFields::make(EditorialItem::translatableFields()),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -82,7 +89,19 @@ class EditorialItemResource extends Resource
             ->emptyStateHeading('No stories yet')
             ->emptyStateDescription('Create your first news article or notice — it will appear here once saved as a draft.')
             ->emptyStateIcon(Heroicon::OutlinedNewspaper)
-            ->columns([TextColumn::make('title')->searchable(), TextColumn::make('type')->badge(), TextColumn::make('category')->searchable()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('published_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
+            ->columns([
+                TextColumn::make('title')->searchable(),
+                TextColumn::make('type')->badge(),
+                TextColumn::make('category')->searchable()->toggleable(),
+                TextColumn::make('status')->badge(),
+                TextColumn::make('verification_status')->badge()->toggleable(),
+                TranslationStatusColumn::make(),
+                TextColumn::make('published_at')->dateTime()->sortable()->toggleable(),
+            ])
+            ->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])
+            ->recordActions([
+                PreviewHelper::makePreviewAction(),
+                DeleteAction::make(),
                 EditAction::make(),
                 Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
                 Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),

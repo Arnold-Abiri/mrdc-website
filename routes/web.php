@@ -80,6 +80,7 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
 
     Route::get('/tenders', [TenderController::class, 'index'])->name('tenders.index');
     Route::get('/tenders/{slug}', [TenderController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('tenders.show');
+    Route::post('/tenders/{slug}/download', [TenderController::class, 'download'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('tenders.download');
 
     Route::get('/vacancies', [VacancyController::class, 'index'])->name('vacancies.index');
     Route::get('/vacancies/{slug}', [VacancyController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('vacancies.show');
@@ -105,14 +106,11 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
     Route::get('/managed-media/{media}', [MediaController::class, 'show'])->whereNumber('media')->name('managed-media.show');
 }); // end locale group
 
-// Stakeholder preview: signed URLs only, never linked publicly or in sitemap.
-Route::middleware(['signed', 'noindex'])->prefix('preview')->group(function () {
-    Route::get('/{locale}', [PreviewController::class, 'home'])->where(['locale' => 'en|sn|nd'])->name('preview.home');
-});
+// Stakeholder preview: signed URLs or session authorization, never linked publicly or in sitemap.
 Route::middleware(['noindex'])->prefix('preview')->group(function () {
-    // Unlocked by visiting a valid signed preview URL (session flag set there).
+    Route::get('/{locale}', [PreviewController::class, 'home'])->where(['locale' => 'en|sn|nd'])->middleware('signed')->name('preview.home');
     Route::get('/{locale}/pages/{slug}', [PreviewController::class, 'page'])->where(['locale' => 'en|sn|nd', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.page');
-    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment|meetings|galleries', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
+    Route::get('/{locale}/{type}/{slug}', [PreviewController::class, 'detail'])->where(['locale' => 'en|sn|nd', 'type' => 'services|news|notices|documents|wards|officials|investment|meetings|galleries|tenders|vacancies', 'slug' => '[a-z0-9]+(?:-[a-z0-9]+)*'])->name('preview.detail');
 });
 
 Route::middleware('auth')->prefix('admin/reports')->group(function () {

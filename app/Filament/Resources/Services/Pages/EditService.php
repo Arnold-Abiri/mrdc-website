@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Services\Pages;
 
 use App\Domain\Cms\ServiceManager;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Services\ServiceResource;
 use App\Models\Service;
 use Filament\Actions\DeleteAction;
@@ -26,6 +27,7 @@ class EditService extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Wards;
 use App\Domain\Cms\WardManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Council\CouncilCluster;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Wards\Pages\CreateWard;
 use App\Filament\Resources\Wards\Pages\EditWard;
@@ -41,7 +42,19 @@ class WardResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([TextInput::make('name')->required()->maxLength(255), TextInput::make('slug')->required()->maxLength(120)->unique(ignoreRecord: true), Textarea::make('description')->maxLength(5000), Textarea::make('boundaries_description')->maxLength(5000)->helperText('Authoritative boundaries have not been supplied as GIS data; do not invent them.'), TextInput::make('map_url')->maxLength(2048)->helperText('Optional council-supplied map link. Leave empty until GIS data is approved.'), TextInput::make('display_order')->numeric()->default(0)->required(), TranslationFields::make(Ward::translatableFields())]);
+        return $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(SlugField::autoFillHook()),
+            Textarea::make('description')->maxLength(5000),
+            Textarea::make('boundaries_description')->maxLength(5000)->helperText('Authoritative boundaries have not been supplied as GIS data; do not invent them.'),
+            TextInput::make('map_url')->maxLength(2048)->helperText('Optional council-supplied map link. Leave empty until GIS data is approved.'),
+            TextInput::make('display_order')->numeric()->default(0)->required(),
+            SlugField::make('name', 'slug', 120),
+            TranslationFields::make(Ward::translatableFields()),
+        ]);
     }
 
     public static function table(Table $table): Table

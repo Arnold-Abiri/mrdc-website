@@ -5,7 +5,10 @@ namespace App\Filament\Resources\Pages;
 use App\Domain\Cms\PageManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Content\ContentCluster;
+use App\Filament\Concerns\PreviewHelper;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
+use App\Filament\Concerns\TranslationStatusColumn;
 use App\Filament\Resources\Pages\Pages\CreatePage;
 use App\Filament\Resources\Pages\Pages\EditPage;
 use App\Filament\Resources\Pages\Pages\ListPages;
@@ -45,8 +48,11 @@ class PageResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255),
-            TextInput::make('slug')->required()->maxLength(160)->unique(ignoreRecord: true),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255)
+                ->live(onBlur: true)
+                ->afterStateUpdated(SlugField::autoFillHook()),
             Textarea::make('summary')->maxLength(1000),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Repeater::make('blocks')->schema([
@@ -56,6 +62,7 @@ class PageResource extends Resource
             ])->defaultItems(1)->required(),
             TextInput::make('seo_title')->maxLength(255),
             Textarea::make('meta_description')->maxLength(320),
+            SlugField::make('title'),
             TranslationFields::make(Page::translatableFields()), ]);
     }
 
@@ -66,8 +73,11 @@ class PageResource extends Resource
             TextColumn::make('slug')->searchable(),
             TextColumn::make('status')->badge(),
             TextColumn::make('verification_status')->badge(),
+            TranslationStatusColumn::make(),
             TextColumn::make('published_at')->dateTime(),
-        ])->recordActions([DeleteAction::make(),
+        ])->recordActions([
+            PreviewHelper::makePreviewAction(),
+            DeleteAction::make(),
             EditAction::make(),
             Action::make('publish')->authorize(fn (Page $record): bool => Gate::allows('publish', $record))
                 ->visible(fn (Page $record): bool => $record->status !== 'published')

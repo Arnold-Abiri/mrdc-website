@@ -12,6 +12,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -41,6 +42,18 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share('site_settings', fn (): array => SiteSetting::allKeyed());
         Gate::policy(Role::class, RolePolicy::class);
         ResetPasswordNotification::createUrlUsing(fn (User $user, string $token): string => Filament::getPanel('admin')->getResetPasswordUrl($token, $user));
+        ResetPasswordNotification::toMailUsing(function (User $user, string $token): MailMessage {
+            $resetUrl = Filament::getPanel('admin')->getResetPasswordUrl($token, $user);
+
+            return (new MailMessage)
+                ->subject('Reset Password Notification - '.config('mail.from.name', 'Mutoko Rural District Council'))
+                ->greeting('Hello!')
+                ->line('You are receiving this email because we received a password reset request for your account.')
+                ->action('Reset Password', $resetUrl)
+                ->line('This password reset link will expire in '.config('auth.passwords.'.config('auth.defaults.passwords').'.expire').' minutes.')
+                ->line('If you did not request a password reset, no further action is required.')
+                ->salutation("Regards,\n".config('mail.from.name', 'Mutoko Rural District Council'));
+        });
         Event::listen(Login::class, function (Login $event): void {
             if ($event->user instanceof User) {
                 $event->user->forceFill(['last_login_at' => now()])->save();

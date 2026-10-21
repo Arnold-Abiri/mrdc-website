@@ -5,11 +5,14 @@ namespace App\Filament\Resources\Tenders;
 use App\Domain\Cms\TenderManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
-use App\Filament\Concerns\HandlesFeaturedImageUpload;
+use App\Filament\Concerns\PreviewHelper;
+use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
+use App\Filament\Concerns\TranslationStatusColumn;
 use App\Filament\Resources\Tenders\Pages\CreateTender;
 use App\Filament\Resources\Tenders\Pages\EditTender;
 use App\Filament\Resources\Tenders\Pages\ListTenders;
+use App\Filament\Resources\Tenders\RelationManagers\BiddersRelationManager;
 use App\Models\Tender;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -54,12 +57,7 @@ class TenderResource extends Resource
                 ->required()
                 ->maxLength(255)
                 ->live(onBlur: true)
-                ->afterStateUpdated(fn ($state, callable $set): mixed => $set('slug', HandlesFeaturedImageUpload::slugFromTitle($state))),
-            TextInput::make('slug')
-                ->required()
-                ->maxLength(160)
-                ->unique(ignoreRecord: true)
-                ->helperText('Suggested from title; you can edit it.'),
+                ->afterStateUpdated(SlugField::autoFillHook()),
             TextInput::make('category')->maxLength(60),
             MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
             Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),
@@ -68,6 +66,7 @@ class TenderResource extends Resource
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Published tender document.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),
+            SlugField::make('title'),
             TranslationFields::make(Tender::translatableFields()), ]);
     }
 
@@ -77,7 +76,20 @@ class TenderResource extends Resource
             ->emptyStateHeading('No tenders yet')
             ->emptyStateDescription('Create your first tender — drafts stay hidden until published.')
             ->emptyStateIcon(Heroicon::OutlinedClipboardDocumentList)
-            ->columns([TextColumn::make('reference')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('lifecycle_status')->badge(), TextColumn::make('award_status')->badge()->toggleable(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()->toggleable(), TextColumn::make('closes_at')->dateTime()->sortable()->toggleable()])->filters([SelectFilter::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
+            ->columns([
+                TextColumn::make('reference')->searchable(),
+                TextColumn::make('title')->searchable(),
+                TextColumn::make('lifecycle_status')->badge(),
+                TextColumn::make('award_status')->badge()->toggleable(),
+                TextColumn::make('status')->badge(),
+                TextColumn::make('verification_status')->badge()->toggleable(),
+                TranslationStatusColumn::make(),
+                TextColumn::make('closes_at')->dateTime()->sortable()->toggleable(),
+            ])
+            ->filters([SelectFilter::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])
+            ->recordActions([
+                PreviewHelper::makePreviewAction(),
+                DeleteAction::make(),
                 EditAction::make(),
                 Action::make('verify')->authorize(fn (Tender $record): bool => Gate::allows('verify', $record))->visible(fn (Tender $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setVerification(auth()->user(), $record, 'publishable')),
                 Action::make('publish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'published')),
@@ -107,6 +119,13 @@ class TenderResource extends Resource
     public static function getNavigationBadgeColor(): ?string
     {
         return 'info';
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            BiddersRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

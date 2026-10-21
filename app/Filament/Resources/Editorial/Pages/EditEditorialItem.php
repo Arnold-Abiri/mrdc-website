@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Editorial\Pages;
 use App\Domain\Cms\EditorialManager;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Editorial\EditorialItemResource;
 use App\Models\EditorialItem;
 use Filament\Actions\DeleteAction;
@@ -30,6 +31,7 @@ class EditEditorialItem extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
         ];
     }

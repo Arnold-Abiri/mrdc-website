@@ -133,13 +133,14 @@
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.25 2.25L18 6.75" /></svg>
                                 @endif
                             </div>
-                            <span class="mrdc-dash-delta mrdc-delta-{{ $metric['change_tone'] }}">
+                            <span class="mrdc-dash-delta mrdc-delta-{{ $metric['change_tone'] }}" title="{{ $metric['change_value'] }} {{ $metric['change_period'] }}">
                                 @if ($metric['change_tone'] === 'up')
-                                    <svg class="w-3 h-3 inline mr-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /></svg>
+                                    <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" /></svg>
                                 @else
-                                    <svg class="w-3 h-3 inline mr-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+                                    <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
                                 @endif
-                                {{ $metric['change'] }}
+                                <span class="mrdc-delta-val">{{ $metric['change_value'] }}</span>
+                                <span class="mrdc-delta-sub">mo</span>
                             </span>
                         </div>
                         <div class="mrdc-dash-metric-bottom">

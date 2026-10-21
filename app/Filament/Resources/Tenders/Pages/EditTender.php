@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Tenders\Pages;
 
 use App\Domain\Cms\TenderManager;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Tenders\TenderResource;
 use App\Models\Tender;
 use Filament\Actions\DeleteAction;
@@ -26,6 +27,7 @@ class EditTender extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
         ];
     }

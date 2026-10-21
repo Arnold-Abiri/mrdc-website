@@ -7,6 +7,7 @@ use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tender extends Model implements TranslatableContent
 {
@@ -29,6 +30,12 @@ class Tender extends Model implements TranslatableContent
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    /** @return HasMany<TenderBidder, $this> */
+    public function bidders(): HasMany
+    {
+        return $this->hasMany(TenderBidder::class)->orderByDesc('downloaded_at');
     }
 
     public function scopePublic(Builder $query): Builder

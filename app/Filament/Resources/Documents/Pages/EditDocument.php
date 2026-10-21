@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Documents\Pages;
 use App\Domain\Cms\DocumentManager;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Documents\DocumentResource;
 use App\Models\Document;
 use Filament\Actions\DeleteAction;
@@ -36,6 +37,7 @@ class EditDocument extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
         ];
     }
