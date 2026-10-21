@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Facades\Filament;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -14,11 +16,20 @@ class SecuritySeeder extends Seeder
     public function run(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
-        foreach (self::PERMISSIONS as $name) {
+        $currentPanel = Filament::getCurrentPanel();
+        Filament::setCurrentPanel('admin');
+
+        try {
+            $permissionNames = array_unique(array_merge(self::PERMISSIONS, FilamentShield::getEntitiesPermissions() ?? []));
+        } finally {
+            Filament::setCurrentPanel($currentPanel);
+        }
+
+        foreach ($permissionNames as $name) {
             Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
         }
         $admin = Role::firstOrCreate(['name' => 'System Administrator', 'guard_name' => 'web']);
-        $admin->syncPermissions(self::PERMISSIONS);
+        $admin->syncPermissions(Permission::where('guard_name', 'web')->get());
         foreach (['Website Administrator', 'Department Content Owner', 'Auditor'] as $name) {
             Role::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
         }
