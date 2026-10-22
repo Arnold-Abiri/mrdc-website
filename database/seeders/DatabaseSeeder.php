@@ -30,5 +30,8 @@ class DatabaseSeeder extends Seeder
         $this->call(GallerySeeder::class);
         $this->call(EmergencyNoticeSeeder::class);
         $this->call(BankAccountSeeder::class);
+        $this->call(FacebookContentSeeder::class);
+        $this->call(CouncilMeetingSeeder::class);
+        $this->call(PublishSeededInformationSeeder::class);
     }
 }

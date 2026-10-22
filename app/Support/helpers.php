@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Media;
+
 if (! function_exists('public_route')) {
     /**
      * Generate a URL for a locale-prefixed public route in the current locale.
@@ -10,6 +12,17 @@ if (! function_exists('public_route')) {
             $params = [$params];
         }
 
-        return route($name, ['locale' => app()->getLocale(), ...$params]);
+        $url = route($name, ['locale' => app()->getLocale(), ...$params], false);
+
+        if ($name === 'managed-media.show') {
+            $mediaId = is_array($params) ? ($params['media'] ?? reset($params)) : $params;
+            $updatedAt = Media::query()->whereKey($mediaId)->value('updated_at');
+
+            if ($updatedAt !== null) {
+                $url .= '?v='.strtotime((string) $updatedAt);
+            }
+        }
+
+        return $url;
     }
 }

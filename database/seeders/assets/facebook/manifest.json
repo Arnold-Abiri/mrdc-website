@@ -1,0 +1,126 @@
+{
+  "source": "https://www.facebook.com/mutokordczw",
+  "directory_source": "https://www.govserv.org/ZW/Mutoko/614085979003410/Mutoko-Rural-District-Council",
+  "organization": "Mutoko Rural District Council",
+  "public_contacts": [
+    {
+      "office": "Headquarters & Civic Centre",
+      "type": "address",
+      "value": "Stand 366, Mutoko Centre, P Bag 509 Mutoko, Zimbabwe",
+      "display_order": 0
+    },
+    {
+      "office": "Main Customer Service Hotline",
+      "type": "phone",
+      "value": "+263 77 159 2888",
+      "display_order": 1
+    },
+    {
+      "office": "General Enquiries",
+      "type": "email",
+      "value": "info@mutokordc.co.zw",
+      "display_order": 2
+    },
+    {
+      "office": "Official Web Portal",
+      "type": "website",
+      "value": "https://www.mutokordc.co.zw",
+      "display_order": 3
+    }
+  ],
+  "district_statistics": [
+    {
+      "label": "Facebook Community Reach",
+      "value": "11000",
+      "unit": "followers",
+      "icon": "community",
+      "source_note": "Verified Mutoko RDC social presence (GovServ / Facebook Page ID 614085979003410)",
+      "display_order": 6
+    }
+  ],
+  "editorial_items": [
+    {
+      "slug": "mutoko-rdc-holds-draft-budget-adoption-meeting",
+      "type": "news",
+      "title": "Mutoko Rural District Council Holds 2027 Draft Budget Adoption Meeting",
+      "category": "finance",
+      "summary": "Mutoko Rural District Council convenes its special full council session to debate and adopt the 2027 draft budget, prioritising rural infrastructure, clean water, and civic service delivery.",
+      "body": "Mutoko Rural District Council has officially held its 2027 draft budget adoption meeting in the council chambers at Mutoko Centre.\n\nThe meeting, attended by council management, executive leadership, and councillors representing all 29 wards of Mutoko District, reviewed comprehensive expenditure projections, tariff adjustments, and capital development allocations.\n\nPriority allocations focus on road grading and culvert construction under devolution programmes, piped water scheme extensions, clinic and school support infrastructure, and enhanced waste collection services across rural service centres and Mutoko Town Board zones.",
+      "image": "notices/mutoko-budget-adoption-meeting-1.jpg",
+      "alt_text": "Mutoko Rural District Council leadership and councillors convened in council chambers for the budget adoption meeting",
+      "caption": "Mutoko Rural District Council executive management and ward councillors during the draft budget adoption meeting.",
+      "published_at": "2026-10-06 11:24:00"
+    },
+    {
+      "slug": "council-scales-up-waste-management-marara-mu-bin-campaign",
+      "type": "news",
+      "title": "Council Scales Up Cleanliness Drive: 'Marara Mu Bin' Waste Management Initiative",
+      "category": "environment",
+      "summary": "Council deploys dedicated refuse collection vehicles and compactor trucks across Mutoko Centre and business centres under the 'Mutoko RDC Irikuti Marara Mu Bin' environmental campaign.",
+      "body": "In a robust step to maintain clean, hygienic, and sustainable communities, Mutoko Rural District Council has scaled up its environmental stewardship and waste management programme through the 'Mutoko RDC Irikuti Marara Mu Bin' campaign.\n\nBranded council refuse compactor vehicles and collection teams have been deployed to ensure regular, scheduled waste collection across commercial growth points, market areas, bus terminuses, and residential areas in Mutoko Centre.\n\nCouncil urges business owners, market vendors, and residents to dispose of waste in designated bins, keep shop frontages clean, and participate in scheduled monthly clean-up exercises.",
+      "image": "news/mutoko-refuse-truck-waste-campaign.jpg",
+      "alt_text": "Mutoko RDC refuse collection compactor vehicle branded with 'Marara Mu Bin' cleanliness campaign",
+      "caption": "Mutoko RDC branded waste management collection vehicle in service at Mutoko Centre.",
+      "published_at": "2026-09-15 09:00:00"
+    },
+    {
+      "slug": "invest-in-mutoko-council-unveils-investment-prospectus",
+      "type": "news",
+      "title": "Invest in Mutoko: Council Unveils Strategic Investment Opportunities",
+      "category": "development",
+      "summary": "Council issues its 'Invest in Mutoko: Grow with Mutoko, Transform Communities' prospectus, highlighting investment prospects in black granite, solar power, horticulture, and commercial property.",
+      "body": "Mutoko Rural District Council has officially launched its targeted investment drive under the banner 'Invest in Mutoko: Grow with Mutoko, Transform Communities — Discover, Invest, Experience'.\n\nStrategically located on the Harare–Nyamapanda highway corridor, Mutoko District offers high-yield investment opportunities in mineral beneficiation (black granite, lithium, and gold), renewable energy (solar utility parks), agro-processing (tomato and vegetable value-addition), and commercial real estate around the growing Mutoko Town Board.\n\nCouncil offers streamlined investment approvals, clear title processing, and supportive local infrastructure to both domestic and international investors.",
+      "image": "news/invest-in-mutoko-prospectus.jpg",
+      "alt_text": "Invest in Mutoko prospectus banner showcasing investment sectors and economic potential",
+      "caption": "Official Mutoko RDC investment drive: Discover, Invest, and Experience Mutoko.",
+      "published_at": "2026-08-28 10:30:00"
+    },
+    {
+      "slug": "notice-annual-budget-and-tariff-consultation-meetings",
+      "type": "notice",
+      "title": "Notice of Stakeholder Budget Consultative Sessions",
+      "category": "finance",
+      "summary": "Council invites all residents, traditional leaders, business operators, and ratepayers across all 29 wards to attend scheduled budget consultation and tariff review sessions.",
+      "body": "Notice is hereby given in terms of Section 219 of the Urban Councils Act and the Rural District Councils Act (Chapter 29:13) that Mutoko Rural District Council is conducting stakeholder consultative meetings across all 29 wards.\n\nThese consultative meetings enable residents and commercial ratepayers to review council performance, scrutinise proposed tariffs, and submit priority projects for the forthcoming budget cycle.\n\nAll ratepayers and community members are encouraged to attend their designated ward venues and contribute to local development planning.",
+      "image": "notices/mutoko-budget-adoption-presentation.jpg",
+      "alt_text": "Council finance presentation to ward councillors and stakeholders during budget deliberations",
+      "caption": "Presentation of budget priorities and tariff schedules to council stakeholders.",
+      "published_at": "2026-10-01 08:00:00"
+    }
+  ],
+  "galleries": [
+    {
+      "slug": "council-deliberations-and-service-delivery",
+      "title": "Council Governance, Fleet & Service Delivery",
+      "summary": "Photographs of council budget deliberations, chambers sessions, and service delivery machinery operating in Mutoko.",
+      "description": "Authentic photography from Mutoko Rural District Council meetings, chamber sessions, waste management vehicles, and service equipment.",
+      "location": "Mutoko Centre, Mutoko District",
+      "images": [
+        {
+          "filename": "notices/mutoko-budget-deliberations.jpg",
+          "title": "Council Chambers Budget Deliberations",
+          "alt_text": "Councillors and executive management seated in Mutoko RDC chambers during budget deliberations",
+          "caption": "Council executive management and councillors in session in the council boardroom."
+        },
+        {
+          "filename": "news/mutoko-council-chambers-session.jpg",
+          "title": "Council Leadership in Chambers",
+          "alt_text": "Council Chairperson and management presiding over full council meeting",
+          "caption": "Council leadership presiding over deliberations at Mutoko RDC offices."
+        },
+        {
+          "filename": "news/mutoko-waste-management-fleet.jpg",
+          "title": "Waste Management & Sanitation Fleet",
+          "alt_text": "Mutoko RDC service delivery trucks and equipment parked outside council premises",
+          "caption": "Mutoko RDC service delivery fleet and waste management equipment."
+        },
+        {
+          "filename": "galleries/council-service-machinery.jpg",
+          "title": "Heavy Plant & Equipment",
+          "alt_text": "Civil works machinery and equipment for district road maintenance and servicing",
+          "caption": "Service delivery machinery maintained for road grading and infrastructure works."
+        }
+      ]
+    }
+  ]
+}

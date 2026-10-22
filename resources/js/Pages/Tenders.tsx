@@ -42,13 +42,36 @@ export default function Tenders({ tenders }: { tenders: Tender[] }) {
     const [selectedTab, setSelectedTab] = useState<'all' | 'open' | 'closed' | 'awarded'>('all');
     const [copiedRef, setCopiedRef] = useState<string | null>(null);
 
-    const handleCopy = (ref: string) => {
+    const handleCopy = async (ref: string) => {
+        if (navigator.clipboard && window.isSecureContext) {
+            try {
+                await navigator.clipboard.writeText(ref);
+                setCopiedRef(ref);
+                setTimeout(() => setCopiedRef(null), 2500);
+
+                return;
+            } catch {
+                // Fall back for browsers that reject clipboard access.
+            }
+        }
+
         try {
-            navigator.clipboard.writeText(ref);
-            setCopiedRef(ref);
-            setTimeout(() => setCopiedRef(null), 2500);
+            const textArea = document.createElement('textarea');
+            textArea.value = ref;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            textArea.setAttribute('readonly', '');
+            document.body.appendChild(textArea);
+            textArea.select();
+            const copied = document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            if (copied) {
+                setCopiedRef(ref);
+                setTimeout(() => setCopiedRef(null), 2500);
+            }
         } catch {
-            // Fallback
+            // Clipboard access is unavailable in this browser.
         }
     };
 

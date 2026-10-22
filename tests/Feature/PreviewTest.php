@@ -10,7 +10,7 @@ use App\Models\Media;
 use App\Models\Page;
 use Database\Seeders\NewsIllustrationSeeder;
 use Database\Seeders\Stage4MutokoContentSeeder;
-use Database\Seeders\StakeholderDemoSeeder;
+use Database\Seeders\StakeholderSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -33,7 +33,7 @@ class PreviewTest extends TestCase
 
     public function test_signed_preview_home_shows_draft_content_with_noindex(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
 
         $url = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
 
@@ -53,7 +53,7 @@ class PreviewTest extends TestCase
     public function test_seeded_news_illustrations_are_managed_and_labelled(): void
     {
         Storage::fake(config('cms.media_disk'));
-        $this->seed(StakeholderDemoSeeder::class);
+        $this->seed(StakeholderSeeder::class);
 
         $items = EditorialItem::query()->where('type', 'news')->where('slug', 'like', 'demo-%')->with('featuredMedia')->get();
         $this->assertCount(6, $items);
@@ -76,7 +76,7 @@ class PreviewTest extends TestCase
 
     public function test_preview_page_shows_draft_after_home_unlocks_session(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
 
         $url = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
         $this->get($url)->assertOk();
@@ -92,7 +92,7 @@ class PreviewTest extends TestCase
     public function test_welcome_slide_is_public_and_draft_slide_image_requires_preview(): void
     {
         Storage::fake(config('cms.media_disk'));
-        $this->seed(StakeholderDemoSeeder::class);
+        $this->seed(StakeholderSeeder::class);
 
         $welcome = HomepageSlide::query()->where('headline', 'Mutoko Rural District Council')->firstOrFail();
         $draft = HomepageSlide::query()->where('headline', 'Roads, Water and Growth Points')->firstOrFail();
@@ -121,13 +121,13 @@ class PreviewTest extends TestCase
     public function test_reseeding_does_not_replace_edited_slides(): void
     {
         Storage::fake(config('cms.media_disk'));
-        $this->seed(StakeholderDemoSeeder::class);
+        $this->seed(StakeholderSeeder::class);
 
         $slide = HomepageSlide::query()->where('headline', 'Mutoko Rural District Council')->firstOrFail();
         $slide->headline = 'Updated council highlight';
         $slide->save();
 
-        $this->seed(StakeholderDemoSeeder::class);
+        $this->seed(StakeholderSeeder::class);
 
         $this->assertSame(3, HomepageSlide::query()->count());
         $this->assertSame('Updated council highlight', $slide->fresh()->headline);
@@ -135,7 +135,7 @@ class PreviewTest extends TestCase
 
     public function test_public_homepage_shows_verified_content_without_preview_flag(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
 
         $this->get('/en')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Home', false)
@@ -156,7 +156,7 @@ class PreviewTest extends TestCase
 
     public function test_preview_detail_pages_resolve_for_draft_records(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
 
         $home = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
         $this->get($home)->assertOk();
@@ -175,7 +175,7 @@ class PreviewTest extends TestCase
 
     public function test_preview_download_serves_demo_guide_in_preview_session(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderDemoSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
 
         // Published guides download publicly.
         $this->get('/en/documents/demo-public-enquiry-guide/download')->assertOk();

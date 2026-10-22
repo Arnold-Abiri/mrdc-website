@@ -180,16 +180,10 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                         {official.department && (
                                             <div className="official-profile-dept">{official.department}</div>
                                         )}
-                                        <p className="official-profile-bio">
-                                            {official.biography ?? t('officialBioFallback')}
-                                        </p>
-                                        <Link
-                                            href={`/${locale}/officials/${official.slug}`}
-                                            className="official-profile-action"
-                                        >
-                                            <span>{t('viewOfficialProfile')}</span>
-                                            <span aria-hidden="true">→</span>
-                                        </Link>
+                                        {official.biography && (
+                                            <p className="official-profile-bio">{official.biography}</p>
+                                        )}
+                                        
                                     </div>
                                 </article>
                             ))}
