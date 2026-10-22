@@ -42,7 +42,7 @@ const ATTRACTIONS: { titleKey: TranslationKey; tagKey: TranslationKey; descKey: 
     },
 ];
 
-export default function Tourism({ page, opportunities }: { page: TourismPage; opportunities: Opportunity[] }) {
+export default function Tourism({ opportunities }: { page?: TourismPage; opportunities: Opportunity[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
 

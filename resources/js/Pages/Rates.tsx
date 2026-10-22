@@ -100,7 +100,6 @@ type DynamicFaq = {
 };
 
 export default function Rates({
-    page,
     schedules,
     bankAccounts = [],
     billingFaqs = [],

@@ -16,13 +16,8 @@ function readContrast(): boolean {
 
 export default function AccessibilitySettings() {
     const t = usePublicTranslation();
-    const [scale, setScale] = useState<number>(FONT_SCALES[DEFAULT_SCALE_INDEX]);
-    const [contrast, setContrast] = useState(false);
-
-    useEffect(() => {
-        setScale(readScale());
-        setContrast(readContrast());
-    }, []);
+    const [scale, setScale] = useState<number>(readScale);
+    const [contrast, setContrast] = useState(readContrast);
 
     useEffect(() => {
         document.documentElement.style.fontSize = `${scale}%`;

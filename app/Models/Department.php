@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $name
+ * @property string $code
+ */
 #[Fillable(['name', 'code', 'description', 'sort_order', 'public_name', 'public_summary', 'public_description', 'responsibilities', 'public_display_order'])]
 class Department extends Model implements TranslatableContent
 {

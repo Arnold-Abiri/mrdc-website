@@ -36,10 +36,10 @@ class TranslationCompletenessWidget extends StatsOverviewWidget
             foreach ($records as $record) {
                 $totalEntities++;
                 $completeness = $record->translationCompleteness();
-                if (($completeness['sn']['status'] ?? '') === 'complete') {
+                if ($completeness['sn']['status'] === 'complete') {
                     $shonaComplete++;
                 }
-                if (($completeness['nd']['status'] ?? '') === 'complete') {
+                if ($completeness['nd']['status'] === 'complete') {
                     $ndebeleComplete++;
                 }
             }

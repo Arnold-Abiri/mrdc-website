@@ -8,7 +8,18 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $title
+ * @property string|null $type
+ * @property string|null $verification_status
+ * @property Carbon|null $published_at
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $updated_at
+ * @property Media|null $featuredMedia
+ * @property Department|null $department
+ */
 class EditorialItem extends Model implements TranslatableContent
 {
     use HasTranslations;
@@ -28,6 +39,7 @@ class EditorialItem extends Model implements TranslatableContent
         return $this->belongsTo(Media::class, 'featured_media_id');
     }
 
+    /** @return BelongsTo<Department, $this> */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);

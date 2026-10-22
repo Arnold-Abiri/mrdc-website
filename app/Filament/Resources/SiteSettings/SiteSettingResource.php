@@ -45,9 +45,9 @@ class SiteSettingResource extends Resource
                 ->schema([
                     Placeholder::make('setting_label')
                         ->label('What you are editing')
-                        ->content(fn (?SiteSetting $record): string => $record?->label ?? 'Site setting'),
+                        ->content(fn (?SiteSetting $record): string => $record === null ? 'Site setting' : $record->label),
                     TextInput::make('value')
-                        ->label(fn (?SiteSetting $record): string => $record?->label ?? 'Value')
+                        ->label(fn (?SiteSetting $record): string => $record === null ? 'Value' : $record->label)
                         ->placeholder(fn (?SiteSetting $record): ?string => self::getValuePlaceholder($record))
                         ->maxLength(2000)
                         ->email(fn (?SiteSetting $record): bool => $record?->type === 'email')
@@ -56,7 +56,7 @@ class SiteSettingResource extends Resource
                         ->visible(fn (?SiteSetting $record): bool => $record === null || ! in_array($record->type, ['textarea', 'image'], true))
                         ->helperText(fn (?SiteSetting $record): ?string => self::getValueHelpText($record)),
                     Textarea::make('value')
-                        ->label(fn (?SiteSetting $record): string => $record?->label ?? 'Value')
+                        ->label(fn (?SiteSetting $record): string => $record === null ? 'Value' : $record->label)
                         ->rows(4)
                         ->maxLength(2000)
                         ->columnSpanFull()

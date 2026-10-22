@@ -9,8 +9,13 @@ use App\Filament\Resources\Meetings\CouncilMeetingResource;
 use App\Filament\Resources\Projects\CouncilProjectResource;
 use App\Filament\Resources\Tenders\TenderResource;
 use App\Filament\Resources\Vacancies\VacancyResource;
+use App\Models\EditorialItem;
+use DateTimeInterface;
 use Filament\Pages\Dashboard;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -40,18 +45,26 @@ class CouncilDashboard extends Dashboard
 
         // Pending approvals from editorial items
         $editorialApprovals = $this->records(EditorialItemResource::class, fn ($query) => $query->where(fn ($q) => $q->where('status', 'draft')->orWhere('verification_status', 'pending'))->latest('updated_at')->limit(4)->get())
-            ->map(fn ($item) => [
-                'title' => $item->title,
-                'type' => ucfirst($item->type ?? 'News'),
-                'tone' => match ($item->type) {
-                    'notice' => 'orange',
-                    'speeches' => 'purple',
-                    default => 'blue',
-                },
-                'date' => $item->updated_at?->format('d M Y') ?? now()->format('d M Y'),
-                'status' => $item->verification_status === 'pending' ? 'Under review' : 'Pending',
-                'url' => EditorialItemResource::getUrl('edit', ['record' => $item]),
-            ]);
+            ->map(function (Model $item): ?array {
+                if (! $item instanceof EditorialItem) {
+                    return null;
+                }
+
+                return [
+                    'title' => $item->title,
+                    'type' => ucfirst($item->type ?? 'News'),
+                    'tone' => match ($item->type) {
+                        'notice' => 'orange',
+                        'speeches' => 'purple',
+                        default => 'blue',
+                    },
+                    'date' => $item->updated_at?->format('d M Y') ?? now()->format('d M Y'),
+                    'status' => $item->verification_status === 'pending' ? 'Under review' : 'Pending',
+                    'url' => EditorialItemResource::getUrl('edit', ['record' => $item]),
+                ];
+            })
+            ->filter(fn (?array $item): bool => $item !== null)
+            ->values();
 
         $cacheKey = 'council_dashboard_aggregates_'.(auth()->id() ?? 'guest');
         $aggregates = Cache::remember($cacheKey, 300, function (): array {
@@ -153,10 +166,10 @@ class CouncilDashboard extends Dashboard
 
                 return [
                     'label' => $month->format('M'),
-                    'news' => $monthlyNews->filter(fn ($item): bool => $item->published_at?->format('Y-m') === $key)->count(),
-                    'documents' => $monthlyDocuments->filter(fn ($item): bool => $item->published_at?->format('Y-m') === $key)->count(),
-                    'projects' => $monthlyProjects->filter(fn ($item): bool => $item->published_at?->format('Y-m') === $key)->count(),
-                    'meetings' => $monthlyMeetings->filter(fn ($item): bool => $item->published_at?->format('Y-m') === $key)->count(),
+                    'news' => $this->countRecordsForMonth($monthlyNews, $key),
+                    'documents' => $this->countRecordsForMonth($monthlyDocuments, $key),
+                    'projects' => $this->countRecordsForMonth($monthlyProjects, $key),
+                    'meetings' => $this->countRecordsForMonth($monthlyMeetings, $key),
                 ];
             })->all();
 
@@ -235,13 +248,29 @@ class CouncilDashboard extends Dashboard
         };
     }
 
+    /** @param callable(Builder<Model>): Collection<int, Model> $callback */
     private function records(string $resource, callable $callback): Collection
     {
         return $resource::canViewAny() ? $callback($resource::getEloquentQuery()) : new Collection;
     }
 
+    /** @param callable(Builder<Model>): Builder<Model> $callback */
     private function count(string $resource, callable $callback): int
     {
         return $resource::canViewAny() ? $callback($resource::getEloquentQuery())->count() : 0;
+    }
+
+    /** @param Collection<int, Model> $records */
+    private function countRecordsForMonth(Collection $records, string $month): int
+    {
+        return $records->filter(function (Model $record) use ($month): bool {
+            $publishedAt = $record->getAttribute('published_at');
+
+            if ($publishedAt instanceof DateTimeInterface) {
+                return $publishedAt->format('Y-m') === $month;
+            }
+
+            return is_string($publishedAt) && $publishedAt !== '' && Carbon::parse($publishedAt)->format('Y-m') === $month;
+        })->count();
     }
 }

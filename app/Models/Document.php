@@ -8,7 +8,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $slug
+ * @property string $title
+ * @property string|null $description
+ * @property string $category
+ * @property int $download_count
+ * @property int $current_version
+ * @property Carbon|null $published_at
+ * @property Carbon|null $reference_date
+ * @property Media|null $media
+ * @property Department|null $department
+ */
 class Document extends Model implements TranslatableContent
 {
     use HasTranslations;
@@ -28,11 +41,13 @@ class Document extends Model implements TranslatableContent
         return ['published_at' => 'datetime', 'reference_date' => 'date', 'verified_at' => 'datetime'];
     }
 
+    /** @return BelongsTo<Media, $this> */
     public function media(): BelongsTo
     {
         return $this->belongsTo(Media::class);
     }
 
+    /** @return BelongsTo<Department, $this> */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);

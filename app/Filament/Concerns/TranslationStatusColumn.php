@@ -19,8 +19,8 @@ class TranslationStatusColumn
                 }
 
                 $completeness = $record->translationCompleteness();
-                $sn = $completeness['sn']['status'] ?? 'missing';
-                $nd = $completeness['nd']['status'] ?? 'missing';
+                $sn = $completeness['sn']['status'];
+                $nd = $completeness['nd']['status'];
 
                 return [
                     "SN: {$sn}",

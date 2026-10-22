@@ -8,6 +8,7 @@ use App\Models\EditorialItem;
 use App\Models\HomepageSlide;
 use App\Models\Media;
 use App\Models\Page;
+use Database\Seeders\CouncilMeetingSeeder;
 use Database\Seeders\NewsIllustrationSeeder;
 use Database\Seeders\Stage4MutokoContentSeeder;
 use Database\Seeders\StakeholderSeeder;
@@ -33,7 +34,7 @@ class PreviewTest extends TestCase
 
     public function test_signed_preview_home_shows_draft_content_with_noindex(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class, CouncilMeetingSeeder::class]);
 
         $url = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
 
@@ -98,15 +99,15 @@ class PreviewTest extends TestCase
         $draft = HomepageSlide::query()->where('headline', 'Roads, Water and Growth Points')->firstOrFail();
         $this->assertNotNull($welcome->media_id);
         $this->assertNotNull($draft->media_id);
-        $welcomeImageUrl = route('managed-media.show', ['locale' => 'en', 'media' => $welcome->media_id]);
-        $draftImageUrl = route('managed-media.show', ['locale' => 'en', 'media' => $draft->media_id]);
+        $welcomeImageUrl = '/en/managed-media/'.$welcome->media_id;
+        $draftImageUrl = '/en/managed-media/'.$draft->media_id;
 
         $this->get('/en')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Home', false)
             ->has('slides', 1)
             ->where('slides.0.headline', 'Mutoko Rural District Council')
             ->where('slides.0.supporting_text', 'Working with our communities to deliver quality services, promote local development and build a better Mutoko.')
-            ->where('slides.0.image_url', $welcomeImageUrl));
+            ->where('slides.0.image_url', fn (string $url) => $this->isVersionedMediaUrl($url, $welcomeImageUrl)));
         $this->get($welcomeImageUrl)->assertOk()->assertHeader('Content-Type', 'image/webp');
         $this->get($draftImageUrl)->assertNotFound();
 
@@ -114,8 +115,18 @@ class PreviewTest extends TestCase
         $this->get($previewUrl)->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Home', false)
             ->has('slides', 3)
-            ->where('slides.1.image_url', $draftImageUrl));
+            ->where('slides.1.image_url', fn (string $url) => $this->isVersionedMediaUrl($url, $draftImageUrl)));
         $this->get($draftImageUrl)->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+    }
+
+    private function isVersionedMediaUrl(string $url, string $expectedPath): bool
+    {
+        $parts = parse_url($url);
+        parse_str($parts['query'] ?? '', $query);
+
+        return ($parts['path'] ?? null) === $expectedPath
+            && isset($query['v'])
+            && ctype_digit((string) $query['v']);
     }
 
     public function test_reseeding_does_not_replace_edited_slides(): void
@@ -156,7 +167,7 @@ class PreviewTest extends TestCase
 
     public function test_preview_detail_pages_resolve_for_draft_records(): void
     {
-        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class]);
+        $this->seed([Stage4MutokoContentSeeder::class, StakeholderSeeder::class, CouncilMeetingSeeder::class]);
 
         $home = URL::temporarySignedRoute('preview.home', now()->addHour(), ['locale' => 'en']);
         $this->get($home)->assertOk();

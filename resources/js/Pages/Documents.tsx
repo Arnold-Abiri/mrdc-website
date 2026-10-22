@@ -76,7 +76,6 @@ export default function Documents({
     documents,
     categories,
     category_counts = {},
-    years,
     total_count = documents.length,
     filters,
 }: DocumentsProps) {

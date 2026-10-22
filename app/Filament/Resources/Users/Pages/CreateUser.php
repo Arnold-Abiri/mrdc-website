@@ -6,6 +6,7 @@ use App\Domain\Identity\UserManager;
 use App\Filament\Resources\Users\UserResource;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -27,7 +28,7 @@ class CreateUser extends CreateRecord
                 ->persistent()
                 ->send();
 
-            $this->halt(shouldRollbackDatabaseTransaction: true);
+            throw (new Halt)->rollBackDatabaseTransaction();
         } catch (Throwable $exception) {
             report($exception);
 
@@ -44,7 +45,7 @@ class CreateUser extends CreateRecord
                 ->persistent()
                 ->send();
 
-            $this->halt(shouldRollbackDatabaseTransaction: true);
+            throw (new Halt)->rollBackDatabaseTransaction();
         }
     }
 }

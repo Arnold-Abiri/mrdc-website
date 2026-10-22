@@ -10,8 +10,8 @@ use App\Models\HomepageSlide;
 use App\Models\Media;
 use App\Models\Official;
 use App\Models\SiteSetting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MediaController extends Controller

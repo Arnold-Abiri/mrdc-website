@@ -15,7 +15,7 @@ class EditSiteSetting extends EditRecord
     /** @param  array<string, mixed>  $data */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if ($record->key === 'logo_media_id') {
+        if ($record->getAttribute('key') === 'logo_media_id') {
             $file = $data['logo_file'] ?? null;
 
             if (! $file instanceof UploadedFile) {

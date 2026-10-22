@@ -7,7 +7,13 @@ use App\Domain\Content\TranslatableContent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon|null $scheduled_date
+ * @property Carbon|null $published_at
+ * @property Department|null $department
+ */
 class CouncilMeeting extends Model implements TranslatableContent
 {
     use HasTranslations;
@@ -31,6 +37,7 @@ class CouncilMeeting extends Model implements TranslatableContent
         return $this->belongsTo(Document::class, 'minutes_document_id');
     }
 
+    /** @return BelongsTo<Department, $this> */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);

@@ -42,6 +42,7 @@ class Faq extends Model implements TranslatableContent
         ];
     }
 
+    /** @return BelongsTo<Department, $this> */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);

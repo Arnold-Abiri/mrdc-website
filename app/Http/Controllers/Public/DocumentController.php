@@ -35,7 +35,8 @@ class DocumentController extends Controller
             ->orderByDesc('published_at')
             ->get(['id', 'slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'media_id', 'department_id'])
             ->map(function (Document $doc): array {
-                $bytes = $doc->media?->size ?? 0;
+                $media = $doc->media;
+                $bytes = $media instanceof Media ? $media->size : 0;
                 $formattedSize = $bytes >= 1048576
                     ? number_format($bytes / 1048576, 2).' MB'
                     : ($bytes >= 1024 ? number_format($bytes / 1024, 1).' KB' : ($bytes > 0 ? $bytes.' B' : 'PDF'));
@@ -49,7 +50,7 @@ class DocumentController extends Controller
                     'reference_date' => $doc->reference_date?->format('Y-m-d'),
                     'download_count' => (int) $doc->download_count,
                     'file_size' => $formattedSize,
-                    'mime_type' => $doc->media?->mime_type ?? 'application/pdf',
+                    'mime_type' => $media instanceof Media ? $media->mime_type : 'application/pdf',
                     'department' => $doc->department instanceof Department ? $doc->department->translated('public_name') : null,
                 ];
             });
@@ -78,7 +79,8 @@ class DocumentController extends Controller
     {
         $document = Document::query()->with(['translations', 'media', 'department.translations', 'department'])->public()->where('slug', $slug)->firstOrFail();
 
-        $bytes = $document->media?->size ?? 0;
+        $media = $document->media;
+        $bytes = $media instanceof Media ? $media->size : 0;
         $formattedSize = $bytes >= 1048576
             ? number_format($bytes / 1048576, 2).' MB'
             : ($bytes >= 1024 ? number_format($bytes / 1024, 1).' KB' : ($bytes > 0 ? $bytes.' B' : 'PDF'));
@@ -102,7 +104,7 @@ class DocumentController extends Controller
                 ...$document->toLocalizedArray(['slug', 'title', 'description', 'category', 'published_at', 'reference_date', 'download_count', 'current_version']),
                 'has_file' => $hasFile,
                 'file_size' => $formattedSize,
-                'mime_type' => $document->media?->mime_type ?? 'application/pdf',
+                'mime_type' => $media instanceof Media ? $media->mime_type : 'application/pdf',
                 'department' => $document->department instanceof Department ? $document->department->translated('public_name') : null,
             ],
             'reference_year' => $document->referenceYear(),

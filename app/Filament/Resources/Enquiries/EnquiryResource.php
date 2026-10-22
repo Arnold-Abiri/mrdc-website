@@ -68,7 +68,7 @@ class EnquiryResource extends Resource
             RepeatableEntry::make('notes_list')
                 ->label('Internal notes')
                 ->state(fn (Enquiry $record): array => $record->notes()->with('author')->oldest()->get()->map(fn ($note): array => [
-                    'meta' => $note->created_at->format('d M Y H:i').' · '.($note->author?->name ?? 'Staff'),
+                    'meta' => $note->created_at->format('d M Y H:i').' · '.$note->author->name,
                     'body' => $note->body,
                 ])->all())
                 ->schema([

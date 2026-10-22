@@ -13,6 +13,7 @@ use App\Filament\Resources\Documents\Pages\CreateDocument;
 use App\Filament\Resources\Documents\Pages\EditDocument;
 use App\Filament\Resources\Documents\Pages\ListDocuments;
 use App\Models\Document;
+use App\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -86,7 +87,8 @@ class DocumentResource extends Resource
             TextColumn::make('file_size')
                 ->label('Size')
                 ->state(function (Document $record): string {
-                    $bytes = $record->media?->size ?? 0;
+                    $media = $record->media;
+                    $bytes = $media instanceof Media ? $media->size : 0;
                     if ($bytes >= 1048576) {
                         return number_format($bytes / 1048576, 1).' MB';
                     }

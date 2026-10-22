@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { normalizeLocale, translate } from '../../localization';
 

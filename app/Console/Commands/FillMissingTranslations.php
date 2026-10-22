@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\Content\TranslatableContent;
 use App\Models\ContentTranslation;
 use App\Models\CouncilMeeting;
 use App\Models\CouncilProject;
@@ -24,6 +25,7 @@ use App\Models\User;
 use App\Models\Vacancy;
 use App\Models\Ward;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -46,7 +48,7 @@ class FillMissingTranslations extends Command
 
     public const MT_PAIR = ['sn' => 'en|sn', 'nd' => 'en|nr'];
 
-    /** @return array<class-string<Model>> */
+    /** @return list<class-string<Model&TranslatableContent>> */
     public static function entities(): array
     {
         return [
@@ -109,10 +111,18 @@ class FillMissingTranslations extends Command
                         return;
                     }
                     $processed++;
-                    $existing = $record->translations->keyBy(fn ($t) => $t->locale.'.'.$t->field);
+                    $loadedTranslations = $record->getRelation('translations');
+                    $existing = [];
+                    if ($loadedTranslations instanceof EloquentCollection) {
+                        foreach ($loadedTranslations as $translation) {
+                            if ($translation instanceof ContentTranslation) {
+                                $existing[$translation->locale.'.'.$translation->field] = $translation;
+                            }
+                        }
+                    }
                     foreach ($locales as $locale) {
                         foreach ($fields as $field) {
-                            $row = $existing->get($locale.'.'.$field);
+                            $row = $existing[$locale.'.'.$field] ?? null;
                             if ($row instanceof ContentTranslation && ! $refresh) {
                                 continue;
                             }
@@ -120,7 +130,7 @@ class FillMissingTranslations extends Command
                             if ($english === []) {
                                 continue;
                             }
-                            if ($row instanceof ContentTranslation && $refresh && ! self::isEnglishCopy($row->value, $english)) {
+                            if ($row instanceof ContentTranslation && ! self::isEnglishCopy($row->value, $english)) {
                                 continue; // Human-edited row: leave it alone.
                             }
                             if ($translator instanceof MyMemoryTranslator) {
@@ -195,7 +205,7 @@ class FillMissingTranslations extends Command
         }
         $decoded = json_decode($stored, true);
 
-        return is_array($decoded) && array_values($decoded) === array_values($english);
+        return is_array($decoded) && $decoded === $english;
     }
 }
 

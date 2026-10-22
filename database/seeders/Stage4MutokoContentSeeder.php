@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Department;
 use App\Models\DistrictStatistic;
 use App\Models\InvestmentOpportunity;
 use App\Models\Page;
@@ -19,6 +20,8 @@ class Stage4MutokoContentSeeder extends Seeder
 {
     public function run(): void
     {
+        // Services reference departments by their stable council code, never by a seeded row ID.
+        $this->call(DepartmentSeeder::class);
         $this->seedAboutPage();
         $this->seedServices();
         $this->seedInvestment();
@@ -67,7 +70,7 @@ class Stage4MutokoContentSeeder extends Seeder
      *     name: string,
      *     summary: string,
      *     description: string,
-     *     department_id: int,
+     *     department_code: string,
      *     requirements: list<string>,
      *     steps: list<string>,
      *     fees_information: string
@@ -81,7 +84,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Education Services',
                 'summary' => 'Council support for 84 primary and 44 secondary schools across the district, school stand planning, and classroom infrastructure grants.',
                 'description' => 'Mutoko Rural District Council partners with the Ministry of Primary and Secondary Education, School Development Committees (SDCs), and community leadership to support 84 primary and 44 secondary schools across all 29 wards. The council facilitates the surveyed allocation of school institutional stands, building plan vetting, devolution-funded classroom construction, boreholes and sanitation facilities, and district sports development tournaments.',
-                'department_id' => 5, // Social Services
+                'department_code' => 'DEPT-SOC',
                 'requirements' => [
                     'Formal application letter from the School Development Committee (SDC) or Ministry of Primary and Secondary Education.',
                     'Approved site plan and layout diagram for institutional land allocation.',
@@ -103,7 +106,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Environmental Protection',
                 'summary' => 'Effluent treatment, sewer reticulation, environmental by-law compliance, and scheduled refuse collection under the "Marara Mu Bin" campaign.',
                 'description' => 'The Environmental Health and Social Services section safeguards public hygiene and environmental sustainability across Mutoko Centre, growth points, and rural service centres. Council operates modern refuse compactor vehicles, administers the "Mutoko RDC Irikuti Marara Mu Bin" anti-litter campaign, maintains effluent stabilization ponds, monitors commercial grease traps, and conducts environmental audits in collaboration with the Environmental Management Agency (EMA).',
-                'department_id' => 5, // Social Services
+                'department_code' => 'DEPT-SOC',
                 'requirements' => [
                     'Standard Council Refuse Service Registration Form for commercial premises, market stalls, and residential holders.',
                     'Installation of approved waste disposal bins (standard 240L plastic wheeled bin or concrete receptacle).',
@@ -124,7 +127,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Roads and Works',
                 'summary' => 'Road network maintenance, culvert construction, building inspectorate, bridge repairs, and civil infrastructure across the 29 wards.',
                 'description' => 'The Engineering and Works Department designs, constructs, and maintains more than 1,200 kilometres of primary, secondary, and feeder gravel roads connecting communal areas, clinics, schools, and business centres to the Harare–Nyamapanda highway. The section operates council heavy plant (motor graders, tippers, front-end loaders), undertakes emergency road repairs under the ERRP-II programme, manages piped water extensions, and enforces structural building compliance.',
-                'department_id' => 3, // Engineering and Works
+                'department_code' => 'DEPT-ENG',
                 'requirements' => [
                     'For Building Plan Approval: 4 copies of complete architectural drawings drawn to standard metric scale (including floor plans, elevations, section, and drainage layout).',
                     'Proof of stand ownership, valid lease agreement, or formal council offer letter.',
@@ -146,7 +149,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Health Services',
                 'summary' => 'Rural health centres: maternal child health, immunisation, treatment of ailments, disease surveillance, and food safety inspection.',
                 'description' => 'Mutoko Rural District Council operates an integrated network of rural clinics and health centres across the district, working in close liaison with the Ministry of Health and Child Care. Facilities provide primary healthcare, maternal and child healthcare, comprehensive immunisation (EPI), voluntary counselling and testing, chronic ailment management, outpatient treatment, and emergency ambulance dispatch, alongside continuous disease prevention programmes.',
-                'department_id' => 5, // Social Services
+                'department_code' => 'DEPT-SOC',
                 'requirements' => [
                     'National Identity Card, Birth Certificate, or Road to Health Child Card for medical consultations.',
                     'Referral letter from village health workers or community clinics for specialised interventions.',
@@ -167,7 +170,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Servicing Business Centres',
                 'summary' => 'Planned commercial stands, shop licenses, market vending stalls, development control, and infrastructure at growth points.',
                 'description' => 'The Planning and Town Board administration coordinates physical planning, stand survey pegs, and infrastructure servicing at Mutoko Centre, Jani Growth Point, and designated rural service centres. Services encompass issuance of shop operating licenses, vendor stall allocations, business lease regularisations, public lighting, and commercial parking bays to foster an orderly, thriving business ecosystem along the transit corridor.',
-                'department_id' => 4, // Planning and Development
+                'department_code' => 'DEPT-PLAN',
                 'requirements' => [
                     'Completed Business Licence Application Form.',
                     'Certified Certificate of Incorporation / CR14 (for companies) or National ID (for sole traders).',
@@ -189,7 +192,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Property Management',
                 'summary' => 'Acquisition, leasing, development, stand allocation, title deeds processing, and property rights securitization.',
                 'description' => 'The Property Management and Town Planning section administers the council estate portfolio comprising residential, commercial, industrial, and institutional stands across all 29 wards. The unit oversees transparent waiting list administration, lease-to-buy conversions, stand titling, property repossessions, ground rent billing, and lease transfer documentation in strict adherence to council resolutions.',
-                'department_id' => 4, // Planning and Development
+                'department_code' => 'DEPT-PLAN',
                 'requirements' => [
                     'Registration on the Council Housing / Commercial Stand Waiting List (valid annual renewal).',
                     'Copy of National Identity Document, proof of current residential address, and passport photos.',
@@ -211,7 +214,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Recreational Facilities',
                 'summary' => 'Chikondoma Stadium bookings, community halls, public sports grounds, youth development centres, and cultural events.',
                 'description' => 'Council provides, manages, and maintains sporting and social infrastructure, spearheaded by the multi-purpose Chikondoma Stadium, Ward Community Halls, public playing fields, and recreational open spaces. The facilities cater to premier league and district football matches, school athletics, community celebrations, state functions, cultural galas, and agricultural expositions.',
-                'department_id' => 5, // Social Services
+                'department_code' => 'DEPT-SOC',
                 'requirements' => [
                     'Official booking request letter stating event date, nature of event, expected attendance, and security arrangements.',
                     'For Commercial Musical Shows / Galas: Police clearance from Zimbabwe Republic Police (ZRP Mutoko District) and censorship board clearance.',
@@ -232,7 +235,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Conservation of Natural Resources',
                 'summary' => 'Sustainable environmental management, mining rehabilitation compliance, granite quarry monitoring, and veld fire prevention.',
                 'description' => 'Mutoko District is endowed with exceptional natural wealth, particularly export-grade black granite, mineral deposits, indigenous woodlands, and fertile catchment basins. Council\'s Natural Resources unit collaborates with traditional leadership, the Forestry Commission, and EMA to enforce conservation by-laws, regulate sand and gravel abstraction, oversee post-mining land reclamation, prevent deforestation, and combat seasonal veld fires.',
-                'department_id' => 4, // Planning and Development
+                'department_code' => 'DEPT-PLAN',
                 'requirements' => [
                     'For Sand Abstraction / Quarrying: Council Natural Resource Extraction Permit application.',
                     'Approved Environmental Management Plan (EMP) and Environmental Impact Assessment (EIA) certificate.',
@@ -254,7 +257,7 @@ class Stage4MutokoContentSeeder extends Seeder
                 'name' => 'Welfare Services',
                 'summary' => 'Social safety nets, disaster relief coordination, disability support, assistance for older persons, and community welfare referral.',
                 'description' => 'The Social Welfare desk provides social safety nets and humanitarian assistance to vulnerable households, orphans, persons with disabilities, and senior citizens across Mutoko District. Operating in coordination with the Ministry of Public Service, Labour and Social Welfare and international humanitarian partners, council facilitates BEAM school fee support, food deficit mitigation programmes, assistive mobility devices, and emergency civil protection during weather disasters.',
-                'department_id' => 5, // Social Services
+                'department_code' => 'DEPT-SOC',
                 'requirements' => [
                     'National Identity Document and verification letter from the local Village Head or Ward Councillor.',
                     'Assessment report from the Ward Social Welfare Committee or healthcare personnel.',
@@ -276,6 +279,10 @@ class Stage4MutokoContentSeeder extends Seeder
     private function seedServices(): void
     {
         foreach ($this->serviceDefinitions() as $index => $definition) {
+            $department = Department::query()->where('code', $definition['department_code'])->firstOrFail();
+            unset($definition['department_code']);
+            $definition['department_id'] = $department->id;
+
             Service::query()->updateOrCreate(
                 ['slug' => $definition['slug']],
                 [

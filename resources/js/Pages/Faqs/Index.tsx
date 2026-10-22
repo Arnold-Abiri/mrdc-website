@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../../Layouts/PublicLayout';
 import { PageHero } from '../../Components/public/PageHeader';
-import { usePublicLocale, usePublicTranslation } from '../../usePublicTranslation';
+import { usePublicLocale } from '../../usePublicTranslation';
 
 type FaqItem = {
     id: number;
@@ -22,18 +22,23 @@ interface FaqsProps {
 
 export default function FaqsIndex({ faqs = [], categories = {}, initialCategory = null }: FaqsProps) {
     const locale = usePublicLocale();
-    const t = usePublicTranslation();
     const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'all');
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [openFaqId, setOpenFaqId] = useState<number | null>(null);
+    const [openFaqId, setOpenFaqId] = useState<number | null>(() => {
+        if (typeof window === 'undefined') {
+            return null;
+        }
+
+        const match = window.location.hash.match(/#faq-(\d+)/);
+        return match?.[1] ? Number.parseInt(match[1], 10) : null;
+    });
 
     // Read initial anchor hash if present
     useEffect(() => {
         if (typeof window !== 'undefined' && window.location.hash) {
             const match = window.location.hash.match(/#faq-(\d+)/);
             if (match && match[1]) {
-                const id = parseInt(match[1], 10);
-                setOpenFaqId(id);
+                const id = Number.parseInt(match[1], 10);
                 // Also scroll to it gently
                 setTimeout(() => {
                     const el = document.getElementById(`faq-${id}`);

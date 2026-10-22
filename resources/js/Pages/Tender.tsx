@@ -44,10 +44,7 @@ export default function Tender({ tender, department }: { tender: TenderDetail; d
     const [representativeName, setRepresentativeName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleDownloadSubmit = (e: React.FormEvent) => {
-        setIsSubmitting(true);
+    const handleDownloadSubmit = () => {
         // Form submits standard POST to download file
     };
 

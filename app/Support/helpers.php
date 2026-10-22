@@ -15,7 +15,7 @@ if (! function_exists('public_route')) {
         $url = route($name, ['locale' => app()->getLocale(), ...$params], false);
 
         if ($name === 'managed-media.show') {
-            $mediaId = is_array($params) ? ($params['media'] ?? reset($params)) : $params;
+            $mediaId = $params['media'] ?? reset($params);
             $updatedAt = Media::query()->whereKey($mediaId)->value('updated_at');
 
             if ($updatedAt !== null) {

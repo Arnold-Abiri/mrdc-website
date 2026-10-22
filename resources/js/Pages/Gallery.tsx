@@ -4,7 +4,7 @@ import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { EmptyState, PageHero } from '../Components/public/PageHeader';
 import GalleryLightbox, { type GalleryImage } from '../Components/public/GalleryLightbox';
-import { extractSources, SourcedText, SourceButtons } from '../Components/public/SourceButtons';
+import { extractSources, SourcedText } from '../Components/public/SourceButtons';
 
 type GalleryDetail = {
     slug: string;

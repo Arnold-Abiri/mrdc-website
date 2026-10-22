@@ -62,7 +62,17 @@ test('public links resolve and keyboard navigation remains usable', async ({ pag
     await page.keyboard.press('Escape');
     await expect(menu).toBeFocused();
     await expect(menu).toHaveAttribute('aria-expanded', 'false');
-    expect(await page.locator('a[href^="tel:"], a[href^="mailto:"], a[href="https://facebook.com"]').count()).toBe(0);
+    const phoneLinks = await page.locator('a[href^="tel:"]').evaluateAll(links =>
+        links.map(link => link.getAttribute('href') || '')
+    );
+    const emailLinks = await page.locator('a[href^="mailto:"]').evaluateAll(links =>
+        links.map(link => link.getAttribute('href') || '')
+    );
+    expect(phoneLinks.length).toBeGreaterThan(0);
+    expect(phoneLinks.every(href => href.replace(/^tel:/, '').replace(/\D/g, '').length >= 7)).toBe(true);
+    expect(emailLinks.length).toBeGreaterThan(0);
+    expect(emailLinks.every(href => /^mailto:[^\s@]+@[^\s@]+\.[^\s@]+$/.test(href))).toBe(true);
+    expect(await page.locator('a[href="https://facebook.com"]').count()).toBe(0);
     expect(await page.locator('header').count()).toBe(1);
     expect(await page.locator('main').count()).toBe(1);
     expect(await page.locator('footer').count()).toBe(1);

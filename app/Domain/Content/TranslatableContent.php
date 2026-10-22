@@ -2,8 +2,13 @@
 
 namespace App\Domain\Content;
 
+use App\Models\ContentTranslation;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @property-read Collection<int, ContentTranslation> $translations
+ */
 interface TranslatableContent
 {
     /** @return list<string> */

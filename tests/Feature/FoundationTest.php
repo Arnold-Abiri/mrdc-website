@@ -69,10 +69,12 @@ class FoundationTest extends TestCase
         $this->get('/en/coming-soon?topic=unapproved')->assertOk()->assertInertia(fn (Assert $page) => $page->where('topic', 'This section'));
     }
 
-    public function test_default_seeder_creates_no_users(): void
+    public function test_default_seeder_creates_the_configured_administrator_accounts(): void
     {
         $this->seed(DatabaseSeeder::class);
-        $this->assertDatabaseCount('users', 0);
+        $this->assertDatabaseCount('users', 2);
+        $this->assertDatabaseHas('users', ['email' => 'admin@mutokordc.co.zw']);
+        $this->assertDatabaseHas('users', ['email' => 'arnoldabiri01@gmail.com']);
     }
 
     public function test_failed_filament_logins_are_rate_limited(): void

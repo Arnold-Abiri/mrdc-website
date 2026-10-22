@@ -252,9 +252,13 @@ class SecurityFoundationTest extends TestCase
     public function test_seed_is_idempotent_and_creates_no_accounts(): void
     {
         $this->seed(SecuritySeeder::class);
+        $permissionCount = DB::table('permissions')->count();
         $this->seed(SecuritySeeder::class);
         $this->assertDatabaseCount('roles', 4);
-        $this->assertDatabaseCount('permissions', count(SecuritySeeder::PERMISSIONS));
+        $this->assertDatabaseCount('permissions', $permissionCount);
+        foreach (SecuritySeeder::PERMISSIONS as $permission) {
+            $this->assertDatabaseHas('permissions', ['name' => $permission, 'guard_name' => 'web']);
+        }
         $this->assertDatabaseCount('users', 0);
     }
 

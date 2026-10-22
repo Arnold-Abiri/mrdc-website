@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Domain\Content\TranslatableContent;
 use App\Domain\Content\TranslationManager;
 use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Resources\Departments\DepartmentResource;
@@ -44,9 +45,17 @@ use App\Models\Vacancy;
 use App\Models\Ward;
 use BackedEnum;
 use Filament\Pages\Page as FilamentPage;
+use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property-read array<string, array{label: string, total: int, sn_complete: int, sn_partial: int, nd_complete: int, nd_partial: int}> $report
+ * @property-read list<array{label: string, total: int, sn_complete: int, sn_partial: int, nd_complete: int, nd_partial: int, sn_complete_pct: float, sn_partial_pct: float, nd_complete_pct: float, nd_partial_pct: float, score: float, status: string, url: ?string}> $rows
+ * @property-read array{records: int, sn_complete: int, nd_complete: int, sn_pct: int, nd_pct: int} $totals
+ * @property-read list<array{label: string, score: float, url: ?string}> $priorityRows
+ */
 class TranslationStatus extends FilamentPage
 {
     protected static ?string $cluster = ContentCluster::class;
@@ -63,7 +72,7 @@ class TranslationStatus extends FilamentPage
 
     protected string $view = 'filament.pages.translation-status';
 
-    /** @return array<string, array{model: class-string, resource: class-string}> */
+    /** @return array<string, array{model: class-string<Model&TranslatableContent>, resource: class-string<resource>}> */
     public static function entities(): array
     {
         return [

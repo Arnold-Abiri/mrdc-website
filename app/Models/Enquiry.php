@@ -19,11 +19,13 @@ class Enquiry extends Model
         return ['submitted_at' => 'datetime', 'consent_given' => 'boolean'];
     }
 
+    /** @return BelongsTo<Department, $this> */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');

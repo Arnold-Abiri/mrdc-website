@@ -45,8 +45,12 @@ class SiteSetting extends Model
 
     protected static function booted(): void
     {
-        static::saved(fn (): mixed => tap(true, fn (): mixed => self::forgetCache()));
-        static::deleted(fn (): mixed => tap(true, fn (): mixed => self::forgetCache()));
+        static::saved(function (): void {
+            self::forgetCache();
+        });
+        static::deleted(function (): void {
+            self::forgetCache();
+        });
     }
 
     /**

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-let mockPageState: Record<string, any> = { locale: 'en', localeCsrfToken: 'test-token', urgent_alerts: [] };
+let mockPageState: Record<string, unknown> = { locale: 'en', localeCsrfToken: 'test-token', urgent_alerts: [] };
 
 vi.mock('@inertiajs/react', async (importOriginal) => ({
     ...(await importOriginal<typeof import('@inertiajs/react')>()),
