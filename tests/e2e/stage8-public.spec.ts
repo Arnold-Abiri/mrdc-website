@@ -18,7 +18,7 @@ const pages = [
 for (const path of pages) {
     test(`meaningful headings on ${path}`, async ({ page }) => {
         await page.goto(path);
-        expect(await page.locator('h1').count()).toBe(1);
+        await expect(page.locator('h1')).toHaveCount(1);
         await expect(page.locator('main#main')).toBeVisible();
     });
 }

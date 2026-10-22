@@ -21,7 +21,7 @@ test('journey 3: feedback submits and shows a reference', async ({ page }) => {
     await page.locator('#feedback-subject').fill('QA smoke complaint');
     await page.locator('#feedback-message').fill('Development-only smoke test message.');
     await page.locator('#feedback-consent').check();
-    await page.getByRole('button', { name: /submit/i }).click();
+    await page.getByRole('button', { name: 'Lodge Feedback / Complaint' }).click();
     await expect(page).toHaveURL(/reference=[0-9a-f-]{8}/);
     await expect(page.getByRole('status')).toBeVisible();
 });

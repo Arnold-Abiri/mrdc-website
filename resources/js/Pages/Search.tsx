@@ -283,7 +283,7 @@ export default function Search({ query, results }: { query: string; results: Res
                     {/* 2-Column Municipal Results & Directory Layout */}
                     <div className="services-layout-grid">
                         {/* Primary Results Column */}
-                        <main className="services-results-column">
+                        <section className="services-results-column">
                             {query ? (
                                 <>
                                     <div className="services-results-meta">
@@ -410,7 +410,7 @@ export default function Search({ query, results }: { query: string; results: Res
                                     </div>
                                 </div>
                             )}
-                        </main>
+                        </section>
 
                         {/* Secondary Sidebar Column */}
                         <aside className="services-sidebar-column">

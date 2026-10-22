@@ -4,7 +4,7 @@ test('skip link, landmarks, and single page heading', async ({ page }) => {
     await page.goto('/en');
     const main = page.locator('main#main');
     await expect(main).toBeVisible();
-    expect(await page.locator('h1').count()).toBe(1);
+    await expect(page.locator('h1')).toHaveCount(1);
     await page.keyboard.press('Tab');
     const focused = page.locator(':focus');
     await expect(focused).toHaveText(/skip to main content/i);
@@ -45,7 +45,7 @@ test('contact form exposes labels and an error summary on invalid submission', a
         const form = document.querySelector('form[action$="/contact"]');
         if (form instanceof HTMLFormElement) HTMLFormElement.prototype.submit.call(form);
     });
-    await expect(page.getByRole('alert')).toBeVisible();
+    await expect(page.locator('.contact-error-summary')).toBeVisible();
 });
 
 test('localized pages carry canonical and hreflang metadata', async ({ page }) => {

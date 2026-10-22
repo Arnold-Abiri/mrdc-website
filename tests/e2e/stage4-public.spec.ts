@@ -14,9 +14,10 @@ test('citizen service sections render honest empty states without seed data', as
     }
 });
 
-test('about and downloads aliases redirect to managed content', async ({ page }) => {
+test('about and downloads aliases resolve to public content', async ({ page }) => {
     await page.goto('/en/about');
-    await expect(page).toHaveURL(/\/pages\/about-mutoko/);
+    await expect(page).toHaveURL(/\/en\/about$/);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await page.goto('/en/downloads');
     await expect(page).toHaveURL(/\/documents/);
 });

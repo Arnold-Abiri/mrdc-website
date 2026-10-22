@@ -93,7 +93,7 @@ export default function Feedback({
                 </div>
             </header>
 
-            <main id="main" className="contact-page">
+            <section className="contact-page">
                 <div className="container">
                     <section className="contact-columns" aria-label="How feedback works and feedback form">
                         <div className="contact-panel contact-info-col">
@@ -442,7 +442,7 @@ export default function Feedback({
                         </div>
                     </section>
                 </div>
-            </main>
+            </section>
         </PublicLayout>
     );
 }

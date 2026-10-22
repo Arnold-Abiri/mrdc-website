@@ -58,7 +58,7 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
             </div>
         </header>
 
-        <main id="main" className="contact-page">
+        <section className="contact-page">
             <div className="container">
                 <section className="contact-columns" aria-label="Contact information and enquiry form">
                     <div className="contact-panel contact-info-col">
@@ -116,6 +116,6 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
                     <div className="contact-link-grid"><a href={`/${locale}/services`}>{t('councilServices')} <span aria-hidden="true">→</span></a><a href={`/${locale}/notices`}>{t('publicNotices')} <span aria-hidden="true">→</span></a><a href={`/${locale}/documents`}>{t('linkDocsDownloads')} <span aria-hidden="true">→</span></a><a href={`/${locale}/wards`}>{t('linkWardsDirectory')} <span aria-hidden="true">→</span></a></div>
                 </section>
             </div>
-        </main>
+        </section>
     </PublicLayout>;
 }

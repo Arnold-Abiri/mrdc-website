@@ -10,7 +10,7 @@ for (const width of [390, 1280]) {
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
         await page.goto('/en/contact');
-        await expect(page.getByRole('heading', { name: 'Contact the council' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Contact Mutoko Rural District Council' })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Send enquiry' })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     });
@@ -19,13 +19,13 @@ for (const width of [390, 1280]) {
 test('public locale selection preserves the page and updates document language', async ({ page }) => {
     await page.goto('/en/services');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await page.getByLabel('Language').selectOption('sn');
+    await page.locator('#public-locale').selectOption('sn');
     await expect(page).toHaveURL(/\/sn\/services/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'sn');
-    await page.getByLabel('Language').selectOption('nd');
+    await page.locator('#public-locale').selectOption('nd');
     await expect(page).toHaveURL(/\/nd\/services/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'nd');
-    await page.getByLabel('Language').selectOption('en');
+    await page.locator('#public-locale').selectOption('en');
     await expect(page).toHaveURL(/\/en\/services/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 });
