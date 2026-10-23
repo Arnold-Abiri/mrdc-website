@@ -969,30 +969,14 @@ body:has(.mrdc-auth-page) .fi-simple-main {
     gap: 1.25rem;
 }
 
-/* Label styling matching modern clean aesthetics */
-.mrdc-filament-form-wrapper .fi-fo-field-wrp-label,
-.mrdc-filament-form-wrapper .fi-fo-field-label,
-.mrdc-filament-form-wrapper .fi-fo-field-label-content,
-.mrdc-filament-form-wrapper .fi-fo-field-label-col,
-.mrdc-filament-form-wrapper .fi-fo-field-wrp-label span,
-.mrdc-filament-form-wrapper label {
-    font-size: 0.8125rem !important;
-    font-weight: 600 !important;
+/* Mutoko RDC login: readable labels on the light authentication card */
+.mrdc-auth-page .mrdc-filament-form-wrapper .fi-fo-field-label,
+.mrdc-auth-page .mrdc-filament-form-wrapper .fi-fo-field-label-content,
+.mrdc-auth-page .mrdc-filament-form-wrapper .fi-fo-field-label-content span,
+.mrdc-auth-page .mrdc-filament-form-wrapper label {
     color: #1e293b !important;
-    margin-bottom: 0.25rem !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.mrdc-filament-form-wrapper .fi-fo-field-label-content {
-    display: inline !important;
-    clip: auto !important;
-    clip-path: none !important;
-    width: auto !important;
-    height: auto !important;
-    overflow: visible !important;
-    position: static !important;
-    white-space: normal !important;
+    font-size: 0.8125rem;
+    font-weight: 600;
 }
 
 /* Text input container and input fields */
@@ -1057,6 +1041,11 @@ body:has(.mrdc-auth-page) .fi-simple-main {
     background: linear-gradient(135deg, #064E3B 0%, #075D46 100%) !important;
     box-shadow: 0 6px 16px rgba(11, 143, 98, 0.35) !important;
     transform: translateY(-1px);
+}
+
+.mrdc-auth-page .mrdc-filament-form-wrapper .fi-btn:focus-visible {
+    outline: 3px solid #0f172a;
+    outline-offset: 3px;
 }
 
 .mrdc-filament-form-wrapper .fi-btn:active {
