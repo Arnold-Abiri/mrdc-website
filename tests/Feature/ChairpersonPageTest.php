@@ -21,10 +21,16 @@ test('chairperson portal page renders correctly with authentic leadership profil
         'published_at' => now(),
     ]);
 
+    $titles = [
+        'en' => 'Council Chairperson',
+        'sn' => 'Sachigaro weKanzuru',
+        'nd' => 'USihlalo woMkhandlu',
+    ];
+
     foreach (['en', 'sn', 'nd'] as $locale) {
         $response = $this->get("/{$locale}/council/chairperson");
         $response->assertOk();
         $response->assertSee('Alderman Trust Kachidza');
-        $response->assertSee('Council Chairperson');
+        $response->assertSee($titles[$locale]);
     }
 });

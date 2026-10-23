@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ContentTranslation;
 use App\Models\Media;
 use App\Models\Official;
 use Illuminate\Database\Seeder;
@@ -125,6 +126,35 @@ class CouncilTeamSeeder extends Seeder
             'verified_at' => now(),
         ]);
         $chairperson->save();
+
+        // Seed Shona and Ndebele translations for Council Chairperson
+        $translations = [
+            'sn' => [
+                'title' => 'Sachigaro weKanzuru',
+                'biography' => 'Alderman Trust Kachidza ndivo Sachigaro weKanzuru yeDunhu reMutoko. Sevatungamiri vezvematongerwo enyika vakasarudzwa pasi peMutemo weMakanzuru eMaruwa (RDC Act [Chapter 29:13]), vanotungamira misangano yeKanzuru Yose, kupa gwara remitemo, kutarisa mitemo yematunhu, pamwe nekutungamira chirongwa chebudiriro yeDevolution mumawadhi ose makumi maviri nemapfumbamwe (29) eMutoko. Pasi pehutungamiriri hwavo, Kanzuru yakasimudzira mapurojekiti makuru ebudiriro anobhadharwa nemari yeDevolution pamwe nemitero yemuno — kusanganisira kuvakwa kweChisambiro Clinic (Wadhi 18), kugadzirwa kwemigwagwa yekuenda kuminda, zvirongwa zvemvura yepombi zvinofambiswa nemagetsi ezuva, nekuchengetedzwa kwezviwanikwa zvakaita segirenayiti nhema (black granite) kuitira kuti zvibatsire nharaunda dzinobva zvicherwa izvi.',
+            ],
+            'nd' => [
+                'title' => 'USihlalo woMkhandlu',
+                'biography' => 'U-Alderman Trust Kachidza nguSihlalo woMkhandlu weSifunda saseMutoko. Njengenhloko yezombusazwe ekhethiweyo ngaphansi koMthetho woMkhandlu weZabelo (Rural District Councils Act [Chapter 29:13]), ukhokhela imihlangano yoMkhandlu Wonke, alethe iziqondiso zezinqubomgomo, ukulawula komthetho, lohlelo lwentuthuko yeDevolution kuwo wonke amawadi angamatshumi amabili lasitshiyagalolunye (29) eMutoko. Ngaphansi kobuholi bakhe, uMkhandlu ususekele amaphrojekthi amakhulu entuthuko axhaswe ngemali yeDevolution lemali engenayo yendawo — okugoqela ukwakhiwa kweChisambiro Clinic (Wadi 18), ukulungiswa kwemigwaqo, izinhlelo zamanzi empompi asebenza ngamandla elanga, lokugcinwa okuhle kwemithombo yengcebo yemvelo ikakhulu igranite emnyama (black granite) ukwenzela ukuthi kuhlomule imiphakathi yendawo.',
+            ],
+        ];
+
+        foreach ($translations as $loc => $fields) {
+            foreach ($fields as $field => $val) {
+                ContentTranslation::updateOrCreate(
+                    [
+                        'translatable_type' => Official::class,
+                        'translatable_id' => $chairperson->id,
+                        'locale' => $loc,
+                        'field' => $field,
+                    ],
+                    [
+                        'value' => $val,
+                        'updated_by' => null,
+                    ]
+                );
+            }
+        }
 
         // Ensure legacy placeholder demo-office-chairperson is unpublished and points cleanly
         Official::query()

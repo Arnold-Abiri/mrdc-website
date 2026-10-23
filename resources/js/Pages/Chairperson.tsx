@@ -45,10 +45,10 @@ export default function Chairperson({
                         <span aria-hidden="true">/</span>
                         <span aria-current="page">{chairperson.title}</span>
                     </nav>
-                    <span className="about-accent-eyebrow">MUTOKO RDC · POLITICAL WING &amp; FULL COUNCIL</span>
+                    <span className="about-accent-eyebrow">{t('chairpersonEyebrow')}</span>
                     <h1>{chairperson.name}</h1>
                     <p className="about-page-hero-subtitle">
-                        {chairperson.title} — Presiding Head of Council &amp; Champion of Devolution in Mutoko District
+                        {chairperson.title} — {t('chairpersonHeroSub')}
                     </p>
                 </div>
             </header>
@@ -60,25 +60,25 @@ export default function Chairperson({
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">29</div>
-                                <div className="about-stat-label">Electoral Wards Governed</div>
+                                <div className="about-stat-label">{t('chairpersonStatWards')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">Cap 29:13</div>
-                                <div className="about-stat-label">Statutory Legal Authority</div>
+                                <div className="about-stat-label">{t('chairpersonStatAuthority')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">Full Council</div>
-                                <div className="about-stat-label">Presiding Authority</div>
+                                <div className="about-stat-label">{t('chairpersonStatPresiding')}</div>
                             </div>
                         </div>
                         <div className="about-stat-item">
                             <div>
                                 <div className="about-stat-num">Vision 2030</div>
-                                <div className="about-stat-label">Devolved District Growth</div>
+                                <div className="about-stat-label">{t('chairpersonStatGrowth')}</div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ export default function Chairperson({
                                         />
                                     )}
                                     <span className="chairperson-dignity-badge">
-                                        Elected Council Chairperson
+                                        {t('chairpersonBadge')}
                                     </span>
                                 </div>
                                 <div className="chairperson-card-info">
@@ -116,24 +116,24 @@ export default function Chairperson({
                                     </h2>
                                     <div className="chairperson-card-role">{chairperson.title}</div>
                                     <p className="chairperson-card-motto">
-                                        &ldquo;Committed to transparent leadership, community participation, and people-driven devolution across every ward in Mutoko.&rdquo;
+                                        {t('chairpersonMotto')}
                                     </p>
                                 </div>
 
                                 <div className="chairperson-desk-block">
-                                    <h3 className="chairperson-desk-title">Office of the Chairperson</h3>
+                                    <h3 className="chairperson-desk-title">{t('chairpersonDeskTitle')}</h3>
                                     <dl className="chairperson-desk-meta">
                                         <div>
-                                            <dt>Jurisdiction</dt>
-                                            <dd>Mutoko Rural District Council</dd>
+                                            <dt>{t('chairpersonDeskJurisdiction')}</dt>
+                                            <dd>{t('chairpersonDeskJurisdictionVal')}</dd>
                                         </div>
                                         <div>
-                                            <dt>Seat of Office</dt>
-                                            <dd>Stand 366, Mutoko Centre, Mashonaland East</dd>
+                                            <dt>{t('chairpersonDeskSeat')}</dt>
+                                            <dd>{t('chairpersonDeskSeatVal')}</dd>
                                         </div>
                                         <div>
-                                            <dt>Executive Body</dt>
-                                            <dd>Full Council &amp; Standing Committees</dd>
+                                            <dt>{t('chairpersonDeskBody')}</dt>
+                                            <dd>{t('chairpersonDeskBodyVal')}</dd>
                                         </div>
                                     </dl>
                                     <Link
@@ -141,7 +141,7 @@ export default function Chairperson({
                                         className="rates-pop-btn-primary"
                                         style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}
                                     >
-                                        <span>Request Courtesy Call / Official Desk</span>
+                                        <span>{t('chairpersonDeskCta')}</span>
                                         <span aria-hidden="true">→</span>
                                     </Link>
                                 </div>
@@ -149,9 +149,9 @@ export default function Chairperson({
 
                             {/* UPCOMING FULL COUNCIL SESSIONS */}
                             <div className="chairperson-sessions-card">
-                                <h3>Full Council Deliberations</h3>
+                                <h3>{t('chairpersonDeliberations')}</h3>
                                 <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 14px' }}>
-                                    Full Council sessions presided over by the Council Chairperson are open to public observation in terms of the RDC Act.
+                                    {t('chairpersonDeliberationsDesc')}
                                 </p>
                                 {upcoming_meetings.length > 0 ? (
                                     <ul className="chairperson-meeting-list">
@@ -169,12 +169,12 @@ export default function Chairperson({
                                     </ul>
                                 ) : (
                                     <p style={{ fontSize: '0.86rem', fontStyle: 'italic', color: '#94A3B8', margin: 0 }}>
-                                        Next session dates will be officially published once confirmed by Secretariat.
+                                        {t('chairpersonNextSessionTba')}
                                     </p>
                                 )}
                                 <div style={{ marginTop: '14px' }}>
                                     <Link href={`/${locale}/meetings`} className="about-page-text-link" style={{ fontSize: '0.85rem' }}>
-                                        View Full Meetings &amp; Agendas Calendar →
+                                        {t('chairpersonViewAgendas')}
                                     </Link>
                                 </div>
                             </div>
@@ -184,28 +184,28 @@ export default function Chairperson({
                         <div className="chairperson-profile-body">
                             {/* EXECUTIVE ADDRESS */}
                             <article className="chairperson-address-card">
-                                <span className="about-accent-eyebrow">CHAIRPERSON'S ADDRESS</span>
-                                <h3 className="chairperson-section-title">Message from Alderman Trust Kachidza</h3>
+                                <span className="about-accent-eyebrow">{t('chairpersonAddressEyebrow')}</span>
+                                <h3 className="chairperson-section-title">{t('chairpersonAddressTitle')}</h3>
                                 <div className="chairperson-address-content">
                                     <p className="lead-quote">
-                                        &ldquo;Our vision is an empowered, resilient, and economically thriving Mutoko District where quality healthcare, clean water, sound road networks, and modern schools are accessible to every resident.&rdquo;
+                                        {t('chairpersonAddressQuote')}
                                     </p>
                                     <p>
                                         {chairperson.biography}
                                     </p>
                                     <p>
-                                        As the Council Chairperson, it is my honour to lead our esteemed body of 29 elected Ward Councillors in working shoulder-to-shoulder with our Traditional Chiefs, Village Heads, Ward Development Committees (WADCOs), and our dedicated Executive Management team led by the Chief Executive Officer.
+                                        {t('chairpersonAddressP2')}
                                     </p>
                                     <p>
-                                        Through the Second Republic's devolution framework, Mutoko Rural District Council has transitioned from mere administrative presence into an active developmental catalyst. We are putting public resources where they matter most: delivering primary health care to rural communities, upgrading bridges and agricultural feeder roads, expanding access to piped water, and ensuring our rich mineral resources—particularly black granite—directly benefit the communities from which they are extracted.
+                                        {t('chairpersonAddressP3')}
                                     </p>
                                 </div>
                             </article>
 
                             {/* CORE FOCUS PILLARS */}
                             <div className="chairperson-pillars-wrap">
-                                <span className="about-accent-eyebrow">STRATEGIC PILLARS</span>
-                                <h3 className="chairperson-section-title">Devolution &amp; Community Transformation Priorities</h3>
+                                <span className="about-accent-eyebrow">{t('chairpersonPillarsEyebrow')}</span>
+                                <h3 className="chairperson-section-title">{t('chairpersonPillarsTitle')}</h3>
 
                                 <div className="chairperson-pillars-grid">
                                     <div className="chairperson-pillar-item">
@@ -214,9 +214,9 @@ export default function Chairperson({
                                                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                                             </svg>
                                         </div>
-                                        <h4>Primary Health Delivery</h4>
+                                        <h4>{t('chairpersonPillarHealthTitle')}</h4>
                                         <p>
-                                            Spearheading modern clinics across rural wards—exemplified by the commissioning of <strong>Chisambiro Clinic (Ward 18)</strong>—drastically cutting walking distances for mothers, children, and the elderly.
+                                            {t('chairpersonPillarHealthDesc')}
                                         </p>
                                     </div>
 
@@ -227,9 +227,9 @@ export default function Chairperson({
                                                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                                             </svg>
                                         </div>
-                                        <h4>Granite Value Addition &amp; Mining</h4>
+                                        <h4>{t('chairpersonPillarGraniteTitle')}</h4>
                                         <p>
-                                            Advocating for local cutting, polishing, and corporate social investment by mining conglomerates to ensure Mutoko's black granite leaves a lasting infrastructure legacy.
+                                            {t('chairpersonPillarGraniteDesc')}
                                         </p>
                                     </div>
 
@@ -239,9 +239,9 @@ export default function Chairperson({
                                                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                                             </svg>
                                         </div>
-                                        <h4>Horticultural Hub &amp; Food Security</h4>
+                                        <h4>{t('chairpersonPillarAgriTitle')}</h4>
                                         <p>
-                                            Strengthening Mutoko's status as Zimbabwe's horticulture capital through cold-chain storage partnerships, tomato agro-processing facilities, and irrigation development.
+                                            {t('chairpersonPillarAgriDesc')}
                                         </p>
                                     </div>
 
@@ -254,9 +254,9 @@ export default function Chairperson({
                                                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                                             </svg>
                                         </div>
-                                        <h4>Ward Democracy &amp; Devolution</h4>
+                                        <h4>{t('chairpersonPillarDemocracyTitle')}</h4>
                                         <p>
-                                            Ensuring participatory governance through rigorous annual budget consultations across all 29 wards so every dollar allocated reflects citizen-voiced priorities.
+                                            {t('chairpersonPillarDemocracyDesc')}
                                         </p>
                                     </div>
                                 </div>
@@ -264,25 +264,25 @@ export default function Chairperson({
 
                             {/* STATUTORY MANDATE CALLOUT */}
                             <div className="chairperson-statutory-card">
-                                <h4>Statutory Role of the Council Chairperson</h4>
+                                <h4>{t('chairpersonStatutoryTitle')}</h4>
                                 <p>
-                                    Under <strong>Section 47 of the Rural District Councils Act [Chapter 29:13]</strong>, the Council Chairperson is elected by the Council from among the Councillors. The Chairperson:
+                                    {t('chairpersonStatutoryIntro')}
                                 </p>
                                 <ul>
-                                    <li>Presides over all Full Council meetings and ensures lawful conduct of municipal business.</li>
-                                    <li>Signs and validates council resolutions, statutory by-laws, and master planning schemes.</li>
-                                    <li>Serves as the civic and ceremonial representative of Mutoko District at national and international forums.</li>
-                                    <li>Exercises leadership over the political wing in formulating policies for implementation by the Chief Executive Officer.</li>
+                                    <li>{t('chairpersonStatutoryR1')}</li>
+                                    <li>{t('chairpersonStatutoryR2')}</li>
+                                    <li>{t('chairpersonStatutoryR3')}</li>
+                                    <li>{t('chairpersonStatutoryR4')}</li>
                                 </ul>
                             </div>
 
                             {/* FOOTER DIRECTORY SHORTCUTS */}
                             <div className="chairperson-quicknav">
                                 <Link href={`/${locale}/officials`} className="chairperson-navlink">
-                                    <span>← View All Council Officials &amp; Management</span>
+                                    <span>{t('chairpersonNavOfficials')}</span>
                                 </Link>
                                 <Link href={`/${locale}/wards`} className="chairperson-navlink">
-                                    <span>Explore All 29 Electoral Wards &amp; Councillors →</span>
+                                    <span>{t('chairpersonNavWards')}</span>
                                 </Link>
                             </div>
                         </div>
