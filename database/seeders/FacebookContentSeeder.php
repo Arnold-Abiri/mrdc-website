@@ -6,214 +6,149 @@ use App\Models\DistrictStatistic;
 use App\Models\EditorialItem;
 use App\Models\Gallery;
 use App\Models\Media;
-use App\Models\PublicContact;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
-/**
- * Authentic council content, directory records, and imagery sourced from Mutoko Rural District Council's
- * official social updates (https://www.facebook.com/mutokordczw) and GovServ entry (https://www.govserv.org/ZW/Mutoko/614085979003410/Mutoko-Rural-District-Council).
- *
- * All records are seeded as fully verified and published (no demo or AI-generated markers).
- * Idempotent: checks for existing records before inserting or updating.
- */
 class FacebookContentSeeder extends Seeder
 {
-    public function run(): void
+    /** @var list<string> */
+    private array $createdFiles = [];
+
+    /** @return array<string, array{create: int, skip: int}> */
+    public function import(bool $apply = false): array
     {
-        $manifestPath = base_path('database/seeders/assets/facebook/manifest.json');
-        if (! File::exists($manifestPath)) {
-            return;
+        $manifest = json_decode(file_get_contents(base_path('database/seeders/assets/facebook/manifest.json')), true, 512, JSON_THROW_ON_ERROR);
+        $report = [];
+        foreach (['public_contacts', 'district_statistics', 'editorial_items', 'galleries'] as $group) {
+            $report[$group] = ['create' => 0, 'skip' => 0];
         }
+        $this->createdFiles = [];
 
-        $data = json_decode(File::get($manifestPath), true);
-        if (! is_array($data)) {
-            return;
-        }
+        try {
+            DB::transaction(function () use ($manifest, $apply, &$report): void {
+                // Contact details require separate council confirmation; preserve the existing directory.
+                $report['public_contacts']['skip'] = count($manifest['public_contacts'] ?? []);
 
-        $disk = Storage::disk(config('cms.media_disk', 'local'));
+                foreach ($manifest['district_statistics'] ?? [] as $statistic) {
+                    if (DistrictStatistic::query()->where('label', $statistic['label'])->exists()) {
+                        $report['district_statistics']['skip']++;
 
-        // 1. Seed Public Contacts (Civic address, phone hotline, email, web portal)
-        if (! empty($data['public_contacts'])) {
-            foreach ($data['public_contacts'] as $contactData) {
-                $contact = PublicContact::query()->firstOrNew([
-                    'type' => $contactData['type'],
-                    'value' => $contactData['value'],
-                ]);
-
-                $contact->fill([
-                    'office' => $contactData['office'],
-                    'type' => $contactData['type'],
-                    'value' => $contactData['value'],
-                    'display_order' => $contactData['display_order'] ?? 0,
-                    'is_public' => true,
-                ]);
-
-                $contact->status = 'published';
-                $contact->verification_status = 'publishable';
-                $contact->published_at = now();
-                $contact->save();
-            }
-        }
-
-        // 2. Seed District Statistics (Verified community social reach)
-        if (! empty($data['district_statistics'])) {
-            foreach ($data['district_statistics'] as $statData) {
-                $stat = DistrictStatistic::query()->firstOrNew(['label' => $statData['label']]);
-                $stat->fill([
-                    'value' => $statData['value'],
-                    'unit' => $statData['unit'],
-                    'icon' => $statData['icon'],
-                    'source_note' => $statData['source_note'],
-                    'display_order' => $statData['display_order'],
-                    'is_active' => true,
-                ]);
-                $stat->save();
-            }
-        }
-
-        // 3. Seed Editorial Items (News & Notices)
-        if (! empty($data['editorial_items'])) {
-            foreach ($data['editorial_items'] as $index => $item) {
-                $mediaId = null;
-
-                if (! empty($item['image'])) {
-                    $mediaId = $this->importMedia(
-                        $item['image'],
-                        $item['title'],
-                        $item['alt_text'] ?? $item['title'],
-                        $item['caption'] ?? 'Official Mutoko Rural District Council update.'
-                    );
-                }
-
-                $publishedAt = isset($item['published_at']) ? Carbon::parse($item['published_at']) : now();
-
-                $editorial = EditorialItem::query()->firstOrNew(['slug' => $item['slug']]);
-                $editorial->fill([
-                    'type' => $item['type'] ?? 'news',
-                    'title' => $item['title'],
-                    'summary' => $item['summary'],
-                    'body' => $item['body'],
-                    'category' => $item['category'] ?? 'general',
-                    'featured_media_id' => $mediaId ?? $editorial->featured_media_id,
-                    'display_order' => $index,
-                ]);
-
-                $editorial->status = 'published';
-                $editorial->verification_status = 'publishable';
-                $editorial->published_at = $publishedAt;
-                $editorial->verified_at = $publishedAt;
-                $editorial->seo_title = $item['title'].' | Mutoko RDC';
-                $editorial->meta_description = $item['summary'];
-                $editorial->save();
-            }
-        }
-
-        // 4. Seed Galleries
-        if (! empty($data['galleries'])) {
-            foreach ($data['galleries'] as $order => $galleryData) {
-                $galleryImages = [];
-
-                if (! empty($galleryData['images'])) {
-                    foreach ($galleryData['images'] as $imgOrder => $imgData) {
-                        $mediaId = $this->importMedia(
-                            $imgData['filename'],
-                            $imgData['title'],
-                            $imgData['alt_text'] ?? $imgData['title'],
-                            $imgData['caption'] ?? ''
-                        );
-
-                        if ($mediaId) {
-                            $galleryImages[$mediaId] = [
-                                'caption' => $imgData['caption'] ?? '',
-                                'display_order' => $imgOrder,
-                            ];
-                        }
+                        continue;
+                    }
+                    $report['district_statistics']['create']++;
+                    if ($apply) {
+                        DistrictStatistic::query()->create([
+                            'label' => $statistic['label'], 'value' => $statistic['value'], 'unit' => $statistic['unit'],
+                            'icon' => $statistic['icon'], 'display_order' => $statistic['display_order'],
+                            'source_note' => 'Unverified historical claim; source: '.$manifest['directory_source'].'; last verified: unknown',
+                            'is_active' => false,
+                        ]);
                     }
                 }
 
-                if (empty($galleryImages)) {
-                    continue;
+                foreach ($manifest['editorial_items'] ?? [] as $order => $item) {
+                    if (EditorialItem::query()->where('slug', $item['slug'])->exists()) {
+                        $report['editorial_items']['skip']++;
+
+                        continue;
+                    }
+                    $report['editorial_items']['create']++;
+                    if ($apply) {
+                        $mediaId = isset($item['image']) ? $this->importMedia($item['image'], $item['title'], $item['alt_text'] ?? $item['title'], $item['caption'] ?? '') : null;
+                        EditorialItem::query()->create([
+                            'slug' => $item['slug'], 'type' => $item['type'] ?? 'news', 'title' => $item['title'],
+                            'summary' => $item['summary'], 'body' => $item['body'], 'category' => $item['category'] ?? 'general',
+                            'featured_media_id' => $mediaId, 'display_order' => $order,
+                        ]);
+                    }
                 }
 
-                $firstMediaId = array_key_first($galleryImages);
+                foreach ($manifest['galleries'] ?? [] as $order => $item) {
+                    if (Gallery::query()->where('slug', $item['slug'])->exists()) {
+                        $report['galleries']['skip']++;
 
-                $gallery = Gallery::query()->firstOrNew(['slug' => $galleryData['slug']]);
-                $gallery->fill([
-                    'title' => $galleryData['title'],
-                    'summary' => $galleryData['summary'],
-                    'description' => $galleryData['description'],
-                    'location' => $galleryData['location'] ?? 'Mutoko District',
-                    'cover_media_id' => $firstMediaId,
-                    'is_featured' => true,
-                    'display_order' => $order,
-                ]);
-
-                $gallery->status = 'published';
-                $gallery->verification_status = 'publishable';
-                $gallery->published_at = now();
-                $gallery->verified_at = now();
-                $gallery->save();
-
-                $gallery->media()->sync($galleryImages);
+                        continue;
+                    }
+                    $report['galleries']['create']++;
+                    if (! $apply) {
+                        continue;
+                    }
+                    $images = [];
+                    foreach ($item['images'] ?? [] as $imageOrder => $image) {
+                        $id = $this->importMedia($image['filename'], $image['title'], $image['alt_text'] ?? $image['title'], $image['caption'] ?? '');
+                        if (isset($images[$id])) {
+                            throw new RuntimeException('Duplicate gallery image: '.$image['filename']);
+                        }
+                        $images[$id] = ['caption' => $image['caption'] ?? '', 'display_order' => $imageOrder];
+                    }
+                    if ($images === []) {
+                        throw new RuntimeException('Gallery has no valid images: '.$item['slug']);
+                    }
+                    $gallery = Gallery::query()->create([
+                        'slug' => $item['slug'], 'title' => $item['title'], 'summary' => $item['summary'],
+                        'description' => $item['description'], 'location' => $item['location'] ?? null,
+                        'cover_media_id' => array_key_first($images), 'display_order' => $order, 'is_featured' => false,
+                    ]);
+                    $gallery->media()->attach($images);
+                }
+            });
+        } catch (\Throwable $exception) {
+            $disk = Storage::disk(config('cms.media_disk', 'local'));
+            foreach ($this->createdFiles as $path) {
+                $disk->delete($path);
             }
+            throw $exception;
         }
+
+        return $report;
     }
 
-    /**
-     * Import a media file from database/seeders/assets/facebook/ into CMS storage.
-     */
-    private function importMedia(string $relativeAssetPath, string $title, string $altText, string $caption): ?int
+    public function run(): void
     {
-        $source = base_path('database/seeders/assets/facebook/'.$relativeAssetPath);
-        if (! is_file($source)) {
-            return null;
+        throw new RuntimeException('Use mrdc:import-facebook --dry-run or --apply; this seeder cannot run implicitly.');
+    }
+
+    private function importMedia(string $relativePath, string $title, string $altText, string $caption): int
+    {
+        if (! preg_match('~\\A[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_.-]+)+\\z~D', $relativePath)
+            || str_contains($relativePath, '..')) {
+            throw new RuntimeException('Unsafe media path: '.$relativePath);
         }
-
-        $dimensions = getimagesize($source);
-        if ($dimensions === false) {
-            return null;
+        $root = realpath(base_path('database/seeders/assets/facebook'));
+        $source = realpath($root.'/'.$relativePath);
+        if ($source === false || ! str_starts_with($source, $root.DIRECTORY_SEPARATOR) || ! is_file($source)) {
+            throw new RuntimeException('Missing media: '.$relativePath);
         }
-
-        $contents = file_get_contents($source);
-        if ($contents === false) {
-            return null;
-        }
-
-        $filename = basename($relativeAssetPath);
-        $storagePath = 'facebook/'.ltrim($relativeAssetPath, '/');
-        $disk = Storage::disk(config('cms.media_disk', 'local'));
-
-        if (! $disk->exists($storagePath)) {
-            $disk->put($storagePath, $contents);
-        }
-
-        $media = Media::query()->firstOrNew(['storage_path' => $storagePath]);
-        $media->fill([
-            'title' => $title,
-            'alt_text' => $altText,
-            'caption' => $caption,
-        ]);
-
-        $mimeType = match (strtolower(pathinfo($filename, PATHINFO_EXTENSION))) {
-            'jpg', 'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'webp' => 'image/webp',
-            default => 'image/jpeg',
+        $image = @getimagesize($source);
+        $mime = $image['mime'] ?? null;
+        $expected = match (strtolower(pathinfo($source, PATHINFO_EXTENSION))) {
+            'jpg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp', default => null,
         };
+        if ($expected === null || $mime !== $expected) {
+            throw new RuntimeException('Invalid image: '.$relativePath);
+        }
+        $path = 'facebook/'.$relativePath;
+        $existing = Media::query()->where('storage_path', $path)->first();
+        if ($existing) {
+            return $existing->id;
+        }
+        $disk = Storage::disk(config('cms.media_disk', 'local'));
+        if ($disk->exists($path)) {
+            throw new RuntimeException('Unregistered media file already exists: '.$path);
+        }
+        $contents = file_get_contents($source);
+        if ($contents === false || ! $disk->put($path, $contents)) {
+            throw new RuntimeException('Failed to store media: '.$path);
+        }
+        $this->createdFiles[] = $path;
 
-        Media::unguarded(function () use ($media, $filename, $storagePath, $mimeType, $disk, $dimensions): void {
-            $media->original_filename = $filename;
-            $media->mime_type = $mimeType;
-            $media->size = $disk->size($storagePath);
-            $media->width = $dimensions[0];
-            $media->height = $dimensions[1];
-            $media->status = 'active';
-            $media->save();
-        });
-
-        return $media->id;
+        return Media::unguarded(fn () => Media::query()->create([
+            'title' => $title, 'alt_text' => $altText, 'caption' => $caption,
+            'original_filename' => basename($relativePath), 'storage_path' => $path,
+            'mime_type' => $mime, 'size' => strlen($contents), 'width' => $image[0], 'height' => $image[1],
+            'status' => 'active',
+        ])->id);
     }
 }
