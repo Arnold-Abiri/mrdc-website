@@ -16,10 +16,13 @@ class FacebookContentSeeder extends Seeder
     /** @var list<string> */
     private array $createdFiles = [];
 
+    private string $assetRoot;
+
     /** @return array<string, array{create: int, skip: int}> */
-    public function import(bool $apply = false): array
+    public function import(bool $apply = false, bool $includeStatistics = false, ?string $manifestPath = null, ?string $assetRoot = null): array
     {
-        $manifest = json_decode(file_get_contents(base_path('database/seeders/assets/facebook/manifest.json')), true, 512, JSON_THROW_ON_ERROR);
+        $this->assetRoot = realpath($assetRoot ?? base_path('database/seeders/assets/facebook')) ?: throw new RuntimeException('Media source directory is missing.');
+        $manifest = json_decode(file_get_contents($manifestPath ?? $this->assetRoot.'/manifest.json'), true, 512, JSON_THROW_ON_ERROR);
         $report = [];
         foreach (['public_contacts', 'district_statistics', 'editorial_items', 'galleries'] as $group) {
             $report[$group] = ['create' => 0, 'skip' => 0];
@@ -27,11 +30,16 @@ class FacebookContentSeeder extends Seeder
         $this->createdFiles = [];
 
         try {
-            DB::transaction(function () use ($manifest, $apply, &$report): void {
+            DB::transaction(function () use ($manifest, $apply, $includeStatistics, &$report): void {
                 // Contact details require separate council confirmation; preserve the existing directory.
                 $report['public_contacts']['skip'] = count($manifest['public_contacts'] ?? []);
 
                 foreach ($manifest['district_statistics'] ?? [] as $statistic) {
+                    if (! $includeStatistics) {
+                        $report['district_statistics']['skip']++;
+
+                        continue;
+                    }
                     if (DistrictStatistic::query()->where('label', $statistic['label'])->exists()) {
                         $report['district_statistics']['skip']++;
 
@@ -116,7 +124,7 @@ class FacebookContentSeeder extends Seeder
             || str_contains($relativePath, '..')) {
             throw new RuntimeException('Unsafe media path: '.$relativePath);
         }
-        $root = realpath(base_path('database/seeders/assets/facebook'));
+        $root = $this->assetRoot;
         $source = realpath($root.'/'.$relativePath);
         if ($source === false || ! str_starts_with($source, $root.DIRECTORY_SEPARATOR) || ! is_file($source)) {
             throw new RuntimeException('Missing media: '.$relativePath);
@@ -139,8 +147,16 @@ class FacebookContentSeeder extends Seeder
             throw new RuntimeException('Unregistered media file already exists: '.$path);
         }
         $contents = file_get_contents($source);
-        if ($contents === false || ! $disk->put($path, $contents)) {
-            throw new RuntimeException('Failed to store media: '.$path);
+        if ($contents === false) {
+            throw new RuntimeException('Failed to read media: '.$relativePath);
+        }
+        try {
+            if (! $disk->put($path, $contents)) {
+                throw new RuntimeException('Failed to store media: '.$path);
+            }
+        } catch (\Throwable $exception) {
+            $disk->delete($path);
+            throw $exception;
         }
         $this->createdFiles[] = $path;
 
