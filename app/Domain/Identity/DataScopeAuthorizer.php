@@ -59,4 +59,11 @@ class DataScopeAuthorizer
             }
         });
     }
+
+    public function applyGlobalOnly(Builder $query, User $actor, string $permission): Builder
+    {
+        return $this->allows($actor, $permission, null, null)
+            ? $query
+            : $query->whereRaw('1 = 0');
+    }
 }

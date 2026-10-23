@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AuditEvents;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Reports\ReportsCluster;
 use App\Filament\Resources\AuditEvents\Pages\ListAuditEvents;
 use App\Filament\Resources\AuditEvents\Pages\ViewAuditEvent;
@@ -13,10 +14,16 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class AuditEventResource extends Resource
 {
     protected static ?string $model = AuditEvent::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'audit.view');
+    }
 
     protected static ?string $cluster = ReportsCluster::class;
 

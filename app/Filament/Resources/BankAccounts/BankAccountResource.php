@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BankAccounts;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Resources\BankAccounts\Pages\CreateBankAccount;
 use App\Filament\Resources\BankAccounts\Pages\EditBankAccount;
@@ -13,9 +14,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BankAccountResource extends Resource
 {
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'bank_accounts.view');
+    }
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
     protected static ?string $cluster = ServicesCluster::class;

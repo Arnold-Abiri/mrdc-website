@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Incidents;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Enquiries\EnquiriesCluster;
 use App\Filament\Resources\Incidents\Pages\CreateIncident;
 use App\Filament\Resources\Incidents\Pages\EditIncident;
@@ -21,10 +22,16 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class IncidentResource extends Resource
 {
     protected static ?string $model = Incident::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'system-health.view');
+    }
 
     protected static ?string $cluster = EnquiriesCluster::class;
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ErrorEvents;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Reports\ReportsCluster;
 use App\Filament\Resources\ErrorEvents\Pages\ListErrorEvents;
 use App\Filament\Resources\ErrorEvents\Pages\ViewErrorEvent;
@@ -16,11 +17,17 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 
 class ErrorEventResource extends Resource
 {
     protected static ?string $model = ErrorEvent::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'system-health.view');
+    }
 
     protected static ?string $cluster = ReportsCluster::class;
 

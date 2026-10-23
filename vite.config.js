@@ -1,9 +1,21 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig({
-    plugins: [laravel({ input: ['resources/css/app.css', 'resources/css/contact.css', 'resources/css/admin.css', 'resources/js/app.tsx'], refresh: true }), react(), tailwindcss()],
-    test: { environment: 'jsdom', setupFiles: ['./resources/js/test-setup.ts'], include: ['resources/js/**/*.test.tsx'] },
+export default defineConfig(({ mode }) => {
+    const appOrigin = loadEnv(mode, process.cwd(), '').APP_URL || 'http://mrdc.test';
+
+    return {
+        plugins: [laravel({ input: ['resources/css/app.css', 'resources/css/contact.css', 'resources/css/admin.css', 'resources/js/app.tsx'], refresh: true }), react(), tailwindcss()],
+        server: {
+            proxy: {
+                '/images': {
+                    target: appOrigin,
+                    changeOrigin: true,
+                },
+            },
+        },
+        test: { environment: 'jsdom', setupFiles: ['./resources/js/test-setup.ts'], include: ['resources/js/**/*.test.tsx'] },
+    };
 });

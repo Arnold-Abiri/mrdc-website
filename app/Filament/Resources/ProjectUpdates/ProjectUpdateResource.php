@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectUpdates;
 
 use App\Domain\Cms\ProjectUpdateManager;
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\ProjectUpdates\Pages\CreateProjectUpdate;
@@ -24,11 +25,19 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 
 class ProjectUpdateResource extends Resource
 {
     protected static ?string $model = ProjectUpdate::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        $actor = auth()->user();
+
+        return parent::getEloquentQuery()->whereHas('project', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query, $actor, 'projects.view', 'department_id', 'created_by'));
+    }
 
     protected static ?string $cluster = ServicesCluster::class;
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SiteSettings;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Administration\AdministrationCluster;
 use App\Filament\Resources\SiteSettings\Pages\EditSiteSetting;
 use App\Filament\Resources\SiteSettings\Pages\ListSiteSettings;
@@ -19,11 +20,17 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 
 class SiteSettingResource extends Resource
 {
     protected static ?string $model = SiteSetting::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'site_settings.view');
+    }
 
     protected static ?string $cluster = AdministrationCluster::class;
 

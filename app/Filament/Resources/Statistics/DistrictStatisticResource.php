@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Statistics;
 
 use App\Domain\Cms\DistrictStatisticManager;
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Council\CouncilCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Statistics\Pages\CreateDistrictStatistic;
@@ -23,10 +24,16 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DistrictStatisticResource extends Resource
 {
     protected static ?string $model = DistrictStatistic::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'statistics.view');
+    }
 
     protected static ?string $cluster = CouncilCluster::class;
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Faqs;
 
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Resources\Faqs\Pages\CreateFaq;
 use App\Filament\Resources\Faqs\Pages\EditFaq;
@@ -14,10 +15,16 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FaqResource extends Resource
 {
     protected static ?string $model = Faq::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->apply(parent::getEloquentQuery(), auth()->user(), 'faqs.view', 'department_id', null);
+    }
 
     protected static ?string $cluster = ContentCluster::class;
 

@@ -33,6 +33,7 @@ class Login extends BaseLogin
     {
         return TextInput::make('email')
             ->label('Email Address')
+            ->hiddenLabel(false)
             ->email()
             ->required()
             ->autocomplete('email')
@@ -48,6 +49,7 @@ class Login extends BaseLogin
     {
         return TextInput::make('password')
             ->label('Password')
+            ->hiddenLabel(false)
             ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="-1">Forgot password?</x-filament::link>')) : null)
             ->password()
             ->revealable(filament()->arePasswordsRevealable())

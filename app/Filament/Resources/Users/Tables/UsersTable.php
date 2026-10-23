@@ -29,8 +29,13 @@ class UsersTable
                 Action::make('removeRole')->authorize(fn (User $record) => Gate::allows('assignRoles', $record))->form([Select::make('role_id')->options(fn (User $record) => $record->roles()->pluck('name', 'id'))->required()])->requiresConfirmation()->action(fn (User $record, array $data) => app(UserManager::class)->removeRole(auth()->user(), $record, Role::findOrFail($data['role_id']))),
                 Action::make('assignRole')->authorize(fn (User $record) => Gate::allows('assignRoles', $record))->form([
                     Select::make('role_id')->options(Role::query()->pluck('name', 'id'))->required(),
-                    Select::make('scope_type')->options(['global' => 'Global', 'department' => 'Department', 'own' => 'Own'])->required(),
-                    Select::make('department_id')->options(Department::query()->where('status', 'active')->pluck('name', 'id')),
+                    Select::make('scope_type')->options(['global' => 'Global', 'department' => 'Department', 'own' => 'Own'])->required()->live(),
+                    Select::make('department_id')
+                        ->label('Department')
+                        ->options(Department::query()->where('status', 'active')->pluck('name', 'id'))
+                        ->visible(fn (callable $get): bool => $get('scope_type') === 'department')
+                        ->required(fn (callable $get): bool => $get('scope_type') === 'department')
+                        ->dehydrated(fn (callable $get): bool => $get('scope_type') === 'department'),
                 ])->action(fn (User $record, array $data) => app(UserManager::class)->assignRole(auth()->user(), $record, Role::findOrFail($data['role_id']), $data['scope_type'], $data['department_id'] ?? null)),
             ]);
     }

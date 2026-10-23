@@ -970,23 +970,44 @@ body:has(.mrdc-auth-page) .fi-simple-main {
 }
 
 /* Label styling matching modern clean aesthetics */
+.mrdc-filament-form-wrapper .fi-fo-field-wrp-label,
+.mrdc-filament-form-wrapper .fi-fo-field-label,
+.mrdc-filament-form-wrapper .fi-fo-field-label-content,
+.mrdc-filament-form-wrapper .fi-fo-field-label-col,
+.mrdc-filament-form-wrapper .fi-fo-field-wrp-label span,
 .mrdc-filament-form-wrapper label {
     font-size: 0.8125rem !important;
     font-weight: 600 !important;
     color: #1e293b !important;
     margin-bottom: 0.25rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.mrdc-filament-form-wrapper .fi-fo-field-label-content {
+    display: inline !important;
+    clip: auto !important;
+    clip-path: none !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+    white-space: normal !important;
 }
 
 /* Text input container and input fields */
-.mrdc-filament-form-wrapper .fi-input-wrp {
+.mrdc-filament-form-wrapper .fi-input-wrp,
+.mrdc-filament-form-wrapper .mrdc-login-input-wrp {
     border-radius: 0.75rem !important;
-    border-color: #e2e8f0 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-color: #cbd5e1 !important;
     background-color: #ffffff !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
     transition: all 0.15s ease-in-out !important;
 }
 
-.mrdc-filament-form-wrapper .fi-input-wrp:focus-within {
+.mrdc-filament-form-wrapper .fi-input-wrp:focus-within,
+.mrdc-filament-form-wrapper .mrdc-login-input-wrp:focus-within {
     border-color: #0b8f62 !important;
     box-shadow: 0 0 0 3px rgba(11, 143, 98, 0.18) !important;
 }
@@ -998,8 +1019,18 @@ body:has(.mrdc-auth-page) .fi-simple-main {
     color: #0f172a !important;
 }
 
+.mrdc-filament-form-wrapper input.mrdc-login-input {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    opacity: 1 !important;
+}
+
+.mrdc-filament-form-wrapper input.mrdc-login-input::placeholder,
+.mrdc-filament-form-wrapper input.mrdc-login-input::-webkit-input-placeholder,
 .mrdc-filament-form-wrapper .fi-input::placeholder {
-    color: #94a3b8 !important;
+    color: #64748b !important;
+    -webkit-text-fill-color: #64748b !important;
+    opacity: 1 !important;
     font-size: 0.85rem !important;
 }
 
@@ -1052,9 +1083,22 @@ body:has(.mrdc-auth-page) .fi-simple-main {
 
 /* Checkbox styling */
 .mrdc-filament-form-wrapper input[type="checkbox"] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+    min-width: 1.125rem !important;
+    min-height: 1.125rem !important;
+    background-color: #ffffff !important;
+    border: 1px solid #94a3b8 !important;
     border-radius: 0.375rem !important;
-    border-color: #cbd5e1 !important;
     color: #0b8f62 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12) !important;
+}
+
+.mrdc-filament-form-wrapper input[type="checkbox"]:checked {
+    background-color: #0b8f62 !important;
+    border-color: #0b8f62 !important;
 }
 
 .mrdc-filament-form-wrapper input[type="checkbox"]:focus {

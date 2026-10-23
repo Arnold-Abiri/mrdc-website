@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Slides;
 
 use App\Domain\Cms\HomepageSlideManager;
+use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Content\ContentCluster;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Slides\Pages\CreateHomepageSlide;
@@ -26,11 +27,17 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 
 class HomepageSlideResource extends Resource
 {
     protected static ?string $model = HomepageSlide::class;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return app(DataScopeAuthorizer::class)->applyGlobalOnly(parent::getEloquentQuery(), auth()->user(), 'slides.view');
+    }
 
     protected static ?string $cluster = ContentCluster::class;
 
