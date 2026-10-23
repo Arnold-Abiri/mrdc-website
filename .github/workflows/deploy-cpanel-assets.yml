@@ -1,0 +1,64 @@
+
+name: Build cPanel Frontend Assets
+
+on:
+  push:
+    branches:
+      - deployment/cpanel-php83
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cpanel-assets
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Verify build
+        run: |
+          test -s public/build/manifest.json
+          test -d public/build/assets
+
+      - name: Prepare deployment branch
+        run: |
+          mkdir -p /tmp/mrdc-assets
+          cp -a public/build/. /tmp/mrdc-assets/
+          git rev-parse HEAD > /tmp/mrdc-assets/SOURCE_COMMIT
+
+      - name: Publish compiled assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          cd /tmp/mrdc-assets
+          git init
+          git checkout -b deployment/cpanel-assets
+          git add -A
+          git commit -m "build: frontend assets from ${GITHUB_SHA}"
+
+          git remote add origin \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          git push --force origin deployment/cpanel-assets
