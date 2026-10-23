@@ -9253,5 +9253,540 @@ h3 { margin: 0; }
   gap: 4px;
 }
 
+/* ==========================================================================
+   OFFICE OF THE COUNCIL CHAIRPERSON (CIVIC PORTAL)
+   ========================================================================== */
+.chairperson-portal-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .chairperson-portal-layout {
+    grid-template-columns: 360px 1fr;
+    gap: 44px;
+  }
+}
+
+.chairperson-profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.chairperson-portrait-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(11, 45, 77, 0.05);
+}
+
+.chairperson-portrait-frame {
+  position: relative;
+  background: linear-gradient(135deg, #0B2D4D 0%, #164E63 100%);
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.chairperson-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+
+.chairperson-dignity-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(11, 45, 77, 0.9);
+  color: #F8FAFC;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chairperson-card-info {
+  padding: 24px 22px 18px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.chairperson-card-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 0 0 6px;
+  line-height: 1.25;
+}
+
+.chairperson-card-role {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-council-green);
+  margin-bottom: 14px;
+}
+
+.chairperson-card-motto {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #475569;
+  font-style: italic;
+  margin: 0;
+}
+
+.chairperson-desk-block {
+  padding: 20px 22px 24px;
+  background: #F8FAFC;
+}
+
+.chairperson-desk-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 12px;
+}
+
+.chairperson-desk-meta {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chairperson-desk-meta dt {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.chairperson-desk-meta dd {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 0;
+}
+
+.chairperson-sessions-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.chairperson-sessions-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 0 0 8px;
+}
+
+.chairperson-meeting-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chairperson-meeting-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #F8FAFC;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.chairperson-meeting-date {
+  background: var(--color-council-green);
+  color: #FFFFFF;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+  min-width: 54px;
+  line-height: 1.2;
+}
+
+.chairperson-meeting-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--color-civic-navy);
+  margin: 0 0 2px;
+}
+
+.chairperson-meeting-venue {
+  font-size: 0.78rem;
+  color: #64748B;
+}
+
+.chairperson-profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.chairperson-address-card {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 20px rgba(11, 45, 77, 0.04);
+}
+
+.chairperson-section-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 4px 0 20px;
+  line-height: 1.25;
+}
+
+.chairperson-address-content {
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.chairperson-address-content .lead-quote {
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: 500;
+  color: #0F172A;
+  border-left: 4px solid var(--color-council-green);
+  padding-left: 18px;
+  margin: 6px 0 12px;
+  line-height: 1.6;
+}
+
+.chairperson-pillars-wrap {
+  background: #F8FAFC;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 36px 32px;
+}
+
+.chairperson-pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+@media (min-width: 640px) {
+  .chairperson-pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chairperson-pillar-item {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.chairperson-pillar-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-council-green);
+}
+
+.chairperson-pillar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-council-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.chairperson-pillar-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.chairperson-pillar-item h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 0 0 8px;
+}
+
+.chairperson-pillar-item p {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #64748B;
+  margin: 0;
+}
+
+.chairperson-statutory-card {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-left: 5px solid var(--color-civic-navy);
+  border-radius: 12px;
+  padding: 24px 28px;
+}
+
+.chairperson-statutory-card h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 0 0 10px;
+}
+
+.chairperson-statutory-card p {
+  font-size: 0.92rem;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.chairperson-statutory-card ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #334155;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.chairperson-quicknav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+@media (min-width: 640px) {
+  .chairperson-quicknav {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.chairperson-navlink {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-council-green);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.chairperson-navlink:hover {
+  background: #F8FAFC;
+  border-color: var(--color-council-green);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   OFFICIALS DIRECTORY HIERARCHY: APEX SHOWCASE & EXECUTIVE SECTIONS
+   ========================================================================== */
+.officials-apex-showcase {
+  margin-bottom: 40px;
+}
+
+.officials-apex-card {
+  background: linear-gradient(135deg, #0B2D4D 0%, #0F375E 55%, #164E63 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(11, 45, 77, 0.16);
+  display: grid;
+  grid-template-columns: 1fr;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (min-width: 840px) {
+  .officials-apex-card {
+    grid-template-columns: 340px 1fr;
+  }
+}
+
+.officials-apex-media {
+  position: relative;
+  min-height: 280px;
+  background: #0B2D4D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.officials-apex-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+
+.officials-apex-tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(16, 185, 129, 0.95);
+  color: #FFFFFF;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.officials-apex-content {
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.officials-apex-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6EE7B7;
+  margin-bottom: 8px;
+}
+
+.officials-apex-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.officials-apex-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #F8FAFC;
+  margin-bottom: 14px;
+}
+
+.officials-apex-desc {
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #CBD5E1;
+  margin: 0 0 22px;
+  max-width: 640px;
+}
+
+.officials-apex-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.officials-apex-btn {
+  background: var(--color-council-green);
+  color: #FFFFFF;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.officials-apex-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  color: #FFFFFF;
+}
+
+.officials-apex-stat {
+  font-size: 0.82rem;
+  color: #94A3B8;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.officials-tier-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 32px 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #E2E8F0;
+}
+
+.officials-tier-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.officials-tier-badge {
+  font-size: 0.76rem;
+  font-weight: 700;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #E2E8F0;
+  color: #334155;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+
+
 
 

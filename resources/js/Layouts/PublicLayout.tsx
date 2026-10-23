@@ -10,6 +10,7 @@ type NavChild = { label: string; href: string };
 type NavEntry = { label: string; href: string; children?: NavChild[] };
 
 const navigationTranslationKeys: Record<string, Parameters<typeof translate>[1]> = {
+    'Office of the Chairperson': 'officeChairperson',
     Departments: 'councilDepartments', Officials: 'officials', Wards: 'wards', Meetings: 'meetings',
     'Financial Transparency': 'transparency', 'All Services': 'services', Projects: 'projects',
     Rates: 'rates', Feedback: 'feedback', News: 'news', Notices: 'notices', Gallery: 'gallery',
@@ -24,6 +25,7 @@ const navigation: NavEntry[] = [
         label: 'Council',
         href: '/departments',
         children: [
+            { label: 'Office of the Chairperson', href: '/council/chairperson' },
             { label: 'Departments', href: '/departments' },
             { label: 'Officials', href: '/officials' },
             { label: 'Wards', href: '/wards' },

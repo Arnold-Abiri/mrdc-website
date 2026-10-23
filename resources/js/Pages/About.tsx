@@ -406,7 +406,7 @@ export default function About({
                     </p>
 
                     <div className="about-gov-grid">
-                        <a href={link(locale, '/officials')} className="about-gov-card">
+                        <a href={link(locale, '/council/chairperson')} className="about-gov-card">
                             <span className="about-gov-badge about-gov-badge-pol">{t('polWing')}</span>
                             <div className="about-gov-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -468,25 +468,30 @@ export default function About({
                                 </a>
                             </div>
                             <div className="about-officials-grid">
-                                {directory.officials.map(official => (
-                                    <div className="about-official-card" key={official.slug}>
-                                        <div className="about-official-photo-wrap">
-                                            {official.photo_url ? (
-                                                <img className="about-official-photo" src={official.photo_url} alt={official.name} loading="lazy" />
-                                            ) : (
-                                                <div className="about-official-photo-placeholder" aria-hidden="true">
-                                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="about-official-info">
-                                            <div className="about-official-name">{official.name}</div>
-                                            <div className="about-official-title">{official.title}</div>
-                                        </div>
-                                    </div>
-                                ))}
+                                {directory.officials.map(official => {
+                                    const href = official.title.toLowerCase().includes('chairperson')
+                                        ? link(locale, '/council/chairperson')
+                                        : link(locale, `/officials/${official.slug}`);
+                                    return (
+                                        <a href={href} className="about-official-card" key={official.slug} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                            <div className="about-official-photo-wrap">
+                                                {official.photo_url ? (
+                                                    <img className="about-official-photo" src={official.photo_url} alt={official.name} loading="lazy" />
+                                                ) : (
+                                                    <div className="about-official-photo-placeholder" aria-hidden="true">
+                                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                                        </svg>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="about-official-info">
+                                                <div className="about-official-name">{official.name}</div>
+                                                <div className="about-official-title">{official.title}</div>
+                                            </div>
+                                        </a>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}

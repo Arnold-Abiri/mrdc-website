@@ -15,8 +15,12 @@ test('reference team portraits are published as editable officials without dupli
     $this->seed(CouncilTeamSeeder::class);
     $this->seed(CouncilTeamSeeder::class);
 
-    expect(Official::query()->public()->count())->toBe(9);
-    expect(Media::query()->count())->toBe(9);
+    expect(Official::query()->public()->count())->toBe(10);
+    expect(Media::query()->count())->toBe(10);
+
+    $chairperson = Official::query()->where('slug', 'alderman-trust-kachidza')->firstOrFail();
+    expect($chairperson->name)->toBe('Alderman Trust Kachidza');
+    expect($chairperson->title)->toBe('Council Chairperson');
 
     $official = Official::query()->where('slug', 'b-tasarira')->firstOrFail();
     expect($official->name)->toBe('B. Tasarira');

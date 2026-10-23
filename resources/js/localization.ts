@@ -1141,6 +1141,12 @@ const english = {
     activeAlertAvailable: 'Active emergency alert available', activeAlert: 'Active Alert', expandAdvisory: 'Click to expand the full civil protection advisory.',
     viewAction: 'View', emergencyWarning: 'Public Safety and Emergency Warning', civilProtectionDefault: 'CIVIL PROTECTION ALERT',
     minimizeAlert: 'Minimize emergency alert', minimizeAlertTitle: 'Minimize alert', councilDesk: 'Council Desk', readFullAdvisory: 'Read Full Advisory',
+    officeChairperson: 'Office of the Council Chairperson',
+    councilChairperson: 'Council Chairperson',
+    apexPoliticalHead: 'Political Leadership · Full Council',
+    apexChairpersonDesc: 'Elected head of Mutoko Rural District Council presiding over Full Council meetings, setting municipal policy, and championing devolved community development across all 29 wards.',
+    execAdminSection: 'Executive Administration & Management',
+    execAdminLedBy: 'Led by the Chief Executive Officer',
 } as const;
 
 type Key = keyof typeof english;
@@ -2301,6 +2307,12 @@ const shona: Record<Key, string> = {
     activeAlertAvailable: 'Yambiro yechimbichimbi iripo', activeAlert: 'Yambiro Iripo', expandAdvisory: 'Dzvanya kuti uone yambiro yakazara.',
     viewAction: 'Ona', emergencyWarning: 'Yambiro yeKuchengetedza Veruzhinji', civilProtectionDefault: 'YAMBIRO YOKUDZIVIRIRA',
     minimizeAlert: 'Deredza yambiro yechimbichimbi', minimizeAlertTitle: 'Deredza yambiro', councilDesk: 'Dhesiki reKanzuru', readFullAdvisory: 'Verenga Yambiro Yakazara',
+    officeChairperson: 'Hofisi yaSachigaro weKanzuru',
+    councilChairperson: 'Sachigaro weKanzuru',
+    apexPoliticalHead: 'Hutungamiriri hweZvematongerwo · Kanzuru Yose',
+    apexChairpersonDesc: 'Musoro weKanzuru yeDunhu reMutoko anotungamira misangano yeKanzuru yose, kuumba mitemo nekutungamira budiriro mumatunhu ose 29.',
+    execAdminSection: 'Vatungamiri veMabasa eKanzuru',
+    execAdminLedBy: 'Inotungamirwa neMukuru weKanzuru (CEO)',
 };
 const ndebele: Record<Key, string> = {
     home: 'Ikhaya', about: 'Mayelana lathi', council: 'Umkhandlu', officials: 'Izikhulu zoMkhandlu', wards: 'Amawadi',
@@ -3457,6 +3469,12 @@ const ndebele: Record<Key, string> = {
     activeAlertAvailable: 'Isixwayiso esiphuthumayo esikhona', activeAlert: 'Isixwayiso Esikhona', expandAdvisory: 'Chofoza ubone isixwayiso esigcwele.',
     viewAction: 'Bona', emergencyWarning: 'Isixwayiso Sokuphepha Komphakathi', civilProtectionDefault: 'ISIXWAYISO SOKUVIKELA',
     minimizeAlert: 'Nciphisa isixwayiso esiphuthumayo', minimizeAlertTitle: 'Nciphisa isixwayiso', councilDesk: 'Idesiki loMkhandlu', readFullAdvisory: 'Funda Isixwayiso Esigcwele',
+    officeChairperson: 'Ihofisi kaSihlalo woMkhandlu',
+    councilChairperson: 'USihlalo woMkhandlu',
+    apexPoliticalHead: 'Ubuholi Bezombangazwe · Umkhandlu Wonke',
+    apexChairpersonDesc: 'Inhloko yoMkhandlu weSifunda saseMutoko ekhokhela imihlangano yoMkhandlu, ukubeka imithetho lokuthuthukisa izigaba zonke ezingamatshumi amabili lasitshiyagalolunye (29).',
+    execAdminSection: 'Abaphathi Bomsebenzi woMkhandlu',
+    execAdminLedBy: 'Ikhokhelwa yiSikhulu Esiphezulu (CEO)',
 };
 
 export function translate(locale: PublicLocale, key: Key): string {

@@ -75,6 +75,7 @@ Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAna
     Route::get('/wards', [WardController::class, 'index'])->name('wards.index');
     Route::get('/wards/{slug}', [WardController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('wards.show');
 
+    Route::get('/council/chairperson', [OfficialController::class, 'chairperson'])->name('council.chairperson');
     Route::get('/officials', [OfficialController::class, 'index'])->name('officials.index');
     Route::get('/officials/{slug}', [OfficialController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('officials.show');
 

@@ -136,7 +136,7 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                         </div>
                     </div>
 
-                    {/* GRID */}
+                    {/* HIERARCHICAL LAYOUT: APEX CHAIRPERSON & EXECUTIVE ADMINISTRATION */}
                     {filteredOfficials.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
@@ -152,42 +152,115 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                             </button>
                         </div>
                     ) : (
-                        <div className="officials-directory-grid">
-                            {filteredOfficials.map((official) => (
-                                <article key={official.slug} className="official-profile-card">
-                                    <div className="official-portrait-wrapper">
-                                        {official.photo_url ? (
-                                            <img
-                                                src={official.photo_url}
-                                                alt={`${t('portraitOf')} ${official.name}`}
-                                                loading="lazy"
-                                            />
-                                        ) : (
-                                            <img
-                                                src="/images/council-crest-light.webp"
-                                                alt={t('crestFallbackAlt')}
-                                                className="official-crest-fallback"
-                                            />
-                                        )}
-                                        <span className="official-badge-role">
-                                            {official.department ?? t('execOfficeFallback')}
-                                        </span>
+                        <>
+                            {/* 1. APEX POLITICAL HEAD SHOWCASE (COUNCIL CHAIRPERSON) */}
+                            {(() => {
+                                const chairperson = filteredOfficials.find(o => o.title.toLowerCase().includes('chairperson'));
+                                if (!chairperson) return null;
+                                return (
+                                    <div className="officials-apex-showcase">
+                                        <article className="officials-apex-card">
+                                            <div className="officials-apex-media">
+                                                {chairperson.photo_url ? (
+                                                    <img
+                                                        src={chairperson.photo_url}
+                                                        alt={`${t('portraitOf')} ${chairperson.name}`}
+                                                        className="officials-apex-photo"
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src="/images/council-crest-light.webp"
+                                                        alt={t('crestFallbackAlt')}
+                                                        className="official-crest-fallback"
+                                                    />
+                                                )}
+                                                <span className="officials-apex-tag">{t('govChair')}</span>
+                                            </div>
+                                            <div className="officials-apex-content">
+                                                <span className="officials-apex-eyebrow">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                                    </svg>
+                                                    {t('apexPoliticalHead')}
+                                                </span>
+                                                <h3 className="officials-apex-name">{chairperson.name}</h3>
+                                                <div className="officials-apex-title">{chairperson.title}</div>
+                                                <p className="officials-apex-desc">
+                                                    {t('apexChairpersonDesc')}
+                                                </p>
+                                                <div className="officials-apex-footer">
+                                                    <Link
+                                                        href={`/${locale}/council/chairperson`}
+                                                        className="officials-apex-btn"
+                                                    >
+                                                        <span>{t('officeChairperson')}</span>
+                                                        <span aria-hidden="true">→</span>
+                                                    </Link>
+                                                    <span className="officials-apex-stat">
+                                                        <span>• 29 Wards Governed</span>
+                                                        <span>• Cap 29:13 Statutory Powers</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </article>
                                     </div>
+                                );
+                            })()}
 
-                                    <div className="official-profile-body">
-                                        <h3 className="official-profile-name">{official.name}</h3>
-                                        <div className="official-profile-title">{official.title}</div>
-                                        {official.department && (
-                                            <div className="official-profile-dept">{official.department}</div>
-                                        )}
-                                        {official.biography && (
-                                            <p className="official-profile-bio">{official.biography}</p>
-                                        )}
-                                        
+                            {/* 2. EXECUTIVE ADMINISTRATION & SECRETARIAT TIER */}
+                            {(() => {
+                                const subordinates = filteredOfficials.filter(o => !o.title.toLowerCase().includes('chairperson'));
+                                if (subordinates.length === 0) return null;
+                                return (
+                                    <div>
+                                        <div className="officials-tier-header">
+                                            <h3 className="officials-tier-title">
+                                                {t('execAdminSection')}
+                                            </h3>
+                                            <span className="officials-tier-badge">
+                                                {t('execAdminLedBy')}
+                                            </span>
+                                        </div>
+
+                                        <div className="officials-directory-grid">
+                                            {subordinates.map((official) => (
+                                                <article key={official.slug} className="official-profile-card">
+                                                    <div className="official-portrait-wrapper">
+                                                        {official.photo_url ? (
+                                                            <img
+                                                                src={official.photo_url}
+                                                                alt={`${t('portraitOf')} ${official.name}`}
+                                                                loading="lazy"
+                                                            />
+                                                        ) : (
+                                                            <img
+                                                                src="/images/council-crest-light.webp"
+                                                                alt={t('crestFallbackAlt')}
+                                                                className="official-crest-fallback"
+                                                            />
+                                                        )}
+                                                        <span className="official-badge-role">
+                                                            {official.department ?? t('execOfficeFallback')}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="official-profile-body">
+                                                        <h3 className="official-profile-name">{official.name}</h3>
+                                                        <div className="official-profile-title">{official.title}</div>
+                                                        {official.department && (
+                                                            <div className="official-profile-dept">{official.department}</div>
+                                                        )}
+                                                        {official.biography && (
+                                                            <p className="official-profile-bio">{official.biography}</p>
+                                                        )}
+                                                    </div>
+                                                </article>
+                                            ))}
+                                        </div>
                                     </div>
-                                </article>
-                            ))}
-                        </div>
+                                );
+                            })()}
+                        </>
                     )}
 
                     {/* FOOTER STRIP */}
