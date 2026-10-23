@@ -16,34 +16,87 @@ concurrency:
 
 jobs:
   build:
+    name: Build and Publish Frontend Assets
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, curl, zip, intl, bcmath, gd, pdo_mysql
+          coverage: none
+          tools: composer:v2
+
+      - name: Verify PHP and Composer
+        run: |
+          php -v
+          composer --version
+
+      - name: Install Composer dependencies
+        run: |
+          composer install \
+            --no-interaction \
+            --prefer-dist \
+            --no-progress \
+            --no-scripts \
+            --no-dev \
+            --optimize-autoloader
+
+      - name: Verify Filament CSS dependency
+        run: |
+          test -f vendor/filament/filament/resources/css/theme.css
+          echo "Filament CSS dependency found"
+
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
 
-      - name: Install dependencies
+      - name: Verify Node.js and npm
+        run: |
+          node --version
+          npm --version
+
+      - name: Install npm dependencies
         run: npm ci
 
-      - name: Build frontend
+      - name: Build frontend assets
         run: npm run build
 
-      - name: Verify build
+      - name: Verify compiled assets
         run: |
           test -s public/build/manifest.json
           test -d public/build/assets
 
+          echo "Vite manifest exists"
+          echo "Compiled assets directory exists"
+
+          echo "Checking admin CSS manifest entry..."
+          grep -q '"resources/css/admin.css"' public/build/manifest.json
+
+          echo "Checking new login styling..."
+          grep -rlq 'mrdc-login-input' public/build/assets/*.css
+
+          echo "Frontend asset verification passed"
+
       - name: Prepare deployment branch
         run: |
           mkdir -p /tmp/mrdc-assets
+
           cp -a public/build/. /tmp/mrdc-assets/
+
           git rev-parse HEAD > /tmp/mrdc-assets/SOURCE_COMMIT
+
+          echo "Build source commit:"
+          cat /tmp/mrdc-assets/SOURCE_COMMIT
+
+          echo "Prepared deployment files:"
+          ls -lah /tmp/mrdc-assets
 
       - name: Publish compiled assets
         env:
@@ -53,8 +106,10 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           cd /tmp/mrdc-assets
+
           git init
           git checkout -b deployment/cpanel-assets
+
           git add -A
           git commit -m "build: frontend assets from ${GITHUB_SHA}"
 
@@ -62,3 +117,5 @@ jobs:
             "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
           git push --force origin deployment/cpanel-assets
+
+          echo "Compiled assets published successfully"
