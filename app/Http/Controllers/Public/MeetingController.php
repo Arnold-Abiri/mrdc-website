@@ -12,7 +12,20 @@ class MeetingController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Meetings', ['meetings' => CouncilMeeting::query()->with('translations')->public()->orderBy('scheduled_date')->orderBy('display_order')->get(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status'])->map(fn (CouncilMeeting $meeting): array => $meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status']))]);
+        $paginated = CouncilMeeting::query()
+            ->with('translations')
+            ->public()
+            ->orderBy('scheduled_date')
+            ->orderBy('display_order')
+            ->paginate(15)
+            ->withQueryString();
+
+        $paginated->through(fn (CouncilMeeting $meeting): array => $meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status']));
+
+        return Inertia::render('Meetings', [
+            'meetings' => $paginated->items(),
+            'pagination' => $paginated,
+        ]);
     }
 
     public function show(string $locale, CouncilMeeting $meeting): Response

@@ -12,7 +12,26 @@ class EditorialController extends Controller
 {
     public function newsIndex(): Response
     {
-        return Inertia::render('EditorialList', ['type' => 'News', 'items' => EditorialItem::query()->with(['translations', 'featuredMedia.translations'])->public()->where('type', 'news')->orderByDesc('published_at')->get(['id', 'slug', 'title', 'summary', 'published_at', 'featured_media_id'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null, 'image_alt' => $item->featuredMedia?->translated('alt_text'), 'image_caption' => $item->featuredMedia?->translated('caption')])]);
+        $paginated = EditorialItem::query()
+            ->with(['translations', 'featuredMedia.translations'])
+            ->public()
+            ->where('type', 'news')
+            ->orderByDesc('published_at')
+            ->paginate(12)
+            ->withQueryString();
+
+        $paginated->through(fn (EditorialItem $item): array => [
+            ...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']),
+            'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null,
+            'image_alt' => $item->featuredMedia?->translated('alt_text'),
+            'image_caption' => $item->featuredMedia?->translated('caption'),
+        ]);
+
+        return Inertia::render('EditorialList', [
+            'type' => 'News',
+            'items' => $paginated->items(),
+            'pagination' => $paginated,
+        ]);
     }
 
     public function newsShow(string $locale, string $slug): Response
@@ -24,7 +43,27 @@ class EditorialController extends Controller
 
     public function noticesIndex(): Response
     {
-        return Inertia::render('EditorialList', ['type' => 'Notices', 'items' => EditorialItem::query()->with(['translations', 'featuredMedia.translations'])->public()->where('type', 'notice')->orderByDesc('published_at')->get(['id', 'slug', 'title', 'summary', 'published_at', 'featured_media_id', 'expires_at'])->map(fn (EditorialItem $item): array => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']), 'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null, 'image_alt' => $item->featuredMedia?->translated('alt_text'), 'image_caption' => $item->featuredMedia?->translated('caption'), 'expires_at' => $item->expires_at?->format('Y-m-d')])]);
+        $paginated = EditorialItem::query()
+            ->with(['translations', 'featuredMedia.translations'])
+            ->public()
+            ->where('type', 'notice')
+            ->orderByDesc('published_at')
+            ->paginate(12)
+            ->withQueryString();
+
+        $paginated->through(fn (EditorialItem $item): array => [
+            ...$item->toLocalizedArray(['slug', 'title', 'summary', 'published_at']),
+            'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null,
+            'image_alt' => $item->featuredMedia?->translated('alt_text'),
+            'image_caption' => $item->featuredMedia?->translated('caption'),
+            'expires_at' => $item->expires_at?->format('Y-m-d'),
+        ]);
+
+        return Inertia::render('EditorialList', [
+            'type' => 'Notices',
+            'items' => $paginated->items(),
+            'pagination' => $paginated,
+        ]);
     }
 
     public function noticesShow(string $locale, string $slug): Response

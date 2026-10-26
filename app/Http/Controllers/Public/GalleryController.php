@@ -13,31 +13,35 @@ class GalleryController extends Controller
 {
     public function index(): Response
     {
-        $galleries = Gallery::query()
+        $paginated = Gallery::query()
             ->with(['translations', 'media.translations', 'coverMedia.translations', 'coverMedia'])
             ->public()
             ->orderByDesc('is_featured')
             ->orderBy('display_order')
             ->orderByDesc('album_date')
             ->orderBy('title')
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
+
+        $paginated->through(function (Gallery $gallery): array {
+            $images = $this->activeImages($gallery);
+            $cover = $gallery->coverMedia instanceof Media && $gallery->coverMedia->status === 'active'
+                ? $gallery->coverMedia
+                : $images->first();
+
+            return [
+                ...$gallery->toLocalizedArray(['slug', 'title', 'summary', 'location']),
+                'album_date' => $gallery->album_date?->format('Y-m-d'),
+                'is_featured' => (bool) $gallery->is_featured,
+                'image_count' => $images->count(),
+                'cover_url' => $cover instanceof Media ? public_route('managed-media.show', $cover->id) : null,
+                'cover_alt' => $cover instanceof Media ? ($cover->translated('alt_text') ?: $gallery->title) : null,
+            ];
+        });
 
         return Inertia::render('Galleries', [
-            'galleries' => $galleries->map(function (Gallery $gallery): array {
-                $images = $this->activeImages($gallery);
-                $cover = $gallery->coverMedia instanceof Media && $gallery->coverMedia->status === 'active'
-                    ? $gallery->coverMedia
-                    : $images->first();
-
-                return [
-                    ...$gallery->toLocalizedArray(['slug', 'title', 'summary', 'location']),
-                    'album_date' => $gallery->album_date?->format('Y-m-d'),
-                    'is_featured' => (bool) $gallery->is_featured,
-                    'image_count' => $images->count(),
-                    'cover_url' => $cover instanceof Media ? public_route('managed-media.show', $cover->id) : null,
-                    'cover_alt' => $cover instanceof Media ? ($cover->translated('alt_text') ?: $gallery->title) : null,
-                ];
-            })->values(),
+            'galleries' => $paginated->items(),
+            'pagination' => $paginated,
         ]);
     }
 

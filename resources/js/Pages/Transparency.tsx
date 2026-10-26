@@ -4,6 +4,7 @@ import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import type { TranslationKey } from '../localization';
 import { formatDate } from '../formatDate';
 import { SourcedText } from '../Components/public/SourceButtons';
+import { Pagination, type PaginatedData } from '../Components/public/Pagination';
 
 type FinancialDocument = {
     slug: string;
@@ -25,17 +26,20 @@ const categoryLabels: Record<string, TranslationKey> = {
 
 export default function Transparency({
     documents,
+    pagination,
     categories,
     years,
     filters,
 }: {
-    documents: FinancialDocument[];
+    documents?: FinancialDocument[];
+    pagination?: PaginatedData<FinancialDocument>;
     categories: string[];
     years: number[];
     filters: { category: string | null; year: string | null };
 }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
+    const displayDocs = pagination ? pagination.data : (documents ?? []);
 
     return (
         <PublicLayout>
@@ -203,46 +207,49 @@ export default function Transparency({
                     </form>
 
                     {/* DOCUMENTS LIST */}
-                    {documents.length === 0 ? (
+                    {displayDocs.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
                                 {t('noFinMatch')}
                             </p>
                         </div>
                     ) : (
-                        <div className="dept-directory-grid">
-                            {documents.map((doc) => (
-                                <article key={doc.slug} className="transparency-doc-card">
-                                    <div className="transparency-doc-top">
-                                        <span className="transparency-file-pill">{t('schedOfficialPdf')}</span>
-                                        <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>
-                                            {doc.reference_date ? formatDate(doc.reference_date, locale) : t('docRecent')}
-                                        </span>
-                                    </div>
+                        <>
+                            <div className="dept-directory-grid">
+                                {displayDocs.map((doc) => (
+                                    <article key={doc.slug} className="transparency-doc-card">
+                                        <div className="transparency-doc-top">
+                                            <span className="transparency-file-pill">{t('schedOfficialPdf')}</span>
+                                            <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>
+                                                {doc.reference_date ? formatDate(doc.reference_date, locale) : t('docRecent')}
+                                            </span>
+                                        </div>
 
-                                    <h3 className="transparency-doc-title">
-                                        <Link href={`/${locale}/documents/${doc.slug}`}>{doc.title}</Link>
-                                    </h3>
+                                        <h3 className="transparency-doc-title">
+                                            <Link href={`/${locale}/documents/${doc.slug}`}>{doc.title}</Link>
+                                        </h3>
 
-                                    <div className="transparency-doc-desc">
-                                        <SourcedText text={doc.description ?? t('finFallback')} />
-                                    </div>
+                                        <div className="transparency-doc-desc">
+                                            <SourcedText text={doc.description ?? t('finFallback')} />
+                                        </div>
 
-                                    <div className="transparency-doc-footer">
-                                        <span>
-                                            {categoryLabels[doc.category] ? t(categoryLabels[doc.category]) : doc.category}
-                                        </span>
-                                        <Link
-                                            href={`/${locale}/documents/${doc.slug}`}
-                                            className="transparency-download-cta"
-                                        >
-                                            <span>{t('viewDownload')}</span>
-                                            <span aria-hidden="true">→</span>
-                                        </Link>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
+                                        <div className="transparency-doc-footer">
+                                            <span>
+                                                {categoryLabels[doc.category] ? t(categoryLabels[doc.category]) : doc.category}
+                                            </span>
+                                            <Link
+                                                href={`/${locale}/documents/${doc.slug}`}
+                                                className="transparency-download-cta"
+                                            >
+                                                <span>{t('viewDownload')}</span>
+                                                <span aria-hidden="true">→</span>
+                                            </Link>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                            {pagination && <Pagination links={pagination.links} />}
+                        </>
                     )}
 
                     {/* CIVIC PORTAL FOOTER */}

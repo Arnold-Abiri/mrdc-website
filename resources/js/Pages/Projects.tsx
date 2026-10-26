@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import type { TranslationKey } from '../localization';
+import { Pagination, type PaginatedData } from '../Components/public/Pagination';
 
 type Project = {
     slug: string;
@@ -23,13 +24,16 @@ const statusLabels: Record<string, { labelKey: TranslationKey; class: string }> 
 
 export default function Projects({
     projects,
+    pagination,
     filters,
 }: {
-    projects: Project[];
+    projects?: Project[];
+    pagination?: PaginatedData<Project>;
     filters: { status: string | null; type: string | null; department: string | null; ward: string | null };
 }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
+    const displayProjects = pagination ? pagination.data : (projects ?? []);
 
     return (
         <PublicLayout>
@@ -152,70 +156,73 @@ export default function Projects({
                     </form>
 
                     {/* PROJECTS GRID */}
-                    {projects.length === 0 ? (
+                    {displayProjects.length === 0 ? (
                         <div style={{ padding: '48px 24px', textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px dashed var(--color-border)' }}>
                             <p style={{ margin: 0, fontWeight: 600, color: '#475569' }}>
                                 {t('noProjectsMatch')}
                             </p>
                         </div>
                     ) : (
-                        <div className="dept-directory-grid">
-                            {projects.map((project) => {
-                                const statusConfig = statusLabels[project.project_status] ?? {
-                                    label: project.project_status,
-                                    class: 'project-status-planned',
-                                };
-                                const progress = project.progress_percent !== null ? project.progress_percent : 0;
-                                return (
-                                    <Link
-                                        key={project.slug}
-                                        href={`/${locale}/projects/${project.slug}`}
-                                        className="project-card-modern"
-                                    >
-                                        <div className="project-card-top">
-                                            <span className={`project-status-pill ${statusConfig.class}`}>
-                                                {t(statusConfig.labelKey)}
-                                            </span>
-                                            {project.location && (
-                                                <span className="project-card-location">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                                        <circle cx="12" cy="10" r="3" />
-                                                    </svg>
-                                                    <span>{project.location}</span>
+                        <>
+                            <div className="dept-directory-grid">
+                                {displayProjects.map((project) => {
+                                    const statusConfig = statusLabels[project.project_status] ?? {
+                                        labelKey: 'statusPlanned' as TranslationKey,
+                                        class: 'project-status-planned',
+                                    };
+                                    const progress = project.progress_percent !== null ? project.progress_percent : 0;
+                                    return (
+                                        <Link
+                                            key={project.slug}
+                                            href={`/${locale}/projects/${project.slug}`}
+                                            className="project-card-modern"
+                                        >
+                                            <div className="project-card-top">
+                                                <span className={`project-status-pill ${statusConfig.class}`}>
+                                                    {t(statusConfig.labelKey)}
                                                 </span>
-                                            )}
-                                        </div>
-
-                                        <h3 className="project-card-title">{project.title}</h3>
-
-                                        <p className="project-card-summary">
-                                            {project.summary ?? t('projSummaryFallback')}
-                                        </p>
-
-                                        {project.progress_percent !== null && (
-                                            <div className="project-progress-wrapper">
-                                                <div className="project-progress-labels">
-                                                    <span>{t('civilProgress')}</span>
-                                                    <span>{progress}%</span>
-                                                </div>
-                                                <div className="project-progress-bar-bg">
-                                                    <div
-                                                        className="project-progress-bar-fill"
-                                                        style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                                                    />
-                                                </div>
+                                                {project.location && (
+                                                    <span className="project-card-location">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                                            <circle cx="12" cy="10" r="3" />
+                                                        </svg>
+                                                        <span>{project.location}</span>
+                                                    </span>
+                                                )}
                                             </div>
-                                        )}
 
-                                        <div className="dept-card-footer">
-                                            <span>{t('viewTimeline')}</span>
-                                            <span aria-hidden="true">→</span>
-                                        </div>
-                                    </Link>
-                                );
-                            })}
-                        </div>
+                                            <h3 className="project-card-title">{project.title}</h3>
+
+                                            <p className="project-card-summary">
+                                                {project.summary ?? t('projSummaryFallback')}
+                                            </p>
+
+                                            {project.progress_percent !== null && (
+                                                <div className="project-progress-wrapper">
+                                                    <div className="project-progress-labels">
+                                                        <span>{t('civilProgress')}</span>
+                                                        <span>{progress}%</span>
+                                                    </div>
+                                                    <div className="project-progress-bar-bg">
+                                                        <div
+                                                            className="project-progress-bar-fill"
+                                                            style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="dept-card-footer">
+                                                <span>{t('viewTimeline')}</span>
+                                                <span aria-hidden="true">→</span>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                            {pagination && <Pagination links={pagination.links} />}
+                        </>
                     )}
 
                     {/* CIVIC PORTAL FOOTER */}

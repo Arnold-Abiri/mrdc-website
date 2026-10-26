@@ -22,16 +22,22 @@ class ProjectController extends Controller
         abort_unless($status === null || in_array($status, ['planned', 'ongoing', 'completed', 'on_hold', 'cancelled'], true), 422);
         abort_unless($type === null || in_array($type, ['project', 'programme'], true), 422);
 
-        $projects = CouncilProject::query()->with('translations')->public()
+        $paginated = CouncilProject::query()->with('translations')->public()
             ->when($status, fn ($query) => $query->where('project_status', $status))
             ->when($type, fn ($query) => $query->where('project_type', $type))
             ->when($departmentId, fn ($query) => $query->where('department_id', (int) $departmentId))
             ->when($wardId, fn ($query) => $query->whereHas('wards', fn ($wards) => $wards->where('wards.id', (int) $wardId)))
             ->orderBy('display_order')->orderBy('title')
-            ->get(['id', 'slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent'])
-            ->map(fn (CouncilProject $project): array => $project->toLocalizedArray(['slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent']));
+            ->paginate(12)
+            ->withQueryString();
 
-        return Inertia::render('Projects', ['projects' => $projects, 'filters' => ['status' => $status, 'type' => $type, 'department' => $departmentId, 'ward' => $wardId]]);
+        $paginated->through(fn (CouncilProject $project): array => $project->toLocalizedArray(['slug', 'title', 'project_type', 'project_status', 'location', 'summary', 'progress_percent']));
+
+        return Inertia::render('Projects', [
+            'projects' => $paginated->items(),
+            'pagination' => $paginated,
+            'filters' => ['status' => $status, 'type' => $type, 'department' => $departmentId, 'ward' => $wardId],
+        ]);
     }
 
     public function show(string $locale, string $slug): Response

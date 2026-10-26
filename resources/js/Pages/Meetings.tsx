@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { formatDate } from '../formatDate';
+import { Pagination, type PaginatedData } from '../Components/public/Pagination';
 
 type Meeting = {
     id: number;
@@ -40,18 +41,25 @@ function parseDateParts(dateStr: string | null): { month: string; day: string; y
     };
 }
 
-export default function Meetings({ meetings }: { meetings: Meeting[] }) {
+export default function Meetings({
+    meetings,
+    pagination,
+}: {
+    meetings?: Meeting[];
+    pagination?: PaginatedData<Meeting>;
+}) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
     const [tab, setTab] = useState<'all' | 'full' | 'committee'>('all');
+    const sourceMeetings = pagination ? pagination.data : (meetings ?? []);
 
     const filteredMeetings = useMemo(() => {
-        return meetings.filter((m) => {
+        return sourceMeetings.filter((m) => {
             if (tab === 'full') return m.meeting_type === 'full_council' || m.meeting_type === 'special';
             if (tab === 'committee') return m.meeting_type === 'committee' || m.meeting_type === 'public_hearing';
             return true;
         });
-    }, [meetings, tab]);
+    }, [sourceMeetings, tab]);
 
     return (
         <PublicLayout>
@@ -209,6 +217,8 @@ export default function Meetings({ meetings }: { meetings: Meeting[] }) {
                             })}
                         </div>
                     )}
+
+                    {pagination && <Pagination links={pagination.links} />}
 
                     {/* CIVIC PORTAL FOOTER */}
                     <div className="dept-portal-strip">

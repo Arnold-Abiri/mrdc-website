@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
 import { EmptyState, PageHero } from '../Components/public/PageHeader';
+import { Pagination, type PaginatedData } from '../Components/public/Pagination';
 
 type GalleryCard = {
     slug: string;
@@ -23,9 +24,16 @@ function formatDate(value: string | null, locale: string): string {
     return Number.isNaN(parsed.getTime()) ? '' : parsed.toLocaleDateString(locale === 'en' ? 'en-ZW' : `${locale}-ZW`, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
+export default function Galleries({
+    galleries,
+    pagination,
+}: {
+    galleries?: GalleryCard[];
+    pagination?: PaginatedData<GalleryCard>;
+}) {
     const t = usePublicTranslation();
     const locale = usePublicLocale();
+    const displayGalleries = pagination ? pagination.data : (galleries ?? []);
 
     return (
         <PublicLayout>
@@ -37,46 +45,49 @@ export default function Galleries({ galleries }: { galleries: GalleryCard[] }) {
                     <span className="about-accent-eyebrow">{t('galleries')}</span>
                     <h2 id="gallery-list">{t('fromDistrict')}</h2>
 
-                    {galleries.length === 0 ? (
+                    {displayGalleries.length === 0 ? (
                         <EmptyState title={t('noGalleries')} text={t('galleriesDesc')} />
                     ) : (
-                        <div className="gallery-albums">
-                            {galleries.map(gallery => {
-                                const meta = [formatDate(gallery.album_date, locale), gallery.location].filter(Boolean).join(' · ');
+                        <>
+                            <div className="gallery-albums">
+                                {displayGalleries.map(gallery => {
+                                    const meta = [formatDate(gallery.album_date, locale), gallery.location].filter(Boolean).join(' · ');
 
-                                return (
-                                    <article key={gallery.slug} className={gallery.is_featured ? 'gallery-album is-featured' : 'gallery-album'}>
-                                        <Link href={`/${locale}/galleries/${gallery.slug}`} className="gallery-album-media" aria-label={`${t('viewGallery')}: ${gallery.title}`}>
-                                            {gallery.cover_url ? (
-                                                <img src={gallery.cover_url} alt={gallery.cover_alt ?? gallery.title} loading="lazy" />
-                                            ) : (
-                                                <span className="gallery-album-placeholder" aria-hidden="true">
-                                                    <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                                                        <rect x="3" y="4" width="18" height="16" rx="2" />
-                                                        <circle cx="9" cy="10" r="2" />
-                                                        <path d="m21 16-5-5L5 20" />
-                                                    </svg>
+                                    return (
+                                        <article key={gallery.slug} className={gallery.is_featured ? 'gallery-album is-featured' : 'gallery-album'}>
+                                            <Link href={`/${locale}/galleries/${gallery.slug}`} className="gallery-album-media" aria-label={`${t('viewGallery')}: ${gallery.title}`}>
+                                                {gallery.cover_url ? (
+                                                    <img src={gallery.cover_url} alt={gallery.cover_alt ?? gallery.title} loading="lazy" />
+                                                ) : (
+                                                    <span className="gallery-album-placeholder" aria-hidden="true">
+                                                        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                                                            <rect x="3" y="4" width="18" height="16" rx="2" />
+                                                            <circle cx="9" cy="10" r="2" />
+                                                            <path d="m21 16-5-5L5 20" />
+                                                        </svg>
+                                                    </span>
+                                                )}
+                                                {gallery.is_featured && <span className="gallery-album-flag">{t('featured')}</span>}
+                                                <span className="gallery-album-count">
+                                                    <span>{gallery.image_count}</span> {gallery.image_count === 1 ? t('photo') : t('photos')}
                                                 </span>
-                                            )}
-                                            {gallery.is_featured && <span className="gallery-album-flag">{t('featured')}</span>}
-                                            <span className="gallery-album-count">
-                                                <span>{gallery.image_count}</span> {gallery.image_count === 1 ? t('photo') : t('photos')}
-                                            </span>
-                                        </Link>
-                                        <div className="gallery-album-body">
-                                            <h3>
-                                                <Link href={`/${locale}/galleries/${gallery.slug}`}>{gallery.title}</Link>
-                                            </h3>
-                                            {meta && <p className="gallery-album-meta">{meta}</p>}
-                                            {gallery.summary && <p className="gallery-album-summary">{gallery.summary}</p>}
-                                            <Link href={`/${locale}/galleries/${gallery.slug}`} className="about-economic-link">
-                                                {t('viewGallery')} <span aria-hidden="true">→</span>
                                             </Link>
-                                        </div>
-                                    </article>
-                                );
-                            })}
-                        </div>
+                                            <div className="gallery-album-body">
+                                                <h3>
+                                                    <Link href={`/${locale}/galleries/${gallery.slug}`}>{gallery.title}</Link>
+                                                </h3>
+                                                {meta && <p className="gallery-album-meta">{meta}</p>}
+                                                {gallery.summary && <p className="gallery-album-summary">{gallery.summary}</p>}
+                                                <Link href={`/${locale}/galleries/${gallery.slug}`} className="about-economic-link">
+                                                    {t('viewGallery')} <span aria-hidden="true">→</span>
+                                                </Link>
+                                            </div>
+                                        </article>
+                                    );
+                                })}
+                            </div>
+                            {pagination && <Pagination links={pagination.links} />}
+                        </>
                     )}
                 </div>
             </section>
