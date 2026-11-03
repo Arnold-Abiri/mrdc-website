@@ -33,7 +33,10 @@ class EditHomepageSlide extends EditRecord
             titleSuffix: ' slide image',
         );
 
-        return app(HomepageSlideManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(HomepageSlideManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -45,6 +48,7 @@ class EditHomepageSlide extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -53,6 +57,7 @@ class EditHomepageSlide extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'published_at']);
                 }),
             DeleteAction::make(),

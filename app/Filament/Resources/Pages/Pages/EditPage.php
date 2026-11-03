@@ -32,7 +32,7 @@ class EditPage extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(PageManager::class)->setVerification(auth()->user(), $this->pageRecord(), 'publishable');
-                    $this->pageRecord()->refresh();
+                    $this->record = $this->pageRecord()->refresh();
                     $this->fillForm();
                 }),
             Action::make('publish')
@@ -42,7 +42,7 @@ class EditPage extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'published');
-                    $this->pageRecord()->refresh();
+                    $this->record = $this->pageRecord()->refresh();
                     $this->fillForm();
                 }),
             Action::make('unpublish')
@@ -51,7 +51,7 @@ class EditPage extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'unpublished');
-                    $this->pageRecord()->refresh();
+                    $this->record = $this->pageRecord()->refresh();
                     $this->fillForm();
                 }),
             DeleteAction::make(),
@@ -67,7 +67,7 @@ class EditPage extends EditRecord
                 ->action(function (array $data): void {
                     $revision = PageRevision::query()->findOrFail($data['revision_id']);
                     app(PageManager::class)->restore(auth()->user(), $this->pageRecord(), $revision);
-                    $this->pageRecord()->refresh();
+                    $this->record = $this->pageRecord()->refresh();
                     $this->fillForm();
                 }),
         ];
@@ -88,6 +88,9 @@ class EditPage extends EditRecord
             throw new \LogicException('Invalid record.');
         }
 
-        return app(PageManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(PageManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 }

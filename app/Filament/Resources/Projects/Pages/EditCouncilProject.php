@@ -26,7 +26,10 @@ class EditCouncilProject extends EditRecord
 
         $data = $this->attachInlineFeaturedImage($data, $data['title'] ?? $record->title);
 
-        return app(CouncilProjectManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(CouncilProjectManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -39,6 +42,7 @@ class EditCouncilProject extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(CouncilProjectManager::class)->setVerification(auth()->user(), $this->councilProject(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -49,6 +53,7 @@ class EditCouncilProject extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(CouncilProjectManager::class)->setStatus(auth()->user(), $this->councilProject(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -57,6 +62,7 @@ class EditCouncilProject extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(CouncilProjectManager::class)->setStatus(auth()->user(), $this->councilProject(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             DeleteAction::make(),

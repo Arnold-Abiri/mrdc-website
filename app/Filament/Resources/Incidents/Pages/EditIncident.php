@@ -17,7 +17,10 @@ class EditIncident extends EditRecord
     {
         abort_unless($record instanceof Incident, 404);
 
-        return app(IncidentManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(IncidentManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array

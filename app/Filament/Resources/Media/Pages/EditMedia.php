@@ -22,7 +22,10 @@ class EditMedia extends EditRecord
     {
         abort_unless($record instanceof Media, 404);
 
-        return app(MediaManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(MediaManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array

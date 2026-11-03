@@ -33,7 +33,10 @@ class EditDocument extends EditRecord
             titleSuffix: ' document',
         );
 
-        return app(DocumentManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(DocumentManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -46,6 +49,7 @@ class EditDocument extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(DocumentManager::class)->setVerification(auth()->user(), $this->document(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -56,6 +60,7 @@ class EditDocument extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(DocumentManager::class)->setStatus(auth()->user(), $this->document(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -64,6 +69,7 @@ class EditDocument extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(DocumentManager::class)->setStatus(auth()->user(), $this->document(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             PreviewHelper::makePreviewAction(),

@@ -20,7 +20,10 @@ class EditDistrictStatistic extends EditRecord
     {
         abort_unless($record instanceof DistrictStatistic, 404);
 
-        return app(DistrictStatisticManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(DistrictStatisticManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array

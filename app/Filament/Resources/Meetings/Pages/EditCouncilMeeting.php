@@ -22,7 +22,10 @@ class EditCouncilMeeting extends EditRecord
     {
         abort_unless($record instanceof CouncilMeeting, 404);
 
-        return app(CouncilMeetingManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(CouncilMeetingManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -35,6 +38,7 @@ class EditCouncilMeeting extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(CouncilMeetingManager::class)->setVerification(auth()->user(), $this->councilMeeting(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -45,6 +49,7 @@ class EditCouncilMeeting extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(CouncilMeetingManager::class)->setStatus(auth()->user(), $this->councilMeeting(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -53,6 +58,7 @@ class EditCouncilMeeting extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(CouncilMeetingManager::class)->setStatus(auth()->user(), $this->councilMeeting(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             DeleteAction::make(),

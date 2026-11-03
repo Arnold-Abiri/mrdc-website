@@ -22,7 +22,10 @@ class EditGallery extends EditRecord
     {
         abort_unless($record instanceof Gallery, 404);
 
-        return app(GalleryManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(GalleryManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -35,6 +38,7 @@ class EditGallery extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(GalleryManager::class)->setVerification(auth()->user(), $this->gallery(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -45,6 +49,7 @@ class EditGallery extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(GalleryManager::class)->setStatus(auth()->user(), $this->gallery(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -53,6 +58,7 @@ class EditGallery extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(GalleryManager::class)->setStatus(auth()->user(), $this->gallery(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             DeleteAction::make(),

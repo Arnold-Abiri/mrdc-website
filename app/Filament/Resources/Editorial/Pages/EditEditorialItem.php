@@ -27,7 +27,10 @@ class EditEditorialItem extends EditRecord
 
         $data = $this->attachInlineFeaturedImage($data, $data['title'] ?? $record->title);
 
-        return app(EditorialManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(EditorialManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -40,6 +43,7 @@ class EditEditorialItem extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(EditorialManager::class)->setVerification(auth()->user(), $this->editorialItem(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -50,6 +54,7 @@ class EditEditorialItem extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(EditorialManager::class)->setStatus(auth()->user(), $this->editorialItem(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -58,6 +63,7 @@ class EditEditorialItem extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(EditorialManager::class)->setStatus(auth()->user(), $this->editorialItem(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             PreviewHelper::makePreviewAction(),

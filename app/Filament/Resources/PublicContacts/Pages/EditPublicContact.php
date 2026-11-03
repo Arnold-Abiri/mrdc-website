@@ -22,7 +22,10 @@ class EditPublicContact extends EditRecord
     {
         abort_unless($record instanceof PublicContact, 404);
 
-        return app(PublicContactManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(PublicContactManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -35,6 +38,7 @@ class EditPublicContact extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(PublicContactManager::class)->setVerification(auth()->user(), $this->publicContact(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -45,6 +49,7 @@ class EditPublicContact extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(PublicContactManager::class)->setStatus(auth()->user(), $this->publicContact(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -53,6 +58,7 @@ class EditPublicContact extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(PublicContactManager::class)->setStatus(auth()->user(), $this->publicContact(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             DeleteAction::make(),

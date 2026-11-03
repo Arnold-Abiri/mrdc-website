@@ -18,6 +18,9 @@ class EditUser extends EditRecord
             throw new \LogicException('Invalid record.');
         }
 
-        return app(UserManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(UserManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 }

@@ -21,6 +21,9 @@ class EditDepartment extends EditRecord
             throw new \LogicException('Invalid record.');
         }
 
-        return app(DepartmentManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(DepartmentManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 }

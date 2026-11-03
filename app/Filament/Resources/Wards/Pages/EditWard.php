@@ -22,7 +22,10 @@ class EditWard extends EditRecord
     {
         abort_unless($record instanceof Ward, 404);
 
-        return app(WardManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(WardManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -35,6 +38,7 @@ class EditWard extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(WardManager::class)->setVerification(auth()->user(), $this->ward(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -45,6 +49,7 @@ class EditWard extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(WardManager::class)->setStatus(auth()->user(), $this->ward(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -53,6 +58,7 @@ class EditWard extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(WardManager::class)->setStatus(auth()->user(), $this->ward(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             DeleteAction::make(),

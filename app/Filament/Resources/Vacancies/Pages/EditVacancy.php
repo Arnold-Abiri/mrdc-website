@@ -23,7 +23,10 @@ class EditVacancy extends EditRecord
     {
         abort_unless($record instanceof Vacancy, 404);
 
-        return app(VacancyManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(VacancyManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -36,6 +39,7 @@ class EditVacancy extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(VacancyManager::class)->setVerification(auth()->user(), $this->vacancy(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -46,6 +50,7 @@ class EditVacancy extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(VacancyManager::class)->setStatus(auth()->user(), $this->vacancy(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -54,6 +59,7 @@ class EditVacancy extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(VacancyManager::class)->setStatus(auth()->user(), $this->vacancy(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             PreviewHelper::makePreviewAction(),

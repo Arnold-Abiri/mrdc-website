@@ -22,7 +22,10 @@ class EditProjectUpdate extends EditRecord
     {
         abort_unless($record instanceof ProjectUpdate, 404);
 
-        return app(ProjectUpdateManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(ProjectUpdateManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -34,6 +37,7 @@ class EditProjectUpdate extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(ProjectUpdateManager::class)->setStatus(auth()->user(), $this->projectUpdate(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -42,6 +46,7 @@ class EditProjectUpdate extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(ProjectUpdateManager::class)->setStatus(auth()->user(), $this->projectUpdate(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'published_at']);
                 }),
             DeleteAction::make(),

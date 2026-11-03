@@ -22,7 +22,10 @@ class EditInvestmentOpportunity extends EditRecord
     {
         abort_unless($record instanceof InvestmentOpportunity, 404);
 
-        return app(InvestmentManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(InvestmentManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -35,6 +38,7 @@ class EditInvestmentOpportunity extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(InvestmentManager::class)->setVerification(auth()->user(), $this->investmentOpportunity(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -45,6 +49,7 @@ class EditInvestmentOpportunity extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(InvestmentManager::class)->setStatus(auth()->user(), $this->investmentOpportunity(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -53,6 +58,7 @@ class EditInvestmentOpportunity extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(InvestmentManager::class)->setStatus(auth()->user(), $this->investmentOpportunity(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             DeleteAction::make(),

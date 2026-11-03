@@ -34,7 +34,10 @@ class EditOfficial extends EditRecord
             titleSuffix: ' portrait',
         );
 
-        return app(OfficialManager::class)->update(auth()->user(), $record, $data);
+        $updatedOfficial = app(OfficialManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedOfficial->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -47,8 +50,9 @@ class EditOfficial extends EditRecord
                 ->visible(fn (): bool => $this->official()->verification_status !== 'publishable')
                 ->requiresConfirmation()
                 ->action(function (): void {
+                    $this->refreshOfficial();
                     app(OfficialManager::class)->setVerification(auth()->user(), $this->official(), 'publishable');
-                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                    $this->refreshOfficial();
                 }),
             Action::make('publish')
                 ->authorize(fn (): bool => Gate::allows('publish', $this->record))
@@ -58,7 +62,7 @@ class EditOfficial extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(OfficialManager::class)->setStatus(auth()->user(), $this->official(), 'published');
-                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                    $this->refreshOfficial();
                 }),
             Action::make('unpublish')
                 ->authorize(fn (): bool => Gate::allows('publish', $this->record))
@@ -66,7 +70,7 @@ class EditOfficial extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(OfficialManager::class)->setStatus(auth()->user(), $this->official(), 'unpublished');
-                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                    $this->refreshOfficial();
                 }),
             DeleteAction::make(),
         ];
@@ -77,5 +81,11 @@ class EditOfficial extends EditRecord
         abort_unless($this->record instanceof Official, 404);
 
         return $this->record;
+    }
+
+    private function refreshOfficial(): void
+    {
+        $this->record = $this->official()->refresh();
+        $this->refreshFormData(['status', 'verification_status', 'published_at']);
     }
 }

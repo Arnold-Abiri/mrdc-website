@@ -23,7 +23,10 @@ class EditTender extends EditRecord
     {
         abort_unless($record instanceof Tender, 404);
 
-        return app(TenderManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(TenderManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -36,6 +39,7 @@ class EditTender extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(TenderManager::class)->setVerification(auth()->user(), $this->tender(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -46,6 +50,7 @@ class EditTender extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(TenderManager::class)->setStatus(auth()->user(), $this->tender(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -54,6 +59,7 @@ class EditTender extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(TenderManager::class)->setStatus(auth()->user(), $this->tender(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             PreviewHelper::makePreviewAction(),

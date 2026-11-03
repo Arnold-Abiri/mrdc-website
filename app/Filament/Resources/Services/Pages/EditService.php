@@ -23,7 +23,10 @@ class EditService extends EditRecord
     {
         abort_unless($record instanceof Service, 404);
 
-        return app(ServiceManager::class)->update(auth()->user(), $record, $data);
+        $updatedRecord = app(ServiceManager::class)->update(auth()->user(), $record, $data);
+        $this->record = $updatedRecord->refresh();
+
+        return $this->record;
     }
 
     protected function getHeaderActions(): array
@@ -36,6 +39,7 @@ class EditService extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(ServiceManager::class)->setVerification(auth()->user(), $this->service(), 'publishable');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('publish')
@@ -46,6 +50,7 @@ class EditService extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(ServiceManager::class)->setStatus(auth()->user(), $this->service(), 'published');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             Action::make('unpublish')
@@ -54,6 +59,7 @@ class EditService extends EditRecord
                 ->requiresConfirmation()
                 ->action(function (): void {
                     app(ServiceManager::class)->setStatus(auth()->user(), $this->service(), 'unpublished');
+                    $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
             PreviewHelper::makePreviewAction(),
