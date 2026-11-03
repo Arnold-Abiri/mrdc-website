@@ -22,6 +22,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -30,9 +31,11 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class DocumentResource extends Resource
 {
@@ -62,6 +65,7 @@ class DocumentResource extends Resource
                 DatePicker::make('reference_date'),
             ])->columns(2),
             Section::make('Document File')->description('Upload a PDF directly, or pick one already in the library.')->schema([
+                Placeholder::make('current_document')->label('Current document')->content(fn (?Document $record): HtmlString|string => $record?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media->id)).'" target="_blank" rel="noopener">'.e($record->media->original_filename).'</a>') : 'No document selected.')->html()->visible(fn (?Document $record): bool => $record !== null),
                 FileUpload::make('document_file_upload')
                     ->label('Upload PDF document')
                     ->storeFiles(false)
@@ -82,7 +86,10 @@ class DocumentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('title')->searchable(),
+            ViewColumn::make('title')
+                ->label('Title')
+                ->searchable()
+                ->view('filament.tables.columns.document-title'),
             TextColumn::make('category')->badge(),
             TextColumn::make('file_size')
                 ->label('Size')

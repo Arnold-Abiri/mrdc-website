@@ -13,6 +13,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class UpdatesRelationManager extends RelationManager
 {
@@ -49,6 +51,13 @@ class UpdatesRelationManager extends RelationManager
                     ->numeric()
                     ->default(0)
                     ->required(),
+                Placeholder::make('current_update_image')
+                    ->label('Current image')
+                    ->content(fn (?ProjectUpdate $record): HtmlString|string => $record?->media_id
+                        ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->media_id)).'" alt="Current project update image" style="max-height: 180px; max-width: 100%; object-fit: contain;">')
+                        : 'No image selected.')
+                    ->html()
+                    ->visible(fn (?ProjectUpdate $record): bool => $record !== null),
                 Select::make('media_id')
                     ->relationship('media', 'title')
                     ->searchable()

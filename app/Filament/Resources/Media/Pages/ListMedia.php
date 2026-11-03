@@ -24,14 +24,14 @@ class ListMedia extends ListRecords
             'all' => Tab::make('All')
                 ->badge(fn (): int => static::getResource()::getEloquentQuery()->count())
                 ->badgeColor('gray'),
-            'draft' => Tab::make('Draft')
-                ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('status', 'draft'))
-                ->badge(fn (): int => static::getResource()::getEloquentQuery()->where('status', 'draft')->count())
-                ->badgeColor('gray'),
-            'published' => Tab::make('Published')
-                ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('status', 'published'))
-                ->badge(fn (): int => static::getResource()::getEloquentQuery()->where('status', 'published')->count())
+            'active' => Tab::make('Active')
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('status', 'active'))
+                ->badge(fn (): int => static::getResource()::getEloquentQuery()->where('status', 'active')->count())
                 ->badgeColor('success'),
+            'archived' => Tab::make('Archived')
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('status', 'archived'))
+                ->badge(fn (): int => static::getResource()::getEloquentQuery()->where('status', 'archived')->count())
+                ->badgeColor('gray'),
         ];
     }
 }

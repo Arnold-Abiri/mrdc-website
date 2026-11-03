@@ -14,7 +14,7 @@ class Official extends Model implements TranslatableContent
 
     public const TRANSLATABLE_FIELDS = ['title', 'biography'];
 
-    protected $fillable = ['name', 'title', 'slug', 'biography', 'photo_media_id', 'department_id', 'is_department_head', 'display_order'];
+    protected $fillable = ['name', 'title', 'category', 'slug', 'biography', 'photo_media_id', 'department_id', 'is_department_head', 'display_order'];
 
     protected function casts(): array
     {

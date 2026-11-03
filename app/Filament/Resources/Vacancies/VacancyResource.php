@@ -21,6 +21,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -32,6 +33,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class VacancyResource extends Resource
 {
@@ -62,6 +64,7 @@ class VacancyResource extends Resource
             Textarea::make('responsibilities')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'), Textarea::make('requirements')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'),
             DatePicker::make('opens_at'), DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site. Expired vacancies must not be republished as open.'),
             Textarea::make('application_instructions')->maxLength(5000),
+            Placeholder::make('current_vacancy_document')->label('Current vacancy document')->content(fn (?Vacancy $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No vacancy document selected.')->html()->visible(fn (?Vacancy $record): bool => $record !== null),
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Downloadable vacancy advert.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),

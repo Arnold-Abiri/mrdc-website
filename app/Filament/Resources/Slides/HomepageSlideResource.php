@@ -17,6 +17,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -29,6 +30,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class HomepageSlideResource extends Resource
 {
@@ -59,6 +61,7 @@ class HomepageSlideResource extends Resource
                 TextInput::make('cta_url')->maxLength(2048)->helperText('Internal path only, e.g. /services.'),
             ])->columns(2),
             Section::make('Hero Artwork / Background')->description('Upload a slide background image directly, or select one from the media library.')->schema([
+                Placeholder::make('current_slide_image')->label('Current image')->content(fn (?HomepageSlide $record): HtmlString|string => $record?->media_id ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->media_id)).'" alt="Current homepage slide image" style="max-height: 180px; max-width: 100%; object-fit: contain;">') : 'No image selected.')->html()->visible(fn (?HomepageSlide $record): bool => $record !== null),
                 FileUpload::make('slide_image_upload')
                     ->label('Upload slide image')
                     ->image()
@@ -87,7 +90,7 @@ class HomepageSlideResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            ImageColumn::make('media.storage_path')->label('Image')->disk(config('cms.media_disk'))->square(),
+            ImageColumn::make('media.storage_path')->label('Image')->disk(config('cms.media_disk'))->circular(),
             TextColumn::make('headline')->searchable()->weight('semibold'),
             TextColumn::make('status')->badge(),
             TextColumn::make('is_active')->badge(),

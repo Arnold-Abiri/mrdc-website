@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MediaPreviewController;
 use App\Http\Controllers\AuditExportController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MonthlyMetricsExportController;
@@ -117,6 +118,11 @@ Route::middleware(['noindex'])->prefix('preview')->group(function () {
 Route::middleware('auth')->prefix('admin/reports')->group(function () {
     Route::get('/audit-export', AuditExportController::class)->name('admin.audit-export');
     Route::get('/monthly-export', MonthlyMetricsExportController::class)->name('admin.monthly-export');
+});
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::get('/media/{media}/preview', [MediaPreviewController::class, 'page'])->whereNumber('media')->name('admin.media.preview');
+    Route::get('/media/{media}/file', [MediaPreviewController::class, 'show'])->whereNumber('media')->name('admin.media.file');
 });
 
 Route::get('/{legacy}', [LegacyRedirectController::class, 'show'])->where('legacy', '(services|documents|pages|news|notices|wards|officials|departments|tenders|vacancies|investment|projects|meetings|tourism|transparency|rates|contact|feedback|search|coming-soon|about|downloads)(/.*)?')->name('legacy-redirect');

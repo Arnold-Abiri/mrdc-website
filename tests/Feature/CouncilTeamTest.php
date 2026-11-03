@@ -24,7 +24,14 @@ test('reference team portraits are published as editable officials without dupli
 
     $official = Official::query()->where('slug', 'b-tasarira')->firstOrFail();
     expect($official->name)->toBe('B. Tasarira');
+    expect($official->category)->toBe('executive');
     expect($official->photo_media_id)->not->toBeNull();
+
+    $audit = Official::query()->where('slug', 't-k-hambaguzha')->firstOrFail();
+    expect($audit->category)->toBe('sectional_head');
+
+    $procurement = Official::query()->where('slug', 'd-t-mutangadura')->firstOrFail();
+    expect($procurement->category)->toBe('sectional_head');
 
     $this->get('/en/officials')->assertOk()->assertSee('B. Tasarira')->assertSee('D. T. Mutangadura');
     $this->get('/en/officials/b-tasarira')->assertOk()->assertSee('Chief Executive Officer');

@@ -7,9 +7,11 @@ use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Slides\HomepageSlideResource;
 use App\Models\HomepageSlide;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class EditHomepageSlide extends EditRecord
 {
@@ -37,7 +39,30 @@ class EditHomepageSlide extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('publish')
+                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                ->visible(fn (): bool => $this->slide()->status !== 'published')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'published');
+                    $this->refreshFormData(['status', 'published_at']);
+                }),
+            Action::make('unpublish')
+                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                ->visible(fn (): bool => $this->slide()->status === 'published')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'unpublished');
+                    $this->refreshFormData(['status', 'published_at']);
+                }),
             DeleteAction::make(),
         ];
+    }
+
+    private function slide(): HomepageSlide
+    {
+        abort_unless($this->record instanceof HomepageSlide, 404);
+
+        return $this->record;
     }
 }

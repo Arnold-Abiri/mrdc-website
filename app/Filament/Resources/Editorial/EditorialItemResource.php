@@ -22,6 +22,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -34,6 +35,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class EditorialItemResource extends Resource
 {
@@ -66,6 +68,7 @@ class EditorialItemResource extends Resource
                 TextInput::make('category')->maxLength(60), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             ])->columns(2),
             Section::make('Cover image')->description('Upload here, or pick an existing library image below. Uploading replaces the library pick.')->schema([
+                Placeholder::make('current_featured_image')->label('Current image')->content(fn (?EditorialItem $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->featured_media_id)).'" alt="Current cover image" style="max-height: 180px; max-width: 100%; object-fit: contain;">') : 'No image selected.')->html()->visible(fn (?EditorialItem $record): bool => $record !== null),
                 FileUpload::make('featured_image_upload')->label('Upload cover image')->image()->storeFiles(false)->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->maxSize(config('cms.max_upload_kb'))->helperText('JPEG, PNG or WebP. Saved to the Media library automatically.'),
                 TextInput::make('featured_image_alt')->label('Image alt text')->maxLength(255)->helperText('Short description for screen readers.'),
                 Textarea::make('featured_image_caption')->label('Image caption')->maxLength(2000)->helperText('Visible credit line under the image.'),

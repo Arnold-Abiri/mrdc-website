@@ -18,6 +18,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -29,6 +30,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class InvestmentOpportunityResource extends Resource
 {
@@ -57,6 +59,7 @@ class InvestmentOpportunityResource extends Resource
             MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not state financial returns.'),
             TextInput::make('location')->maxLength(255),
             Select::make('opportunity_status')->options(['open' => 'Open', 'prospecting' => 'Prospecting', 'committed' => 'Committed', 'closed' => 'Closed'])->required(),
+            Placeholder::make('current_opportunity_document')->label('Current document')->content(fn (?InvestmentOpportunity $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No document selected.')->html()->visible(fn (?InvestmentOpportunity $record): bool => $record !== null),
             Select::make('document_id')->relationship('document', 'title')->searchable(),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),

@@ -19,6 +19,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -27,10 +28,12 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class GalleryResource extends Resource
 {
@@ -64,6 +67,13 @@ class GalleryResource extends Resource
             Textarea::make('description')->maxLength(20000)->helperText('Plain text only; HTML is not rendered.'),
             TextInput::make('location')->maxLength(255),
             DatePicker::make('album_date')->label('Date photographed'),
+            Placeholder::make('current_cover_preview')
+                ->label('Current cover image')
+                ->content(fn (?Gallery $record): HtmlString|string => $record?->cover_media_id
+                    ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->cover_media_id)).'" alt="Current gallery cover" style="max-height: 180px; max-width: 100%; object-fit: contain;">')
+                    : 'No cover image selected.')
+                ->html()
+                ->visible(fn (?Gallery $record): bool => $record !== null),
             Select::make('cover_media_id')
                 ->label('Cover image')
                 ->searchable()
@@ -73,6 +83,10 @@ class GalleryResource extends Resource
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             Repeater::make('media')
                 ->label('Album images')
+                ->helperText(fn (?Gallery $record): string => $record instanceof Gallery && $record->media->isNotEmpty()
+                    ? $record->media->map(fn (Media $media): string => '<a href="'.e(route('admin.media.preview', $media->id)).'" target="_blank" rel="noopener">'.e($media->title).'</a>')->implode(' · ')
+                    : 'No album images selected.')
+                ->hintIcon('heroicon-o-arrow-top-right-on-square')
                 ->schema([
                     Select::make('media_id')
                         ->label('Image')
@@ -91,6 +105,7 @@ class GalleryResource extends Resource
                         'caption' => $media->pivot->caption,
                     ])->all());
                 })
+                ->itemLabel(fn (array $state): ?string => isset($state['media_id']) ? Media::query()->whereKey($state['media_id'])->value('title') : null)
                 ->reorderable()
                 ->addActionLabel('Add image')
                 ->defaultItems(1)
@@ -106,7 +121,10 @@ class GalleryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('title')->searchable()->weight('semibold'),
+            ViewColumn::make('cover_preview')
+                ->label('Cover')
+                ->view('filament.tables.columns.gallery-cover'),
+            TextColumn::make('title')->searchable()->limit(30)->tooltip(fn (Gallery $record): string => $record->title)->weight('semibold'),
             TextColumn::make('media_count')->label('Images')->badge(),
             TextColumn::make('album_date')->label('Date')->date(),
             TextColumn::make('location')->searchable()->toggleable(isToggledHiddenByDefault: true),

@@ -21,6 +21,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -33,6 +34,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class CouncilProjectResource extends Resource
 {
@@ -72,6 +74,7 @@ class CouncilProjectResource extends Resource
                 Textarea::make('contact_instructions')->maxLength(5000)->columnSpanFull(),
             ])->columns(2),
             Section::make('Cover Image')->description('Upload a project image directly, or pick one from the library.')->schema([
+                Placeholder::make('current_cover_image')->label('Current image')->content(fn (?CouncilProject $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->featured_media_id)).'" alt="Current project image" style="max-height: 180px; max-width: 100%; object-fit: contain;">') : 'No image selected.')->html()->visible(fn (?CouncilProject $record): bool => $record !== null),
                 FileUpload::make('featured_image_upload')
                     ->label('Upload cover image')
                     ->image()

@@ -7,6 +7,7 @@ type OfficialSummary = {
     slug: string;
     name: string;
     title: string;
+    category?: string | null;
     biography: string | null;
     department: string | null;
     photo_url: string | null;
@@ -15,16 +16,24 @@ type OfficialSummary = {
 export default function Officials({ officials }: { officials: OfficialSummary[] }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
-    const [filter, setFilter] = useState<'all' | 'executive' | 'secretariat'>('all');
+    const [filter, setFilter] = useState<'all' | 'executive' | 'sectional'>('all');
     const [search, setSearch] = useState('');
+
+    const isChairperson = (o: OfficialSummary) => o.title.toLowerCase().includes('chairperson');
+    const isSectionalHead = (o: OfficialSummary) => {
+        if (o.category === 'sectional_head') return true;
+        if (o.category === 'executive') return false;
+        const title = o.title.toLowerCase();
+        return title.includes('internal audit') || title.includes('procurement');
+    };
+    const isExecutiveLeader = (o: OfficialSummary) => !isSectionalHead(o);
 
     const filteredOfficials = useMemo(() => {
         const q = search.trim().toLowerCase();
         return officials.filter((o) => {
             const matchesQuery = !q || `${o.name} ${o.title} ${o.department ?? ''} ${o.biography ?? ''}`.toLowerCase().includes(q);
-            const isExecutive = o.title.toLowerCase().includes('chairperson') || o.title.toLowerCase().includes('chief executive') || o.title.toLowerCase().includes('secretary');
-            if (filter === 'executive') return matchesQuery && isExecutive;
-            if (filter === 'secretariat') return matchesQuery && !isExecutive;
+            if (filter === 'executive') return matchesQuery && isExecutiveLeader(o);
+            if (filter === 'sectional') return matchesQuery && isSectionalHead(o);
             return matchesQuery;
         });
     }, [officials, filter, search]);
@@ -112,10 +121,10 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                             </button>
                             <button
                                 type="button"
-                                className={`dept-filter-btn ${filter === 'secretariat' ? 'active' : ''}`}
-                                onClick={() => setFilter('secretariat')}
+                                className={`dept-filter-btn ${filter === 'sectional' ? 'active' : ''}`}
+                                onClick={() => setFilter('sectional')}
                             >
-                                {t('directorateHeads')}
+                                {t('sectionalHeads')}
                             </button>
                         </div>
 
@@ -155,7 +164,7 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                         <>
                             {/* 1. APEX POLITICAL HEAD SHOWCASE (COUNCIL CHAIRPERSON) */}
                             {(() => {
-                                const chairperson = filteredOfficials.find(o => o.title.toLowerCase().includes('chairperson'));
+                                const chairperson = filteredOfficials.find(isChairperson);
                                 if (!chairperson) return null;
                                 return (
                                     <div className="officials-apex-showcase">
@@ -207,10 +216,10 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                 );
                             })()}
 
-                            {/* 2. EXECUTIVE ADMINISTRATION & SECRETARIAT TIER */}
+                            {/* 2. EXECUTIVE ADMINISTRATION & MANAGEMENT TIER */}
                             {(() => {
-                                const subordinates = filteredOfficials.filter(o => !o.title.toLowerCase().includes('chairperson'));
-                                if (subordinates.length === 0) return null;
+                                const executives = filteredOfficials.filter(o => !isChairperson(o) && !isSectionalHead(o));
+                                if (executives.length === 0) return null;
                                 return (
                                     <div>
                                         <div className="officials-tier-header">
@@ -223,7 +232,64 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                         </div>
 
                                         <div className="officials-directory-grid">
-                                            {subordinates.map((official) => (
+                                            {executives.map((official) => {
+                                                const badgeText = official.department ?? t('execOfficeFallback');
+                                                return (
+                                                    <article key={official.slug} className="official-profile-card">
+                                                        <div className="official-portrait-wrapper">
+                                                            {official.photo_url ? (
+                                                                <img
+                                                                    src={official.photo_url}
+                                                                    alt={`${t('portraitOf')} ${official.name}`}
+                                                                    loading="lazy"
+                                                                />
+                                                            ) : (
+                                                                <img
+                                                                    src="/images/council-crest-light.webp"
+                                                                    alt={t('crestFallbackAlt')}
+                                                                    className="official-crest-fallback"
+                                                                />
+                                                            )}
+                                                            <span className="official-badge-role">
+                                                                {badgeText}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="official-profile-body">
+                                                            <h3 className="official-profile-name">{official.name}</h3>
+                                                            <div className="official-profile-title">{official.title}</div>
+                                                            {official.department && (
+                                                                <div className="official-profile-dept">{official.department}</div>
+                                                            )}
+                                                            {official.biography && (
+                                                                <p className="official-profile-bio">{official.biography}</p>
+                                                            )}
+                                                        </div>
+                                                    </article>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
+                            {/* 3. SECTIONAL HEADS & UNITS TIER */}
+                            {(() => {
+                                const sectionalHeads = filteredOfficials.filter(isSectionalHead);
+                                if (sectionalHeads.length === 0) return null;
+                                return (
+                                    <div style={{ marginTop: '36px' }}>
+                                        <div className="officials-tier-header">
+                                            <h3 className="officials-tier-title">
+                                                {t('sectionalHeadsSection')}
+                                            </h3>
+                                            <span className="officials-tier-badge">
+                                                {t('sectionalHeadsLedBy')}
+                                            </span>
+                                        </div>
+
+                                        <div className="officials-directory-grid">
+                                            {sectionalHeads.map((official) => (
                                                 <article key={official.slug} className="official-profile-card">
                                                     <div className="official-portrait-wrapper">
                                                         {official.photo_url ? (
@@ -239,8 +305,8 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                                                 className="official-crest-fallback"
                                                             />
                                                         )}
-                                                        <span className="official-badge-role">
-                                                            {official.department ?? t('execOfficeFallback')}
+                                                        <span className="official-badge-role badge-sectional-head">
+                                                            {official.department ?? t('sectionalHead')}
                                                         </span>
                                                     </div>
 

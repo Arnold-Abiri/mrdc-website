@@ -61,9 +61,18 @@ class DistrictStatisticResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('label')->searchable(), TextColumn::make('value'), TextColumn::make('unit'), TextColumn::make('is_active')->badge()])->recordActions([DeleteAction::make(),
+        return $table->columns([TextColumn::make('label')->searchable(), TextColumn::make('value'), TextColumn::make('unit'), TextColumn::make('is_active')->badge()->formatStateUsing(fn (bool|int $state): string => $state ? 'Active' : 'Inactive')])->recordActions([DeleteAction::make(),
             EditAction::make(),
-            Action::make('toggle')->requiresConfirmation()->action(fn (DistrictStatistic $record) => app(DistrictStatisticManager::class)->update(auth()->user(), $record, [...$record->only(['label', 'value', 'unit', 'icon', 'source_note', 'display_order']), 'is_active' => ! $record->is_active])),
+            Action::make('deactivate')
+                ->label('Deactivate')
+                ->visible(fn (DistrictStatistic $record): bool => $record->is_active)
+                ->requiresConfirmation()
+                ->action(fn (DistrictStatistic $record) => app(DistrictStatisticManager::class)->update(auth()->user(), $record, [...$record->only(['label', 'value', 'unit', 'icon', 'source_note', 'display_order']), 'is_active' => false])),
+            Action::make('activate')
+                ->label('Activate')
+                ->visible(fn (DistrictStatistic $record): bool => ! $record->is_active)
+                ->requiresConfirmation()
+                ->action(fn (DistrictStatistic $record) => app(DistrictStatisticManager::class)->update(auth()->user(), $record, [...$record->only(['label', 'value', 'unit', 'icon', 'source_note', 'display_order']), 'is_active' => true])),
         ])
             ->toolbarActions([
                 BulkActionGroup::make([

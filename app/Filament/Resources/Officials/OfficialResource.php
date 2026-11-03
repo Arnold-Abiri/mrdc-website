@@ -18,6 +18,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -31,6 +32,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class OfficialResource extends Resource
 {
@@ -54,12 +56,28 @@ class OfficialResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(SlugField::autoFillHook()),
                 TextInput::make('title')->label('Position / Role Title')->required()->maxLength(255),
+                Select::make('category')
+                    ->label('Leadership Tier')
+                    ->options([
+                        'executive' => 'Executive Office',
+                        'sectional_head' => 'Sectional Head',
+                    ])
+                    ->required()
+                    ->default('executive')
+                    ->helperText('Classifies the official as Executive Office or Sectional Head in council rosters.'),
                 Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
                 Select::make('is_department_head')->options([1 => 'Yes', 0 => 'No'])->required()->default(0)->helperText('Mark the head of the department. Shown on the public department page.'),
                 TextInput::make('display_order')->numeric()->default(0)->required(),
                 Textarea::make('biography')->maxLength(10000)->columnSpanFull(),
             ])->columns(2),
             Section::make('Official Portrait')->description('Upload an official portrait image directly, or pick one from the library.')->schema([
+                Placeholder::make('current_photo')
+                    ->label('Current photo')
+                    ->content(fn (?Official $record): HtmlString|string => $record?->photo_media_id
+                        ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->photo_media_id)).'" alt="Current official portrait" style="max-height: 180px; max-width: 100%; object-fit: contain;">')
+                        : 'No photo selected.')
+                    ->html()
+                    ->visible(fn (?Official $record): bool => $record !== null),
                 FileUpload::make('photo_upload')
                     ->label('Upload portrait photo')
                     ->image()
@@ -88,10 +106,27 @@ class OfficialResource extends Resource
             ImageColumn::make('photo.storage_path')->label('Photo')->disk(config('cms.media_disk'))->circular(),
             TextColumn::make('name')->searchable()->weight('semibold'),
             TextColumn::make('title')->searchable(),
+            TextColumn::make('category')
+                ->label('Tier')
+                ->badge()
+                ->formatStateUsing(fn (?string $state): string => match ($state) {
+                    'sectional_head' => 'Sectional Head',
+                    default => 'Executive Office',
+                })
+                ->color(fn (?string $state): string => match ($state) {
+                    'sectional_head' => 'warning',
+                    default => 'success',
+                }),
             TextColumn::make('department.name'),
             TextColumn::make('status')->badge(),
             TextColumn::make('verification_status')->badge(),
-        ])->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])->recordActions([DeleteAction::make(),
+        ])->filters([
+            SelectFilter::make('category')->options([
+                'executive' => 'Executive Office',
+                'sectional_head' => 'Sectional Head',
+            ]),
+            SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived']),
+        ])->recordActions([DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (Official $record): bool => Gate::allows('verify', $record))->visible(fn (Official $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Official $record): bool => Gate::allows('publish', $record))->visible(fn (Official $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setStatus(auth()->user(), $record, 'published')),

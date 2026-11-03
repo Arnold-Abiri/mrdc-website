@@ -17,6 +17,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -24,9 +25,11 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class MediaResource extends Resource
 {
@@ -43,6 +46,15 @@ class MediaResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
+            Placeholder::make('current_media_preview')
+                ->label('Current file')
+                ->content(fn (?Media $record): HtmlString|string => $record === null
+                    ? 'No file selected.'
+                    : (str_starts_with($record->mime_type, 'image/')
+                        ? new HtmlString('<img src="'.e(route('admin.media.file', $record->id)).'" alt="'.e($record->title).'" style="max-height: 220px; max-width: 100%; object-fit: contain;">')
+                        : new HtmlString('<a href="'.e(route('admin.media.preview', $record->id)).'" target="_blank" rel="noopener">'.e($record->original_filename).'</a>')))
+                ->html()
+                ->visible(fn (?Media $record): bool => $record !== null),
             FileUpload::make('file')->visibleOn('create')->required()->storeFiles(false)->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])->maxSize(config('cms.max_upload_kb')),
             TextInput::make('title')->required()->maxLength(255),
             TextInput::make('alt_text')->maxLength(255),
@@ -55,7 +67,11 @@ class MediaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('title')->searchable(), TextColumn::make('mime_type'), TextColumn::make('size'),
+            ViewColumn::make('preview')
+                ->label('File')
+                ->view('filament.tables.columns.media-preview'),
+            TextColumn::make('title')->searchable()->limit(30)->tooltip(fn (Media $record): string => $record->title), TextColumn::make('mime_type'), TextColumn::make('size'),
+            TextColumn::make('original_filename')->label('Filename')->searchable()->toggleable(),
             TextColumn::make('status')->badge(), TextColumn::make('created_at')->dateTime(),
             TextColumn::make('alt_text')->label('Alt text')->state(fn (Media $record): string => str_starts_with($record->mime_type, 'image/') ? ($record->alt_text !== null && trim($record->alt_text) !== '' ? 'Provided' : 'Missing') : 'N/A')->badge()->color(fn (string $state): string => $state === 'Missing' ? 'danger' : ($state === 'Provided' ? 'success' : 'gray')),
         ])->recordActions([DeleteAction::make(),

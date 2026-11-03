@@ -13,6 +13,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class EditPage extends EditRecord
 {
@@ -24,6 +25,35 @@ class EditPage extends EditRecord
     {
         return [
             PreviewHelper::makePreviewAction(),
+            Action::make('markPublishable')
+                ->label('Mark publishable')
+                ->authorize(fn (): bool => Gate::allows('verify', $this->record))
+                ->visible(fn (): bool => $this->pageRecord()->verification_status !== 'publishable')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(PageManager::class)->setVerification(auth()->user(), $this->pageRecord(), 'publishable');
+                    $this->pageRecord()->refresh();
+                    $this->fillForm();
+                }),
+            Action::make('publish')
+                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                ->visible(fn (): bool => $this->pageRecord()->status !== 'published')
+                ->disabled(fn (): bool => app()->environment('production') && $this->pageRecord()->verification_status !== 'publishable')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'published');
+                    $this->pageRecord()->refresh();
+                    $this->fillForm();
+                }),
+            Action::make('unpublish')
+                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                ->visible(fn (): bool => $this->pageRecord()->status === 'published')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'unpublished');
+                    $this->pageRecord()->refresh();
+                    $this->fillForm();
+                }),
             DeleteAction::make(),
             Action::make('restoreRevision')
                 ->label('Restore revision')

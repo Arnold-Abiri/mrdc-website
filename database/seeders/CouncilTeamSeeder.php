@@ -13,20 +13,20 @@ class CouncilTeamSeeder extends Seeder
     public function run(): void
     {
         $team = [
-            ['b-tasarira', 'B. Tasarira', 'Chief Executive Officer', 'btasarira.png'],
-            ['k-k-chamisa', 'K. K. Chamisa', 'Townboard Administrator', 'kchamisa.png'],
-            ['z-nhidza', 'Z. Nhidza', 'E. O. Social Service', 'znhidza.png'],
-            ['r-makore', 'R. Makore', 'Engineer', 'rmakore.png'],
-            ['t-nyabonde', 'T. Nyabonde', 'E. O. Finance', 'tnyabonde.png'],
-            ['d-tshuma', 'D. Tshuma', 'District Town Planner', 'tshuma.png'],
-            ['o-katuka', 'O. Katuka', 'E. O. HR & Admin', 'okatuka.png'],
-            ['t-k-hambaguzha', 'T. K. Hambaguzha', 'E. O. Internal Audit', 'thamba.png'],
-            ['d-t-mutangadura', 'D. T. Mutangadura', 'Procurement Officer', 'tmuta.png'],
+            ['b-tasarira', 'B. Tasarira', 'Chief Executive Officer', 'btasarira.png', 'executive'],
+            ['k-k-chamisa', 'K. K. Chamisa', 'Townboard Administrator', 'kchamisa.png', 'executive'],
+            ['z-nhidza', 'Z. Nhidza', 'E. O. Social Service', 'znhidza.png', 'executive'],
+            ['r-makore', 'R. Makore', 'Engineer', 'rmakore.png', 'executive'],
+            ['t-nyabonde', 'T. Nyabonde', 'E. O. Finance', 'tnyabonde.png', 'executive'],
+            ['d-tshuma', 'D. Tshuma', 'District Town Planner', 'tshuma.png', 'executive'],
+            ['o-katuka', 'O. Katuka', 'E. O. HR & Admin', 'okatuka.png', 'executive'],
+            ['t-k-hambaguzha', 'T. K. Hambaguzha', 'E. O. Internal Audit', 'thamba.png', 'sectional_head'],
+            ['d-t-mutangadura', 'D. T. Mutangadura', 'Procurement Officer', 'tmuta.png', 'sectional_head'],
         ];
 
         $disk = Storage::disk(config('cms.media_disk', 'local'));
 
-        foreach ($team as $order => [$slug, $name, $title, $filename]) {
+        foreach ($team as $order => [$slug, $name, $title, $filename, $category]) {
             $source = base_path('database/seeders/assets/officials/'.$filename);
             $storagePath = 'officials/reference-team/'.$filename;
             $contents = file_get_contents($source);
@@ -58,6 +58,7 @@ class CouncilTeamSeeder extends Seeder
                     'slug' => $slug,
                     'name' => $name,
                     'title' => $title,
+                    'category' => $category,
                     'photo_media_id' => $media->id,
                     'display_order' => $order + 1,
                     'status' => 'published',
@@ -65,7 +66,7 @@ class CouncilTeamSeeder extends Seeder
                     'published_at' => now(),
                 ]));
             } else {
-                $official->update(['display_order' => $order + 1, 'photo_media_id' => $media->id]);
+                $official->update(['category' => $category, 'display_order' => $order + 1, 'photo_media_id' => $media->id]);
             }
         }
 

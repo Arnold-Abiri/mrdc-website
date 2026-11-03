@@ -72,7 +72,7 @@ class SiteSettingResource extends Resource
                     Placeholder::make('logo_preview')
                         ->label('Current logo')
                         ->content(fn (?SiteSetting $record): HtmlString|string => $record?->key === 'logo_media_id' && ctype_digit((string) $record->value)
-                            ? new HtmlString('<img src="'.e(public_route('managed-media.show', (int) $record->value)).'" alt="Current council logo" style="max-height: 100px; max-width: 280px; object-fit: contain;">')
+                            ? new HtmlString('<img src="'.e(route('admin.media.preview', (int) $record->value)).'" alt="Current council logo" style="max-height: 100px; max-width: 280px; object-fit: contain;">')
                             : 'No logo uploaded; the default crest is in use.')
                         ->html()
                         ->visible(fn (?SiteSetting $record): bool => $record?->key === 'logo_media_id'),

@@ -13,9 +13,9 @@ class OfficialController extends Controller
 {
     public function index(): Response
     {
-        $officials = Official::query()->public()->with(['department.translations', 'translations'])->orderBy('display_order')->orderBy('name')->get(['id', 'slug', 'name', 'title', 'biography', 'department_id', 'photo_media_id']);
+        $officials = Official::query()->public()->with(['department.translations', 'translations'])->orderBy('display_order')->orderBy('name')->get(['id', 'slug', 'name', 'title', 'category', 'biography', 'department_id', 'photo_media_id']);
 
-        return Inertia::render('Officials', ['officials' => $officials->map(fn (Official $official): array => [...$official->toLocalizedArray(['slug', 'name', 'title', 'biography']), 'department' => $official->department instanceof Department ? $official->department->translated('public_name') : null, 'photo_url' => $official->photo_media_id ? public_route('managed-media.show', $official->photo_media_id) : null])]);
+        return Inertia::render('Officials', ['officials' => $officials->map(fn (Official $official): array => [...$official->toLocalizedArray(['slug', 'name', 'title', 'biography']), 'category' => $official->category ?? 'executive', 'department' => $official->department instanceof Department ? $official->department->translated('public_name') : null, 'photo_url' => $official->photo_media_id ? public_route('managed-media.show', $official->photo_media_id) : null])]);
     }
 
     public function chairperson(string $locale): Response
@@ -64,6 +64,6 @@ class OfficialController extends Controller
     {
         $official = Official::query()->public()->with(['department.translations', 'translations'])->where('slug', $slug)->firstOrFail();
 
-        return Inertia::render('Official', ['official' => [...$official->toLocalizedArray(['slug', 'name', 'title', 'biography']), 'department' => $official->department instanceof Department ? $official->department->translated('public_name') : null, 'photo_url' => $official->photo_media_id ? public_route('managed-media.show', $official->photo_media_id) : null]]);
+        return Inertia::render('Official', ['official' => [...$official->toLocalizedArray(['slug', 'name', 'title', 'biography']), 'category' => $official->category ?? 'executive', 'department' => $official->department instanceof Department ? $official->department->translated('public_name') : null, 'photo_url' => $official->photo_media_id ? public_route('managed-media.show', $official->photo_media_id) : null]]);
     }
 }

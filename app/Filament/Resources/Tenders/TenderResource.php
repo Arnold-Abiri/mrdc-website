@@ -23,6 +23,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -34,6 +35,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\HtmlString;
 
 class TenderResource extends Resource
 {
@@ -63,6 +65,7 @@ class TenderResource extends Resource
             Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),
             DatePicker::make('opens_at'), DateTimePicker::make('closes_at')->helperText('Public status derives from these dates: past closing means closed.'),
             Textarea::make('contact_instructions')->maxLength(5000)->helperText('How and where to submit bids. Never enter bank or payment details.'),
+            Placeholder::make('current_tender_document')->label('Current tender document')->content(fn (?Tender $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No tender document selected.')->html()->visible(fn (?Tender $record): bool => $record !== null),
             Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Published tender document.'),
             Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             TextInput::make('display_order')->numeric()->default(0)->required(),

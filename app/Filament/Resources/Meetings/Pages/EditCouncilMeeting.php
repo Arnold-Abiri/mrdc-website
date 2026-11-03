@@ -6,9 +6,11 @@ use App\Domain\Cms\CouncilMeetingManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Meetings\CouncilMeetingResource;
 use App\Models\CouncilMeeting;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class EditCouncilMeeting extends EditRecord
 {
@@ -26,7 +28,41 @@ class EditCouncilMeeting extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('verify')
+                ->label('Mark publishable')
+                ->authorize(fn (): bool => Gate::allows('verify', $this->record))
+                ->visible(fn (): bool => $this->councilMeeting()->verification_status !== 'publishable')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(CouncilMeetingManager::class)->setVerification(auth()->user(), $this->councilMeeting(), 'publishable');
+                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                }),
+            Action::make('publish')
+                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                ->visible(fn (): bool => $this->councilMeeting()->status !== 'published')
+                ->disabled(fn (): bool => $this->councilMeeting()->verification_status !== 'publishable')
+                ->tooltip(fn (): ?string => $this->councilMeeting()->verification_status !== 'publishable' ? 'Mark this record publishable before publishing.' : null)
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(CouncilMeetingManager::class)->setStatus(auth()->user(), $this->councilMeeting(), 'published');
+                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                }),
+            Action::make('unpublish')
+                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                ->visible(fn (): bool => $this->councilMeeting()->status === 'published')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    app(CouncilMeetingManager::class)->setStatus(auth()->user(), $this->councilMeeting(), 'unpublished');
+                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                }),
             DeleteAction::make(),
         ];
+    }
+
+    private function councilMeeting(): CouncilMeeting
+    {
+        abort_unless($this->record instanceof CouncilMeeting, 404);
+
+        return $this->record;
     }
 }

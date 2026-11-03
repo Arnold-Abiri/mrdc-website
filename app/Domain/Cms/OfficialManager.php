@@ -109,6 +109,7 @@ class OfficialManager
     {
         return Validator::make($input, [
             'name' => ['required', 'string', 'max:255'], 'title' => ['required', 'string', 'max:255'],
+            'category' => ['nullable', 'string', 'max:40', Rule::in(['executive', 'sectional_head'])],
             'slug' => ['required', 'string', 'max:160', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('officials', 'slug')->ignore($official?->id)],
             'biography' => ['nullable', 'string', 'max:10000'],
             'photo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('status', 'active')->where('mime_type', 'like', 'image/%'))],
