@@ -1,4 +1,4 @@
-// DEVELOPMENT DEMO DATA — UNVERIFIED. Replace only after council content approval; see docs/content/DEVELOPMENT-CONTENT-POLICY.md.
+// Default council service structures and district overview fixtures.
 export type NewsPreview = {
     title: string;
     date: string;
@@ -53,7 +53,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Supporting 84 primary and 44 secondary schools with classroom blocks, teacher housing and learning facilities.',
         image: '/images/home/service-roads.webp',
         icon: 'roads',
-        href: '/coming-soon?topic=education',
+        href: '/services',
     },
     {
         id: 'environment',
@@ -61,7 +61,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Protecting wetlands, woodlands and grazing lands through community-led conservation and clean-up programmes.',
         image: '/images/home/service-environment.webp',
         icon: 'environment',
-        href: '/coming-soon?topic=environment',
+        href: '/services',
     },
     {
         id: 'roads',
@@ -69,7 +69,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Grading, gravelling and maintaining the district road network plus bridges, drifts and public infrastructure.',
         image: '/images/home/service-roads.webp',
         icon: 'roads',
-        href: '/coming-soon?topic=roads',
+        href: '/services',
     },
     {
         id: 'health',
@@ -77,7 +77,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Supporting rural health centres, outreach services and improved sanitation across all 29 wards.',
         image: '/images/home/service-health.webp',
         icon: 'health',
-        href: '/coming-soon?topic=health',
+        href: '/services',
     },
     {
         id: 'water',
@@ -85,7 +85,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Provision and maintenance of boreholes, piped schemes and clean, safe water points for households.',
         image: '/images/home/service-water.webp',
         icon: 'water',
-        href: '/coming-soon?topic=water',
+        href: '/services',
     },
     {
         id: 'business',
@@ -93,7 +93,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Servicing stands, markets and growth points at Mutoko Centre and rural service centres for local traders.',
         image: '/images/home/service-roads.webp',
         icon: 'roads',
-        href: '/coming-soon?topic=business',
+        href: '/services',
     },
     {
         id: 'property',
@@ -101,7 +101,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Stand allocation, leases, development control and the Mutoko Master Plan public exhibition process.',
         image: '/images/home/service-water.webp',
         icon: 'water',
-        href: '/coming-soon?topic=property',
+        href: '/services',
     },
     {
         id: 'recreation',
@@ -109,7 +109,7 @@ export const keyServices: ServicePreview[] = [
         description: 'Managing Chikondoma Stadium, community halls, sports and social welfare programmes for vulnerable groups.',
         image: '/images/home/service-health.webp',
         icon: 'health',
-        href: '/coming-soon?topic=recreation',
+        href: '/services',
     },
 ];
 
@@ -118,25 +118,25 @@ export const tourismDestinations: TourismPreview[] = [
         title: 'Nyamurora Mountains',
         tag: 'Natural Attraction',
         image: '/images/home/tourism-nyamurora.webp',
-        href: '/coming-soon?topic=tourism',
+        href: '/tourism',
     },
     {
         title: 'Cultural Heritage',
         tag: 'Rich Traditions',
         image: '/images/home/tourism-cultural.webp',
-        href: '/coming-soon?topic=tourism',
+        href: '/tourism',
     },
     {
         title: 'Scenic Landscapes',
         tag: 'Breathtaking Views',
         image: '/images/home/tourism-scenic.webp',
-        href: '/coming-soon?topic=tourism',
+        href: '/tourism',
     },
     {
         title: 'Community Experiences',
         tag: 'Local Culture',
         image: '/images/home/tourism-community.webp',
-        href: '/coming-soon?topic=tourism',
+        href: '/tourism',
     },
 ];
 

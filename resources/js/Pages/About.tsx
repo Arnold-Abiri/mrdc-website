@@ -124,7 +124,7 @@ export default function About({
                             ) : (
                                 <>
                                     <p>
-                                        Mutoko Rural District Council is the local government authority established under the Rural District Councils Act [Chapter 29:13], legally mandated to govern, administer, and spearhead socioeconomic development across Mutoko District in Mashonaland East Province, Zimbabwe.
+                                        Mutoko Rural District Council is the local government authority established under the Rural District Councils Act [Chapter 29:13], legally mandated to govern, administer, and lead socioeconomic development across Mutoko District in Mashonaland East Province, Zimbabwe.
                                     </p>
                                     <p>
                                         Operating from the administrative headquarters at Stand 366 Mutoko Centre, the Council works collaboratively with traditional leaders, ward development committees, Government line ministries, and development partners to deliver public infrastructure, primary health, educational facilities, and natural resource stewardship.

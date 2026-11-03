@@ -34,7 +34,7 @@ class OfficialController extends Controller
             $chairperson->fill([
                 'name' => 'Alderman Trust Kachidza',
                 'title' => 'Council Chairperson',
-                'biography' => 'Alderman Trust Kachidza is the Council Chairperson of Mutoko Rural District Council. As the elected political head of the local authority under the Rural District Councils Act [Chapter 29:13], he presides over Full Council meetings and spearheads the policy direction, legislative oversight, and devolved community development agenda across all 29 wards of Mutoko District.',
+                'biography' => 'Alderman Trust Kachidza is the Council Chairperson of Mutoko Rural District Council. As the elected political head of the local authority under the Rural District Councils Act [Chapter 29:13], he presides over Full Council meetings and leads the policy direction, legislative oversight, and devolved community development agenda across all 29 wards of Mutoko District.',
             ]);
         }
 

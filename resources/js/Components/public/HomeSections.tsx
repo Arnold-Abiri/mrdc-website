@@ -743,7 +743,7 @@ export function KeyServicesSection({ services = keyServices }: { services?: Serv
                         </div>
                         <h2 id="services-heading" className="section-title">{t('keyServices')}</h2>
                     </div>
-                    <a href={L("/coming-soon?topic=services")} className="header-viewall-link">
+                    <a href={L("/services")} className="header-viewall-link">
                         {t('viewAllServicesLink')} <span aria-hidden="true">→</span>
                     </a>
                 </div>
@@ -1116,7 +1116,7 @@ export function DevelopmentSection() {
                         {t('devDesc')}
                     </p>
                     <div>
-                        <a href={L("/coming-soon?topic=projects")} className="btn-section-primary">
+                        <a href={L("/projects")} className="btn-section-primary">
                             <span>{t('exploreDevelopment')}</span>
                             <span aria-hidden="true">→</span>
                         </a>
@@ -1150,7 +1150,7 @@ export function TourismSection({ destinations = tourismDestinations }: { destina
                         </div>
                         <h2 id="tourism-heading" className="section-title">{t('discoverMutoko')}</h2>
                     </div>
-                    <a href={L("/coming-soon?topic=tourism")} className="header-viewall-link">
+                    <a href={L("/tourism")} className="header-viewall-link">
                         {t('exploreTourism')} <span aria-hidden="true">→</span>
                     </a>
                 </div>

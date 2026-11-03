@@ -770,7 +770,7 @@
 
     <!-- Council Footer -->
     <footer class="preview-footer">
-        <p>&copy; {{ date('Y') }} Mutoko Rural District Council &middot; Municipal Asset Governance System</p>
+        <p>&copy; {{ date('Y') }} Mutoko Rural District Council &middot; Media Library</p>
     </footer>
 
     <!-- Copy Feedback Toast -->
