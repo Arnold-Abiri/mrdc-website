@@ -102,26 +102,33 @@ class PreviewController extends Controller
 
     private function previewService(string $slug): Response
     {
-        $service = Service::query()->with('translations')->where('slug', $slug)->firstOrFail();
+        $service = Service::query()->with(['translations', 'department.translations', 'department'])->where('slug', $slug)->firstOrFail();
+        $department = $service->department;
 
         return Inertia::render('Service', [
             'preview' => true,
             'service' => [...$service->toLocalizedArray(['slug', 'name', 'summary', 'description', 'requirements', 'steps', 'fees_information', 'seo_title', 'meta_description']), 'is_review_content' => true],
-            'department' => null,
-            'documents' => [],
+            'department' => $department instanceof Department ? $department->translated('public_name') : null,
+            'documents' => $service->department_id ? Document::query()->with('translations')->where('department_id', $service->department_id)->whereIn('status', ['draft', 'published'])->orderByDesc('published_at')->limit(10)->get(['id', 'slug', 'title', 'category'])->map(fn (Document $document): array => $document->toLocalizedArray(['slug', 'title', 'category'])) : [],
         ]);
     }
 
     private function previewEditorial(string $type, string $slug): Response
     {
         $expected = $type === 'news' ? 'news' : 'notice';
-        $item = EditorialItem::query()->with('translations')->where('type', $expected)->where('slug', $slug)->firstOrFail();
+        $item = EditorialItem::query()->with(['translations', 'featuredMedia.translations', 'documents.translations'])->where('type', $expected)->where('slug', $slug)->firstOrFail();
 
         return Inertia::render('EditorialDetail', [
             'preview' => true,
             'type' => $type === 'news' ? 'News' : 'Notice',
-            'item' => [...$item->toLocalizedArray(['slug', 'title', 'summary', 'body', 'published_at']), 'image_url' => null, 'is_review_content' => true],
-            'documents' => [],
+            'item' => [
+                ...$item->toLocalizedArray(['slug', 'title', 'summary', 'body', 'published_at', 'expires_at']),
+                'image_url' => $item->featured_media_id ? public_route('managed-media.show', $item->featured_media_id) : null,
+                'image_alt' => $item->featuredMedia?->translated('alt_text'),
+                'image_caption' => $item->featuredMedia?->translated('caption'),
+                'is_review_content' => true,
+            ],
+            'documents' => $item->documents->map(fn (Document $document) => $document->toLocalizedArray(['slug', 'title'])),
         ]);
     }
 
@@ -147,31 +154,40 @@ class PreviewController extends Controller
 
     private function previewOfficial(string $slug): Response
     {
-        $official = Official::query()->where('slug', $slug)->firstOrFail();
+        $official = Official::query()->with(['translations', 'department.translations', 'department'])->where('slug', $slug)->firstOrFail();
 
         return Inertia::render('Official', [
             'preview' => true,
-            'official' => [...$official->only(['slug', 'name', 'title', 'biography']), 'department' => null, 'photo_url' => null, 'is_review_content' => true],
+            'official' => [
+                ...$official->only(['slug', 'name', 'title', 'biography']),
+                'category' => $official->category ?? 'executive',
+                'department' => $official->department instanceof Department ? $official->department->translated('public_name') : null,
+                'photo_url' => $official->photo_media_id ? public_route('managed-media.show', $official->photo_media_id) : null,
+                'is_review_content' => true,
+            ],
         ]);
     }
 
     private function previewInvestment(string $slug): Response
     {
-        $opportunity = InvestmentOpportunity::query()->with('translations')->where('slug', $slug)->firstOrFail();
+        $opportunity = InvestmentOpportunity::query()->with(['translations', 'document.translations'])->where('slug', $slug)->firstOrFail();
+        $document = $opportunity->document;
 
         return Inertia::render('InvestmentDetail', [
             'preview' => true,
-            'opportunity' => [...$opportunity->toLocalizedArray(['slug', 'title', 'sector', 'summary', 'description', 'location', 'opportunity_status']), 'document' => null, 'is_review_content' => true],
+            'opportunity' => [...$opportunity->toLocalizedArray(['slug', 'title', 'sector', 'summary', 'description', 'location', 'opportunity_status']), 'document' => $document instanceof Document ? $document->toLocalizedArray(['slug', 'title']) : null, 'is_review_content' => true],
         ]);
     }
 
     private function previewMeeting(string $slug): Response
     {
-        $meeting = CouncilMeeting::query()->with('translations')->where('id', $slug)->firstOrFail();
+        $meeting = CouncilMeeting::query()->with(['translations', 'agenda.translations', 'minutes.translations'])->where('id', $slug)->firstOrFail();
+        $agenda = $meeting->agenda;
+        $minutes = $meeting->minutes;
 
         return Inertia::render('Meeting', [
             'preview' => true,
-            'meeting' => [...$meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status', 'summary']), 'agenda' => null, 'minutes' => null],
+            'meeting' => [...$meeting->toLocalizedArray(['id', 'title', 'meeting_type', 'scheduled_date', 'scheduled_time', 'venue', 'meeting_status', 'summary']), 'agenda' => $agenda instanceof Document ? $agenda->toLocalizedArray(['slug', 'title']) : null, 'minutes' => $minutes instanceof Document ? $minutes->toLocalizedArray(['slug', 'title']) : null],
         ]);
     }
 

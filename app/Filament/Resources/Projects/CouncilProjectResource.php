@@ -74,7 +74,7 @@ class CouncilProjectResource extends Resource
                 Textarea::make('contact_instructions')->maxLength(5000)->columnSpanFull(),
             ])->columns(2),
             Section::make('Cover Image')->description('Upload a project image directly, or pick one from the library.')->schema([
-                Placeholder::make('current_cover_image')->label('Current image')->content(fn (?CouncilProject $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->featured_media_id)).'" alt="Current project image" style="max-height: 180px; max-width: 100%; object-fit: contain;">') : 'No image selected.')->html()->visible(fn (?CouncilProject $record): bool => $record !== null),
+                Placeholder::make('current_cover_image')->label('Current image')->content(fn (?CouncilProject $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->featured_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->featured_media_id)).'" alt="Current project image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>') : 'No image selected.')->html()->visible(fn (?CouncilProject $record): bool => $record !== null),
                 FileUpload::make('featured_image_upload')
                     ->label('Upload cover image')
                     ->image()

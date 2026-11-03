@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Officials\Pages;
 use App\Domain\Cms\OfficialManager;
 use App\Filament\Concerns\HandlesFeaturedImageUpload;
 use App\Filament\Concerns\HandlesTranslations;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Officials\OfficialResource;
 use App\Models\Official;
 use Filament\Actions\Action;
@@ -39,6 +40,7 @@ class EditOfficial extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewHelper::makePreviewAction(),
             Action::make('verify')
                 ->label('Mark publishable')
                 ->authorize(fn (): bool => Gate::allows('verify', $this->record))

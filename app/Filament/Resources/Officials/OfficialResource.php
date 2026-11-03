@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Officials;
 use App\Domain\Cms\OfficialManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Council\CouncilCluster;
+use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Concerns\SlugField;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Officials\Pages\CreateOfficial;
@@ -74,7 +75,7 @@ class OfficialResource extends Resource
                 Placeholder::make('current_photo')
                     ->label('Current photo')
                     ->content(fn (?Official $record): HtmlString|string => $record?->photo_media_id
-                        ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->photo_media_id)).'" alt="Current official portrait" style="max-height: 180px; max-width: 100%; object-fit: contain;">')
+                        ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->photo_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->photo_media_id)).'" alt="Current official portrait" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
                         : 'No photo selected.')
                     ->html()
                     ->visible(fn (?Official $record): bool => $record !== null),
@@ -126,7 +127,9 @@ class OfficialResource extends Resource
                 'sectional_head' => 'Sectional Head',
             ]),
             SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived']),
-        ])->recordActions([DeleteAction::make(),
+        ])->recordActions([
+            PreviewHelper::makePreviewAction(),
+            DeleteAction::make(),
             EditAction::make(),
             Action::make('verify')->authorize(fn (Official $record): bool => Gate::allows('verify', $record))->visible(fn (Official $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
             Action::make('publish')->authorize(fn (Official $record): bool => Gate::allows('publish', $record))->visible(fn (Official $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Official $record) => app(OfficialManager::class)->setStatus(auth()->user(), $record, 'published')),

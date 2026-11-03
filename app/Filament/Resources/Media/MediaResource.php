@@ -74,10 +74,17 @@ class MediaResource extends Resource
             TextColumn::make('original_filename')->label('Filename')->searchable()->toggleable(),
             TextColumn::make('status')->badge(), TextColumn::make('created_at')->dateTime(),
             TextColumn::make('alt_text')->label('Alt text')->state(fn (Media $record): string => str_starts_with($record->mime_type, 'image/') ? ($record->alt_text !== null && trim($record->alt_text) !== '' ? 'Provided' : 'Missing') : 'N/A')->badge()->color(fn (string $state): string => $state === 'Missing' ? 'danger' : ($state === 'Provided' ? 'success' : 'gray')),
-        ])->recordActions([DeleteAction::make(),
+        ])->recordActions([
+            Action::make('preview')
+                ->label('Preview')
+                ->icon(Heroicon::OutlinedEye)
+                ->color('gray')
+                ->url(fn (Media $record): string => route('admin.media.preview', $record->id))
+                ->openUrlInNewTab(),
             EditAction::make(),
             Action::make('archive')->authorize(fn (Media $record): bool => Gate::allows('update', $record))
                 ->requiresConfirmation()->action(fn (Media $record) => app(MediaManager::class)->archive(auth()->user(), $record)),
+            DeleteAction::make(),
         ])
             ->toolbarActions([
                 BulkActionGroup::make([

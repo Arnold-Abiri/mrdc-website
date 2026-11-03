@@ -237,6 +237,21 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <a className="skip-link" href="#main">{t('skip')}</a>
+
+            {/* Stakeholder Preview Notification Banner */}
+            {Boolean((page.props as { preview?: boolean }).preview) && (
+                <div style={{ background: '#0F172A', color: '#F8FAFC', padding: '10px 16px', borderBottom: '2px solid #D97706', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap', zIndex: 1000, position: 'relative' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B', boxShadow: '0 0 0 3px rgba(245, 158, 11, 0.3)' }} />
+                        <strong style={{ color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '11px' }}>Stakeholder Preview Mode</strong>
+                        <span>&mdash; Reviewing non-public / draft content. Do not distribute.</span>
+                    </div>
+                    <a href="/admin" style={{ color: '#FCD34D', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)' }}>
+                        Return to Admin &rarr;
+                    </a>
+                </div>
+            )}
+
             {normalizedCurrentPath !== '/' && urgentAlerts && urgentAlerts.length > 0 && <div className="urgent-alert" role="alert"><p><strong>{t('urgentNotice')}: </strong>{urgentAlerts.map((alert, index) => <span key={alert.slug}>{index > 0 && ' — '}<a href={L(`/notices/${alert.slug}`)}>{alert.title}</a></span>)}</p></div>}
 
             {/* Top Utility Bar */}

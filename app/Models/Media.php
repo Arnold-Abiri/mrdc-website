@@ -34,4 +34,10 @@ class Media extends Model implements TranslatableContent
     {
         return $this->belongsTo(Department::class);
     }
+
+    /** @return BelongsTo<User, $this> */
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
+    }
 }

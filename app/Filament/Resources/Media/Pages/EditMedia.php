@@ -6,8 +6,10 @@ use App\Domain\Cms\MediaManager;
 use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Media\MediaResource;
 use App\Models\Media;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
 class EditMedia extends EditRecord
@@ -26,6 +28,12 @@ class EditMedia extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('preview')
+                ->label('Preview Media')
+                ->icon(Heroicon::OutlinedEye)
+                ->color('gray')
+                ->url(fn (Media $record): string => route('admin.media.preview', $record->id))
+                ->openUrlInNewTab(),
             DeleteAction::make(),
         ];
     }

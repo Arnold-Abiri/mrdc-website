@@ -70,7 +70,7 @@ class GalleryResource extends Resource
             Placeholder::make('current_cover_preview')
                 ->label('Current cover image')
                 ->content(fn (?Gallery $record): HtmlString|string => $record?->cover_media_id
-                    ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->cover_media_id)).'" alt="Current gallery cover" style="max-height: 180px; max-width: 100%; object-fit: contain;">')
+                    ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->cover_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->cover_media_id)).'" alt="Current gallery cover" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
                     : 'No cover image selected.')
                 ->html()
                 ->visible(fn (?Gallery $record): bool => $record !== null),

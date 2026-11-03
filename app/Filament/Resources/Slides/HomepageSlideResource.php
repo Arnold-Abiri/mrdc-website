@@ -61,7 +61,7 @@ class HomepageSlideResource extends Resource
                 TextInput::make('cta_url')->maxLength(2048)->helperText('Internal path only, e.g. /services.'),
             ])->columns(2),
             Section::make('Hero Artwork / Background')->description('Upload a slide background image directly, or select one from the media library.')->schema([
-                Placeholder::make('current_slide_image')->label('Current image')->content(fn (?HomepageSlide $record): HtmlString|string => $record?->media_id ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->media_id)).'" alt="Current homepage slide image" style="max-height: 180px; max-width: 100%; object-fit: contain;">') : 'No image selected.')->html()->visible(fn (?HomepageSlide $record): bool => $record !== null),
+                Placeholder::make('current_slide_image')->label('Current image')->content(fn (?HomepageSlide $record): HtmlString|string => $record?->media_id ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->media_id)).'" alt="Current homepage slide image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>') : 'No image selected.')->html()->visible(fn (?HomepageSlide $record): bool => $record !== null),
                 FileUpload::make('slide_image_upload')
                     ->label('Upload slide image')
                     ->image()

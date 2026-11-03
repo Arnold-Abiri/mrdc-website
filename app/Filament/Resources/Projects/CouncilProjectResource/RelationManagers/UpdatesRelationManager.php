@@ -54,7 +54,7 @@ class UpdatesRelationManager extends RelationManager
                 Placeholder::make('current_update_image')
                     ->label('Current image')
                     ->content(fn (?ProjectUpdate $record): HtmlString|string => $record?->media_id
-                        ? new HtmlString('<img src="'.e(route('admin.media.preview', $record->media_id)).'" alt="Current project update image" style="max-height: 180px; max-width: 100%; object-fit: contain;">')
+                        ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->media_id)).'" alt="Current project update image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
                         : 'No image selected.')
                     ->html()
                     ->visible(fn (?ProjectUpdate $record): bool => $record !== null),
