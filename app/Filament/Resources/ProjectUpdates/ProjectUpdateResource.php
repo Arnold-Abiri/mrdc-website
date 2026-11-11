@@ -22,6 +22,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -59,20 +60,26 @@ class ProjectUpdateResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('council_project_id')->relationship('project', 'title')->searchable()->required(),
-            DatePicker::make('update_date')->required(),
-            TextInput::make('title')->required()->maxLength(255),
-            Textarea::make('summary')->maxLength(1000),
-            TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100),
-            Placeholder::make('current_update_image')
-                ->label('Current image')
-                ->content(fn (?ProjectUpdate $record): HtmlString|string => $record?->media_id
-                    ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->media_id)).'" alt="Current project update image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
-                    : 'No image selected.')
-                ->html()
-                ->visible(fn (?ProjectUpdate $record): bool => $record !== null),
-            Select::make('media_id')->relationship('media', 'title')->searchable(),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Update details')
+                ->schema([
+                    Select::make('council_project_id')->relationship('project', 'title')->searchable()->required(),
+                    DatePicker::make('update_date')->required(),
+                    TextInput::make('title')->required()->maxLength(255),
+                    Textarea::make('summary')->maxLength(1000),
+                    TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Update image')
+                ->schema([
+                    Placeholder::make('current_update_image')
+                        ->label('Current image')
+                        ->content(fn (?ProjectUpdate $record): HtmlString|string => $record?->media_id
+                            ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->media_id)).'" alt="Current project update image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
+                            : 'No image selected.')
+                        ->html()
+                        ->visible(fn (?ProjectUpdate $record): bool => $record !== null),
+                    Select::make('media_id')->relationship('media', 'title')->searchable(),
+                ]),
             TranslationFields::make(ProjectUpdate::translatableFields()),
         ]);
     }

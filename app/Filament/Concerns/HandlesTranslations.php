@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
@@ -32,7 +33,11 @@ trait HandlesTranslations
             return;
         }
         $input = ['sn' => [], 'nd' => []];
-        foreach ($this->form->getState() as $key => $value) {
+        // Translation fields are dehydrated(false) so getState() drops them;
+        // read the raw form state instead. TranslationManager validates.
+        $rawState = $this->form->getRawState();
+        $rawState = $rawState instanceof Arrayable ? $rawState->toArray() : (array) $rawState;
+        foreach ($rawState as $key => $value) {
             if (! str_starts_with($key, 'content_translations_')) {
                 continue;
             }

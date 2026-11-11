@@ -8,6 +8,7 @@ use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Vacancies\VacancyResource;
 use App\Models\Vacancy;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -32,36 +33,38 @@ class EditVacancy extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('verify')
-                ->label('Mark publishable')
-                ->authorize(fn (): bool => Gate::allows('verify', $this->record))
-                ->visible(fn (): bool => $this->vacancy()->verification_status !== 'publishable')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(VacancyManager::class)->setVerification(auth()->user(), $this->vacancy(), 'publishable');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
-                }),
-            Action::make('publish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->vacancy()->status !== 'published')
-                ->disabled(fn (): bool => $this->vacancy()->verification_status !== 'publishable')
-                ->tooltip(fn (): ?string => $this->vacancy()->verification_status !== 'publishable' ? 'Mark this record publishable before publishing.' : null)
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(VacancyManager::class)->setStatus(auth()->user(), $this->vacancy(), 'published');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
-                }),
-            Action::make('unpublish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->vacancy()->status === 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(VacancyManager::class)->setStatus(auth()->user(), $this->vacancy(), 'unpublished');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'verification_status', 'published_at']);
-                }),
+            ActionGroup::make([
+                Action::make('verify')
+                    ->label('Mark publishable')
+                    ->authorize(fn (): bool => Gate::allows('verify', $this->record))
+                    ->visible(fn (): bool => $this->vacancy()->verification_status !== 'publishable')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(VacancyManager::class)->setVerification(auth()->user(), $this->vacancy(), 'publishable');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                    }),
+                Action::make('publish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->vacancy()->status !== 'published')
+                    ->disabled(fn (): bool => $this->vacancy()->verification_status !== 'publishable')
+                    ->tooltip(fn (): ?string => $this->vacancy()->verification_status !== 'publishable' ? 'Mark this record publishable before publishing.' : null)
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(VacancyManager::class)->setStatus(auth()->user(), $this->vacancy(), 'published');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                    }),
+                Action::make('unpublish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->vacancy()->status === 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(VacancyManager::class)->setStatus(auth()->user(), $this->vacancy(), 'unpublished');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'verification_status', 'published_at']);
+                    }),
+            ])->label('Publishing')->button()->outlined(),
             PreviewHelper::makePreviewAction(),
             DeleteAction::make(),
         ];

@@ -28,6 +28,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -54,21 +55,28 @@ class TenderResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('reference')->required()->maxLength(60)->helperText('Official tender reference, e.g. MRDC/2026/014.'),
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            TextInput::make('category')->maxLength(60),
-            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
-            Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),
-            DatePicker::make('opens_at'), DateTimePicker::make('closes_at')->helperText('Public status derives from these dates: past closing means closed.'),
-            Textarea::make('contact_instructions')->maxLength(5000)->helperText('How and where to submit bids. Never enter bank or payment details.'),
-            Placeholder::make('current_tender_document')->label('Current tender document')->content(fn (?Tender $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No tender document selected.')->html()->visible(fn (?Tender $record): bool => $record !== null),
-            Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Published tender document.'),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Tender details')
+                ->schema([
+                    TextInput::make('reference')->required()->maxLength(60)->helperText('Official tender reference, e.g. MRDC/2026/014.'),
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    TextInput::make('category')->maxLength(60),
+                    MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
+                    Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),
+                    DatePicker::make('opens_at'), DateTimePicker::make('closes_at')->helperText('Public status derives from these dates: past closing means closed.'),
+                    Textarea::make('contact_instructions')->maxLength(5000)->helperText('How and where to submit bids. Never enter bank or payment details.'),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Tender document')
+                ->description('Published tender document.')
+                ->schema([
+                    Placeholder::make('current_tender_document')->label('Current tender document')->content(fn (?Tender $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No tender document selected.')->html()->visible(fn (?Tender $record): bool => $record !== null),
+                    Select::make('document_id')->relationship('document', 'title')->searchable(),
+                ]),
             SlugField::make('title'),
             TranslationFields::make(Tender::translatableFields()), ]);
     }

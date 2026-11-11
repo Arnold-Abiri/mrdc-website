@@ -7,6 +7,7 @@ use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\ProjectUpdates\ProjectUpdateResource;
 use App\Models\ProjectUpdate;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -31,24 +32,26 @@ class EditProjectUpdate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('publish')
-                ->authorize(fn (): bool => Gate::allows('update', $this->record))
-                ->visible(fn (): bool => $this->projectUpdate()->status !== 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(ProjectUpdateManager::class)->setStatus(auth()->user(), $this->projectUpdate(), 'published');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'published_at']);
-                }),
-            Action::make('unpublish')
-                ->authorize(fn (): bool => Gate::allows('update', $this->record))
-                ->visible(fn (): bool => $this->projectUpdate()->status === 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(ProjectUpdateManager::class)->setStatus(auth()->user(), $this->projectUpdate(), 'unpublished');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'published_at']);
-                }),
+            ActionGroup::make([
+                Action::make('publish')
+                    ->authorize(fn (): bool => Gate::allows('update', $this->record))
+                    ->visible(fn (): bool => $this->projectUpdate()->status !== 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(ProjectUpdateManager::class)->setStatus(auth()->user(), $this->projectUpdate(), 'published');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'published_at']);
+                    }),
+                Action::make('unpublish')
+                    ->authorize(fn (): bool => Gate::allows('update', $this->record))
+                    ->visible(fn (): bool => $this->projectUpdate()->status === 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(ProjectUpdateManager::class)->setStatus(auth()->user(), $this->projectUpdate(), 'unpublished');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'published_at']);
+                    }),
+            ])->label('Publishing')->button()->outlined(),
             DeleteAction::make(),
         ];
     }

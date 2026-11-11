@@ -9,6 +9,7 @@ use App\Filament\Resources\Pages\PageResource;
 use App\Models\Page;
 use App\Models\PageRevision;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\EditRecord;
@@ -25,36 +26,39 @@ class EditPage extends EditRecord
     {
         return [
             PreviewHelper::makePreviewAction(),
-            Action::make('markPublishable')
-                ->label('Mark publishable')
-                ->authorize(fn (): bool => Gate::allows('verify', $this->record))
-                ->visible(fn (): bool => $this->pageRecord()->verification_status !== 'publishable')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(PageManager::class)->setVerification(auth()->user(), $this->pageRecord(), 'publishable');
-                    $this->record = $this->pageRecord()->refresh();
-                    $this->fillForm();
-                }),
-            Action::make('publish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->pageRecord()->status !== 'published')
-                ->disabled(fn (): bool => app()->environment('production') && $this->pageRecord()->verification_status !== 'publishable')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'published');
-                    $this->record = $this->pageRecord()->refresh();
-                    $this->fillForm();
-                }),
-            Action::make('unpublish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->pageRecord()->status === 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'unpublished');
-                    $this->record = $this->pageRecord()->refresh();
-                    $this->fillForm();
-                }),
+            ActionGroup::make([
+                Action::make('markPublishable')
+                    ->label('Mark publishable')
+                    ->authorize(fn (): bool => Gate::allows('verify', $this->record))
+                    ->visible(fn (): bool => $this->pageRecord()->verification_status !== 'publishable')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(PageManager::class)->setVerification(auth()->user(), $this->pageRecord(), 'publishable');
+                        $this->record = $this->pageRecord()->refresh();
+                        $this->fillForm();
+                    }),
+                Action::make('publish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->pageRecord()->status !== 'published')
+                    ->disabled(fn (): bool => app()->environment('production') && $this->pageRecord()->verification_status !== 'publishable')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'published');
+                        $this->record = $this->pageRecord()->refresh();
+                        $this->fillForm();
+                    }),
+                Action::make('unpublish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->pageRecord()->status === 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(PageManager::class)->setStatus(auth()->user(), $this->pageRecord(), 'unpublished');
+                        $this->record = $this->pageRecord()->refresh();
+                        $this->fillForm();
+                    }),
+            ])->label('Publishing')->button()->outlined(),
             DeleteAction::make(),
+            self::makeAiTranslateAction(),
             Action::make('restoreRevision')
                 ->label('Restore revision')
                 ->authorize(fn (): bool => auth()->user()?->can('update', $this->record) ?? false)

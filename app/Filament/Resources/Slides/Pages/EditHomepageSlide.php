@@ -8,6 +8,7 @@ use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Slides\HomepageSlideResource;
 use App\Models\HomepageSlide;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -42,24 +43,26 @@ class EditHomepageSlide extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('publish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->slide()->status !== 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'published');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'published_at']);
-                }),
-            Action::make('unpublish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->slide()->status === 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'unpublished');
-                    $this->record = $this->record->refresh();
-                    $this->refreshFormData(['status', 'published_at']);
-                }),
+            ActionGroup::make([
+                Action::make('publish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->slide()->status !== 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'published');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'published_at']);
+                    }),
+                Action::make('unpublish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->slide()->status === 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(HomepageSlideManager::class)->setStatus(auth()->user(), $this->slide(), 'unpublished');
+                        $this->record = $this->record->refresh();
+                        $this->refreshFormData(['status', 'published_at']);
+                    }),
+            ])->label('Publishing')->button()->outlined(),
             DeleteAction::make(),
         ];
     }

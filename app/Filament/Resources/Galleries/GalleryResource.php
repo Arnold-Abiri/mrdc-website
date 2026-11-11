@@ -25,6 +25,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -58,61 +59,71 @@ class GalleryResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            Textarea::make('summary')->maxLength(500)->helperText('Short line shown on the gallery card.'),
-            Textarea::make('description')->maxLength(20000)->helperText('Plain text only; HTML is not rendered.'),
-            TextInput::make('location')->maxLength(255),
-            DatePicker::make('album_date')->label('Date photographed'),
-            Placeholder::make('current_cover_preview')
-                ->label('Current cover image')
-                ->content(fn (?Gallery $record): HtmlString|string => $record?->cover_media_id
-                    ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->cover_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->cover_media_id)).'" alt="Current gallery cover" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
-                    : 'No cover image selected.')
-                ->html()
-                ->visible(fn (?Gallery $record): bool => $record !== null),
-            Select::make('cover_media_id')
-                ->label('Cover image')
-                ->searchable()
-                ->getSearchResultsUsing(fn (string $search): array => self::imageSearch($search))
-                ->getOptionLabelUsing(fn ($value): ?string => Media::query()->whereKey($value)->value('title'))
-                ->helperText('Optional. The first album image is used as the cover when empty.'),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            Repeater::make('media')
-                ->label('Album images')
-                ->helperText(fn (?Gallery $record): string => $record instanceof Gallery && $record->media->isNotEmpty()
-                    ? $record->media->map(fn (Media $media): string => '<a href="'.e(route('admin.media.preview', $media->id)).'" target="_blank" rel="noopener">'.e($media->title).'</a>')->implode(' · ')
-                    : 'No album images selected.')
-                ->hintIcon('heroicon-o-arrow-top-right-on-square')
+            Section::make('Gallery details')
                 ->schema([
-                    Select::make('media_id')
-                        ->label('Image')
+                    TextInput::make('title')
                         ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    Textarea::make('summary')->maxLength(500)->helperText('Short line shown on the gallery card.'),
+                    Textarea::make('description')->maxLength(20000)->helperText('Plain text only; HTML is not rendered.'),
+                    TextInput::make('location')->maxLength(255),
+                    DatePicker::make('album_date')->label('Date photographed'),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    Select::make('is_featured')->options([1 => 'Yes', 0 => 'No'])->default(0)->required()->helperText('Featured galleries appear first on the public gallery page.'),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Cover image')
+                ->description('Optional. The first album image is used as the cover when empty.')
+                ->schema([
+                    Placeholder::make('current_cover_preview')
+                        ->label('Current cover image')
+                        ->content(fn (?Gallery $record): HtmlString|string => $record?->cover_media_id
+                            ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->cover_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->cover_media_id)).'" alt="Current gallery cover" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>')
+                            : 'No cover image selected.')
+                        ->html()
+                        ->visible(fn (?Gallery $record): bool => $record !== null),
+                    Select::make('cover_media_id')
+                        ->label('Cover image')
                         ->searchable()
                         ->getSearchResultsUsing(fn (string $search): array => self::imageSearch($search))
                         ->getOptionLabelUsing(fn ($value): ?string => Media::query()->whereKey($value)->value('title')),
-                    TextInput::make('caption')->maxLength(500)->helperText('Optional caption shown under the image.'),
-                ])
-                ->afterStateHydrated(function (Repeater $component, ?Gallery $record): void {
-                    if (! $record instanceof Gallery) {
-                        return;
-                    }
-                    $component->state($record->media->map(fn ($media): array => [
-                        'media_id' => $media->id,
-                        'caption' => $media->pivot->caption,
-                    ])->all());
-                })
-                ->itemLabel(fn (array $state): ?string => isset($state['media_id']) ? Media::query()->whereKey($state['media_id'])->value('title') : null)
-                ->reorderable()
-                ->addActionLabel('Add image')
-                ->defaultItems(1)
-                ->maxItems(60)
-                ->required(),
-            Select::make('is_featured')->options([1 => 'Yes', 0 => 'No'])->default(0)->required()->helperText('Featured galleries appear first on the public gallery page.'),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Album images')
+                ->schema([
+                    Repeater::make('media')
+                        ->hiddenLabel()
+                        ->helperText(fn (?Gallery $record): string => $record instanceof Gallery && $record->media->isNotEmpty()
+                            ? $record->media->map(fn (Media $media): string => '<a href="'.e(route('admin.media.preview', $media->id)).'" target="_blank" rel="noopener">'.e($media->title).'</a>')->implode(' · ')
+                            : 'No album images selected.')
+                        ->hintIcon('heroicon-o-arrow-top-right-on-square')
+                        ->schema([
+                            Select::make('media_id')
+                                ->label('Image')
+                                ->required()
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search): array => self::imageSearch($search))
+                                ->getOptionLabelUsing(fn ($value): ?string => Media::query()->whereKey($value)->value('title')),
+                            TextInput::make('caption')->maxLength(500)->helperText('Optional caption shown under the image.'),
+                        ])
+                        ->afterStateHydrated(function (Repeater $component, ?Gallery $record): void {
+                            if (! $record instanceof Gallery) {
+                                return;
+                            }
+                            $component->state($record->media->map(fn ($media): array => [
+                                'media_id' => $media->id,
+                                'caption' => $media->pivot->caption,
+                            ])->all());
+                        })
+                        ->itemLabel(fn (array $state): ?string => isset($state['media_id']) ? Media::query()->whereKey($state['media_id'])->value('title') : null)
+                        ->reorderable()
+                        ->addActionLabel('Add image')
+                        ->defaultItems(1)
+                        ->maxItems(60)
+                        ->required()
+                        ->columnSpanFull(),
+                ]),
             SlugField::make('title'),
             TranslationFields::make(Gallery::translatableFields()),
         ]);

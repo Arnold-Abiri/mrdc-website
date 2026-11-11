@@ -24,6 +24,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -48,20 +49,28 @@ class PageResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            Textarea::make('summary')->maxLength(1000),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            Repeater::make('blocks')->schema([
-                Select::make('type')->options(['heading' => 'Heading', 'paragraph' => 'Paragraph', 'cta' => 'Link'])->required(),
-                Textarea::make('text')->required()->maxLength(10000),
-                TextInput::make('url')->helperText('Use an internal path beginning with / for links.'),
-            ])->defaultItems(1)->required(),
-            TextInput::make('seo_title')->maxLength(255),
-            Textarea::make('meta_description')->maxLength(320),
+            Section::make('Content')
+                ->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    Textarea::make('summary')->maxLength(1000),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    Repeater::make('blocks')->schema([
+                        Select::make('type')->options(['heading' => 'Heading', 'paragraph' => 'Paragraph', 'cta' => 'Link'])->required(),
+                        Textarea::make('text')->required()->maxLength(10000),
+                        TextInput::make('url')->helperText('Use an internal path beginning with / for links.'),
+                    ])->defaultItems(1)->required()->columnSpanFull(),
+                ]),
+            Section::make('Search & metadata')
+                ->description('How this page appears in search results.')
+                ->schema([
+                    TextInput::make('seo_title')->maxLength(255),
+                    Textarea::make('meta_description')->maxLength(320),
+                ])
+                ->collapsible(),
             SlugField::make('title'),
             TranslationFields::make(Page::translatableFields()), ]);
     }

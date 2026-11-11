@@ -23,6 +23,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -49,20 +50,26 @@ class InvestmentOpportunityResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            TextInput::make('sector')->maxLength(60)->helperText('e.g. Solar energy, Mining, Horticulture.'),
-            Textarea::make('summary')->maxLength(1000),
-            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not state financial returns.'),
-            TextInput::make('location')->maxLength(255),
-            Select::make('opportunity_status')->options(['open' => 'Open', 'prospecting' => 'Prospecting', 'committed' => 'Committed', 'closed' => 'Closed'])->required(),
-            Placeholder::make('current_opportunity_document')->label('Current document')->content(fn (?InvestmentOpportunity $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No document selected.')->html()->visible(fn (?InvestmentOpportunity $record): bool => $record !== null),
-            Select::make('document_id')->relationship('document', 'title')->searchable(),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Opportunity details')
+                ->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    TextInput::make('sector')->maxLength(60)->helperText('e.g. Solar energy, Mining, Horticulture.'),
+                    Textarea::make('summary')->maxLength(1000),
+                    MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not state financial returns.'),
+                    TextInput::make('location')->maxLength(255),
+                    Select::make('opportunity_status')->options(['open' => 'Open', 'prospecting' => 'Prospecting', 'committed' => 'Committed', 'closed' => 'Closed'])->required(),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Supporting document')
+                ->schema([
+                    Placeholder::make('current_opportunity_document')->label('Current document')->content(fn (?InvestmentOpportunity $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No document selected.')->html()->visible(fn (?InvestmentOpportunity $record): bool => $record !== null),
+                    Select::make('document_id')->relationship('document', 'title')->searchable(),
+                ]),
             SlugField::make('title'),
             TranslationFields::make(InvestmentOpportunity::translatableFields()), ]);
     }

@@ -20,6 +20,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -43,15 +44,18 @@ class WardResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            Textarea::make('description')->maxLength(5000),
-            Textarea::make('boundaries_description')->maxLength(5000)->helperText('Authoritative boundaries have not been supplied as GIS data; do not invent them.'),
-            TextInput::make('map_url')->maxLength(2048)->helperText('Optional council-supplied map link. Leave empty until GIS data is approved.'),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Ward details')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    Textarea::make('description')->maxLength(5000),
+                    Textarea::make('boundaries_description')->maxLength(5000)->helperText('Authoritative boundaries have not been supplied as GIS data; do not invent them.'),
+                    TextInput::make('map_url')->maxLength(2048)->helperText('Optional council-supplied map link. Leave empty until GIS data is approved.'),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
             SlugField::make('name', 'slug', 120),
             TranslationFields::make(Ward::translatableFields()),
         ]);

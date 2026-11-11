@@ -26,6 +26,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -52,22 +53,29 @@ class VacancyResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            TextInput::make('grade')->maxLength(60),
-            TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
-            Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
-            MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
-            Textarea::make('responsibilities')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'), Textarea::make('requirements')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'),
-            DatePicker::make('opens_at'), DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site. Expired vacancies must not be republished as open.'),
-            Textarea::make('application_instructions')->maxLength(5000),
-            Placeholder::make('current_vacancy_document')->label('Current vacancy document')->content(fn (?Vacancy $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No vacancy document selected.')->html()->visible(fn (?Vacancy $record): bool => $record !== null),
-            Select::make('document_id')->relationship('document', 'title')->searchable()->helperText('Downloadable vacancy advert.'),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Vacancy details')
+                ->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    TextInput::make('grade')->maxLength(60),
+                    TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
+                    Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
+                    MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
+                    Textarea::make('responsibilities')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'), Textarea::make('requirements')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'),
+                    DatePicker::make('opens_at'), DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site. Expired vacancies must not be republished as open.'),
+                    Textarea::make('application_instructions')->maxLength(5000),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Vacancy document')
+                ->description('Downloadable vacancy advert.')
+                ->schema([
+                    Placeholder::make('current_vacancy_document')->label('Current vacancy document')->content(fn (?Vacancy $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No vacancy document selected.')->html()->visible(fn (?Vacancy $record): bool => $record !== null),
+                    Select::make('document_id')->relationship('document', 'title')->searchable(),
+                ]),
             SlugField::make('title'),
             TranslationFields::make(Vacancy::translatableFields()), ]);
     }

@@ -25,6 +25,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -47,17 +48,26 @@ class ServiceResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(SlugField::autoFillHook()),
-            Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('One or two sentences shown on cards and search results.'), MarkdownEditor::make('description')->maxLength(20000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            Repeater::make('requirements')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),
-            Repeater::make('steps')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),
-            Textarea::make('fees_information')->maxLength(5000)->helperText('Enter only verified fee information.'),
-            TextInput::make('display_order')->numeric()->default(0)->required(), TextInput::make('seo_title')->maxLength(255), Textarea::make('meta_description')->maxLength(320),
+            Section::make('Service details')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(SlugField::autoFillHook()),
+                    Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('One or two sentences shown on cards and search results.'), MarkdownEditor::make('description')->maxLength(20000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    Repeater::make('requirements')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),
+                    Repeater::make('steps')->schema([Textarea::make('value')->required()])->simple(Textarea::make('value'))->maxItems(30),
+                    Textarea::make('fees_information')->maxLength(5000)->helperText('Enter only verified fee information.'),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Search & metadata')
+                ->description('How this service appears in search results.')
+                ->schema([
+                    TextInput::make('seo_title')->maxLength(255), Textarea::make('meta_description')->maxLength(320),
+                ])
+                ->collapsible(),
             SlugField::make('name'),
             TranslationFields::make(Service::translatableFields()), ]);
     }

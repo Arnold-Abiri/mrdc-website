@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Incidents;
 
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Enquiries\EnquiriesCluster;
+use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\Incidents\Pages\CreateIncident;
 use App\Filament\Resources\Incidents\Pages\EditIncident;
 use App\Filament\Resources\Incidents\Pages\ListIncidents;
@@ -52,10 +53,11 @@ class IncidentResource extends Resource
     {
         return $schema->components([
             DateTimePicker::make('started_at')->required(),
-            DateTimePicker::make('recovered_at'),
+            DateTimePicker::make('recovered_at')->afterOrEqual('started_at')->helperText('Must be on or after Started at. Leave empty while the incident is ongoing.'),
             Select::make('source')->options(['manual' => 'Manual', 'health_check' => 'Health check', 'external_monitor' => 'External monitor'])->required()->default('manual'),
             Select::make('status')->options(['open' => 'Open', 'monitoring' => 'Monitoring', 'resolved' => 'Resolved'])->required()->default('open'),
-            Textarea::make('summary')->maxLength(500)->helperText('Safe operational summary only. No credentials or hostnames.'),
+            Textarea::make('summary')->maxLength(500),
+            TranslationFields::make(Incident::translatableFields()),
         ]);
     }
 

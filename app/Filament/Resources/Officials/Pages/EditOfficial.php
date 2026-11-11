@@ -9,6 +9,7 @@ use App\Filament\Concerns\PreviewHelper;
 use App\Filament\Resources\Officials\OfficialResource;
 use App\Models\Official;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -44,34 +45,36 @@ class EditOfficial extends EditRecord
     {
         return [
             PreviewHelper::makePreviewAction(),
-            Action::make('verify')
-                ->label('Mark publishable')
-                ->authorize(fn (): bool => Gate::allows('verify', $this->record))
-                ->visible(fn (): bool => $this->official()->verification_status !== 'publishable')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    $this->refreshOfficial();
-                    app(OfficialManager::class)->setVerification(auth()->user(), $this->official(), 'publishable');
-                    $this->refreshOfficial();
-                }),
-            Action::make('publish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->official()->status !== 'published')
-                ->disabled(fn (): bool => $this->official()->verification_status !== 'publishable')
-                ->tooltip(fn (): ?string => $this->official()->verification_status !== 'publishable' ? 'Mark this official publishable before publishing.' : null)
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(OfficialManager::class)->setStatus(auth()->user(), $this->official(), 'published');
-                    $this->refreshOfficial();
-                }),
-            Action::make('unpublish')
-                ->authorize(fn (): bool => Gate::allows('publish', $this->record))
-                ->visible(fn (): bool => $this->official()->status === 'published')
-                ->requiresConfirmation()
-                ->action(function (): void {
-                    app(OfficialManager::class)->setStatus(auth()->user(), $this->official(), 'unpublished');
-                    $this->refreshOfficial();
-                }),
+            ActionGroup::make([
+                Action::make('verify')
+                    ->label('Mark publishable')
+                    ->authorize(fn (): bool => Gate::allows('verify', $this->record))
+                    ->visible(fn (): bool => $this->official()->verification_status !== 'publishable')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        $this->refreshOfficial();
+                        app(OfficialManager::class)->setVerification(auth()->user(), $this->official(), 'publishable');
+                        $this->refreshOfficial();
+                    }),
+                Action::make('publish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->official()->status !== 'published')
+                    ->disabled(fn (): bool => $this->official()->verification_status !== 'publishable')
+                    ->tooltip(fn (): ?string => $this->official()->verification_status !== 'publishable' ? 'Mark this official publishable before publishing.' : null)
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(OfficialManager::class)->setStatus(auth()->user(), $this->official(), 'published');
+                        $this->refreshOfficial();
+                    }),
+                Action::make('unpublish')
+                    ->authorize(fn (): bool => Gate::allows('publish', $this->record))
+                    ->visible(fn (): bool => $this->official()->status === 'published')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        app(OfficialManager::class)->setStatus(auth()->user(), $this->official(), 'unpublished');
+                        $this->refreshOfficial();
+                    }),
+            ])->label('Publishing')->button()->outlined(),
             DeleteAction::make(),
         ];
     }

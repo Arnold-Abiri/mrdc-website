@@ -22,6 +22,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -48,19 +49,26 @@ class CouncilMeetingResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')->required()->maxLength(255),
-            Select::make('meeting_type')->options(['full_council' => 'Full council', 'committee' => 'Committee', 'special' => 'Special', 'public_hearing' => 'Public hearing'])->required(),
-            DatePicker::make('scheduled_date')->required(),
-            TextInput::make('scheduled_time')->maxLength(20)->helperText('e.g. 10:00 CAT.'),
-            TextInput::make('venue')->maxLength(255),
-            Select::make('meeting_status')->options(['scheduled' => 'Scheduled', 'completed' => 'Completed', 'postponed' => 'Postponed', 'cancelled' => 'Cancelled'])->required(),
-            Textarea::make('summary')->maxLength(5000),
-            Placeholder::make('current_agenda_document')->label('Current agenda')->content(fn (?CouncilMeeting $record): HtmlString|string => $record?->agenda?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->agenda->media->id)).'" target="_blank" rel="noopener">'.e($record->agenda->media->original_filename).'</a>') : 'No agenda selected.')->html()->visible(fn (?CouncilMeeting $record): bool => $record !== null),
-            Select::make('agenda_document_id')->relationship('agenda', 'title')->searchable()->helperText('Published agenda only; drafts stay private.'),
-            Placeholder::make('current_minutes_document')->label('Current minutes')->content(fn (?CouncilMeeting $record): HtmlString|string => $record?->minutes?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->minutes->media->id)).'" target="_blank" rel="noopener">'.e($record->minutes->media->original_filename).'</a>') : 'No minutes selected.')->html()->visible(fn (?CouncilMeeting $record): bool => $record !== null),
-            Select::make('minutes_document_id')->relationship('minutes', 'title')->searchable()->helperText('Published minutes only; drafts stay private.'),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
+            Section::make('Meeting details')
+                ->schema([
+                    TextInput::make('title')->required()->maxLength(255),
+                    Select::make('meeting_type')->options(['full_council' => 'Full council', 'committee' => 'Committee', 'special' => 'Special', 'public_hearing' => 'Public hearing'])->required(),
+                    DatePicker::make('scheduled_date')->required(),
+                    TextInput::make('scheduled_time')->maxLength(20)->helperText('e.g. 10:00 CAT.'),
+                    TextInput::make('venue')->maxLength(255),
+                    Select::make('meeting_status')->options(['scheduled' => 'Scheduled', 'completed' => 'Completed', 'postponed' => 'Postponed', 'cancelled' => 'Cancelled'])->required(),
+                    Textarea::make('summary')->maxLength(5000),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                ]),
+            Section::make('Meeting documents')
+                ->description('Published documents only; drafts stay private.')
+                ->schema([
+                    Placeholder::make('current_agenda_document')->label('Current agenda')->content(fn (?CouncilMeeting $record): HtmlString|string => $record?->agenda?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->agenda->media->id)).'" target="_blank" rel="noopener">'.e($record->agenda->media->original_filename).'</a>') : 'No agenda selected.')->html()->visible(fn (?CouncilMeeting $record): bool => $record !== null),
+                    Select::make('agenda_document_id')->relationship('agenda', 'title')->searchable(),
+                    Placeholder::make('current_minutes_document')->label('Current minutes')->content(fn (?CouncilMeeting $record): HtmlString|string => $record?->minutes?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->minutes->media->id)).'" target="_blank" rel="noopener">'.e($record->minutes->media->original_filename).'</a>') : 'No minutes selected.')->html()->visible(fn (?CouncilMeeting $record): bool => $record !== null),
+                    Select::make('minutes_document_id')->relationship('minutes', 'title')->searchable(),
+                ]),
             TranslationFields::make(CouncilMeeting::translatableFields()), ]);
     }
 

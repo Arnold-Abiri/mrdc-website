@@ -44,9 +44,6 @@ class TranslationFields
 
         return Section::make('Translations')
             ->description('Shona and Ndebele public wording. Missing entries fall back to English.')
-            ->headerActions([
-                HandlesTranslations::makeAiTranslateAction(),
-            ])
             ->schema($components)
             ->collapsible()
             ->collapsed();

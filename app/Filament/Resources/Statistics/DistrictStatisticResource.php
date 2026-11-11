@@ -20,6 +20,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -48,13 +49,16 @@ class DistrictStatisticResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('label')->required()->maxLength(120)->helperText('e.g. Electoral wards, District population.'),
-            TextInput::make('value')->required()->maxLength(60)->helperText('e.g. 29, 161091.'),
-            TextInput::make('unit')->maxLength(60)->helperText('Optional unit, e.g. km², wards.'),
-            TextInput::make('icon')->maxLength(60),
-            Textarea::make('source_note')->maxLength(255)->helperText('Internal verification note, e.g. 2022 census. Never shown as a production claim without approval.'),
-            TextInput::make('display_order')->numeric()->default(0)->required(),
-            Select::make('is_active')->options([1 => 'Active', 0 => 'Inactive'])->required(),
+            Section::make('Statistic')
+                ->schema([
+                    TextInput::make('label')->required()->maxLength(120)->helperText('e.g. Electoral wards, District population.'),
+                    TextInput::make('value')->required()->maxLength(60)->helperText('e.g. 29, 161091.'),
+                    TextInput::make('unit')->maxLength(60)->helperText('Optional unit, e.g. km², wards.'),
+                    TextInput::make('icon')->maxLength(60),
+                    Textarea::make('source_note')->maxLength(255)->helperText('Internal verification note, e.g. 2022 census. Never shown as a production claim without approval.'),
+                    TextInput::make('display_order')->numeric()->default(0)->required(),
+                    Select::make('is_active')->options([1 => 'Active', 0 => 'Inactive'])->required(),
+                ]),
             TranslationFields::make(DistrictStatistic::translatableFields()),
         ]);
     }

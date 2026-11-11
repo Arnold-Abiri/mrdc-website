@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Incidents\Pages;
 
 use App\Domain\Operations\IncidentManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Resources\Incidents\IncidentResource;
 use App\Models\Incident;
 use Filament\Actions\DeleteAction;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 class EditIncident extends EditRecord
 {
     protected static string $resource = IncidentResource::class;
+
+    use HandlesTranslations;
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
@@ -26,6 +29,7 @@ class EditIncident extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             DeleteAction::make(),
         ];
     }

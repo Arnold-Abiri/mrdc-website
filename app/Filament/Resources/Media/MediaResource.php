@@ -22,6 +22,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -46,20 +47,26 @@ class MediaResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Placeholder::make('current_media_preview')
-                ->label('Current file')
-                ->content(fn (?Media $record): HtmlString|string => $record === null
-                    ? 'No file selected.'
-                    : (str_starts_with($record->mime_type, 'image/')
-                        ? new HtmlString('<img src="'.e(route('admin.media.file', $record->id)).'" alt="'.e($record->title).'" style="max-height: 220px; max-width: 100%; object-fit: contain;">')
-                        : new HtmlString('<a href="'.e(route('admin.media.preview', $record->id)).'" target="_blank" rel="noopener">'.e($record->original_filename).'</a>')))
-                ->html()
-                ->visible(fn (?Media $record): bool => $record !== null),
-            FileUpload::make('file')->visibleOn('create')->required()->storeFiles(false)->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])->maxSize(config('cms.max_upload_kb')),
-            TextInput::make('title')->required()->maxLength(255),
-            TextInput::make('alt_text')->maxLength(255),
-            Textarea::make('caption')->maxLength(2000),
-            Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+            Section::make('File')
+                ->schema([
+                    Placeholder::make('current_media_preview')
+                        ->label('Current file')
+                        ->content(fn (?Media $record): HtmlString|string => $record === null
+                            ? 'No file selected.'
+                            : (str_starts_with($record->mime_type, 'image/')
+                                ? new HtmlString('<img src="'.e(route('admin.media.file', $record->id)).'" alt="'.e($record->title).'" style="max-height: 220px; max-width: 100%; object-fit: contain;">')
+                                : new HtmlString('<a href="'.e(route('admin.media.preview', $record->id)).'" target="_blank" rel="noopener">'.e($record->original_filename).'</a>')))
+                        ->html()
+                        ->visible(fn (?Media $record): bool => $record !== null),
+                    FileUpload::make('file')->visibleOn('create')->required()->storeFiles(false)->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])->maxSize(config('cms.max_upload_kb')),
+                ]),
+            Section::make('Details')
+                ->schema([
+                    TextInput::make('title')->required()->maxLength(255),
+                    TextInput::make('alt_text')->maxLength(255),
+                    Textarea::make('caption')->maxLength(2000),
+                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                ]),
             TranslationFields::make(Media::translatableFields()),
         ]);
     }
