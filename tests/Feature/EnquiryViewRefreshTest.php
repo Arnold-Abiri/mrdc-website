@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Cms\EnquiryManager;
 use App\Filament\Resources\Enquiries\Pages\ViewEnquiry;
 use App\Models\Department;
 use App\Models\Enquiry;
@@ -8,6 +9,7 @@ use Database\Seeders\SecuritySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -39,6 +41,29 @@ test('route header action refreshes the viewed record', function (): void {
 
     expect($enquiry->fresh()->department_id)->toBe($department->id);
     expect($page->get('record')->department_id)->toBe($department->id);
+});
+
+test('invalid status transitions are rejected', function (): void {
+    $this->seed(SecuritySeeder::class);
+    $actor = viewRefreshAdmin();
+    $enquiry = Enquiry::factory()->create(['department_id' => null, 'status' => 'new']);
+
+    expect(EnquiryManager::canTransition('new', 'resolved'))->toBeFalse()
+        ->and(EnquiryManager::canTransition('in_progress', 'resolved'))->toBeTrue();
+
+    expect(fn (): Enquiry => app(EnquiryManager::class)->setStatus($actor, $enquiry, 'resolved'))
+        ->toThrow(HttpException::class);
+});
+
+test('resolve actions are hidden unless the transition is valid', function (): void {
+    $this->seed(SecuritySeeder::class);
+    $actor = viewRefreshAdmin();
+    $this->actingAs($actor);
+    $enquiry = Enquiry::factory()->create(['department_id' => null, 'status' => 'new']);
+
+    Livewire::test(ViewEnquiry::class, ['record' => $enquiry->getRouteKey()])
+        ->assertActionHidden('resolved')
+        ->assertActionVisible('closed');
 });
 
 test('note header action persists and is visible on a fresh read', function (): void {

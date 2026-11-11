@@ -15,6 +15,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ViewEnquiry extends ViewRecord
 {
@@ -141,22 +142,19 @@ class ViewEnquiry extends ViewRecord
                 }),
             ActionGroup::make([
                 Action::make('in_progress')->label('Mark in progress')->authorize(fn (): bool => Gate::allows('update', $this->record))
+                    ->visible(fn (): bool => EnquiryManager::canTransition($this->enquiry()->status, 'in_progress'))
                     ->requiresConfirmation()->action(function (): void {
-                        app(EnquiryManager::class)->setStatus(auth()->user(), $this->enquiry(), 'in_progress');
-                        $this->refreshRecord();
-                        Notification::make()->title('Marked in progress')->success()->send();
+                        $this->changeStatus('in_progress', 'Marked in progress');
                     }),
                 Action::make('resolved')->label('Resolve')->authorize(fn (): bool => Gate::allows('update', $this->record))
+                    ->visible(fn (): bool => EnquiryManager::canTransition($this->enquiry()->status, 'resolved'))
                     ->requiresConfirmation()->action(function (): void {
-                        app(EnquiryManager::class)->setStatus(auth()->user(), $this->enquiry(), 'resolved');
-                        $this->refreshRecord();
-                        Notification::make()->title('Enquiry resolved')->success()->send();
+                        $this->changeStatus('resolved', 'Enquiry resolved');
                     }),
                 Action::make('closed')->label('Close')->authorize(fn (): bool => Gate::allows('update', $this->record))
+                    ->visible(fn (): bool => EnquiryManager::canTransition($this->enquiry()->status, 'closed'))
                     ->requiresConfirmation()->action(function (): void {
-                        app(EnquiryManager::class)->setStatus(auth()->user(), $this->enquiry(), 'closed');
-                        $this->refreshRecord();
-                        Notification::make()->title('Enquiry closed')->success()->send();
+                        $this->changeStatus('closed', 'Enquiry closed');
                     }),
             ])->label('Change status')->button()->outlined(),
         ];
@@ -174,5 +172,24 @@ class ViewEnquiry extends ViewRecord
     private function refreshRecord(): void
     {
         $this->record->refresh();
+    }
+
+    private function changeStatus(string $status, string $successTitle): void
+    {
+        try {
+            app(EnquiryManager::class)->setStatus(auth()->user(), $this->enquiry(), $status);
+        } catch (HttpException $exception) {
+            $this->refreshRecord();
+            Notification::make()
+                ->title('Status no longer available')
+                ->body('This enquiry changed before the action was confirmed. The view has been refreshed.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $this->refreshRecord();
+        Notification::make()->title($successTitle)->success()->send();
     }
 }

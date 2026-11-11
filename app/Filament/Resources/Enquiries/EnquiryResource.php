@@ -18,6 +18,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -26,6 +27,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class EnquiryResource extends Resource
 {
@@ -137,9 +139,17 @@ class EnquiryResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn (Enquiry $record): bool => ! in_array($record->status, ['resolved', 'closed'], true))
+                    ->visible(fn (Enquiry $record): bool => EnquiryManager::canTransition($record->status, 'resolved'))
                     ->action(function (Enquiry $record): void {
-                        app(EnquiryManager::class)->setStatus(auth()->user(), $record, 'resolved');
+                        try {
+                            app(EnquiryManager::class)->setStatus(auth()->user(), $record, 'resolved');
+                        } catch (HttpException $exception) {
+                            Notification::make()
+                                ->title('Status no longer available')
+                                ->body('This enquiry changed before Resolve was confirmed. The list has been refreshed.')
+                                ->warning()
+                                ->send();
+                        }
                     }),
                 DeleteAction::make(),
             ])

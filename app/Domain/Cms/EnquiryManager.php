@@ -31,6 +31,11 @@ class EnquiryManager
         'closed' => ['in_progress'],
     ];
 
+    public static function canTransition(string $from, string $to): bool
+    {
+        return in_array($to, self::TRANSITIONS[$from] ?? [], true);
+    }
+
     public const CITIZEN_CATEGORIES = ['general', 'services', 'feedback', 'complaint', 'fault_report', 'investment_enquiry', 'service_enquiry', 'other'];
 
     public const CONTEXT_TYPES = ['service', 'investment', 'ward'];
@@ -97,7 +102,7 @@ class EnquiryManager
             $enquiry = Enquiry::query()->lockForUpdate()->findOrFail($enquiry->id);
             Gate::forUser($actor)->authorize('update', $enquiry);
             $before = $enquiry->status;
-            abort_unless(in_array($status, self::TRANSITIONS[$before] ?? [], true), 422, 'Invalid enquiry status transition.');
+            abort_unless(self::canTransition($before, $status), 422, 'Invalid enquiry status transition.');
             $enquiry->status = $status;
             $enquiry->save();
             app(AuditWriter::class)->record($actor, 'enquiries.status_changed', $enquiry, ['from' => $before, 'to' => $status]);
