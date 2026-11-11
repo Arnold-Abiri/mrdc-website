@@ -19,6 +19,7 @@ use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -43,39 +44,53 @@ class EnquiryResource extends Resource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            TextEntry::make('public_id')->label('Reference'),
-            TextEntry::make('status')->badge(),
-            TextEntry::make('submitted_at')->dateTime(),
-            TextEntry::make('name'),
-            TextEntry::make('email'),
-            TextEntry::make('phone'),
-            TextEntry::make('category'),
-            TextEntry::make('organisation')->visible(fn (Enquiry $record): bool => $record->organisation !== null),
-            TextEntry::make('context')->label('Origin / Ward')->state(function (Enquiry $record): ?string {
-                if (! $record->context_type) {
-                    return null;
-                }
-                if ($record->context_type === 'ward') {
-                    return 'Ward: '.str($record->context_reference)->replace('-', ' ')->title();
-                }
-
-                return $record->context_type.':'.$record->context_reference;
-            })->visible(fn (Enquiry $record): bool => $record->context_type !== null),
-            TextEntry::make('department_name')->label('Department')->state(fn (Enquiry $record): ?string => $record->department instanceof Department ? $record->department->name : null),
-            TextEntry::make('assignee_name')->label('Assigned to')->state(fn (Enquiry $record): ?string => $record->assignee instanceof User ? $record->assignee->name : null),
-            TextEntry::make('subject'),
-            TextEntry::make('message')->columnSpanFull(),
-            RepeatableEntry::make('notes_list')
-                ->label('Internal notes')
-                ->state(fn (Enquiry $record): array => $record->notes()->with('author')->oldest()->get()->map(fn ($note): array => [
-                    'meta' => $note->created_at->format('d M Y H:i').' · '.$note->author->name,
-                    'body' => $note->body,
-                ])->all())
+            Section::make('Enquiry')
+                ->columns(3)
                 ->schema([
-                    TextEntry::make('meta')->label('')->weight('bold'),
-                    TextEntry::make('body')->label(''),
+                    TextEntry::make('public_id')->label('Reference')->copyable(),
+                    TextEntry::make('status')->badge(),
+                    TextEntry::make('submitted_at')->dateTime()->label('Submitted'),
+                    TextEntry::make('category')->badge(),
+                    TextEntry::make('context')->label('Origin / Ward')->state(function (Enquiry $record): ?string {
+                        if (! $record->context_type) {
+                            return null;
+                        }
+                        if ($record->context_type === 'ward') {
+                            return 'Ward: '.str($record->context_reference)->replace('-', ' ')->title();
+                        }
+
+                        return $record->context_type.':'.$record->context_reference;
+                    })->visible(fn (Enquiry $record): bool => $record->context_type !== null),
+                    TextEntry::make('department_name')->label('Department')->state(fn (Enquiry $record): ?string => $record->department instanceof Department ? $record->department->name : null),
+                    TextEntry::make('assignee_name')->label('Assigned to')->state(fn (Enquiry $record): ?string => $record->assignee instanceof User ? $record->assignee->name : null),
+                ]),
+            Section::make('Citizen')
+                ->columns(3)
+                ->schema([
+                    TextEntry::make('name'),
+                    TextEntry::make('email')->copyable()->icon('heroicon-o-envelope'),
+                    TextEntry::make('phone')->copyable()->icon('heroicon-o-phone'),
+                    TextEntry::make('organisation')->visible(fn (Enquiry $record): bool => $record->organisation !== null),
+                ]),
+            Section::make('Message')
+                ->schema([
+                    TextEntry::make('subject')->weight('bold'),
+                    TextEntry::make('message')->columnSpanFull(),
+                ]),
+            Section::make('Internal notes')
+                ->schema([
+                    RepeatableEntry::make('notes_list')
+                        ->hiddenLabel()
+                        ->state(fn (Enquiry $record): array => $record->notes()->with('author')->oldest()->get()->map(fn ($note): array => [
+                            'meta' => $note->created_at->format('d M Y H:i').' · '.$note->author->name,
+                            'body' => $note->body,
+                        ])->all())
+                        ->schema([
+                            TextEntry::make('meta')->hiddenLabel()->weight('bold'),
+                            TextEntry::make('body')->hiddenLabel()->copyable(),
+                        ])
+                        ->columnSpanFull(),
                 ])
-                ->columnSpanFull()
                 ->visible(fn (Enquiry $record): bool => $record->notes()->exists()),
         ]);
     }

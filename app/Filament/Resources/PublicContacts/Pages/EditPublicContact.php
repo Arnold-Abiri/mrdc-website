@@ -61,6 +61,7 @@ class EditPublicContact extends EditRecord
                     $this->record = $this->record->refresh();
                     $this->refreshFormData(['status', 'verification_status', 'published_at']);
                 }),
+            self::makeAiTranslateAction(),
             DeleteAction::make(),
         ];
     }

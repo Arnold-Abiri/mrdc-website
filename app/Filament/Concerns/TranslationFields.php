@@ -42,7 +42,14 @@ class TranslationFields
             }
         }
 
-        return Section::make('Translations')->description('Shona and Ndebele public wording. Missing entries fall back to English.')->schema($components)->collapsible()->collapsed();
+        return Section::make('Translations')
+            ->description('Shona and Ndebele public wording. Missing entries fall back to English.')
+            ->headerActions([
+                HandlesTranslations::makeAiTranslateAction(),
+            ])
+            ->schema($components)
+            ->collapsible()
+            ->collapsed();
     }
 
     /**
@@ -68,7 +75,7 @@ class TranslationFields
      *
      * @param  array<int, mixed>  $english
      */
-    private static function englishToLines(array $english): string
+    public static function englishToLines(array $english): string
     {
         if (self::isBlocks($english)) {
             $texts = [];
