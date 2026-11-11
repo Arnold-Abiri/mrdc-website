@@ -19,6 +19,7 @@
             const q = this.filter.toLowerCase();
             return (task.title || '').toLowerCase().includes(q) 
                 || (task.keywords || '').toLowerCase().includes(q)
+                || (task.role || '').toLowerCase().includes(q)
                 || (task.steps || []).some(s => s.toLowerCase().includes(q));
         },
         countVisibleTasks() {
@@ -53,6 +54,7 @@
         x-show="open" 
         role="dialog"
         aria-modal="true"
+        x-trap.inert.noscroll="open"
         aria-labelledby="workflow-drawer-title"
         x-transition:enter="transition ease-out duration-300 transform"
         x-transition:enter-start="translate-x-full"
@@ -72,8 +74,8 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 </div>
                 <div class="min-w-0">
-                    <h3 id="workflow-drawer-title" class="font-bold text-base text-slate-900 dark:text-slate-100 truncate">Council Workflow Navigator</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Step-by-step procedures & navigation shortcuts</p>
+                    <h3 id="workflow-drawer-title" class="font-bold text-base text-slate-900 dark:text-slate-100 truncate">Admin User Guide</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Task instructions and admin shortcuts</p>
                 </div>
             </div>
 
@@ -82,6 +84,7 @@
                     type="button" 
                     @click="isExpanded = !isExpanded" 
                     :title="isExpanded ? 'Collapse panel width' : 'Expand panel width'"
+                    :aria-label="isExpanded ? 'Collapse panel width' : 'Expand panel width'"
                     class="hidden sm:inline-flex items-center justify-center p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
                     <svg x-show="!isExpanded" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
@@ -115,12 +118,14 @@
                 <input 
                     type="text" 
                     x-ref="drawerSearchInput"
+                    aria-label="Search admin tasks"
                     x-model="filter" 
                     placeholder="Search any process (e.g. 'tender', 'complaint', 'minutes', 'user')..." 
                     class="w-full pl-10 pr-9 py-2.5 text-sm rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <button 
                     type="button" 
+                    aria-label="Clear search"
                     x-show="filter.length > 0" 
                     @click="filter = ''; $refs.drawerSearchInput?.focus()" 
                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
@@ -139,7 +144,7 @@
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'"
                     class="px-3 py-1.5 rounded-full text-xs transition-colors cursor-pointer whitespace-nowrap"
                 >
-                    All Procedures
+                    All Tasks
                 </button>
                 <template x-for="c in workflows" :key="c.id">
                     <button 
@@ -212,6 +217,8 @@
                                         </a>
                                     </template>
                                 </div>
+
+                                <p x-show="!task.destination" class="mb-3 text-xs text-slate-500">This shortcut is unavailable for your account. Ask an authorised colleague for help with this task.</p>
 
                                 <ol class="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 pl-4 list-decimal list-outside leading-relaxed">
                                     <template x-for="step in task.steps" :key="step">

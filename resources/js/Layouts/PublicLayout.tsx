@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import AccessibilitySettings from '../Components/public/AccessibilitySettings';
+import CitizenChatWidget from '../Components/public/CitizenChatWidget';
 import { ConnectBanner } from '../Components/public/PageHeader';
 import { normalizeLocale, translate } from '../localization';
 import type { ReactNode } from 'react';
@@ -657,6 +658,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 {/* Bottom African Pattern Banner */}
                 <div className="bottom-pattern-banner" style={{ backgroundImage: 'url(/images/bottom-pattern.png)' }} aria-hidden="true" />
             </footer>
+
+            {/* Interactive Council AI Help Desk Floating Widget */}
+            <CitizenChatWidget />
         </>
     );
 }

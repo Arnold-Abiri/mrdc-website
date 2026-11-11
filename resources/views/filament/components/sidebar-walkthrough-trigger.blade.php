@@ -17,7 +17,7 @@
                     System Walkthrough
                 </div>
                 <div class="text-[10px] text-slate-500 dark:text-slate-400">
-                    {{ $totalTasks }} quick guides & SOPs
+                    {{ $totalTasks }} task guides
                 </div>
             </div>
         </div>

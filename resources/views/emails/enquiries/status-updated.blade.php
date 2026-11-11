@@ -3,7 +3,11 @@
 
 Thank you for contacting **Mutoko Rural District Council**.
 
+@if($isAcknowledgement ?? false)
+We have received your enquiry regarding **"{{ $enquiry->subject }}"** and it is now with our team for review.
+@else
 We are writing to inform you that your enquiry regarding **"{{ $enquiry->subject }}"** has been updated.
+@endif
 
 **Reference Number:** `{{ $enquiry->public_id }}`  
 **Current Status:** **{{ $statusLabel }}**  

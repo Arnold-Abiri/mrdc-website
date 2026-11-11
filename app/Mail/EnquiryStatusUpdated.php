@@ -21,7 +21,8 @@ class EnquiryStatusUpdated extends Mailable implements ShouldQueue
     public function __construct(
         public Enquiry $enquiry,
         public ?string $officerNote = null,
-        public ?string $statusLabel = null
+        public ?string $statusLabel = null,
+        public bool $isAcknowledgement = false
     ) {
         $this->statusLabel = $statusLabel ?? str($enquiry->status)->headline()->toString();
     }
@@ -49,6 +50,7 @@ class EnquiryStatusUpdated extends Mailable implements ShouldQueue
                 'enquiry' => $this->enquiry,
                 'officerNote' => $this->officerNote,
                 'statusLabel' => $this->statusLabel,
+                'isAcknowledgement' => $this->isAcknowledgement,
             ],
         );
     }

@@ -67,6 +67,11 @@ class EnquiryManager
         $enquiry->submitted_at = now();
         $enquiry->save();
         $this->notifyStaff($this->staffForDepartment($enquiry->department_id), $enquiry, 'New citizen submission');
+        try {
+            Mail::to($enquiry->email)->send(new EnquiryStatusUpdated($enquiry, null, 'Received', true));
+        } catch (Throwable $exception) {
+            report($exception);
+        }
 
         return $enquiry;
     }
@@ -214,19 +219,22 @@ class EnquiryManager
 
         $note = $validated['message'] ?? null;
 
-        // If officer provided a note, also record it as an internal note
+        try {
+            Mail::to($enquiry->email)->send(new EnquiryStatusUpdated($enquiry, $note));
+        } catch (Throwable $exception) {
+            report($exception);
+            $this->addNote($actor, $enquiry, "[Citizen Notification Failed]:\n".($note ?? '(no message)'));
+
+            return;
+        }
+
+        // Only record a sent notification after the mail was dispatched.
         if (! empty($note)) {
             $this->addNote($actor, $enquiry, "[Citizen Notification Sent]:\n".$note);
         }
-
-        try {
-            Mail::to($enquiry->email)->send(new EnquiryStatusUpdated($enquiry, $note));
-            app(AuditWriter::class)->record($actor, 'enquiries.citizen_notified', $enquiry, [
-                'recipient' => $enquiry->email,
-                'status' => $enquiry->status,
-            ]);
-        } catch (Throwable $exception) {
-            report($exception);
-        }
+        app(AuditWriter::class)->record($actor, 'enquiries.citizen_notified', $enquiry, [
+            'recipient' => $enquiry->email,
+            'status' => $enquiry->status,
+        ]);
     }
 }

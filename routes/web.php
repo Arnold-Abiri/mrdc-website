@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\MediaPreviewController;
 use App\Http\Controllers\AuditExportController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MonthlyMetricsExportController;
+use App\Http\Controllers\Public\CitizenChatController;
 use App\Http\Controllers\Public\DepartmentController;
 use App\Http\Controllers\Public\DocumentController;
 use App\Http\Controllers\Public\EditorialController;
@@ -38,6 +39,8 @@ Route::get('/', [HomeController::class, 'root'])->name('root');
 Route::get('/{locale}', [HomeController::class, 'index'])->where(['locale' => 'en|sn|nd'])->name('home');
 
 Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
+
+Route::post('/api/ai/chat', CitizenChatController::class)->middleware('throttle:15,1')->name('api.ai.chat');
 
 Route::prefix('{locale}')->where(['locale' => 'en|sn|nd'])->middleware(RecordAnalytics::class)->group(function () {
     Route::get('/contact', [PublicEnquiryController::class, 'create'])->name('contact.create');

@@ -228,3 +228,36 @@ test('unregistered or unpublished ward reference is rejected by context resolver
     expect($enquiry->context_type)->toBeNull()
         ->and($enquiry->context_reference)->toBeNull();
 });
+
+test('citizen receives an acknowledgement email on submit', function (): void {
+    Mail::fake();
+
+    $enquiry = app(EnquiryManager::class)->submit([...enquiryPayload(), 'email' => 'citizen@example.test']);
+
+    Mail::assertQueued(EnquiryStatusUpdated::class, function (EnquiryStatusUpdated $mail) use ($enquiry): bool {
+        return $mail->hasTo('citizen@example.test')
+            && $mail->isAcknowledgement === true
+            && $mail->enquiry->id === $enquiry->id;
+    });
+});
+
+test('failed citizen notification records failure instead of success', function (): void {
+    $this->seed(SecuritySeeder::class);
+    $admin = scopedEnquiryUser(Department::factory()->create());
+    $enquiry = Enquiry::factory()->create(['status' => 'in_progress', 'department_id' => $admin->department_id]);
+
+    $fake = new class(app('mail.manager')) extends \Illuminate\Support\Testing\Fakes\MailFake
+    {
+        protected function sendMail($view, $shouldQueue = false)
+        {
+            throw new \Exception('SMTP down');
+        }
+    };
+    Mail::swap($fake);
+
+    app(EnquiryManager::class)->notifyCitizen($admin, $enquiry, 'Technician dispatched.');
+
+    $bodies = $enquiry->fresh()->notes()->pluck('body')->all();
+    expect($bodies)->toHaveCount(1);
+    expect($bodies[0])->toContain('[Citizen Notification Failed]');
+});

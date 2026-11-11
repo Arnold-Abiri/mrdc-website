@@ -45,13 +45,13 @@
                 <div class="max-w-2xl">
                     <div class="mrdc-guide-eyebrow flex items-center gap-2">
                         <x-filament::icon icon="heroicon-m-book-open" class="w-4 h-4 text-emerald-300 print:hidden" />
-                        Mutoko Rural District Council • Standard Operating Procedures Manual
+                        Mutoko Rural District Council • Admin User Guide
                     </div>
                     <h1>
-                        System Walkthrough & Operating Procedures
+                        Admin User Guide
                     </h1>
                     <p>
-                        Official procedural handbook and digital workflow directory for Mutoko RDC administration, public records, and service operations.
+                        Find a task, follow the steps, and open the relevant admin page. Shortcuts reflect your permissions; ask an authorised colleague when an action is unavailable.
                     </p>
                 </div>
 
@@ -64,7 +64,7 @@
                         title="Print or export as PDF handbook"
                     >
                         <x-filament::icon icon="heroicon-m-printer" class="w-4 h-4" />
-                        <span>Print Walkthrough</span>
+                        <span>Print Guide</span>
                     </button>
                 </div>
             </div>
@@ -75,7 +75,8 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
                 <input 
-                    type="text" 
+                    type="text"
+                    aria-label="Search admin tasks"
                     x-model.debounce.150ms="search"
                     @input="if (search.trim().length > 0 && activeCategory !== 'all') { activeCategory = 'all'; }"
                     placeholder="Search any process (e.g. 'publish tender', 'respond to enquiry', 'minutes', 'project status')..." 
@@ -93,6 +94,11 @@
             </div>
         </div>
 
+        <p class="text-sm text-slate-600 dark:text-slate-300 print:hidden">
+            For current tasks and operational information, open the
+            <a href="{{ route('filament.admin.pages.council-dashboard') }}" class="font-medium text-emerald-700 underline dark:text-emerald-400">dashboard</a>.
+        </p>
+
         {{-- Category Filter Pills (Screen only) --}}
         <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800 print:hidden">
             <button 
@@ -103,7 +109,7 @@
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'"
                 class="px-3.5 py-1.5 rounded-full text-xs transition-colors cursor-pointer whitespace-nowrap border border-slate-200 dark:border-slate-700"
             >
-                All Departments ({{ collect($workflows)->sum(fn($w) => count($w['tasks'])) }})
+                All Tasks ({{ collect($workflows)->sum(fn($w) => count($w['tasks'])) }})
             </button>
 
             @foreach ($workflows as $category)
@@ -121,63 +127,6 @@
                 </button>
             @endforeach
         </div>
-
-        {{-- Council Operations Summary --}}
-        @if (!empty($liveStatus) && (!empty($liveStatus['items']) || !empty($liveStatus['stats'])))
-            <div x-show="activeCategory === 'all' && !search.trim()" class="rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 p-5 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-                            <x-filament::icon icon="heroicon-m-signal" class="w-4 h-4 animate-pulse" />
-                        </span>
-                        <div>
-                            <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ $liveStatus['heading'] }}</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">{{ $liveStatus['description'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Live Quick Metrics Grid --}}
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    @foreach ($liveStatus['stats'] as $statLabel => $statVal)
-                        <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs">
-                            <div class="text-[11px] font-medium text-slate-500 dark:text-slate-400">{{ $statLabel }}</div>
-                            <div class="text-lg font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">{{ $statVal }}</div>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Live Stage Items --}}
-                @if (!empty($liveStatus['items']))
-                    <div class="space-y-2 pt-1">
-                        <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Items Needing Administrative Action Now:</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            @foreach ($liveStatus['items'] as $liveItem)
-                                <a 
-                                    href="{{ $liveItem['url'] }}" 
-                                    class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-colors flex items-center justify-between gap-3 shadow-2xs group"
-                                >
-                                    <div class="min-w-0">
-                                        <div class="flex items-center gap-1.5 mb-0.5">
-                                            <span class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">{{ $liveItem['module'] }}</span>
-                                            <span class="text-slate-300 dark:text-slate-600">•</span>
-                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-medium bg-{{ $liveItem['status_color'] }}-50 text-{{ $liveItem['status_color'] }}-700 dark:bg-{{ $liveItem['status_color'] }}-950/60 dark:text-{{ $liveItem['status_color'] }}-300 border border-{{ $liveItem['status_color'] }}-200 dark:border-{{ $liveItem['status_color'] }}-800">
-                                                {{ $liveItem['status'] }}
-                                            </span>
-                                        </div>
-                                        <div class="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 truncate">{{ $liveItem['title'] }}</div>
-                                        <div class="text-[10px] text-slate-400 truncate">{{ $liveItem['meta'] }}</div>
-                                    </div>
-                                    <span class="flex-shrink-0 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            </div>
-        @endif
 
         {{-- Empty Search Results Feedback --}}
         <div 
@@ -279,10 +228,14 @@
                                         @endif
                                     </div>
 
+                                    @if (empty($task['destination']))
+                                        <p class="text-xs text-slate-500">This shortcut is unavailable for your account. Ask an authorised colleague for help with this task.</p>
+                                    @endif
+
                                     {{-- Steps List with Interactive Checklist --}}
                                     <div class="space-y-2 my-3">
                                         <div class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                                            <span>Procedure Steps:</span>
+                                            <span>Steps:</span>
                                             <div class="flex items-center gap-2 print:hidden" x-show="checkedSteps.length > 0">
                                                 <span class="text-[10px] font-normal normal-case text-slate-400">
                                                     <span x-text="checkedSteps.length"></span> of {{ count($task['steps']) }} completed

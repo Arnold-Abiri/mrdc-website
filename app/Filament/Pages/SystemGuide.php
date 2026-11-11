@@ -13,10 +13,6 @@ use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Resources\Tenders\TenderResource;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Resources\Vacancies\VacancyResource;
-use App\Models\CouncilMeeting;
-use App\Models\CouncilProject;
-use App\Models\Enquiry;
-use App\Models\Tender;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -42,7 +38,6 @@ class SystemGuide extends Page
     {
         return [
             'workflows' => self::getWorkflowCatalog(),
-            'liveStatus' => $this->getLiveStatusSummary(),
             'defaultCategory' => self::getDefaultCategoryForUser(),
         ];
     }
@@ -61,6 +56,10 @@ class SystemGuide extends Page
             return 'admin';
         }
 
+        if ($user->can('users.view')) {
+            return 'all';
+        }
+
         if ($user->hasRole('Department Content Owner') || $user->can('editorial.create')) {
             return 'content';
         }
@@ -77,86 +76,6 @@ class SystemGuide extends Page
     }
 
     /**
-     * Operational summary across active council workflows.
-     *
-     * @return array{heading: string, description: string, stats: array<string, int>, items: array<int, array<string, mixed>>}
-     */
-    public function getLiveStatusSummary(): array
-    {
-        $newEnquiries = EnquiryResource::canViewAny()
-            ? Enquiry::where('status', 'new')->count()
-            : 0;
-
-        $activeTenders = TenderResource::canViewAny()
-            ? Tender::where('status', 'published')
-                ->whereNotIn('lifecycle_status', ['closed', 'cancelled', 'awarded'])
-                ->count()
-            : 0;
-
-        $activeProjects = CouncilProjectResource::canViewAny()
-            ? CouncilProject::where('status', 'published')
-                ->whereNotIn('project_status', ['completed', 'cancelled'])
-                ->count()
-            : 0;
-
-        $upcomingMeetings = CouncilMeetingResource::canViewAny()
-            ? CouncilMeeting::whereDate('scheduled_date', '>=', today())
-                ->where('meeting_status', 'scheduled')
-                ->count()
-            : 0;
-
-        $items = [];
-
-        // Latest open enquiries
-        if (EnquiryResource::canViewAny()) {
-            Enquiry::latest('submitted_at')
-                ->limit(2)
-                ->get()
-                ->each(function (Enquiry $e) use (&$items) {
-                    $items[] = [
-                        'title' => $e->subject ?: 'Citizen Enquiry',
-                        'meta' => 'From: '.($e->name ?: 'Anonymous').' • '.($e->submitted_at?->diffForHumans() ?? 'recently'),
-                        'module' => 'Public Enquiries',
-                        'status' => ucfirst($e->status ?? 'new'),
-                        'status_color' => $e->status === 'new' ? 'amber' : ($e->status === 'resolved' ? 'emerald' : 'blue'),
-                        'url' => EnquiryResource::getUrl('view', ['record' => $e]),
-                    ];
-                });
-        }
-
-        // Active tenders closing soon
-        if (TenderResource::canViewAny()) {
-            Tender::where('status', 'published')
-                ->where('closes_at', '>=', now())
-                ->orderBy('closes_at')
-                ->limit(2)
-                ->get()
-                ->each(function (Tender $t) use (&$items) {
-                    $items[] = [
-                        'title' => $t->title,
-                        'meta' => 'Ref: '.$t->reference.' • Closes: '.($t->closes_at?->format('d M Y') ?? 'N/A'),
-                        'module' => 'Tenders',
-                        'status' => ucfirst($t->lifecycle_status ?? 'open'),
-                        'status_color' => 'emerald',
-                        'url' => TenderResource::getUrl('edit', ['record' => $t]),
-                    ];
-                });
-        }
-
-        return [
-            'heading' => 'Council Live Operational Pipeline',
-            'description' => 'Current live status across critical council operational workflows requiring administrative attention or action.',
-            'stats' => [
-                'New Enquiries' => $newEnquiries,
-                'Active Tenders' => $activeTenders,
-                'Ongoing Projects' => $activeProjects,
-                'Upcoming Meetings' => $upcomingMeetings,
-            ],
-            'items' => $items,
-        ];
-    }
-
-    /**
      * Get the complete catalog of council procedures and workflows.
      *
      * @return array<int, array<string, mixed>>
@@ -169,36 +88,36 @@ class SystemGuide extends Page
                 'category' => 'Citizen Services & Enquiries',
                 'icon' => 'heroicon-o-chat-bubble-left-right',
                 'color' => 'emerald',
-                'description' => 'Receive, triage, assign, and respond to public inquiries and reported incidents.',
+                'description' => 'Respond to citizen enquiries and record service interruptions.',
                 'tasks' => [
                     [
-                        'title' => 'Triage & Respond to Citizen Enquiries',
+                        'title' => 'Respond to an enquiry',
                         'role' => 'Public Relations / Customer Care',
                         'time' => '5 mins',
                         'keywords' => 'enquiry inquiry citizen message grievance complaint help support contact',
                         'destination' => EnquiryResource::canViewAny() ? EnquiryResource::getUrl() : null,
                         'destination_label' => 'View Public Enquiries',
                         'steps' => [
-                            'Go to Enquiries > Public Enquiries in the sidebar.',
-                            'Click on any enquiry with status "New" to inspect citizen details and their message.',
-                            'Update the status to "Under Review" or "Assigned" and allocate to the responsible department head.',
-                            'Record Council findings or reply directly using the internal notes and response form.',
-                            'Once resolved, mark status as "Resolved" to close the public tracking ticket.',
+                            'Open Public Enquiries and select an enquiry to read the message and its current status.',
+                            'Use Route to department, then Assign staff if those actions are available to you.',
+                            'Use Change status > Mark in progress when work begins. Add internal note records staff findings without sending a reply.',
+                            'Use Send Update to Citizen to review and send an email containing your message, the reference number, and current status. Review any AI draft before sending.',
+                            'Use Change status > Resolve when the issue is addressed, or Close when no further work is required. Only valid status changes are offered.',
                         ],
-                        'tips' => 'Respond to urgent water, road, or health enquiries within 24–48 hours to maintain council service level benchmarks.',
+                        'tips' => 'Internal notes stay with the staff record. Use Send Update to Citizen for an email reply.',
                     ],
                     [
-                        'title' => 'Log and Track Reported Incidents & Hazards',
-                        'role' => 'Engineering & Works Dispatch',
+                        'title' => 'Record a service interruption',
+                        'role' => 'Service administrator',
                         'time' => '5 mins',
-                        'keywords' => 'incident emergency hazard breakdown disaster road damage report',
+                        'keywords' => 'incident interruption outage recovery monitoring service status',
                         'destination' => IncidentResource::canViewAny() ? IncidentResource::getUrl() : null,
-                        'destination_label' => 'View Reported Incidents',
+                        'destination_label' => 'View Service Incidents',
                         'steps' => [
-                            'Open Enquiries > Incidents.',
-                            'Review citizen-reported hazards (e.g. fallen trees, water burst, road collapse).',
-                            'Assess severity (Low, Medium, Critical) and forward dispatch notices to Works & Engineering.',
-                            'Update status to "In Progress" with photos or crew notes, and mark "Resolved" when cleared.',
+                            'Open Incidents to record an interruption affecting the website or its supporting services.',
+                            'Enter Started at and select the source: Manual, Health check, or External monitor.',
+                            'Use Open while investigating, Monitoring while checking recovery, and Resolved when the interruption has ended.',
+                            'Add a brief summary of the affected service and action taken. Enter Recovered at on or after Started at when service returns, then save.',
                         ],
                     ],
                 ],
@@ -211,46 +130,46 @@ class SystemGuide extends Page
                 'description' => 'Publish procurement notices, monitor compliance windows, and post employment vacancies.',
                 'tasks' => [
                     [
-                        'title' => 'Publish a New Public Tender',
+                        'title' => 'Publish a tender',
                         'role' => 'Procurement Management Unit (PMU)',
                         'time' => '10 mins',
                         'keywords' => 'tender procurement bid rfp contract expression of interest supplier vendor',
                         'destination' => TenderResource::canCreate() ? TenderResource::getUrl('create') : null,
                         'destination_label' => '+ Create New Tender',
                         'steps' => [
-                            'Navigate to Services > Tenders & Procurement.',
-                            'Click "New Tender" and fill in Tender Reference Number, Title, and Category (Goods, Works, Consultancy).',
-                            'Specify Closing Date and Time accurately — the portal automatically marks tenders closed once passed.',
-                            'Upload standard bidding documents (SBD), RFP files, and fee requirements.',
-                            'Set status to "Published" so it appears on the public website and investor portal.',
+                            'Open Tenders and create a record with the reference, title, category, and description.',
+                            'Select the lifecycle status and enter opening and closing dates. The public closing status is derived from these dates.',
+                            'Enter submission instructions and select the tender document. Upload the PDF through Documents first if needed.',
+                            'Save the draft, review it, then use the authorised Verify and Publish actions. Ask an authorised reviewer if those actions are unavailable.',
+                            'Publishing makes the approved notice available to citizens; confirm the public details and document are correct.',
                         ],
-                        'tips' => 'Always verify PRAZ compliance and mandatory statutory deadlines before publishing tender notices.',
+                        'tips' => 'Confirm the approved submission instructions and closing date with the procurement team before publishing.',
                     ],
                     [
-                        'title' => 'Check Tender Compliance & Closing Dates',
+                        'title' => 'Review tender deadlines',
                         'role' => 'PMU / Internal Audit',
                         'time' => '3 mins',
                         'keywords' => 'tender compliance audit praz deadline closing status',
-                        'destination' => class_exists(TenderCompliance::class) ? TenderCompliance::getUrl() : null,
+                        'destination' => TenderCompliance::canAccess() ? TenderCompliance::getUrl() : null,
                         'destination_label' => 'Tender Compliance Dashboard',
                         'steps' => [
-                            'Open Services > Tender Compliance page.',
-                            'Inspect active tenders nearing closing dates, open clarifications, or missing addenda.',
-                            'Issue addenda or time extensions if required before the formal bid opening deadline.',
+                            'Open Tender compliance to review the counts of open, closed, awarded, cancelled, and overdue tenders.',
+                            'Open Tenders to inspect the relevant record, closing date, and lifecycle status.',
+                            'Use the permitted edit or Record award action to record approved changes. Saving a date change updates how the public closing status is calculated.',
                         ],
                     ],
                     [
-                        'title' => 'Advertise Council Job Vacancies',
+                        'title' => 'Publish a vacancy',
                         'role' => 'Human Resources Department',
                         'time' => '8 mins',
                         'keywords' => 'job vacancy employment recruitment hiring career staff',
                         'destination' => VacancyResource::canCreate() ? VacancyResource::getUrl('create') : null,
                         'destination_label' => '+ Post New Vacancy',
                         'steps' => [
-                            'Navigate to Services > Vacancies.',
-                            'Click "New Vacancy" and input Job Title, Department, Grade/Level, and Responsibilities.',
-                            'Set application deadline and submission instructions (email or physical office delivery).',
-                            'Publish the listing so it is displayed in the Council Careers section.',
+                            'Open Vacancies and create a record with the title, grade, reference, employment type, and department as applicable.',
+                            'Enter the description, responsibilities, requirements, opening and closing dates, and application instructions.',
+                            'Select the vacancy document if required, then save and review the draft.',
+                            'Use the authorised publishing action after review. The public listing treats past closing dates as closed.',
                         ],
                     ],
                 ],
@@ -263,32 +182,32 @@ class SystemGuide extends Page
                 'description' => 'Manage full council and committee meetings, publish agendas/minutes, and maintain official rosters.',
                 'tasks' => [
                     [
-                        'title' => 'Schedule a Council / Committee Meeting',
+                        'title' => 'Schedule a council meeting',
                         'role' => 'Administration / Committee Clerk',
                         'time' => '7 mins',
                         'keywords' => 'council meeting committee schedule minutes agenda full council resolution',
                         'destination' => CouncilMeetingResource::canCreate() ? CouncilMeetingResource::getUrl('create') : null,
                         'destination_label' => '+ Schedule Council Meeting',
                         'steps' => [
-                            'Go to Council > Council Meetings.',
-                            'Click "New Council Meeting", choose meeting type (Full Council, Finance Committee, Works Committee, Special).',
-                            'Set scheduled date, time, venue (Council Chamber or Ward Centre).',
-                            'Attach the meeting Order of Proceedings / Agenda in PDF format.',
-                            'After the meeting has concluded, re-open this record to upload signed Council Minutes and Resolutions.',
+                            'Open Council Meetings and create a record with a title and meeting type: Full council, Committee, Special, or Public hearing.',
+                            'Enter the scheduled date, time, venue, department, and meeting status.',
+                            'Select the agenda document. Use Documents to upload it first if necessary, then save.',
+                            'After the meeting, edit the record to select the minutes document and update the meeting status.',
+                            'Use the authorised Verify and Publish actions for public release. Saving a draft alone does not publish it.',
                         ],
                     ],
                     [
-                        'title' => 'Update Councillors, Wards & Council Officials',
+                        'title' => 'Update council officials',
                         'role' => 'Administration & Executive Secretariat',
                         'time' => '5 mins',
                         'keywords' => 'councillor ward official ceo chairman chairperson management executive director',
                         'destination' => OfficialResource::canViewAny() ? OfficialResource::getUrl() : null,
                         'destination_label' => 'Manage Officials & Councillors',
                         'steps' => [
-                            'Navigate to Council > Officials.',
-                            'Add or update Council Chairperson, Chief Executive Officer (CEO), Heads of Departments, or Ward Councillors.',
-                            'Assign each official their designated Ward, portfolio, photo, and official council contact email.',
-                            'Ensure Ward details in Council > Wards remain synchronized with boundaries and development priorities.',
+                            'Open Officials and create or edit the appropriate profile.',
+                            'Enter the name, Position / Role Title, category, department, biography, and display order.',
+                            'Upload a portrait or choose an image from the library, and provide image alt text.',
+                            'Save and review the profile. An authorised reviewer uses Verify and Publish to release it publicly; manage ward records separately in Wards.',
                         ],
                     ],
                 ],
@@ -298,33 +217,33 @@ class SystemGuide extends Page
                 'category' => 'Development Projects & Services',
                 'icon' => 'heroicon-o-presentation-chart-line',
                 'color' => 'indigo',
-                'description' => 'Track capital infrastructure projects, clinics, schools, roads, devolution funds, and council rates.',
+                'description' => 'Update project progress, council services, and approved payment information.',
                 'tasks' => [
                     [
-                        'title' => 'Create or Update a Council Project',
+                        'title' => 'Update a development project',
                         'role' => 'Planning & Works Department',
                         'time' => '10 mins',
                         'keywords' => 'project development devolution infrastructure road clinic school water borehole contractor',
                         'destination' => CouncilProjectResource::canCreate() ? CouncilProjectResource::getUrl('create') : null,
                         'destination_label' => '+ Add Development Project',
                         'steps' => [
-                            'Go to Council > Council Projects.',
-                            'Click "New Council Project" and enter project name, ward, contractor, and funding source (e.g. Devolution, Zinara, Council Revenue).',
-                            'Specify starting date, expected completion date, and budget allocation.',
-                            'Update completion percentage (e.g. 25%, 50%, 100%) and stage (Planning, Construction, Commissioned).',
-                            'Upload inspection photographs to keep council stakeholders and citizens informed.',
+                            'Open Projects and create a record or edit an existing project.',
+                            'Enter the title, project type, location, department, covered wards, summary, and description.',
+                            'Select Planned, Ongoing, Completed, On Hold, or Cancelled. Record dates and a confirmed progress percentage from 0 to 100; leave progress empty when unconfirmed.',
+                            'Add a cover image with alt text and select associated documents, then save.',
+                            'Use the authorised Verify and Publish actions for public release. Confirm the public project information after publishing.',
                         ],
                     ],
                     [
-                        'title' => 'Manage Council Services & Payment Accounts',
+                        'title' => 'Update services and payment information',
                         'role' => 'Treasury / Finance Department',
                         'time' => '5 mins',
                         'keywords' => 'service council rates payment bank account licenses permits ecocash zipit',
                         'destination' => ServiceResource::canViewAny() ? ServiceResource::getUrl() : null,
                         'destination_label' => 'View Council Services',
                         'steps' => [
-                            'Open Services > Services to update requirements for business licensing, development permits, or water connections.',
-                            'Go to Services > Bank Accounts to ensure council banking details, Ecocash biller codes, and ZIPIT numbers shown to ratepayers are up to date.',
+                            'Open Services to edit the description and requirements for a council service, then save and arrange authorised review and publication.',
+                            'Open Bank Accounts separately to update approved council payment information. Confirm the details before saving because they are used for public payment guidance.',
                         ],
                     ],
                 ],
@@ -334,34 +253,35 @@ class SystemGuide extends Page
                 'category' => 'Website Content, News & Documents',
                 'icon' => 'heroicon-o-document-text',
                 'color' => 'teal',
-                'description' => 'Publish press releases, speeches, downloadable bylaws, public notices, and photo galleries.',
+                'description' => 'Publish news, notices, and approved public documents.',
                 'tasks' => [
                     [
-                        'title' => 'Publish News, Notices or Speeches',
+                        'title' => 'Publish news or a notice',
                         'role' => 'Corporate Communications & Editors',
                         'time' => '8 mins',
                         'keywords' => 'news editorial article notice speech press release announcement publication',
                         'destination' => EditorialItemResource::canCreate() ? EditorialItemResource::getUrl('create') : null,
                         'destination_label' => '+ Draft Editorial Item',
                         'steps' => [
-                            'Navigate to Content > Editorial Items.',
-                            'Select "+ Create" and pick type: "News", "Public Notice", or "Speeches".',
-                            'Enter title, excerpt, and full body content using the rich text editor.',
-                            'Attach high-resolution featured photos and set publishing schedule.',
-                            'Save as "Draft" for review or "Published" for immediate live deployment to the public site.',
+                            'Open News and notices and create a record. Select News or Notice as the type.',
+                            'Enter the title, summary, body, and classification. Add the relevant image and alt text.',
+                            'Save the draft and review its content. Saving alone does not publish it.',
+                            'An authorised reviewer uses Mark publishable, then Publish. If those actions are missing, ask a staff member with verification and publishing permission.',
+                            'Check the public article after publishing. Use Unpublish when it should no longer be public.',
                         ],
                     ],
                     [
-                        'title' => 'Upload Public Documents, Bylaws & Budgets',
+                        'title' => 'Upload a public document',
                         'role' => 'Legal & Finance / Secretariat',
                         'time' => '5 mins',
                         'keywords' => 'document download pdf bylaw budget financial statement annual report strategic plan',
                         'destination' => DocumentResource::canCreate() ? DocumentResource::getUrl('create') : null,
                         'destination_label' => '+ Upload Document',
                         'steps' => [
-                            'Go to Content > Documents.',
-                            'Click "New Document", input title, publication year, and category (e.g. Bylaws, Budgets, Strategic Plans, Tariffs).',
-                            'Upload the PDF file and ensure the "Status" is set to "Published".',
+                            'Open Documents and create a record with the title, description, category, department, and reference date as appropriate.',
+                            'Select Public visibility for a public download; Private documents are not intended for public release.',
+                            'Upload a PDF or select an existing PDF from the library, then save and review the file.',
+                            'Use the authorised Verify and Publish actions to release the approved public document. Confirm the public download works.',
                         ],
                     ],
                 ],
@@ -371,33 +291,34 @@ class SystemGuide extends Page
                 'category' => 'System Administration & Security',
                 'icon' => 'heroicon-o-shield-check',
                 'color' => 'slate',
-                'description' => 'User account management, role-based access control (Shield), audit trails, and system health.',
+                'description' => 'Manage staff access, review administrative activity, and inspect service health.',
                 'tasks' => [
                     [
-                        'title' => 'Add Council Staff User & Assign Roles',
+                        'title' => 'Give a staff member access',
                         'role' => 'IT Administrator / Super Admin',
                         'time' => '4 mins',
                         'keywords' => 'user staff admin password account role permission shield security access',
                         'destination' => UserResource::canCreate() ? UserResource::getUrl('create') : null,
                         'destination_label' => '+ Add New User',
                         'steps' => [
-                            'Navigate to Administration > Users.',
-                            'Click "New User", enter staff name, council email, and temporary password.',
-                            'Assign roles (e.g. "super_admin", "editor", "finance_officer", "enquiry_officer").',
-                            'Roles control which tabs and action buttons staff can view or modify.',
+                            'Open Users and create a record with the staff name, email, and department.',
+                            'Saving requests an emailed password setup link. The staff member sets their own password; check any mail error before retrying.',
+                            'From the Users list, use Assign role if permitted. Select an existing role appropriate to the staff member, such as Department Content Owner, Website Administrator, or Auditor.',
+                            'Select Global for all permitted records, Department for the selected department, or Own for records owned by the user. Assign only the access required.',
+                            'Confirm the role and scope were saved. Account creation alone does not grant a role; ask a System Administrator if Assign role is unavailable.',
                         ],
                     ],
                     [
-                        'title' => 'Inspect Audit Trails & Error Logs',
+                        'title' => 'Review audit history and system health',
                         'role' => 'IT Admin / Internal Auditor',
                         'time' => '3 mins',
                         'keywords' => 'audit log history activity security who changed error system health diagnostics',
                         'destination' => AuditReport::canAccess() ? AuditReport::getUrl() : null,
                         'destination_label' => 'View Audit Reports',
                         'steps' => [
-                            'Open Reports > Audit Report or Reports > Audit Events.',
-                            'Review timestamped logs of record creations, edits, and deletions for accountability.',
-                            'Open Reports > System Health to verify database connectivity, cache state, and email operations.',
+                            'Open Audit Report or Audit Events to review recorded administrative activity, using the available filters.',
+                            'Inspect who performed an action, when it occurred, and which record it affected.',
+                            'If permitted, open System Health to inspect service check results. Report a failed check to the responsible administrator with the time and affected service.',
                         ],
                     ],
                 ],
