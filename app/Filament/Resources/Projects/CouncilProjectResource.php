@@ -14,6 +14,7 @@ use App\Filament\Resources\Projects\Pages\ListCouncilProjects;
 use App\Models\CouncilProject;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -22,10 +23,13 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -53,47 +57,71 @@ class CouncilProjectResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Project Overview')->schema([
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(SlugField::autoFillHook()),
-                Select::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])->required(),
-                Select::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled'])->required(),
-                TextInput::make('location')->maxLength(255),
-                Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-                Select::make('wards')->multiple()->relationship('wards', 'name')->searchable()->helperText('All wards covered; supports multi-ward projects.'),
-                TextInput::make('progress_percent')->numeric()->minValue(0)->maxValue(100)->helperText('Council-managed only; leave empty when unconfirmed.'),
-                DatePicker::make('starts_at'),
-                DatePicker::make('expected_completed_at'),
-                DatePicker::make('completed_at'),
-                TextInput::make('display_order')->numeric()->default(0)->required(),
-                Textarea::make('summary')->maxLength(1000)->columnSpanFull(),
-                MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Do not fabricate progress.'),
-                Textarea::make('contact_instructions')->maxLength(5000)->columnSpanFull(),
-            ])->columns(2),
-            Section::make('Cover Image')->description('Upload a project image directly, or pick one from the library.')->schema([
-                Placeholder::make('current_cover_image')->label('Current image')->content(fn (?CouncilProject $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->featured_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->featured_media_id)).'" alt="Current project image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>') : 'No image selected.')->html()->visible(fn (?CouncilProject $record): bool => $record !== null),
-                FileUpload::make('featured_image_upload')
-                    ->label('Upload cover image')
-                    ->image()
-                    ->storeFiles(false)
-                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                    ->maxSize(config('cms.max_upload_kb'))
-                    ->helperText('JPEG, PNG or WebP. Saved to the media library on save.'),
-                TextInput::make('featured_image_alt')
-                    ->label('Image alt text')
-                    ->maxLength(255),
-                Select::make('featured_media_id')
-                    ->label('Or pick library image')
-                    ->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))
-                    ->searchable()
-                    ->helperText('Active image from media library.'),
-            ])->columns(2),
-            Section::make('Associated Documents')->schema([
-                Select::make('documents')->multiple()->relationship('documents', 'title')->searchable()->helperText('Optional documents linked to this project.'),
-            ]),
+            Grid::make(3)->schema([
+                Group::make([
+                    Section::make('Project Overview')->schema([
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(SlugField::autoFillHook()),
+                        Textarea::make('summary')->maxLength(1000)->rows(3)->helperText('Brief synopsis of the project for public listings.'),
+                        MarkdownEditor::make('description')->required()->maxLength(50000)->helperText('Formatting toolbar with live preview. Do not fabricate progress.'),
+                        Textarea::make('contact_instructions')->maxLength(5000)->rows(2),
+                    ]),
+                    Section::make('Cover Image')->description('Choose whether to upload a project image or pick one from the Media Library.')->schema([
+                        Placeholder::make('current_cover_image')->label('Current image')->content(fn (?CouncilProject $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->featured_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->featured_media_id)).'" alt="Current project image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>') : 'No image selected.')->html()->visible(fn (?CouncilProject $record): bool => $record !== null),
+                        Radio::make('image_source')
+                            ->label('Image Source')
+                            ->options([
+                                'upload' => 'Upload New Image',
+                                'library' => 'Select From Media Library',
+                            ])
+                            ->default(fn (?CouncilProject $record): string => $record?->featured_media_id ? 'library' : 'upload')
+                            ->inline()
+                            ->live()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
+                        FileUpload::make('featured_image_upload')
+                            ->label('Upload cover image')
+                            ->image()
+                            ->storeFiles(false)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(config('cms.max_upload_kb'))
+                            ->visible(fn (callable $get): bool => $get('image_source') === 'upload')
+                            ->helperText('JPEG, PNG or WebP. Saved to the media library on save.'),
+                        Select::make('featured_media_id')
+                            ->label('Select from library')
+                            ->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn (callable $get): bool => $get('image_source') === 'library'),
+                        TextInput::make('featured_image_alt')
+                            ->label('Image alt text')
+                            ->maxLength(255)
+                            ->visible(fn (callable $get): bool => $get('image_source') === 'upload'),
+                    ]),
+                    Section::make('Associated Documents')->schema([
+                        Select::make('documents')->multiple()->relationship('documents', 'title')->searchable()->helperText('Optional documents linked to this project.'),
+                    ]),
+                ])->columnSpan(2),
+                Group::make([
+                    Section::make('Status & Governance')->schema([
+                        Select::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])->required(),
+                        Select::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled'])->required(),
+                        TextInput::make('progress_percent')->label('Progress (%)')->numeric()->minValue(0)->maxValue(100)->suffix('%')->helperText('Leave empty when unconfirmed.'),
+                        Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                        TextInput::make('location')->maxLength(255),
+                        Select::make('wards')->multiple()->relationship('wards', 'name')->searchable()->helperText('All wards covered.'),
+                        TextInput::make('display_order')->numeric()->default(0)->required(),
+                    ]),
+                    Section::make('Timeline')->schema([
+                        DatePicker::make('starts_at'),
+                        DatePicker::make('expected_completed_at'),
+                        DatePicker::make('completed_at'),
+                    ]),
+                ])->columnSpan(1),
+            ])->columnSpanFull(),
             SlugField::make('title'),
             TranslationFields::make(CouncilProject::translatableFields()),
         ]);
@@ -101,12 +129,15 @@ class CouncilProjectResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('project_type')->badge(), TextColumn::make('project_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled']), SelectFilter::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])])->recordActions([DeleteAction::make(),
+        return $table->columns([TextColumn::make('title')->searchable(), TextColumn::make('project_type')->badge(), TextColumn::make('project_status')->badge(), TextColumn::make('status')->badge(), TextColumn::make('verification_status')->badge()])->filters([SelectFilter::make('project_status')->options(['planned' => 'Planned', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'on_hold' => 'On Hold', 'cancelled' => 'Cancelled']), SelectFilter::make('project_type')->options(['project' => 'Project', 'programme' => 'Programme'])])->recordActions([
             EditAction::make(),
-            Action::make('verify')->authorize(fn (CouncilProject $record): bool => Gate::allows('verify', $record))->visible(fn (CouncilProject $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilProject $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilProject $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-            Action::make('archive')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'archived')),
+            ActionGroup::make([
+                Action::make('verify')->authorize(fn (CouncilProject $record): bool => Gate::allows('verify', $record))->visible(fn (CouncilProject $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                Action::make('publish')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilProject $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'published')),
+                Action::make('unpublish')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->visible(fn (CouncilProject $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                Action::make('archive')->authorize(fn (CouncilProject $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (CouncilProject $record) => app(CouncilProjectManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                DeleteAction::make(),
+            ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
         ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -16,6 +16,7 @@ use App\Models\Document;
 use App\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -23,6 +24,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -64,19 +66,32 @@ class DocumentResource extends Resource
                 Select::make('visibility')->options(['public' => 'Public', 'private' => 'Private'])->required()->default('public'),
                 DatePicker::make('reference_date'),
             ])->columns(2),
-            Section::make('Document File')->description('Upload a PDF directly, or pick one already in the library.')->schema([
+            Section::make('Document File')->description('Choose whether to upload a new PDF or pick one from the Media Library.')->schema([
                 Placeholder::make('current_document')->label('Current document')->content(fn (?Document $record): HtmlString|string => $record?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media->id)).'" target="_blank" rel="noopener">'.e($record->media->original_filename).'</a>') : 'No document selected.')->html()->visible(fn (?Document $record): bool => $record !== null),
+                Radio::make('file_source')
+                    ->label('File Source')
+                    ->options([
+                        'upload' => 'Upload New PDF',
+                        'library' => 'Select From Media Library',
+                    ])
+                    ->default(fn (?Document $record): string => $record?->media_id ? 'library' : 'upload')
+                    ->inline()
+                    ->live()
+                    ->dehydrated(false)
+                    ->columnSpanFull(),
                 FileUpload::make('document_file_upload')
                     ->label('Upload PDF document')
                     ->storeFiles(false)
                     ->acceptedFileTypes(['application/pdf'])
                     ->maxSize(config('cms.max_upload_kb'))
+                    ->visible(fn (callable $get): bool => $get('file_source') === 'upload')
                     ->helperText('PDF file. Automatically created in the Media library on save.'),
                 Select::make('media_id')
-                    ->label('Or select existing PDF from library')
+                    ->label('Select PDF from library')
                     ->relationship('media', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'application/pdf'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))
                     ->searchable()
-                    ->helperText('Required if no file is uploaded above.'),
+                    ->preload()
+                    ->visible(fn (callable $get): bool => $get('file_source') === 'library'),
             ])->columns(2),
             SlugField::make('title'),
             TranslationFields::make(Document::translatableFields()),
@@ -119,13 +134,15 @@ class DocumentResource extends Resource
             TextColumn::make('published_at')->dateTime()->sortable(),
         ])->recordActions([
             PreviewHelper::makePreviewAction(),
-            DeleteAction::make(),
             EditAction::make(),
-            Action::make('replace')->label('Replace file')->authorize(fn (Document $record): bool => Gate::allows('update', $record))->schema([Select::make('media_id')->label('Replacement PDF')->relationship('media', 'title')->searchable()->required()->helperText('The previous file is preserved as a version; the replacement returns the document to draft for review.')])->action(fn (Document $record, array $data) => app(DocumentManager::class)->replace(auth()->user(), $record, (int) $data['media_id'])),
-            Action::make('verify')->authorize(fn (Document $record): bool => Gate::allows('verify', $record))->visible(fn (Document $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-            Action::make('publish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->visible(fn (Document $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'published')),
-            Action::make('unpublish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->visible(fn (Document $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-            Action::make('archive')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'archived')),
+            ActionGroup::make([
+                Action::make('replace')->label('Replace file')->authorize(fn (Document $record): bool => Gate::allows('update', $record))->schema([Select::make('media_id')->label('Replacement PDF')->relationship('media', 'title')->searchable()->required()->helperText('The previous file is preserved as a version; the replacement returns the document to draft for review.')])->action(fn (Document $record, array $data) => app(DocumentManager::class)->replace(auth()->user(), $record, (int) $data['media_id'])),
+                Action::make('verify')->authorize(fn (Document $record): bool => Gate::allows('verify', $record))->visible(fn (Document $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                Action::make('publish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->visible(fn (Document $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'published')),
+                Action::make('unpublish')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->visible(fn (Document $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                Action::make('archive')->authorize(fn (Document $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Document $record) => app(DocumentManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                DeleteAction::make(),
+            ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
         ])
             ->toolbarActions([
                 BulkActionGroup::make([

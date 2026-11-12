@@ -15,6 +15,7 @@ use App\Filament\Resources\Vacancies\Pages\ListVacancies;
 use App\Models\Vacancy;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -26,6 +27,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -53,31 +56,54 @@ class VacancyResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Vacancy details')
-                ->schema([
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(SlugField::autoFillHook()),
-                    TextInput::make('grade')->maxLength(60),
-                    TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('Optional HR reference, e.g. MRDC/HR/2026/03.'),
-                    Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
-                    MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
-                    Textarea::make('responsibilities')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'), Textarea::make('requirements')->maxLength(20000)->rows(4)->helperText('One item per line — shown as a bullet list on the public site.'),
-                    DatePicker::make('opens_at'), DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site. Expired vacancies must not be republished as open.'),
-                    Textarea::make('application_instructions')->maxLength(5000),
-                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-                    TextInput::make('display_order')->numeric()->default(0)->required(),
-                ]),
-            Section::make('Vacancy document')
-                ->description('Downloadable vacancy advert.')
-                ->schema([
-                    Placeholder::make('current_vacancy_document')->label('Current vacancy document')->content(fn (?Vacancy $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No vacancy document selected.')->html()->visible(fn (?Vacancy $record): bool => $record !== null),
-                    Select::make('document_id')->relationship('document', 'title')->searchable(),
-                ]),
+            Grid::make(3)->schema([
+                Group::make([
+                    Section::make('Role Details')->schema([
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(SlugField::autoFillHook()),
+                        MarkdownEditor::make('description')
+                            ->required()
+                            ->maxLength(50000)
+                            ->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
+                        Textarea::make('responsibilities')
+                            ->maxLength(20000)
+                            ->rows(4)
+                            ->helperText('One item per line — shown as a bullet list on the public site.'),
+                        Textarea::make('requirements')
+                            ->maxLength(20000)
+                            ->rows(4)
+                            ->helperText('One item per line — shown as a bullet list on the public site.'),
+                        Textarea::make('application_instructions')
+                            ->maxLength(5000)
+                            ->rows(3),
+                    ]),
+                    Section::make('Vacancy Document')
+                        ->description('Downloadable vacancy advert.')
+                        ->schema([
+                            Placeholder::make('current_vacancy_document')->label('Current vacancy document')->content(fn (?Vacancy $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No vacancy document selected.')->html()->visible(fn (?Vacancy $record): bool => $record !== null),
+                            Select::make('document_id')->relationship('document', 'title')->searchable(),
+                        ]),
+                ])->columnSpan(2),
+                Group::make([
+                    Section::make('Position & Department')->schema([
+                        TextInput::make('reference')->maxLength(60)->unique(ignoreRecord: true)->helperText('e.g. MRDC/HR/2026/03'),
+                        TextInput::make('grade')->maxLength(60),
+                        Select::make('employment_type')->options(['full_time' => 'Full time', 'part_time' => 'Part time', 'contract' => 'Contract', 'temporary' => 'Temporary', 'internship' => 'Internship']),
+                        Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                        TextInput::make('display_order')->numeric()->default(0)->required(),
+                    ]),
+                    Section::make('Application Window')->schema([
+                        DatePicker::make('opens_at'),
+                        DatePicker::make('closes_at')->helperText('Past closing dates read as closed on the public site.'),
+                    ]),
+                ])->columnSpan(1),
+            ])->columnSpanFull(),
             SlugField::make('title'),
-            TranslationFields::make(Vacancy::translatableFields()), ]);
+            TranslationFields::make(Vacancy::translatableFields()),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -94,12 +120,14 @@ class VacancyResource extends Resource
             ->filters([SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])
             ->recordActions([
                 PreviewHelper::makePreviewAction(),
-                DeleteAction::make(),
                 EditAction::make(),
-                Action::make('verify')->authorize(fn (Vacancy $record): bool => Gate::allows('verify', $record))->visible(fn (Vacancy $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-                Action::make('publish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'published')),
-                Action::make('unpublish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-                Action::make('archive')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                ActionGroup::make([
+                    Action::make('verify')->authorize(fn (Vacancy $record): bool => Gate::allows('verify', $record))->visible(fn (Vacancy $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                    Action::make('publish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'published')),
+                    Action::make('unpublish')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->visible(fn (Vacancy $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                    Action::make('archive')->authorize(fn (Vacancy $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Vacancy $record) => app(VacancyManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                    DeleteAction::make(),
+                ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

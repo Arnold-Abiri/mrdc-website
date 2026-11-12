@@ -15,6 +15,7 @@ use App\Filament\Resources\Editorial\Pages\ListEditorialItems;
 use App\Models\EditorialItem;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -23,6 +24,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -67,12 +69,35 @@ class EditorialItemResource extends Resource
                 MarkdownEditor::make('body')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Headings, bold, lists and links only — scripts and embeds are stripped on the public site.'),
                 TextInput::make('category')->maxLength(60), Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
             ])->columns(2),
-            Section::make('Cover image')->description('Upload here, or pick an existing library image below. Uploading replaces the library pick.')->schema([
+            Section::make('Cover image')->description('Choose whether to upload a new image or pick one from the Media Library.')->schema([
                 Placeholder::make('current_featured_image')->label('Current image')->content(fn (?EditorialItem $record): HtmlString|string => $record?->featured_media_id ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->featured_media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->featured_media_id)).'" alt="Current cover image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>') : 'No image selected.')->html()->visible(fn (?EditorialItem $record): bool => $record !== null),
-                FileUpload::make('featured_image_upload')->label('Upload cover image')->image()->storeFiles(false)->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->maxSize(config('cms.max_upload_kb'))->helperText('JPEG, PNG or WebP. Saved to the Media library automatically.'),
-                TextInput::make('featured_image_alt')->label('Image alt text')->maxLength(255)->helperText('Short description for screen readers.'),
-                Textarea::make('featured_image_caption')->label('Image caption')->maxLength(2000)->helperText('Visible credit line under the image.'),
-                Select::make('featured_media_id')->label('Or pick a library image')->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))->searchable(),
+                Radio::make('image_source')
+                    ->label('Image Source')
+                    ->options([
+                        'upload' => 'Upload New Image',
+                        'library' => 'Select From Media Library',
+                    ])
+                    ->default(fn (?EditorialItem $record): string => $record?->featured_media_id ? 'library' : 'upload')
+                    ->inline()
+                    ->live()
+                    ->dehydrated(false)
+                    ->columnSpanFull(),
+                FileUpload::make('featured_image_upload')
+                    ->label('Upload cover image')
+                    ->image()
+                    ->storeFiles(false)
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(config('cms.max_upload_kb'))
+                    ->visible(fn (callable $get): bool => $get('image_source') === 'upload')
+                    ->helperText('JPEG, PNG or WebP. Saved to the Media library automatically on save.'),
+                Select::make('featured_media_id')
+                    ->label('Choose from library')
+                    ->relationship('featuredMedia', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'active')->where('mime_type', 'like', 'image/%'), auth()->user(), 'media.view', 'department_id', 'uploaded_by'))
+                    ->searchable()
+                    ->preload()
+                    ->visible(fn (callable $get): bool => $get('image_source') === 'library'),
+                TextInput::make('featured_image_alt')->label('Image alt text')->maxLength(255)->helperText('Short description for screen readers.')->visible(fn (callable $get): bool => $get('image_source') === 'upload'),
+                Textarea::make('featured_image_caption')->label('Image caption')->maxLength(2000)->helperText('Visible credit line under the image.')->visible(fn (callable $get): bool => $get('image_source') === 'upload'),
             ])->columns(2),
             Section::make('Publishing')->description('Expiry, urgency, search and ordering.')->schema([
                 Select::make('documents')->multiple()->relationship('documents', 'title', fn (Builder $query) => app(DataScopeAuthorizer::class)->apply($query->where('status', 'published'), auth()->user(), 'documents.view', 'department_id', 'created_by'))->searchable(),
@@ -104,20 +129,22 @@ class EditorialItemResource extends Resource
             ->filters([SelectFilter::make('type')->options(['news' => 'News', 'notice' => 'Notice']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])
             ->recordActions([
                 PreviewHelper::makePreviewAction(),
-                DeleteAction::make(),
                 EditAction::make(),
-                Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-                Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),
-                Action::make('verifyAndPublish')->label('Verify & Publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record) && Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(function (EditorialItem $record): void {
-                    $manager = app(EditorialManager::class);
-                    $actor = auth()->user();
-                    if ($record->verification_status !== 'publishable') {
-                        $manager->setVerification($actor, $record, 'publishable');
-                    }
-                    $manager->setStatus($actor, $record->fresh(), 'published');
-                }),
-                Action::make('unpublish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-                Action::make('archive')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                ActionGroup::make([
+                    Action::make('verify')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record))->visible(fn (EditorialItem $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                    Action::make('publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'published')),
+                    Action::make('verifyAndPublish')->label('Verify & Publish')->authorize(fn (EditorialItem $record): bool => Gate::allows('verify', $record) && Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status !== 'published')->requiresConfirmation()->action(function (EditorialItem $record): void {
+                        $manager = app(EditorialManager::class);
+                        $actor = auth()->user();
+                        if ($record->verification_status !== 'publishable') {
+                            $manager->setVerification($actor, $record, 'publishable');
+                        }
+                        $manager->setStatus($actor, $record->fresh(), 'published');
+                    }),
+                    Action::make('unpublish')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->visible(fn (EditorialItem $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                    Action::make('archive')->authorize(fn (EditorialItem $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (EditorialItem $record) => app(EditorialManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                    DeleteAction::make(),
+                ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

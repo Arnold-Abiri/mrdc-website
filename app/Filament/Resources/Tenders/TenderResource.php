@@ -16,6 +16,7 @@ use App\Filament\Resources\Tenders\RelationManagers\BiddersRelationManager;
 use App\Models\Tender;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -28,6 +29,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -55,30 +58,47 @@ class TenderResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Tender details')
-                ->schema([
-                    TextInput::make('reference')->required()->maxLength(60)->helperText('Official tender reference, e.g. MRDC/2026/014.'),
-                    TextInput::make('title')
-                        ->required()
-                        ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(SlugField::autoFillHook()),
-                    TextInput::make('category')->maxLength(60),
-                    MarkdownEditor::make('description')->required()->maxLength(50000)->columnSpanFull()->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
-                    Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),
-                    DatePicker::make('opens_at'), DateTimePicker::make('closes_at')->helperText('Public status derives from these dates: past closing means closed.'),
-                    Textarea::make('contact_instructions')->maxLength(5000)->helperText('How and where to submit bids. Never enter bank or payment details.'),
-                    Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
-                    TextInput::make('display_order')->numeric()->default(0)->required(),
-                ]),
-            Section::make('Tender document')
-                ->description('Published tender document.')
-                ->schema([
-                    Placeholder::make('current_tender_document')->label('Current tender document')->content(fn (?Tender $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No tender document selected.')->html()->visible(fn (?Tender $record): bool => $record !== null),
-                    Select::make('document_id')->relationship('document', 'title')->searchable(),
-                ]),
+            Grid::make(3)->schema([
+                Group::make([
+                    Section::make('Tender Content')->schema([
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(SlugField::autoFillHook()),
+                        MarkdownEditor::make('description')
+                            ->required()
+                            ->maxLength(50000)
+                            ->helperText('Formatting toolbar with live preview. Plain paragraphs, lists and links only.'),
+                        Textarea::make('contact_instructions')
+                            ->maxLength(5000)
+                            ->rows(3)
+                            ->helperText('How and where to submit bids. Never enter bank or payment details.'),
+                    ]),
+                    Section::make('Tender Document')
+                        ->description('Downloadable tender advert/specifications.')
+                        ->schema([
+                            Placeholder::make('current_tender_document')->label('Current tender document')->content(fn (?Tender $record): HtmlString|string => $record?->document?->media ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->document->media->id)).'" target="_blank" rel="noopener">'.e($record->document->media->original_filename).'</a>') : 'No tender document selected.')->html()->visible(fn (?Tender $record): bool => $record !== null),
+                            Select::make('document_id')->relationship('document', 'title')->searchable(),
+                        ]),
+                ])->columnSpan(2),
+                Group::make([
+                    Section::make('Identification & Status')->schema([
+                        TextInput::make('reference')->required()->maxLength(60)->helperText('e.g. MRDC/2026/014'),
+                        Select::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled'])->required(),
+                        TextInput::make('category')->maxLength(60),
+                        Select::make('department_id')->relationship('department', 'name')->searchable()->preload(),
+                        TextInput::make('display_order')->numeric()->default(0)->required(),
+                    ]),
+                    Section::make('Key Dates')->schema([
+                        DatePicker::make('opens_at'),
+                        DateTimePicker::make('closes_at')->helperText('Public status derives from dates: past closing means closed.'),
+                    ]),
+                ])->columnSpan(1),
+            ])->columnSpanFull(),
             SlugField::make('title'),
-            TranslationFields::make(Tender::translatableFields()), ]);
+            TranslationFields::make(Tender::translatableFields()),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -100,13 +120,15 @@ class TenderResource extends Resource
             ->filters([SelectFilter::make('lifecycle_status')->options(['upcoming' => 'Upcoming', 'open' => 'Open', 'closed' => 'Closed', 'awarded' => 'Awarded', 'cancelled' => 'Cancelled']), SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'unpublished' => 'Unpublished', 'archived' => 'Archived'])])
             ->recordActions([
                 PreviewHelper::makePreviewAction(),
-                DeleteAction::make(),
                 EditAction::make(),
-                Action::make('verify')->authorize(fn (Tender $record): bool => Gate::allows('verify', $record))->visible(fn (Tender $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-                Action::make('publish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'published')),
-                Action::make('unpublish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-                Action::make('archive')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'archived')),
-                Action::make('award')->label('Record award')->authorize(fn (Tender $record): bool => Gate::allows('award', $record))->schema([Select::make('award_status')->options(['none' => 'None', 'pending' => 'Pending', 'awarded' => 'Awarded'])->required(), TextInput::make('awarded_to')->maxLength(255)->helperText('Awarded contractor/supplier. Only approved public information.'), DatePicker::make('awarded_at'), TextInput::make('award_amount')->numeric()->helperText('Approved published amount only; leave empty if not published.'), TextInput::make('award_reference')->maxLength(60), Select::make('award_document_id')->relationship('document', 'title')->searchable(), Textarea::make('award_remarks')->maxLength(5000)])->action(fn (Tender $record, array $data) => app(TenderManager::class)->recordAward(auth()->user(), $record, $data)),
+                ActionGroup::make([
+                    Action::make('award')->label('Record award')->authorize(fn (Tender $record): bool => Gate::allows('award', $record))->schema([Select::make('award_status')->options(['none' => 'None', 'pending' => 'Pending', 'awarded' => 'Awarded'])->required(), TextInput::make('awarded_to')->maxLength(255)->helperText('Awarded contractor/supplier. Only approved public information.'), DatePicker::make('awarded_at'), TextInput::make('award_amount')->numeric()->helperText('Approved published amount only; leave empty if not published.'), TextInput::make('award_reference')->maxLength(60), Select::make('award_document_id')->relationship('document', 'title')->searchable(), Textarea::make('award_remarks')->maxLength(5000)])->action(fn (Tender $record, array $data) => app(TenderManager::class)->recordAward(auth()->user(), $record, $data)),
+                    Action::make('verify')->authorize(fn (Tender $record): bool => Gate::allows('verify', $record))->visible(fn (Tender $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                    Action::make('publish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'published')),
+                    Action::make('unpublish')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->visible(fn (Tender $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                    Action::make('archive')->authorize(fn (Tender $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Tender $record) => app(TenderManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                    DeleteAction::make(),
+                ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

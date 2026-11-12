@@ -15,6 +15,7 @@ use App\Filament\Resources\Services\Pages\ListServices;
 use App\Models\Service;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -84,12 +85,14 @@ class ServiceResource extends Resource
             ])
             ->recordActions([
                 PreviewHelper::makePreviewAction(),
-                DeleteAction::make(),
                 EditAction::make(),
-                Action::make('verify')->authorize(fn (Service $record): bool => Gate::allows('verify', $record))->visible(fn (Service $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setVerification(auth()->user(), $record, 'publishable')),
-                Action::make('publish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'published')),
-                Action::make('unpublish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
-                Action::make('archive')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                ActionGroup::make([
+                    Action::make('verify')->authorize(fn (Service $record): bool => Gate::allows('verify', $record))->visible(fn (Service $record): bool => $record->verification_status !== 'publishable')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setVerification(auth()->user(), $record, 'publishable')),
+                    Action::make('publish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'published')),
+                    Action::make('unpublish')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->visible(fn (Service $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
+                    Action::make('archive')->authorize(fn (Service $record): bool => Gate::allows('publish', $record))->requiresConfirmation()->action(fn (Service $record) => app(ServiceManager::class)->setStatus(auth()->user(), $record, 'archived')),
+                    DeleteAction::make(),
+                ])->icon(Heroicon::OutlinedEllipsisVertical)->tooltip('Actions'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

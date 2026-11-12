@@ -114,6 +114,32 @@ class EnquiryResource extends Resource
                 TextColumn::make('department.name')->label('Department')->sortable(),
                 TextColumn::make('category')->badge()->toggleable(),
                 TextColumn::make('context_type')->label('Origin')->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('sla_status')
+                    ->label('SLA')
+                    ->badge()
+                    ->state(function (Enquiry $record): string {
+                        if (in_array($record->status, ['resolved', 'closed'], true)) {
+                            return 'Completed';
+                        }
+                        if (! $record->due_at) {
+                            return 'Standard';
+                        }
+                        if ($record->due_at->isPast()) {
+                            return 'Overdue';
+                        }
+                        if ($record->due_at->diffInHours(now()) <= 24) {
+                            return 'Due soon';
+                        }
+
+                        return 'On track';
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'Overdue' => 'danger',
+                        'Due soon' => 'warning',
+                        'Completed' => 'gray',
+                        default => 'success',
+                    })
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy('due_at', $direction)),
                 TextColumn::make('status')->badge()->sortable(),
                 TextColumn::make('submitted_at')->dateTime()->sortable(),
             ])
