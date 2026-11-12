@@ -19,7 +19,7 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
     const [filter, setFilter] = useState<'all' | 'executive' | 'sectional'>('all');
     const [search, setSearch] = useState('');
 
-    const isChairperson = (o: OfficialSummary) => o.title.toLowerCase().includes('chairperson');
+    const isChairperson = (o: OfficialSummary) => o.slug === 'alderman-trust-kachidza' || o.title.toLowerCase().includes('chairperson') || o.title.toLowerCase().includes('sachigaro') || o.title.toLowerCase().includes('sihlalo');
     const isSectionalHead = (o: OfficialSummary) => {
         if (o.category === 'sectional_head') return true;
         if (o.category === 'executive') return false;
@@ -261,9 +261,6 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                                             {official.department && (
                                                                 <div className="official-profile-dept">{official.department}</div>
                                                             )}
-                                                            {official.biography && (
-                                                                <p className="official-profile-bio">{official.biography}</p>
-                                                            )}
                                                         </div>
                                                     </article>
                                                 );
@@ -315,9 +312,6 @@ export default function Officials({ officials }: { officials: OfficialSummary[] 
                                                         <div className="official-profile-title">{official.title}</div>
                                                         {official.department && (
                                                             <div className="official-profile-dept">{official.department}</div>
-                                                        )}
-                                                        {official.biography && (
-                                                            <p className="official-profile-bio">{official.biography}</p>
                                                         )}
                                                     </div>
                                                 </article>

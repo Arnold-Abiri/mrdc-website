@@ -30,7 +30,6 @@ class CreateIncident extends CreateRecord
             Action::make('ai_translate')
                 ->label('AI Translate')
                 ->icon('heroicon-o-sparkles')
-                ->color('info')
                 ->form([
                     Textarea::make('source')
                         ->label('English summary')
