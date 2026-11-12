@@ -56,4 +56,21 @@ class PublicContactTest extends TestCase
             $this->assertDatabaseCount('public_contacts', 0);
         }
     }
+
+    public function test_website_field_is_validated_and_accepted(): void
+    {
+        $admin = $this->administrator();
+        $manager = app(PublicContactManager::class);
+
+        try {
+            $manager->create($admin, ['office' => 'Test', 'type' => 'website', 'value' => 'not-a-url', 'display_order' => 0]);
+            $this->fail('Invalid website URL was accepted.');
+        } catch (ValidationException) {
+            $this->assertDatabaseCount('public_contacts', 0);
+        }
+
+        $contact = $manager->create($admin, ['office' => 'Official Portal', 'type' => 'website', 'value' => 'https://www.mutokordc.co.zw', 'display_order' => 0]);
+        $this->assertEquals('website', $contact->type);
+        $this->assertEquals('https://www.mutokordc.co.zw', $contact->value);
+    }
 }

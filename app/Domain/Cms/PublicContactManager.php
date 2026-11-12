@@ -95,8 +95,8 @@ class PublicContactManager
     private function validate(array $input): array
     {
         return Validator::make($input, [
-            'office' => ['required', 'string', 'max:255'], 'type' => ['required', Rule::in(['phone', 'email', 'physical_address', 'postal_address'])],
-            'value' => ['required', 'string', 'max:2000', Rule::when(($input['type'] ?? null) === 'email', ['email:rfc']), Rule::when(($input['type'] ?? null) === 'phone', ['regex:/^[+0-9().\s-]{5,40}$/'])], 'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('status', 'active')],
+            'office' => ['required', 'string', 'max:255'], 'type' => ['required', Rule::in(['phone', 'email', 'physical_address', 'postal_address', 'website'])],
+            'value' => ['required', 'string', 'max:2000', Rule::when(($input['type'] ?? null) === 'email', ['email:rfc']), Rule::when(($input['type'] ?? null) === 'phone', ['regex:/^[+0-9().\s-]{5,40}$/']), Rule::when(($input['type'] ?? null) === 'website', ['url'])], 'department_id' => ['nullable', 'integer', Rule::exists('departments', 'id')->where('status', 'active')],
             'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
         ])->validate();
     }

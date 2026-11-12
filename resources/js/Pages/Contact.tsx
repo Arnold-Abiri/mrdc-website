@@ -4,7 +4,7 @@ import { usePublicTranslation, usePublicLocale } from '../usePublicTranslation';
 import type { TranslationKey } from '../localization';
 import '../../css/contact.css';
 
-type PublicContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
+type PublicContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address' | 'website'; value: string };
 type ContactDepartment = { id: number; name: string; public_name: string | null };
 type EnquiryContext = { type: string; reference: string; title: string } | null;
 
@@ -21,6 +21,7 @@ const contactLabels: Record<PublicContact['type'], TranslationKey> = {
     email: 'contactTypeEmail',
     physical_address: 'contactTypeVisit',
     postal_address: 'contactTypePostal',
+    website: 'contactTypeWebsite',
 };
 
 function ContactIcon({ type }: { type: PublicContact['type'] }) {
@@ -29,6 +30,7 @@ function ContactIcon({ type }: { type: PublicContact['type'] }) {
         email: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></>,
         physical_address: <><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" /><circle cx="12" cy="10" r="2" /></>,
         postal_address: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></>,
+        website: <><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></>,
     };
     return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[type]}</svg>;
 }
@@ -68,7 +70,7 @@ export default function Contact({ csrfToken, submitted, contacts, departments = 
                         {contacts.length > 0 ? <ul className="contact-details-list">{contacts.map((contact, index) => <li key={`${contact.office}-${contact.type}-${index}`}>
                             <span className="contact-detail-icon"><ContactIcon type={contact.type} /></span>
                             <div><strong>{t(contactLabels[contact.type])}</strong><span className="contact-office">{contact.office}</span>
-                                {contact.type === 'email' ? <a href={`mailto:${contact.value}`}>{contact.value}</a> : contact.type === 'phone' ? <a href={`tel:${contact.value.replace(/\s+/g, '')}`}>{contact.value}</a> : <span>{contact.value}</span>}
+                                {contact.type === 'email' ? <a href={`mailto:${contact.value}`}>{contact.value}</a> : contact.type === 'phone' ? <a href={`tel:${contact.value.replace(/\s+/g, '')}`}>{contact.value}</a> : contact.type === 'website' ? <a href={contact.value.startsWith('http') ? contact.value : `https://${contact.value}`} target="_blank" rel="noopener noreferrer">{contact.value}</a> : <span>{contact.value}</span>}
                             </div>
                         </li>)}</ul> : <div className="contact-empty"><span className="contact-detail-icon"><ContactIcon type="email" /></span><p>{t('contactEmptyVerify')}</p></div>}
                         <div className="contact-info-note"><strong>{t('contactHelpDept')}</strong><p>{t('contactHelpDeptDesc')}</p></div>

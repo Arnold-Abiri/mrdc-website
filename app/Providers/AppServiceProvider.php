@@ -40,8 +40,28 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share('locale', fn (): string => app()->getLocale());
         Inertia::share('localeCsrfToken', fn (): string => csrf_token());
         Inertia::share('errors', fn (): array => session('errors') ? session('errors')->getBag('default')->messages() : []);
-        Inertia::share('urgent_alerts', fn (): array => EditorialItem::query()->public()->where('type', 'notice')->where('is_urgent', true)->orderByDesc('published_at')->limit(3)->get(['slug', 'title', 'summary', 'published_at', 'category'])->toArray());
-        Inertia::share('topbar_notices', fn (): array => EditorialItem::query()->public()->where('type', 'notice')->orderByDesc('published_at')->limit(5)->get(['slug', 'title', 'is_urgent'])->toArray());
+        Inertia::share('urgent_alerts', fn (): array => EditorialItem::query()
+            ->with('translations')
+            ->public()
+            ->where('type', 'notice')
+            ->where('is_urgent', true)
+            ->orderByDesc('published_at')
+            ->limit(3)
+            ->get(['id', 'slug', 'title', 'summary', 'published_at', 'category'])
+            ->map(fn (EditorialItem $item): array => $item->toLocalizedArray(['slug', 'title', 'summary', 'published_at', 'category']))
+            ->all());
+        Inertia::share('topbar_notices', fn (): array => EditorialItem::query()
+            ->with('translations')
+            ->public()
+            ->where('type', 'notice')
+            ->orderByDesc('published_at')
+            ->limit(5)
+            ->get(['id', 'slug', 'title', 'is_urgent'])
+            ->map(fn (EditorialItem $item): array => [
+                ...$item->toLocalizedArray(['slug', 'title']),
+                'is_urgent' => (bool) $item->is_urgent,
+            ])
+            ->all());
         Inertia::share('site_settings', fn (): array => SiteSetting::allKeyed());
         Gate::policy(Role::class, RolePolicy::class);
         $makeResetUrl = function (User $user, string $token): string {

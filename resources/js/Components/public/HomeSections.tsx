@@ -782,7 +782,7 @@ export type ManagedHomepageDocument = { slug: string; title: string; description
 export type ManagedHomepageDepartment = { id: number; public_name: string; public_summary: string | null };
 export type ManagedHomepageNotice = { slug: string; title: string; summary: string | null };
 
-export type ManagedHomepageContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
+export type ManagedHomepageContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address' | 'website'; value: string };
 export type ManagedHomepageOfficial = { slug: string; name: string; title: string };
 export type ManagedHomepageStatistic = { label: string; value: string; unit: string | null; icon: string | null };
 export type ManagedHomepageTender = { slug: string; reference: string; title: string; display_status: string };
@@ -1079,7 +1079,7 @@ export function ManagedHomepageContent({ preview = false, services, documents, n
                     </div>
                     <p className="managed-eyebrow">{t('contact')}</p>
                     <h2 id="managed-contact-heading">{t('talkCouncil')}</h2>
-                    {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.value}</li>)}</ul> : <p>{t('enquiryPrompt')}</p>}
+                    {contacts.length ? <ul className="managed-mini-list">{contacts.slice(0, 3).map((item, index) => <li key={`${item.office}-${item.type}-${index}`}><strong>{item.office}:</strong> {item.type === 'email' ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.type === 'phone' ? <a href={`tel:${item.value}`}>{item.value}</a> : item.type === 'website' ? <a href={item.value.startsWith('http') ? item.value : `https://${item.value}`} target="_blank" rel="noopener noreferrer">{item.value}</a> : item.value}</li>)}</ul> : <p>{t('enquiryPrompt')}</p>}
                     <a className="managed-viewall" href={L('/contact')}>{t('makeEnquiry')} <span aria-hidden="true">→</span></a>
                 </article>
             </div>

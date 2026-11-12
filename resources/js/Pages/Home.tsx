@@ -18,7 +18,7 @@ import PublicLayout from '../Layouts/PublicLayout';
 type HomeService = { slug: string; name: string; summary: string | null };
 type HomeDocument = { slug: string; title: string; description: string | null };
 type HomeDepartment = { id: number; public_name: string; public_summary: string | null };
-type HomeContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address'; value: string };
+type HomeContact = { office: string; type: 'phone' | 'email' | 'physical_address' | 'postal_address' | 'website'; value: string };
 type HomeOfficial = { slug: string; name: string; title: string };
 type HomeEditorial = { slug: string; title: string; summary: string | null; published_at: string | null; image_url?: string | null; image_alt?: string | null; image_caption?: string | null };
 type HomeStatistic = { label: string; value: string; unit: string | null; icon: string | null };

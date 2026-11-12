@@ -8,6 +8,7 @@ use Database\Seeders\SecuritySeeder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -62,5 +63,50 @@ class EditorialTest extends TestCase
         $this->get('/en/news/development-item')->assertNotFound();
         $this->expectException(AuthorizationException::class);
         $manager->setStatus(User::factory()->create(), $item->fresh(), 'published');
+    }
+
+    public function test_urgent_alerts_shared_props_are_localized_by_request_locale(): void
+    {
+        $admin = $this->administrator();
+        $manager = app(EditorialManager::class);
+        $item = $manager->create($admin, [
+            'type' => 'notice',
+            'slug' => 'flood-alert',
+            'title' => 'Flood Warning',
+            'summary' => 'Take caution near rivers',
+            'body' => 'Notice body content',
+            'category' => 'civil_protection',
+            'is_urgent' => true,
+            'display_order' => 0,
+        ]);
+        $manager->setVerification($admin, $item, 'publishable');
+        $item = $manager->setStatus($admin, $item, 'published');
+        $item->is_urgent = true;
+        $item->save();
+
+        $item->translations()->create([
+            'locale' => 'sn',
+            'field' => 'title',
+            'value' => 'Yambiro yeMafashamo',
+        ]);
+        $item->translations()->create([
+            'locale' => 'sn',
+            'field' => 'summary',
+            'value' => 'Chenjerai pedyo nenzizi',
+        ]);
+
+        $this->get('/en/contact')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('urgent_alerts.0.title', 'Flood Warning')
+                ->where('urgent_alerts.0.summary', 'Take caution near rivers')
+            );
+
+        $this->get('/sn/contact')
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('urgent_alerts.0.title', 'Yambiro yeMafashamo')
+                ->where('urgent_alerts.0.summary', 'Chenjerai pedyo nenzizi')
+            );
     }
 }

@@ -33,6 +33,7 @@ class ContactPageTest extends TestCase
         foreach ([
             ['office' => 'General Office', 'type' => 'phone', 'value' => '+263 71 234 5678'],
             ['office' => 'General Office', 'type' => 'email', 'value' => 'info@example.com'],
+            ['office' => 'Official Portal', 'type' => 'website', 'value' => 'https://www.mutokordc.co.zw'],
         ] as $order => $attributes) {
             PublicContact::query()->create([...$attributes,
                 'is_public' => true, 'display_order' => $order,
@@ -42,7 +43,7 @@ class ContactPageTest extends TestCase
         }
 
         $this->get('/en/contact')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->has('contacts', 2));
+            ->has('contacts', 3));
     }
 
     public function test_enquiry_submission_redirects_with_confirmation(): void
