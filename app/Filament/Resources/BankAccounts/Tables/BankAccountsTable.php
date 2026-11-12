@@ -15,14 +15,21 @@ class BankAccountsTable
     {
         return $table
             ->columns([
+                TextColumn::make('payment_type')
+                    ->label('Type')
+                    ->formatStateUsing(fn (string $state): string => $state === 'mobile' ? 'Mobile Money' : 'Bank Account')
+                    ->badge(),
                 TextColumn::make('bank_name')
+                    ->label('Bank / Provider')
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
                 TextColumn::make('account_name')
+                    ->label('Account / Payment Title')
                     ->searchable()
                     ->limit(30),
                 TextColumn::make('account_number')
+                    ->label('Account Number / Code')
                     ->searchable()
                     ->copyable()
                     ->copyMessage('Account number copied')

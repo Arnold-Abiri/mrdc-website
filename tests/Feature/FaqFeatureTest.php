@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Faq;
+use App\Models\Page;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -22,6 +23,21 @@ class FaqFeatureTest extends TestCase
         $response = $this->get('/en/rates');
 
         $response->assertStatus(200);
+    }
+
+    public function test_draft_rates_page_is_not_public(): void
+    {
+        $page = new Page(['slug' => 'rates-information', 'title' => 'Council Rates', 'blocks' => []]);
+        $page->status = 'draft';
+        $page->save();
+
+        $this->get('/en/rates')->assertNotFound();
+
+        $page->status = 'published';
+        $page->published_at = now()->subMinute();
+        $page->save();
+
+        $this->get('/en/rates')->assertOk();
     }
 
     public function test_search_query_finds_matching_faqs(): void

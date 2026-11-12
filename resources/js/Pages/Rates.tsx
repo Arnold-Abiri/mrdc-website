@@ -9,70 +9,6 @@ type RatesBlock = { type: string; text: string; url?: string | null };
 type RatesPage = { slug: string; title: string; summary: string | null; blocks: RatesBlock[] } | null;
 type RateSchedule = { slug: string; title: string; category: string; reference_date: string | null };
 
-type BankAccount = {
-    id: string;
-    bank: string;
-    accountName: string;
-    accountNumber: string;
-    branch: string;
-    branchCode: string;
-    currency: 'ZiG' | 'USD / Nostro' | 'Multi-Currency';
-    currencyClass: string;
-    purposeKey: TranslationKey;
-    category: 'all' | 'rates' | 'stands' | 'licenses';
-};
-
-const BANK_ACCOUNTS: BankAccount[] = [
-    {
-        id: 'cbz-zig',
-        bank: 'CBZ Bank',
-        accountName: 'Mutoko Rural District Council - General Revenue',
-        accountNumber: '02923984010012',
-        branch: 'Mutoko Branch',
-        branchCode: '4129',
-        currency: 'ZiG',
-        currencyClass: 'currency-zig',
-        purposeKey: 'purRates',
-        category: 'rates',
-    },
-    {
-        id: 'afc-zig',
-        bank: 'AFC Commercial Bank (Agribank)',
-        accountName: 'Mutoko RDC - Development & Unit Tax',
-        accountNumber: '100004829104',
-        branch: 'Mutoko Branch',
-        branchCode: '3104',
-        currency: 'ZiG',
-        currencyClass: 'currency-zig',
-        purposeKey: 'purUnitTax',
-        category: 'rates',
-    },
-    {
-        id: 'zb-usd',
-        bank: 'ZB Bank',
-        accountName: 'Mutoko RDC - Capital Projects & Housing Nostro',
-        accountNumber: '4521-789320-200',
-        branch: 'Mutoko Branch',
-        branchCode: '5201',
-        currency: 'USD / Nostro',
-        currencyClass: 'currency-usd',
-        purposeKey: 'purStands',
-        category: 'stands',
-    },
-    {
-        id: 'cabs-multi',
-        bank: 'CABS',
-        accountName: 'Mutoko RDC - Business & Commercial Licensing',
-        accountNumber: '1004928172',
-        branch: 'Mutoko / Corporate Branch',
-        branchCode: '2401',
-        currency: 'Multi-Currency',
-        currencyClass: 'currency-multi',
-        purposeKey: 'purLicences',
-        category: 'licenses',
-    },
-];
-
 const FAQS: { qKey: TranslationKey; aKey: TranslationKey }[] = [
     { qKey: 'faq1q', aKey: 'faq1a' },
     { qKey: 'faq2q', aKey: 'faq2a' },
@@ -93,6 +29,14 @@ type DynamicBankAccount = {
     purpose: string | null;
 };
 
+type MobilePayment = {
+    id: number;
+    account_name: string;
+    account_number: string;
+    code_label: string;
+    instructions: string;
+};
+
 type DynamicFaq = {
     id: number;
     question: string;
@@ -102,11 +46,13 @@ type DynamicFaq = {
 export default function Rates({
     schedules,
     bankAccounts = [],
+    mobilePayments = [],
     billingFaqs = [],
 }: {
     page: RatesPage;
     schedules: RateSchedule[];
     bankAccounts?: DynamicBankAccount[];
+    mobilePayments?: MobilePayment[];
     billingFaqs?: DynamicFaq[];
 }) {
     const locale = usePublicLocale();
@@ -149,9 +95,7 @@ export default function Rates({
         }
     };
 
-    // Map dynamic accounts from database if available; otherwise use default fallback accounts
-    const accountsList = bankAccounts && bankAccounts.length > 0
-        ? bankAccounts.map((acc) => {
+    const accountsList = bankAccounts.map((acc) => {
             let currencyClass = 'currency-multi';
             if (acc.currency === 'ZiG') currencyClass = 'currency-zig';
             else if (acc.currency.includes('USD')) currencyClass = 'currency-usd';
@@ -168,8 +112,7 @@ export default function Rates({
                 purpose: acc.purpose ?? 'Council revenue and rates assessment.',
                 category: acc.category,
             };
-        })
-        : BANK_ACCOUNTS;
+        });
 
     const filteredAccounts = selectedCategory === 'all'
         ? accountsList
@@ -310,6 +253,9 @@ export default function Rates({
                     </div>
 
                     {/* Bank Grid */}
+                    {filteredAccounts.length === 0 && (
+                        <p role="status">No published bank accounts are available for this category. Please contact the council for payment details.</p>
+                    )}
                     <div className="rates-bank-grid">
                         {filteredAccounts.map((acc) => (
                             <article key={acc.id} className="rates-bank-card">
@@ -350,69 +296,36 @@ export default function Rates({
                                 </div>
 
                                 <div className="rates-bank-footer">
-                                    <strong>{t('accPurpose')}:</strong> {'purposeKey' in acc ? t(acc.purposeKey) : acc.purpose}
+                                    <strong>{t('accPurpose')}:</strong> {acc.purpose}
                                 </div>
                             </article>
                         ))}
                     </div>
 
-                    {/* MOBILE MONEY & USSD INSTRUCTIONS */}
-                    <div className="rates-mobile-box">
-                        <div className="rates-mobile-card">
-                            <h3 className="rates-mobile-title">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-                                    <line x1="12" y1="18" x2="12.01" y2="18" />
-                                </svg>
-                                <span>{t('ecoTitle')}</span>
-                            </h3>
-                            <ol className="rates-mobile-steps">
-                                <li>{t('ecoDial')} <strong>*151#</strong> {t('ecoEnterPin')}</li>
-                                <li>{t('ecoSelect')} <strong>{t('ecoMakePay')}</strong> → <strong>{t('ecoPayBill')}</strong>.</li>
-                                <li>{t('ecoBillerCode')} <strong>94812</strong>.</li>
-                                <li>{t('ecoAmount')}</li>
-                                <li>{t('ecoRef')} <strong>{t('ecoStandWard')}</strong> (e.g. <em>ST366-W18</em>).</li>
-                            </ol>
-                            <div className="rates-mobile-badge">
-                                <span>{t('ecoBiller')} <strong>94812</strong></span>
-                                <button
-                                    type="button"
-                                    className={`rates-copy-btn ${copiedId === 'ecocash' ? 'copied' : ''}`}
-                                    onClick={() => handleCopy('ecocash', '94812')}
-                                >
-                                    {copiedId === 'ecocash' ? t('copiedTick') : t('copyCode')}
-                                </button>
-                            </div>
+                    {mobilePayments.length > 0 && (
+                        <div className="rates-mobile-box">
+                            {mobilePayments.map((payment) => (
+                                <div key={payment.id} className="rates-mobile-card">
+                                    <h3 className="rates-mobile-title">{payment.account_name}</h3>
+                                    <ol className="rates-mobile-steps">
+                                        {(payment.instructions ?? '').split(/\r?\n/).filter((step) => step.trim()).map((step, index) => (
+                                            <li key={index}>{step}</li>
+                                        ))}
+                                    </ol>
+                                    <div className="rates-mobile-badge">
+                                        <span>{payment.code_label}: <strong>{payment.account_number}</strong></span>
+                                        <button
+                                            type="button"
+                                            className={`rates-copy-btn ${copiedId === `mobile-${payment.id}` ? 'copied' : ''}`}
+                                            onClick={() => handleCopy(`mobile-${payment.id}`, payment.account_number)}
+                                        >
+                                            {copiedId === `mobile-${payment.id}` ? t('copiedTick') : t('copyCode')}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-
-                        <div className="rates-mobile-card">
-                            <h3 className="rates-mobile-title">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="2" y1="12" x2="22" y2="12" />
-                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                                </svg>
-                                <span>{t('oneTitle')}</span>
-                            </h3>
-                            <ol className="rates-mobile-steps">
-                                <li>{t('ecoDial')} <strong>*111#</strong> {t('oneLine')}</li>
-                                <li>{t('ecoSelect')} <strong>{t('onePayMerchant')}</strong>.</li>
-                                <li>{t('oneMerchantCode')} <strong>48920</strong>.</li>
-                                <li>{t('ecoRef')} <strong>{t('oneStandSurname')}</strong>.</li>
-                                <li>{t('oneConfirm')}</li>
-                            </ol>
-                            <div className="rates-mobile-badge">
-                                <span>{t('oneMerchant')} <strong>48920</strong></span>
-                                <button
-                                    type="button"
-                                    className={`rates-copy-btn ${copiedId === 'onemoney' ? 'copied' : ''}`}
-                                    onClick={() => handleCopy('onemoney', '48920')}
-                                >
-                                    {copiedId === 'onemoney' ? t('copiedTick') : t('copyCode')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    )}
 
                     {/* 4-STEP PAYMENT CREDITING GUIDE */}
                     <span className="about-accent-eyebrow">{t('stepsEyebrow')}</span>

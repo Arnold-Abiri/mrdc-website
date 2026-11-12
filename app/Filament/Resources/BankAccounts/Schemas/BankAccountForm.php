@@ -9,6 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class BankAccountForm
@@ -19,25 +20,46 @@ class BankAccountForm
             ->components([
                 Section::make('Account details')
                     ->schema([
+                        Select::make('payment_type')
+                            ->label('Payment Type')
+                            ->options(['bank' => 'Bank Account', 'mobile' => 'Mobile Money'])
+                            ->default('bank')
+                            ->required()
+                            ->live(),
                         TextInput::make('bank_name')
-                            ->label('Bank Name')
+                            ->label(fn (Get $get): string => $get('payment_type') === 'mobile' ? 'Provider Name' : 'Bank Name')
                             ->required()
                             ->maxLength(255),
                         TextInput::make('account_name')
-                            ->label('Account Name')
+                            ->label(fn (Get $get): string => $get('payment_type') === 'mobile' ? 'Payment Title' : 'Account Name')
                             ->required()
                             ->maxLength(255),
                         TextInput::make('account_number')
-                            ->label('Account Number')
+                            ->label(fn (Get $get): string => $get('payment_type') === 'mobile' ? 'Biller / Merchant Code' : 'Account Number')
                             ->required()
                             ->maxLength(255),
                         TextInput::make('branch_name')
                             ->label('Branch Name')
-                            ->required()
+                            ->visible(fn (Get $get): bool => $get('payment_type') !== 'mobile')
+                            ->required(fn (Get $get): bool => $get('payment_type') !== 'mobile')
                             ->maxLength(255),
                         TextInput::make('branch_code')
                             ->label('Branch Code')
+                            ->visible(fn (Get $get): bool => $get('payment_type') !== 'mobile')
                             ->maxLength(50),
+                        TextInput::make('code_label')
+                            ->label('Code Label')
+                            ->placeholder('Biller Code or Merchant Code')
+                            ->visible(fn (Get $get): bool => $get('payment_type') === 'mobile')
+                            ->required(fn (Get $get): bool => $get('payment_type') === 'mobile')
+                            ->maxLength(255),
+                        Textarea::make('instructions')
+                            ->label('Payment Instructions')
+                            ->helperText('Enter one step per line. Update any code mentioned in the steps when changing the payment code.')
+                            ->rows(6)
+                            ->visible(fn (Get $get): bool => $get('payment_type') === 'mobile')
+                            ->required(fn (Get $get): bool => $get('payment_type') === 'mobile')
+                            ->columnSpanFull(),
                         Select::make('currency')
                             ->options([
                                 'ZiG' => 'ZiG',

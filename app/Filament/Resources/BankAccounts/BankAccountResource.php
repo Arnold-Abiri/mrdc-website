@@ -33,7 +33,7 @@ class BankAccountResource extends Resource
 
     protected static ?string $navigationLabel = 'Bank & Payment Accounts';
 
-    protected static ?string $modelLabel = 'bank account';
+    protected static ?string $modelLabel = 'payment account';
 
     public static function form(Schema $schema): Schema
     {

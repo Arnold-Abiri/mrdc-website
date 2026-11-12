@@ -611,9 +611,9 @@ class ContentTranslationTest extends TestCase
         $page = Livewire::test(CreateBankAccount::class)
             ->fillForm($details)->assertActionVisible('ai_translate')
             ->callAction('ai_translate', data: ['locale' => 'sn'])->assertHasNoActionErrors();
-        $this->assertDatabaseCount('bank_accounts', 0);
+        $this->assertSame(0, BankAccount::query()->where('payment_type', 'bank')->count());
         $page->call('create')->assertHasNoFormErrors();
-        $account = BankAccount::query()->sole();
+        $account = BankAccount::query()->where('payment_type', 'bank')->sole();
         $this->assertSame('Bhadharai mari yekanzuru', $account->translated('purpose', 'sn'));
         Livewire::test(EditBankAccount::class, ['record' => $account->getRouteKey()])
             ->assertActionVisible('ai_translate')

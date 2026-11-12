@@ -11,9 +11,12 @@ class BankAccount extends Model implements TranslatableContent
 {
     use HasTranslations;
 
-    public const TRANSLATABLE_FIELDS = ['purpose'];
+    public const TRANSLATABLE_FIELDS = ['purpose', 'instructions', 'code_label'];
 
     protected $fillable = [
+        'payment_type',
+        'code_label',
+        'instructions',
         'bank_name',
         'account_name',
         'account_number',
