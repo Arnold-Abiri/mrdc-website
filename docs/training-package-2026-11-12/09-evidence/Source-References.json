@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Approved system discovery",
+    "source": "../SYSTEM-DISCOVERY-TRAINING-AUDIT.md",
+    "qualification": "Approved baseline dated 12 November 2026; copy included in evidence."
+  },
+  {
+    "title": "Original contractual ToR",
+    "source": "../ToRs for Mutoko RDC websitev2.pdf",
+    "qualification": "Sections 3.5 and 5: four subjects; 2 ICT, 3 HR, 2 Finance; one day in Mutoko."
+  },
+  {
+    "title": "Existing administrator guide",
+    "source": "../ADMIN-USER-GUIDE.md",
+    "qualification": "Use only where reconciled to current code; deletion/lifecycle exceptions override historical claims."
+  },
+  {
+    "title": "Role permission source",
+    "source": "../../database/seeders/SecuritySeeder.php",
+    "qualification": "Actual seed baseline; production assignments unverified."
+  },
+  {
+    "title": "Workflow source",
+    "source": "../../app/Domain/Cms and ../../app/Filament",
+    "qualification": "Managers, forms, policies and publication conditions; no application edits made."
+  },
+  {
+    "title": "Operational handover",
+    "source": "../TECHNICAL-HANDOVER.md; ../MAINTENANCE-SOP.md; ../DEPLOYMENT-RUNBOOK.md; ../DISASTER-RECOVERY.md",
+    "qualification": "Historical Redis/hosting assumptions and proposed RPO/RTO retained as limitations."
+  },
+  {
+    "title": "Zimbabwe legislation",
+    "source": "https://zimlii.org/akn/zw/act/2021/5/eng%402022-03-11",
+    "qualification": "Act 5/2021; sections 7\u201319 support quality, lawful handling, security and prompt breach escalation. Checked by web search 12 November 2026; page fetch restricted."
+  },
+  {
+    "title": "POTRAZ implementation guidance",
+    "source": "https://www.veritaszim.net/node/7966",
+    "qualification": "POTRAZ-issued 2025 implementation guidance listed by Veritas. Full page fetch restricted; Council privacy/legal lead must confirm current detail before delivery."
+  }
+]

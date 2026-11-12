@@ -1,0 +1,10 @@
+TRAINING ONLY — fictional data, isolated environment only.
+Participant ID: ____
+Training day: ____; closing date = training day + 7 calendar days.
+Page/news title: TRAINING ONLY — Community Records Workshop [ID].
+Slug: training-only-records-workshop-[id].
+Body: This fictional workshop helps participants practise safe website content management. It is not a Council announcement.
+Vacancy: TRAINING ONLY — Records Assistant [ID]. Reference: TRAINING-HR-[ID].
+Budget category: Budget; reference_date 2099-01-01.
+Alt text: Fictional training notice board for a website content-management workshop.
+No real names, recipients, bank details, dates of birth or applications.

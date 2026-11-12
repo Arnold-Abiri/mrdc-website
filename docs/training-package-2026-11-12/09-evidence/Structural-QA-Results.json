@@ -1,0 +1,65 @@
+{
+  "checked_at": "2026-11-12T02:51:18.236029+00:00",
+  "curriculum_minutes": 480,
+  "break_minutes": 60,
+  "slides": 38,
+  "workflows": 17,
+  "docx_structure": {
+    "03-participant-manual/Participant-User-Manual.docx": {
+      "paragraphs": 467,
+      "tables": 1
+    },
+    "06-assessments/Assessment-Materials-and-Individual-Sheets.docx": {
+      "paragraphs": 220,
+      "tables": 17
+    },
+    "06-assessments/Participant-Knowledge-Tests-No-Answers.docx": {
+      "paragraphs": 114,
+      "tables": 0
+    },
+    "05-quick-references/ICT-Quick-Reference.docx": {
+      "paragraphs": 31,
+      "tables": 1
+    },
+    "05-quick-references/Finance-Quick-Reference.docx": {
+      "paragraphs": 34,
+      "tables": 0
+    },
+    "05-quick-references/HR-Quick-Reference.docx": {
+      "paragraphs": 34,
+      "tables": 0
+    },
+    "09-evidence/Final-Quality-Assurance-Report.docx": {
+      "paragraphs": 35,
+      "tables": 2
+    },
+    "01-curriculum/Detailed-One-Day-Curriculum.docx": {
+      "paragraphs": 230,
+      "tables": 3
+    },
+    "02-presentation/Facilitator-Slide-Notes.docx": {
+      "paragraphs": 255,
+      "tables": 0
+    },
+    "08-handover/Final-Handover-Checklist.docx": {
+      "paragraphs": 12,
+      "tables": 1
+    },
+    "08-handover/Training-Completion-Report-Template.docx": {
+      "paragraphs": 18,
+      "tables": 3
+    },
+    "04-practical-workbook/Practical-Exercise-Workbook.docx": {
+      "paragraphs": 123,
+      "tables": 17
+    }
+  },
+  "shape_bounds_issues": [],
+  "score_templates_blank": true,
+  "slide_browser_layout_review": {
+    "method": "Browser approximation from actual PPTX coordinates, fonts and images; not native Office rendering.",
+    "overflow": []
+  },
+  "native_office_render": "Not performed: no local LibreOffice/PowerPoint renderer; open in target Office before delivery.",
+  "authenticated_workflows": "Pending; no new application workflow tests run for document-only development."
+}

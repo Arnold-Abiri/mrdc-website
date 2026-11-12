@@ -1,0 +1,50 @@
+[
+  {
+    "file": "03-participant-manual/Participant-User-Manual.pdf",
+    "pages": 25,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "05-quick-references/ICT-Quick-Reference.pdf",
+    "pages": 3,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "05-quick-references/Finance-Quick-Reference.pdf",
+    "pages": 3,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "05-quick-references/HR-Quick-Reference.pdf",
+    "pages": 3,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "01-curriculum/Detailed-One-Day-Curriculum.pdf",
+    "pages": 15,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Vacancy-Advert.pdf",
+    "pages": 2,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Budget-2099-v2.pdf",
+    "pages": 2,
+    "extractable_text": true,
+    "text_outside_page": []
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Budget-2099-v1.pdf",
+    "pages": 2,
+    "extractable_text": true,
+    "text_outside_page": []
+  }
+]

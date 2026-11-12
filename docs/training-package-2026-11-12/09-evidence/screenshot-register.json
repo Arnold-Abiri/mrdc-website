@@ -1,0 +1,57 @@
+[
+  {
+    "id": "home",
+    "url": "https://www.mutokordc.co.zw/en",
+    "status": "verified",
+    "file": "assets/screenshots/home.png",
+    "captured_at": "2026-11-12T02:26:18.341Z",
+    "viewport": "1440 \u00d7 1000",
+    "evidence": "Live browser response 200 and expected component/login heading; no form submitted.",
+    "visual_review": "Visually inspected actual public screen; expected page identity and visible controls; no credentials entered or private data displayed."
+  },
+  {
+    "id": "documents",
+    "url": "https://www.mutokordc.co.zw/en/documents",
+    "status": "verified",
+    "file": "assets/screenshots/documents.png",
+    "captured_at": "2026-11-12T02:26:20.400Z",
+    "viewport": "1440 \u00d7 1000",
+    "evidence": "Live browser response 200 and expected component/login heading; no form submitted.",
+    "visual_review": "Visually inspected actual public screen; expected page identity and visible controls; no credentials entered or private data displayed."
+  },
+  {
+    "id": "vacancies",
+    "url": "https://www.mutokordc.co.zw/en/vacancies",
+    "status": "verified",
+    "file": "assets/screenshots/vacancies.png",
+    "captured_at": "2026-11-12T02:26:22.069Z",
+    "viewport": "1440 \u00d7 1000",
+    "evidence": "Live browser response 200 and expected component/login heading; no form submitted.",
+    "visual_review": "Visually inspected actual public screen; expected page identity and visible controls; no credentials entered or private data displayed."
+  },
+  {
+    "id": "transparency",
+    "url": "https://www.mutokordc.co.zw/en/transparency",
+    "status": "verified",
+    "file": "assets/screenshots/transparency.png",
+    "captured_at": "2026-11-12T02:26:23.782Z",
+    "viewport": "1440 \u00d7 1000",
+    "evidence": "Live browser response 200 and expected component/login heading; no form submitted.",
+    "visual_review": "Visually inspected actual public screen; expected page identity and visible controls; no credentials entered or private data displayed."
+  },
+  {
+    "id": "login",
+    "url": "https://www.mutokordc.co.zw/admin/login",
+    "status": "verified",
+    "file": "assets/screenshots/login.png",
+    "captured_at": "2026-11-12T02:26:28.838Z",
+    "viewport": "1440 \u00d7 1000",
+    "evidence": "Live browser response 200 and expected component/login heading; no form submitted.",
+    "visual_review": "Visually inspected actual public screen; expected page identity and visible controls; no credentials entered or private data displayed."
+  },
+  {
+    "id": "admin-pending",
+    "status": "pending",
+    "reason": "No authorized isolated authenticated session provided. Required views: dashboard/navigation/profile; Page/editorial/media/document forms and actions; HR vacancy form; audit/users/health/email. No invented UI screenshots."
+  }
+]

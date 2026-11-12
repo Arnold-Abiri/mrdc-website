@@ -1,0 +1,290 @@
+[
+  {
+    "file": "01-curriculum/Detailed-One-Day-Curriculum.docx",
+    "purpose": "Detailed schedule, measurable outcomes and facilitation plan",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "07d3d7ee71d75807640d892d96e753a109fad913e2c6495f3006733eb731ad3b"
+  },
+  {
+    "file": "01-curriculum/Detailed-One-Day-Curriculum.pdf",
+    "purpose": "Detailed schedule, measurable outcomes and facilitation plan",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "81a6bfdff0dc3c01ee55d062865884d7c2d01060e94b660c16695eb290e56d11"
+  },
+  {
+    "file": "02-presentation/Facilitator-Slide-Notes.docx",
+    "purpose": "Council-branded slides or editable speaker-note companion",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "d3850f9f752d3903ab59f67299a7b6fc65cbe42221ec15b2d5bbc8f5cb6389e0"
+  },
+  {
+    "file": "02-presentation/MRDC-Website-Training.pptx",
+    "purpose": "Council-branded slides or editable speaker-note companion",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "1f1016531fa7cdeecb43d073ce90b77a91d5cbf3c52799d0e3ccedd392e5154d"
+  },
+  {
+    "file": "03-participant-manual/Participant-User-Manual.docx",
+    "purpose": "Numbered task reference with permissions, errors, screenshots/pending markers and glossary",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "854a6f5362de561132b6d2d79e9914f4986ce9e49780d1e7499d3fafd1752a31"
+  },
+  {
+    "file": "03-participant-manual/Participant-User-Manual.pdf",
+    "purpose": "Numbered task reference with permissions, errors, screenshots/pending markers and glossary",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "922b1e6ad571a4d56b8095f7c5073209be5456a52d3900a839fdb6fef690bcb3"
+  },
+  {
+    "file": "04-practical-workbook/Practical-Exercise-Workbook.docx",
+    "purpose": "Fictional guided exercises and evidence worksheets",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "52a572b5fc8a934e73142b167449300965a990bfe72d942ba2cb244abc5f6cbf"
+  },
+  {
+    "file": "05-quick-references/Finance-Quick-Reference.docx",
+    "purpose": "Role-specific desk reference",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "bec6f56719d99497f7dc09060f852cd79c33796e7d4fceffd1e7377bd3e5cf01"
+  },
+  {
+    "file": "05-quick-references/Finance-Quick-Reference.pdf",
+    "purpose": "Role-specific desk reference",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "3aebefd753277934cfcdcc3a2fe68c2a2fab3d2de18f96e8d739abffd14562df"
+  },
+  {
+    "file": "05-quick-references/HR-Quick-Reference.docx",
+    "purpose": "Role-specific desk reference",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "0be5f4bdbb345cff151f60fc6debd9ed8fdf9edd97c1d9124f64313cebcaba88"
+  },
+  {
+    "file": "05-quick-references/HR-Quick-Reference.pdf",
+    "purpose": "Role-specific desk reference",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "300c070312fa8dcaba2c5a805c8d37a4863f6071a02c221ba241f2ba31dcfdcf"
+  },
+  {
+    "file": "05-quick-references/ICT-Quick-Reference.docx",
+    "purpose": "Role-specific desk reference",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "86e630eded2b4358f74ebb32525fe38c79aa66dce4e841ef035c8200e3c43d1b"
+  },
+  {
+    "file": "05-quick-references/ICT-Quick-Reference.pdf",
+    "purpose": "Role-specific desk reference",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "28663901cd151ef346af7f74e7485198eea77f09fdaf85984b81ab8890722961"
+  },
+  {
+    "file": "06-assessments/Assessment-Materials-and-Individual-Sheets.docx",
+    "purpose": "Blank pre/post tests, rubrics, seven individual sheets and answer key",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "1b103e654a61597112ee2730aed2630d99cc2c3e5769f0b391955d3f97120a7f"
+  },
+  {
+    "file": "06-assessments/Participant-Knowledge-Tests-No-Answers.docx",
+    "purpose": "Blank pre/post tests, rubrics, seven individual sheets and answer key",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "44e3de695b6e2ad808e15122e4de12ecd8af0b0090802a92623fa31050d29db4"
+  },
+  {
+    "file": "07-registers/Attendance-Evaluation-and-Completion-Templates.xlsx",
+    "purpose": "Blank attendance, feedback, evaluation, assessment and completion workbook",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "bf1c6ecbefc241d051ccdbc257d117391c60f0c50f1f70ecb534e5b4a1af7a4c"
+  },
+  {
+    "file": "08-handover/Final-Handover-Checklist.docx",
+    "purpose": "Compliance mapping or blank completion/handover template",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "a87944c6fa9e21a74b08478371e3bc3aa6c735aeaefcf93e5c0994126ab77a30"
+  },
+  {
+    "file": "08-handover/ToR-Training-Compliance-Matrix.xlsx",
+    "purpose": "Compliance mapping or blank completion/handover template",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "915e3a0d8e0fd387bb818450c6f68ca55d235245e876726d63caf29f982f9e2d"
+  },
+  {
+    "file": "08-handover/Training-Completion-Report-Template.docx",
+    "purpose": "Compliance mapping or blank completion/handover template",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "6480d89026e95a5df162f9ef406ab10ceeb5511f3b0a7ac1f6bd910672714e02"
+  },
+  {
+    "file": "09-evidence/Approved-System-Discovery-Audit.md",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Approved discovery baseline copied unchanged",
+    "sha256": "1817d4787894e1de977b5a96f1e4e0cdee90025128dd7f97d950385a89480033"
+  },
+  {
+    "file": "09-evidence/Final-Quality-Assurance-Report.docx",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "2e698fe46070967a8e829fee10cc0a39460bec37f10aef106b30be30ba2c4120"
+  },
+  {
+    "file": "09-evidence/PDF-Text-Review.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "59281e83b34cffa44fbfa5884db3ca2fae1f58a201a54219b9bef0c41fd111cb"
+  },
+  {
+    "file": "09-evidence/Slide-Layout-Review-Results.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "3ab87d16dc1508ed8223b6331e1852a02840cbbe9a390d55598a0876d35d1981"
+  },
+  {
+    "file": "09-evidence/Slide-Layout-Review.html",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "1ab0afe41a99147d6815ad43e64ec058d5ca4c18498e458e16c98182470b4ebb"
+  },
+  {
+    "file": "09-evidence/Source-References.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "34f00aeb0faa31dadd152cf2de5d0915f8cdfe3af3de47a27bdba0d91726e283"
+  },
+  {
+    "file": "09-evidence/Structural-QA-Results.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "57e8ac2bb2a5b53cc7513c2eb411fbd1212a00bdb47d5e0bb88f0d1fb3a47827"
+  },
+  {
+    "file": "09-evidence/Visual-Review-Record.md",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "3230cfa8173199d2fbfb5cbf31a8208d6af9e804be163e458381ab93377e6029"
+  },
+  {
+    "file": "09-evidence/curriculum-sequence.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "89231c9597b19c9457828aaa6b24c9bfaacedddc7090dfac23b23d2571c36db3"
+  },
+  {
+    "file": "09-evidence/presentation-sequence.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "d6d4736028d611345b1f06215dae4eb5e48fc16669c618c6bf8a145baa720abb"
+  },
+  {
+    "file": "09-evidence/screenshot-register.json",
+    "purpose": "Approved baseline, provenance, generation sequence or QA evidence",
+    "verification": "Generated; structurally checked where applicable; delivery pending",
+    "sha256": "f686213785f9c746df44612283b5532050879cb05955c4922d030550076cfd92"
+  },
+  {
+    "file": "assets/council-crest.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "56e9ad420a6da6f729c37e1ffba0286390f64da5414e7c0d1fa9581277aaa169"
+  },
+  {
+    "file": "assets/screenshots/documents.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "115561e620b8f60b756a2d1a50259520ebebecff714c10a4ec4ec4e800c34609"
+  },
+  {
+    "file": "assets/screenshots/home.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "93b827edb1c3769fe44274a349180d07597fc4876636313c4f7ef52277b5c16a"
+  },
+  {
+    "file": "assets/screenshots/login.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "d9a7551880661bc793e22b44eff6198c649442cd0d0013a70b6c108efdfa5a00"
+  },
+  {
+    "file": "assets/screenshots/transparency.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "20c0325fca2761458167efc040b20bd2c8bcb451bd7004db7ecdb674fb7bf8b5"
+  },
+  {
+    "file": "assets/screenshots/vacancies.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "3a36119baaf81dfa616da20b19f5770f46f5e2d7e81bd094bdaef68e760c33bd"
+  },
+  {
+    "file": "assets/training-data/Fixture-Text.txt",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "326e13d99fde6f7e1fe2f70838a3bd0d80a87e572292ae0973402e93638a92ad"
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Budget-2099-v1.pdf",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "ac1fe9f00155b7883e469c2a91cff9422adbeff7d2d86378b0604590a7774487"
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Budget-2099-v2.pdf",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "c395f81b335c352cba73a0e6cfc526f6b562a8371effe84fac6ab68ba46a30a2"
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Notice-Board.png",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "d87dbf18f1bd13e83384ae4dddcc75f4762873f12bbc3ead93a9d8fd300a8421"
+  },
+  {
+    "file": "assets/training-data/TRAINING-ONLY-Vacancy-Advert.pdf",
+    "purpose": "Verified public visual/crest or clearly labelled fictional exercise fixture",
+    "verification": "Actual capture/brand asset or fictional fixture; see screenshot provenance",
+    "sha256": "9bc3f60404c9cf52a6ac2b06fb5c322419034f2f4dbb4a4116e1d502a72bec78"
+  },
+  {
+    "file": "source/Rebuild-Instructions.md",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "8b5315b0adf59ec88836ca518a0ae3de375ebda7779c53e07eb3463627df0b14"
+  },
+  {
+    "file": "source/build_package.py",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "dda4ebb4e6b1de31e4f3d16d53d8efcd99325a919ff2b8cc59dfbca36cdc7e27"
+  },
+  {
+    "file": "source/capture-public.mjs",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "8da6ffee1a47bf814771e7323af27d979fbcdf9ec4555d5aada6a6d54058b36a"
+  },
+  {
+    "file": "source/check-layout.mjs",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "8381cbe5e8d547170f6cd9aa02f2264fbbe1c04c5537ef3c4d7c36a7286c6a14"
+  },
+  {
+    "file": "source/content.py",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "ec39b493c4e159a8d81657f39e720dcd19d3d7f322c77ce7ae0e2c41d5c4e5e5"
+  },
+  {
+    "file": "source/requirements.txt",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "376d800cdfb2273ddbfe263c112c29e0440063d34225c1c51ba41af6f33a9e4c"
+  },
+  {
+    "file": "source/review_layout.py",
+    "purpose": "Editable reproducible content/build or read-only screenshot capture source",
+    "verification": "Rebuild source; no application mutation functions",
+    "sha256": "7b53f8b4749630e65a0e628611edb03af632435091f70d3aae85cc851e0b4c3d"
+  }
+]
