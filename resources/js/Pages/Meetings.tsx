@@ -187,14 +187,14 @@ export default function Meetings({
                                                             <circle cx="12" cy="12" r="10" />
                                                             <polyline points="12 6 12 12 16 14" />
                                                         </svg>
-                                                        <span>{meeting.scheduled_time ?? '10:00 AM'}</span>
+                                                        <span>{meeting.scheduled_time || 'Time not published'}</span>
                                                     </span>
                                                     <span className="meeting-meta-item">
                                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                                                             <circle cx="12" cy="10" r="3" />
                                                         </svg>
-                                                        <span>{meeting.venue ?? 'Council Chambers, Stand 366 Mutoko Centre'}</span>
+                                                        <span>{meeting.venue || 'Venue not published'}</span>
                                                     </span>
                                                     <span className="meeting-meta-item" style={{ color: status.color, fontWeight: 700 }}>
                                                         <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: status.color, marginRight: 4 }} />

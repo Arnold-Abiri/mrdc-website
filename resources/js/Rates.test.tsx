@@ -27,7 +27,7 @@ describe('rates bank accounts', () => {
         expect(screen.queryByText('Published Council Bank')).not.toBeInTheDocument();
         expect(screen.queryByText('CBZ Bank')).not.toBeInTheDocument();
         expect(screen.queryByText('02923984010012')).not.toBeInTheDocument();
-        expect(screen.getByRole('status')).toHaveTextContent('No published bank accounts');
+        expect(screen.getByText(/No published bank accounts/)).toBeInTheDocument();
     });
     it('renders managed mobile instructions and copies the current code without fallback content', async () => {
         const writeText = vi.fn().mockResolvedValue(undefined);
@@ -50,6 +50,26 @@ describe('rates bank accounts', () => {
         expect(screen.queryByText('48920')).not.toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'copyCode' })).not.toBeInTheDocument();
         vi.unstubAllGlobals();
+    });
+
+    it('uses CMS guidance and hides withdrawn FAQs and payment contacts', () => {
+        const view = render(<Rates page={{ slug: 'rates-information', title: 'Approved Rates Guide', summary: 'Council guidance', blocks: [
+            { type: 'paragraph', text: 'Council approved receipt processing guidance.' },
+        ] }} schedules={[]} billingFaqs={[{ id: 1, question: 'Managed billing question', answer: 'Managed billing answer' }]}
+            paymentContacts={{ email: 'payments@example.com', whatsapp_url: 'https://wa.me/263771234567' }} />);
+        expect(screen.getByText('Council approved receipt processing guidance.')).toBeInTheDocument();
+        expect(screen.getByText('Managed billing question')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'popEmail' })).toHaveAttribute('href', 'mailto:payments@example.com');
+        expect(screen.getByRole('link', { name: 'popWhatsapp' })).toHaveAttribute('href', 'https://wa.me/263771234567');
+
+        view.rerender(<Rates page={null} schedules={[]} billingFaqs={[]} paymentContacts={{}} />);
+        expect(screen.queryByText('Managed billing question')).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'faq1q' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: 'popEmail' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('link', { name: 'popWhatsapp' })).not.toBeInTheDocument();
+        expect(screen.queryByText(/24 to 48/)).not.toBeInTheDocument();
+        expect(screen.queryByText('stat48h')).not.toBeInTheDocument();
+        expect(screen.queryByText('rbzTitle')).not.toBeInTheDocument();
     });
 
 });

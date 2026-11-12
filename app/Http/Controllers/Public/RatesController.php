@@ -7,6 +7,7 @@ use App\Models\BankAccount;
 use App\Models\Document;
 use App\Models\Faq;
 use App\Models\Page;
+use App\Models\SiteSetting;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -64,6 +65,10 @@ class RatesController extends Controller
                     'id', 'account_name', 'account_number', 'code_label', 'instructions',
                 ])),
             'billingFaqs' => $billingFaqs,
+            'paymentContacts' => [
+                'email' => SiteSetting::get('finance_email'),
+                'whatsapp_url' => SiteSetting::whatsappLink(SiteSetting::get('finance_whatsapp_number')),
+            ],
         ]);
     }
 }

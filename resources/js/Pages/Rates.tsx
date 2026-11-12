@@ -2,20 +2,12 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
-import type { TranslationKey } from '../localization';
+
 import { formatDate } from '../formatDate';
 
 type RatesBlock = { type: string; text: string; url?: string | null };
 type RatesPage = { slug: string; title: string; summary: string | null; blocks: RatesBlock[] } | null;
 type RateSchedule = { slug: string; title: string; category: string; reference_date: string | null };
-
-const FAQS: { qKey: TranslationKey; aKey: TranslationKey }[] = [
-    { qKey: 'faq1q', aKey: 'faq1a' },
-    { qKey: 'faq2q', aKey: 'faq2a' },
-    { qKey: 'faq3q', aKey: 'faq3a' },
-    { qKey: 'faq4q', aKey: 'faq4a' },
-    { qKey: 'faq5q', aKey: 'faq5a' },
-];
 
 type DynamicBankAccount = {
     id: number;
@@ -44,16 +36,19 @@ type DynamicFaq = {
 };
 
 export default function Rates({
+    page,
     schedules,
     bankAccounts = [],
     mobilePayments = [],
     billingFaqs = [],
+    paymentContacts = {},
 }: {
     page: RatesPage;
     schedules: RateSchedule[];
     bankAccounts?: DynamicBankAccount[];
     mobilePayments?: MobilePayment[];
     billingFaqs?: DynamicFaq[];
+    paymentContacts?: { email?: string | null; whatsapp_url?: string | null };
 }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
@@ -106,10 +101,10 @@ export default function Rates({
                 accountName: acc.account_name,
                 accountNumber: acc.account_number,
                 branch: acc.branch_name,
-                branchCode: acc.branch_code ?? 'Mutoko',
+                branchCode: acc.branch_code,
                 currency: acc.currency,
                 currencyClass,
-                purpose: acc.purpose ?? 'Council revenue and rates assessment.',
+                purpose: acc.purpose,
                 category: acc.category,
             };
         });
@@ -121,7 +116,7 @@ export default function Rates({
 
     return (
         <PublicLayout>
-            <Head title={t('ratesTitle')} />
+            <Head title={page?.title ?? t('ratesTitle')} />
 
             {/* HERO */}
             <header className="about-page-hero">
@@ -135,73 +130,28 @@ export default function Rates({
                         <span aria-current="page">{t('rates')}</span>
                     </nav>
                     <span className="about-accent-eyebrow">{t('ratesEyebrow')}</span>
-                    <h1>{t('ratesTitle')}</h1>
+                    <h1>{page?.title ?? t('ratesTitle')}</h1>
                     <p className="about-page-hero-subtitle">
-                        {t('ratesSubtitle')}
+                        {page?.summary}
                     </p>
                 </div>
             </header>
 
-            {/* STATS RIBBON */}
-            <section className="about-stats-ribbon" aria-label="Rates overview statistics">
-                <div className="container">
-                    <div className="about-stats-flex">
-                        <div className="about-stat-item">
-                            <div>
-                                <div className="about-stat-num">{t('statMultiCurr')}</div>
-                                <div className="about-stat-label">{t('statMultiCurrLabel')}</div>
-                            </div>
-                        </div>
-                        <div className="about-stat-item">
-                            <div>
-                                <div className="about-stat-num">{t('statRbZ')}</div>
-                                <div className="about-stat-label">{t('statInterbank')}</div>
-                            </div>
-                        </div>
-                        <div className="about-stat-item">
-                            <div>
-                                <div className="about-stat-num">{t('stat48h')}</div>
-                                <div className="about-stat-label">{t('statPopTurn')}</div>
-                            </div>
-                        </div>
-                        <div className="about-stat-item">
-                            <div>
-                                <div className="about-stat-num">{t('statStand366')}</div>
-                                <div className="about-stat-label">{t('statRevHall')}</div>
-                            </div>
-                        </div>
+            {page && page.blocks.length > 0 && (
+                <section className="about-page-section">
+                    <div className="container">
+                        {page.blocks.map((block, index) => {
+                            if (block.type === 'heading') return <h2 key={index}>{block.text}</h2>;
+                            if (block.type === 'paragraph') return <div key={index} className="about-page-copy"><p>{block.text}</p></div>;
+                            if (block.type === 'cta' && block.url?.startsWith('/') && !block.url.startsWith('//')) {
+                                const url = /^\/(en|sn|nd)(\/|$)/.test(block.url) ? block.url : `/${locale}${block.url}`;
+                                return <p key={index}><Link className="about-page-text-link" href={url}>{block.text}</Link></p>;
+                            }
+                            return null;
+                        })}
                     </div>
-                </div>
-            </section>
-
-            {/* MULTI-CURRENCY RBZ POLICY ADVISORY */}
-            <section className="about-page-section" style={{ paddingBottom: '16px' }} aria-labelledby="rates-policy">
-                <div className="container">
-                    <div className="rates-currency-alert">
-                        <div className="rates-currency-icon" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="12" y1="8" x2="12" y2="12" />
-                                <line x1="12" y1="16" x2="12.01" y2="16" />
-                            </svg>
-                        </div>
-                        <div className="rates-currency-body">
-                            <h3 id="rates-policy" className="rates-currency-title">
-                                {t('rbzTitle')}
-                            </h3>
-                            <p className="rates-currency-text">
-                                In full compliance with Statutory Instruments and the Reserve Bank of Zimbabwe guidelines, Mutoko Rural District Council accepts payments in <strong>Zimbabwe Gold (ZiG)</strong> and <strong>US Dollars (USD cash or Domestic Nostro)</strong>. All ZiG transactions are computed based on the prevailing RBZ official interbank exchange rate on the date payment is recorded.
-                            </p>
-                            <div className="rates-currency-tags">
-                                <span className="rates-currency-pill">✓ {t('pillZigPos')}</span>
-                                <span className="rates-currency-pill">✓ {t('pillUsdCash')}</span>
-                                <span className="rates-currency-pill">✓ {t('pillNostro')}</span>
-                                <span className="rates-currency-pill">✓ {t('pillEco')}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* BANK ACCOUNTS SECTION */}
             <section className="about-page-section" aria-labelledby="bank-details">
@@ -290,14 +240,14 @@ export default function Rates({
                                     <div className="rates-bank-row">
                                         <span className="rates-bank-label">{t('accBranchCode')}</span>
                                         <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155' }}>
-                                            {acc.branch} ({t('accCode')}: {acc.branchCode})
+                                            {acc.branch}{acc.branchCode && <> ({t('accCode')}: {acc.branchCode})</>}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="rates-bank-footer">
+                                {acc.purpose && <div className="rates-bank-footer">
                                     <strong>{t('accPurpose')}:</strong> {acc.purpose}
-                                </div>
+                                </div>}
                             </article>
                         ))}
                     </div>
@@ -327,71 +277,15 @@ export default function Rates({
                         </div>
                     )}
 
-                    {/* 4-STEP PAYMENT CREDITING GUIDE */}
-                    <span className="about-accent-eyebrow">{t('stepsEyebrow')}</span>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-civic-navy)', margin: '0 0 16px' }}>
-                        {t('stepsTitle')}
-                    </h3>
-                    <div className="rates-steps-grid">
-                        <div className="rates-step-card">
-                            <div className="rates-step-num">1</div>
-                            <h4 className="rates-step-title">{t('step1t')}</h4>
-                            <p className="rates-step-text">
-                                Ensure your transfer details explicitly quote your <strong>Stand Number, Ward Number, and Name</strong> as the payment narrative.
-                            </p>
+                    {(paymentContacts.email || paymentContacts.whatsapp_url) && (
+                        <div className="rates-pop-banner">
+                            <div className="rates-pop-info"><h3>{t('popTitle')}</h3></div>
+                            <div className="rates-pop-actions">
+                                {paymentContacts.whatsapp_url && <a href={paymentContacts.whatsapp_url} target="_blank" rel="noreferrer" className="rates-pop-btn-primary">{t('popWhatsapp')}</a>}
+                                {paymentContacts.email && <a href={`mailto:${paymentContacts.email}`} className="rates-pop-btn-secondary">{t('popEmail')}</a>}
+                            </div>
                         </div>
-                        <div className="rates-step-card">
-                            <div className="rates-step-num">2</div>
-                            <h4 className="rates-step-title">{t('step2t')}</h4>
-                            <p className="rates-step-text">
-                                Deposit funds via Online Banking, ZIPIT, RTGS, Mobile Money, or in person at Stand 366 Mutoko Centre.
-                            </p>
-                        </div>
-                        <div className="rates-step-card">
-                            <div className="rates-step-num">3</div>
-                            <h4 className="rates-step-title">{t('step3t')}</h4>
-                            <p className="rates-step-text">
-                                Forward your stamped bank confirmation or EcoCash confirmation SMS immediately to the Council Treasury.
-                            </p>
-                        </div>
-                        <div className="rates-step-card">
-                            <div className="rates-step-num">4</div>
-                            <h4 className="rates-step-title">{t('step4t')}</h4>
-                            <p className="rates-step-text">
-                                Receive your official printed council receipt within 24 to 48 hours and an updated monthly statement.
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* PROOF OF PAYMENT (POP) SUBMISSION BANNER */}
-                    <div className="rates-pop-banner">
-                        <div className="rates-pop-info">
-                            <h3>{t('popTitle')}</h3>
-                            <p>
-                                Made an electronic transfer or ZIPIT deposit? Send your bank statement or payment voucher directly to our Revenue Desk with your Stand Number for instant reconciliation and receipt generation.
-                            </p>
-                        </div>
-                        <div className="rates-pop-actions">
-                            <a
-                                href="https://wa.me/263772100366?text=Hello%20Mutoko%20RDC%20Finance,%20I%20have%20made%20a%20rates%20payment.%20Here%20is%20my%20Proof%20of%20Payment."
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rates-pop-btn-primary"
-                            >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                                </svg>
-                                <span>{t('popWhatsapp')}</span>
-                            </a>
-                            <a href="mailto:finance@mutokordc.co.zw?subject=Proof%20of%20Payment%20-%20Rates%20Deposit" className="rates-pop-btn-secondary">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                    <polyline points="22,6 12,13 2,6" />
-                                </svg>
-                                <span>{t('popEmail')}</span>
-                            </a>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </section>
 
@@ -404,8 +298,9 @@ export default function Rates({
                         Clear answers on assessment valuations, payment grace periods, interest charges, and rates clearance certification.
                     </p>
 
+                    {billingFaqs.length === 0 && <p role="status">No billing FAQs are currently published.</p>}
                     <div className="rates-faq-list" role="region" aria-label={t('faqRegion')}>
-                        {(billingFaqs.length > 0 ? billingFaqs : FAQS.map((f, i) => ({ id: i, question: t(f.qKey), answer: t(f.aKey) }))).map((faq, index) => {
+                        {billingFaqs.map((faq, index) => {
                             const isOpen = openFaq === index;
                             return (
                                 <div key={faq.id} className={`rates-faq-item ${isOpen ? 'open' : ''}`}>

@@ -92,9 +92,9 @@ class SiteSettingResource extends Resource
     private static function getValueHelpText(?SiteSetting $record): ?string
     {
         return match ($record?->key) {
-            'whatsapp_number' => 'Include the country code, e.g. 263771234567. Used by the WhatsApp Council Desk button.',
+            'whatsapp_number', 'finance_whatsapp_number' => 'Include the country code, e.g. 263771234567. Only configured numbers are shown on the website.',
             'phone' => 'Include the country code so visitors can call from outside Zimbabwe.',
-            'email', 'recruitment_email' => 'Enter a complete email address, e.g. name@example.com.',
+            'email', 'recruitment_email', 'finance_email' => 'Enter a complete email address, e.g. name@example.com.',
             'physical_address' => 'Enter the public office address. Line breaks are preserved.',
             'office_hours' => 'Enter the hours visitors can contact or visit the council.',
             'facebook_url' => 'Paste the full Facebook page address, starting with https://.',
@@ -107,9 +107,9 @@ class SiteSettingResource extends Resource
     private static function getValuePlaceholder(?SiteSetting $record): ?string
     {
         return match ($record?->key) {
-            'whatsapp_number' => '263771234567',
+            'whatsapp_number', 'finance_whatsapp_number' => '263771234567',
             'phone' => '+263 6621 1234',
-            'email', 'recruitment_email' => 'name@example.com',
+            'email', 'recruitment_email', 'finance_email' => 'name@example.com',
             'office_hours' => 'Monday to Friday, 8:00 am to 4:30 pm',
             'facebook_url' => 'https://www.facebook.com/your-page',
             'x_url' => 'https://x.com/your-account',

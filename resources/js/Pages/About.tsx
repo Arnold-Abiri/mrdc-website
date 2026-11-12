@@ -58,8 +58,8 @@ export default function About({
             </div>
         ));
 
-    const directory = about ?? { ward_count: 29, officials: [], investment: [], pages: [] };
-    const wardCount = directory.ward_count ?? 29;
+    const directory = about ?? { ward_count: 0, officials: [], investment: [], pages: [] };
+    const wardCount = directory.ward_count ?? 0;
 
     return (
         <PublicLayout>

@@ -37,7 +37,7 @@ class PageController extends Controller
     private function aboutDirectory(): array
     {
         return [
-            'ward_count' => Ward::query()->public()->count() ?: 29,
+            'ward_count' => Ward::query()->public()->count(),
             'officials' => Official::query()->public()->orderBy('display_order')->limit(4)->get(['slug', 'name', 'title', 'photo_media_id'])->map(fn ($official): array => [
                 'slug' => $official->slug,
                 'name' => $official->name,
