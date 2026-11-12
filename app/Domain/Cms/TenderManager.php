@@ -44,7 +44,7 @@ class TenderManager
             Gate::forUser($actor)->authorize('update', $tender);
             $tender->fill($data);
             $tender->status = 'draft';
-            $tender->verification_status = 'demo';
+            $tender->verification_status = 'verified';
             $tender->published_at = null;
             $tender->verified_by = null;
             $tender->verified_at = null;

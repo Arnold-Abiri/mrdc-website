@@ -36,7 +36,7 @@ class DepartmentManager
             $department->update($values);
             if (array_key_exists('public_name', $values) || array_key_exists('public_summary', $values) || array_key_exists('public_description', $values) || array_key_exists('responsibilities', $values)) {
                 $department->public_status = 'draft';
-                $department->public_verification_status = 'demo';
+                $department->public_verification_status = 'verified';
                 $department->public_published_at = null;
                 $department->save();
             }

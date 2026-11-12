@@ -54,7 +54,7 @@ class CouncilProjectManager
             unset($data['wards'], $data['documents']);
             $project->fill($data);
             $project->status = 'draft';
-            $project->verification_status = 'demo';
+            $project->verification_status = 'verified';
             $project->published_at = null;
             $project->verified_by = null;
             $project->verified_at = null;

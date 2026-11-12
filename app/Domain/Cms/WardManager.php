@@ -37,7 +37,7 @@ class WardManager
             Gate::forUser($actor)->authorize('update', $ward);
             $ward->fill($data);
             $ward->status = 'draft';
-            $ward->verification_status = 'demo';
+            $ward->verification_status = 'verified';
             $ward->published_at = null;
             $ward->updated_by = $actor->id;
             $ward->save();

@@ -31,6 +31,7 @@ class EditMedia extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             Action::make('preview')
                 ->label('Preview Media')
                 ->icon(Heroicon::OutlinedEye)

@@ -14,6 +14,11 @@ class CreateTender extends CreateRecord
 
     protected static string $resource = TenderResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(TenderManager::class)->create(auth()->user(), $data);

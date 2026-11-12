@@ -79,14 +79,11 @@ class HomepageSlideManager
             'headline' => ['required', 'string', 'max:120'],
             'supporting_text' => ['nullable', 'string', 'max:220'],
             'cta_label' => ['nullable', 'string', 'max:40'],
-            'cta_url' => ['nullable', 'string', 'max:2048'],
+            'cta_url' => ['nullable', 'string', 'max:2048', 'regex:~^/(?!/)[^[:space:]\\\\]*$~'],
             'media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('status', 'active')->where('mime_type', 'like', 'image/%'))],
             'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
             'is_active' => ['required', 'boolean'],
-        ])->validate();
-        if (! empty($data['cta_url'])) {
-            abort_unless(str_starts_with($data['cta_url'], '/'), 422);
-        }
+        ], ['cta_url.regex' => 'Enter an internal page path starting with /, such as /services.'])->validate();
 
         return $data;
     }

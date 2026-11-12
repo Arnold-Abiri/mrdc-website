@@ -32,6 +32,7 @@ class EditInvestmentOpportunity extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             ActionGroup::make([
                 Action::make('verify')
                     ->label('Mark publishable')

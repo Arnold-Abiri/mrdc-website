@@ -9,5 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('analytics:prune')->weekly()->sundays()->at('02:30')->withoutOverlapping();
+Schedule::command('enquiries:escalate-overdue')->dailyAt('07:00')->withoutOverlapping();
 Schedule::command('queue:prune-failed --hours=720')->monthly();
 Schedule::command('auth:clear-resets')->everyFifteenMinutes();

@@ -41,7 +41,7 @@ class OfficialManager
             Gate::forUser($actor)->authorize('update', $official);
             $official->fill($data);
             $official->status = 'draft';
-            $official->verification_status = 'demo';
+            $official->verification_status = 'verified';
             $official->published_at = null;
             $official->verified_by = null;
             $official->verified_at = null;

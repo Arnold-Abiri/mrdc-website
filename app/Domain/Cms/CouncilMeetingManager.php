@@ -44,7 +44,7 @@ class CouncilMeetingManager
             Gate::forUser($actor)->authorize('update', $meeting);
             $meeting->fill($data);
             $meeting->status = 'draft';
-            $meeting->verification_status = 'demo';
+            $meeting->verification_status = 'verified';
             $meeting->published_at = null;
             $meeting->verified_by = null;
             $meeting->verified_at = null;

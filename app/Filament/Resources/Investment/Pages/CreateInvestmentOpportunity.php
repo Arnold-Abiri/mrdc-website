@@ -14,6 +14,11 @@ class CreateInvestmentOpportunity extends CreateRecord
 
     protected static string $resource = InvestmentOpportunityResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(InvestmentManager::class)->create(auth()->user(), $data);

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BankAccounts\Schemas;
 
+use App\Filament\Concerns\TranslationFields;
+use App\Models\BankAccount;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -62,6 +64,7 @@ class BankAccountForm
                             ->default(0)
                             ->required(),
                     ]),
+                TranslationFields::make(BankAccount::translatableFields()),
                 Section::make('Visibility')
                     ->schema([
                         Toggle::make('is_active')

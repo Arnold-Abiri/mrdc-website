@@ -12,10 +12,12 @@ use App\Models\Enquiry;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -24,10 +26,13 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
 
 class EnquiryResource extends Resource
 {
@@ -130,6 +135,7 @@ class EnquiryResource extends Resource
                     'other' => 'Other',
                 ]),
                 SelectFilter::make('department')->label('Department')->relationship('department', 'name'),
+                Filter::make('overdue')->label('Overdue SLA')->query(fn (Builder $query): Builder => $query->overdue()),
             ])
             ->defaultSort('submitted_at', 'desc')->recordUrl(fn (Enquiry $record): string => static::getUrl('view', ['record' => $record]))
             ->recordActions([
@@ -155,6 +161,38 @@ class EnquiryResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('changeStatus')
+                        ->label('Change status')
+                        ->icon('heroicon-o-arrow-path')
+                        ->requiresConfirmation()
+                        ->form([
+                            Select::make('status')->label('New status')->options([
+                                'in_progress' => 'In progress',
+                                'resolved' => 'Resolved',
+                                'closed' => 'Closed',
+                            ])->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $updated = 0;
+                            $skipped = 0;
+                            foreach ($records as $record) {
+                                if (! $record instanceof Enquiry || ! EnquiryManager::canTransition($record->status, $data['status'])) {
+                                    $skipped++;
+
+                                    continue;
+                                }
+                                try {
+                                    app(EnquiryManager::class)->setStatus(auth()->user(), $record, $data['status']);
+                                    $updated++;
+                                } catch (Throwable) {
+                                    $skipped++;
+                                }
+                            }
+                            Notification::make()
+                                ->title("Status updated for {$updated} enquir".($updated === 1 ? 'y' : 'ies').($skipped > 0 ? "; {$skipped} skipped (invalid transition or no permission)" : ''))
+                                ->success()
+                                ->send();
+                        }),
                     DeleteBulkAction::make(),
                 ]),
             ]);
@@ -167,6 +205,10 @@ class EnquiryResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
+        $overdue = (clone static::getEloquentQuery())->overdue()->count();
+        if ($overdue > 0) {
+            return (string) $overdue;
+        }
         $count = static::getEloquentQuery()->where('status', 'new')->count();
 
         return $count > 0 ? (string) $count : null;
@@ -174,7 +216,9 @@ class EnquiryResource extends Resource
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return 'warning';
+        $overdue = (clone static::getEloquentQuery())->overdue()->count();
+
+        return $overdue > 0 ? 'danger' : 'warning';
     }
 
     public static function getPages(): array

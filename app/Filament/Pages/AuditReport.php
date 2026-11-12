@@ -40,7 +40,7 @@ class AuditReport extends FilamentPage
             'action' => is_string(request()->query('action')) ? request()->query('action') : null,
             'subject_type' => is_string(request()->query('subject_type')) ? request()->query('subject_type') : null,
         ];
-        $events = $this->filtered($filters)->orderByDesc('created_at')->limit(500)->get();
+        $events = $this->filtered($filters)->orderByDesc('created_at')->paginate(25)->withQueryString();
         $actors = AuditEvent::query()->whereNotNull('actor_id')->select('actor_id')->distinct()->orderBy('actor_id')->pluck('actor_id');
 
         return ['filters' => $filters, 'events' => $events, 'actors' => $actors];

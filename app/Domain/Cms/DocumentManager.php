@@ -45,7 +45,7 @@ class DocumentManager
             $document->fill($data);
             $document->status = 'draft';
             $document->published_at = null;
-            $document->verification_status = 'demo';
+            $document->verification_status = 'verified';
             $document->verified_by = null;
             $document->verified_at = null;
             $document->updated_by = $actor->id;
@@ -117,7 +117,7 @@ class DocumentManager
             $document->current_version = $document->current_version + 1;
             $document->status = 'draft';
             $document->published_at = null;
-            $document->verification_status = 'demo';
+            $document->verification_status = 'verified';
             $document->verified_by = null;
             $document->verified_at = null;
             $document->updated_by = $actor->id;

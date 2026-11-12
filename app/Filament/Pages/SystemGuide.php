@@ -23,11 +23,9 @@ class SystemGuide extends Page
 
     protected static ?string $navigationLabel = 'System Walkthrough';
 
-    protected static \UnitEnum|string|null $navigationGroup = null;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $title = 'System Walkthrough';
-
-    protected static ?int $navigationSort = 100;
 
     protected string $view = 'filament.pages.system-guide';
 

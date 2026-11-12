@@ -44,7 +44,7 @@ class VacancyManager
             Gate::forUser($actor)->authorize('update', $vacancy);
             $vacancy->fill($data);
             $vacancy->status = 'draft';
-            $vacancy->verification_status = 'demo';
+            $vacancy->verification_status = 'verified';
             $vacancy->published_at = null;
             $vacancy->verified_by = null;
             $vacancy->verified_at = null;

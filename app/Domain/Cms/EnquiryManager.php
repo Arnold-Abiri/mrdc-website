@@ -65,6 +65,7 @@ class EnquiryManager
         $enquiry->public_id = (string) Str::uuid();
         $enquiry->status = 'new';
         $enquiry->submitted_at = now();
+        $enquiry->due_at = now()->addDays((int) config('cms.enquiries_sla_days', 5));
         $enquiry->save();
         $this->notifyStaff($this->staffForDepartment($enquiry->department_id), $enquiry, 'New citizen submission');
         try {
@@ -109,6 +110,7 @@ class EnquiryManager
             $before = $enquiry->status;
             abort_unless(self::canTransition($before, $status), 422, 'Invalid enquiry status transition.');
             $enquiry->status = $status;
+            $enquiry->last_escalated_at = null;
             $enquiry->save();
             app(AuditWriter::class)->record($actor, 'enquiries.status_changed', $enquiry, ['from' => $before, 'to' => $status]);
 
@@ -207,6 +209,31 @@ class EnquiryManager
             $enquiry->notes()->create(['author_id' => $actor->id, 'body' => $data['body']]);
             app(AuditWriter::class)->record($actor, 'enquiries.note_added', $enquiry);
         });
+    }
+
+    /**
+     * Notify department staff about open enquiries past their SLA due date.
+     * Each overdue episode escalates once until the record changes hands.
+     *
+     * @return int Number of enquiries escalated.
+     */
+    public function escalateOverdue(): int
+    {
+        $overdue = Enquiry::query()->overdue()->whereNull('last_escalated_at')->get();
+        foreach ($overdue as $enquiry) {
+            $this->notifyStaff(
+                $this->staffForDepartment($enquiry->department_id),
+                $enquiry,
+                'Overdue since '.$enquiry->due_at->format('d M Y').' ('.$enquiry->status.')'
+            );
+            $enquiry->forceFill(['last_escalated_at' => now()])->save();
+            app(AuditWriter::class)->record(null, 'enquiries.escalated', $enquiry, [
+                'status' => $enquiry->status,
+                'due_at' => $enquiry->due_at->toDateTimeString(),
+            ]);
+        }
+
+        return $overdue->count();
     }
 
     public function notifyCitizen(User $actor, Enquiry $enquiry, ?string $message = null): void

@@ -14,6 +14,11 @@ class CreateWard extends CreateRecord
 
     protected static string $resource = WardResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(WardManager::class)->create(auth()->user(), $data);

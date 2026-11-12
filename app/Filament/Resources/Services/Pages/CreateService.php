@@ -14,6 +14,11 @@ class CreateService extends CreateRecord
 
     protected static string $resource = ServiceResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(ServiceManager::class)->create(auth()->user(), $data);

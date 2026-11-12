@@ -16,6 +16,11 @@ class CreateOfficial extends CreateRecord
 
     protected static string $resource = OfficialResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         $data = $this->attachInlineMedia(

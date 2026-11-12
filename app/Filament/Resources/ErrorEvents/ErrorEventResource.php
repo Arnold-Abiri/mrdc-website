@@ -12,6 +12,8 @@ use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -47,28 +49,106 @@ class ErrorEventResource extends Resource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            TextEntry::make('exception_class'),
-            TextEntry::make('summary')->columnSpanFull(),
-            TextEntry::make('route'),
-            TextEntry::make('correlation_id'),
-            TextEntry::make('resolved')->badge(),
-            TextEntry::make('created_at')->dateTime(),
+            Section::make('Exception Overview')
+                ->description('System-level application exception and execution context.')
+                ->schema([
+                    Grid::make(3)->schema([
+                        TextEntry::make('created_at')
+                            ->label('Timestamp')
+                            ->dateTime()
+                            ->fontFamily('mono'),
+
+                        TextEntry::make('resolved')
+                            ->label('Resolution Status')
+                            ->badge()
+                            ->color(fn (bool $state): string => $state ? 'success' : 'danger')
+                            ->formatStateUsing(fn (bool $state): string => $state ? 'Resolved' : 'Unresolved / Open'),
+
+                        TextEntry::make('correlation_id')
+                            ->label('Correlation ID')
+                            ->fontFamily('mono')
+                            ->copyable()
+                            ->placeholder('—'),
+                    ]),
+
+                    TextEntry::make('exception_class')
+                        ->label('Exception Class')
+                        ->fontFamily('mono')
+                        ->weight('bold')
+                        ->copyable(),
+
+                    TextEntry::make('route')
+                        ->label('Target Route / URI')
+                        ->fontFamily('mono')
+                        ->placeholder('—'),
+                ]),
+
+            Section::make('Stack Trace & Error Summary')
+                ->description('Detailed exception diagnostic information.')
+                ->schema([
+                    TextEntry::make('summary')
+                        ->label('')
+                        ->fontFamily('mono')
+                        ->size('xs')
+                        ->columnSpanFull()
+                        ->placeholder('No stack trace or summary recorded.'),
+                ]),
         ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table->columns([
-            TextColumn::make('created_at')->dateTime()->sortable(),
-            TextColumn::make('exception_class')->searchable(),
-            TextColumn::make('route'),
-            TextColumn::make('resolved')->badge(),
-        ])->filters([
-            SelectFilter::make('resolved')->options([0 => 'Unresolved', 1 => 'Resolved']),
-        ])->defaultSort('created_at', 'desc')->recordActions([
-            ViewAction::make(),
-            Action::make('resolve')->authorize(fn (ErrorEvent $record): bool => Gate::allows('update', $record))->requiresConfirmation()->action(fn (ErrorEvent $record) => $record->forceFill(['resolved' => true])->save()),
-        ]);
+        return $table
+            ->columns([
+                TextColumn::make('created_at')
+                    ->label('Timestamp')
+                    ->dateTime()
+                    ->sortable()
+                    ->fontFamily('mono')
+                    ->size('xs'),
+
+                TextColumn::make('exception_class')
+                    ->label('Exception Class')
+                    ->searchable()
+                    ->fontFamily('mono')
+                    ->weight('medium')
+                    ->wrap(),
+
+                TextColumn::make('route')
+                    ->label('Route / URI')
+                    ->fontFamily('mono')
+                    ->size('xs')
+                    ->placeholder('—')
+                    ->toggleable(),
+
+                TextColumn::make('resolved')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (bool $state): string => $state ? 'success' : 'danger')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Resolved' : 'Open'),
+            ])
+            ->filters([
+                SelectFilter::make('resolved')
+                    ->label('Status')
+                    ->options([
+                        0 => 'Unresolved (Open)',
+                        1 => 'Resolved',
+                    ]),
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->defaultPaginationPageOption(25)
+            ->paginationPageOptions([10, 25, 50, 100])
+            ->recordActions([
+                ViewAction::make(),
+                Action::make('resolve')
+                    ->label('Mark Resolved')
+                    ->icon(Heroicon::OutlinedCheckCircle)
+                    ->color('success')
+                    ->visible(fn (ErrorEvent $record): bool => ! $record->resolved)
+                    ->authorize(fn (ErrorEvent $record): bool => Gate::allows('update', $record))
+                    ->requiresConfirmation()
+                    ->action(fn (ErrorEvent $record) => $record->forceFill(['resolved' => true])->save()),
+            ]);
     }
 
     public static function getPages(): array

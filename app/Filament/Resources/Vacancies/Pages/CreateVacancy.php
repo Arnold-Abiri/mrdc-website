@@ -14,6 +14,11 @@ class CreateVacancy extends CreateRecord
 
     protected static string $resource = VacancyResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(VacancyManager::class)->create(auth()->user(), $data);

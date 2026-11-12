@@ -45,7 +45,7 @@ class PageManager
             $page->fill($data);
             $page->status = 'draft';
             $page->published_at = null;
-            $page->verification_status = 'demo';
+            $page->verification_status = 'verified';
             $page->updated_by = $actor->id;
             $page->save();
             $this->revise($page, $actor);
@@ -111,7 +111,7 @@ class PageManager
             $page->fill($data);
             $page->status = 'draft';
             $page->published_at = null;
-            $page->verification_status = 'demo';
+            $page->verification_status = 'verified';
             $page->updated_by = $actor->id;
             $page->save();
             $this->revise($page, $actor);

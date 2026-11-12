@@ -15,6 +15,11 @@ class EditDepartment extends EditRecord
 
     protected static string $resource = DepartmentResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [self::makeAiTranslateAction()];
+    }
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         if (! $record instanceof Department) {

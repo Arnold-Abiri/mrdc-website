@@ -16,7 +16,12 @@ class Enquiry extends Model
 
     protected function casts(): array
     {
-        return ['submitted_at' => 'datetime', 'consent_given' => 'boolean'];
+        return ['submitted_at' => 'datetime', 'due_at' => 'datetime', 'last_escalated_at' => 'datetime', 'consent_given' => 'boolean'];
+    }
+
+    public function scopeOverdue(Builder $query): Builder
+    {
+        return $query->whereIn('status', ['new', 'in_progress'])->whereNotNull('due_at')->where('due_at', '<=', now());
     }
 
     /** @return BelongsTo<Department, $this> */

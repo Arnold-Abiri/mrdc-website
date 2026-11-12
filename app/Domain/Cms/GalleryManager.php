@@ -49,7 +49,7 @@ class GalleryManager
             unset($data['media']);
             $gallery->fill($data);
             $gallery->status = 'draft';
-            $gallery->verification_status = 'demo';
+            $gallery->verification_status = 'verified';
             $gallery->published_at = null;
             $gallery->verified_by = null;
             $gallery->verified_at = null;

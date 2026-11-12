@@ -50,7 +50,7 @@ class EditorialManager
             unset($data['documents']);
             $item->fill($data);
             $item->status = 'draft';
-            $item->verification_status = 'demo';
+            $item->verification_status = 'verified';
             $item->published_at = null;
             $item->verified_by = null;
             $item->verified_at = null;

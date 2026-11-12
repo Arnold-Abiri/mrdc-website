@@ -44,6 +44,7 @@ class EditOfficial extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             PreviewHelper::makePreviewAction(),
             ActionGroup::make([
                 Action::make('verify')

@@ -14,6 +14,11 @@ class CreateCouncilMeeting extends CreateRecord
 
     protected static string $resource = CouncilMeetingResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(CouncilMeetingManager::class)->create(auth()->user(), $data);

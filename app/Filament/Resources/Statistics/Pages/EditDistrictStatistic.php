@@ -29,6 +29,7 @@ class EditDistrictStatistic extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             DeleteAction::make(),
         ];
     }

@@ -38,7 +38,7 @@ class ServiceManager
             Gate::forUser($actor)->authorize('update', $service);
             $service->fill($data);
             $service->status = 'draft';
-            $service->verification_status = 'demo';
+            $service->verification_status = 'verified';
             $service->published_at = null;
             $service->updated_by = $actor->id;
             $service->save();

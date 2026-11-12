@@ -44,7 +44,7 @@ class InvestmentManager
             Gate::forUser($actor)->authorize('update', $opportunity);
             $opportunity->fill($data);
             $opportunity->status = 'draft';
-            $opportunity->verification_status = 'demo';
+            $opportunity->verification_status = 'verified';
             $opportunity->published_at = null;
             $opportunity->verified_by = null;
             $opportunity->verified_at = null;

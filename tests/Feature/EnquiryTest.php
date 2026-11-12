@@ -2,6 +2,7 @@
 
 use App\Domain\Cms\EnquiryManager;
 use App\Domain\Identity\DataScopeAuthorizer;
+use App\Mail\EnquiryStatusUpdated;
 use App\Models\Department;
 use App\Models\Enquiry;
 use App\Models\User;
@@ -10,6 +11,8 @@ use Database\Seeders\SecuritySeeder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Testing\Fakes\MailFake;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -246,11 +249,11 @@ test('failed citizen notification records failure instead of success', function 
     $admin = scopedEnquiryUser(Department::factory()->create());
     $enquiry = Enquiry::factory()->create(['status' => 'in_progress', 'department_id' => $admin->department_id]);
 
-    $fake = new class(app('mail.manager')) extends \Illuminate\Support\Testing\Fakes\MailFake
+    $fake = new class(app('mail.manager')) extends MailFake
     {
         protected function sendMail($view, $shouldQueue = false)
         {
-            throw new \Exception('SMTP down');
+            throw new Exception('SMTP down');
         }
     };
     Mail::swap($fake);
@@ -260,4 +263,44 @@ test('failed citizen notification records failure instead of success', function 
     $bodies = $enquiry->fresh()->notes()->pluck('body')->all();
     expect($bodies)->toHaveCount(1);
     expect($bodies[0])->toContain('[Citizen Notification Failed]');
+});
+
+test('submit sets an sla due date on the enquiry', function (): void {
+    $enquiry = app(EnquiryManager::class)->submit(enquiryPayload());
+
+    expect($enquiry->due_at)->not->toBeNull();
+    expect($enquiry->submitted_at->diffInDays($enquiry->due_at))->toEqual(5);
+});
+
+test('overdue open enquiries escalate exactly once per episode', function (): void {
+    $this->seed(SecuritySeeder::class);
+    $overdue = Enquiry::factory()->create([
+        'status' => 'new',
+        'department_id' => null,
+        'submitted_at' => now()->subDays(9),
+        'due_at' => now()->subDays(4),
+    ]);
+    $fresh = Enquiry::factory()->create(['status' => 'new', 'department_id' => null, 'due_at' => now()->addDays(2)]);
+    $resolved = Enquiry::factory()->create(['status' => 'resolved', 'department_id' => null, 'due_at' => now()->subDays(4)]);
+
+    expect(app(EnquiryManager::class)->escalateOverdue())->toBe(1);
+    expect($overdue->fresh()->last_escalated_at)->not->toBeNull();
+    expect(app(EnquiryManager::class)->escalateOverdue())->toBe(0);
+    expect($fresh->fresh()->last_escalated_at)->toBeNull();
+    expect($resolved->fresh()->last_escalated_at)->toBeNull();
+});
+
+test('status change re-arms escalation for the next episode', function (): void {
+    $this->seed(SecuritySeeder::class);
+    $actor = scopedEnquiryUser(Department::factory()->create());
+    $enquiry = Enquiry::factory()->create([
+        'status' => 'in_progress',
+        'department_id' => $actor->department_id,
+        'due_at' => now()->subDay(),
+        'last_escalated_at' => now()->subDay(),
+    ]);
+
+    app(EnquiryManager::class)->setStatus($actor, $enquiry, 'resolved');
+
+    expect($enquiry->fresh()->last_escalated_at)->toBeNull();
 });

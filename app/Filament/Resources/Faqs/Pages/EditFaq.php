@@ -26,6 +26,7 @@ class EditFaq extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             DeleteAction::make()
                 ->using(fn (Faq $record) => app(FaqManager::class)->delete(auth()->user(), $record)),
         ];

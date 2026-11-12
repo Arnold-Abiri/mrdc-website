@@ -175,8 +175,8 @@ class EmailOperations extends FilamentPage
                 'queue.all_retried',
             ])
             ->orderByDesc('created_at')
-            ->limit(20)
-            ->get();
+            ->paginate(15, ['*'], 'email_page')
+            ->withQueryString();
 
         return [
             'activeConfig' => $activeConfig,

@@ -55,6 +55,55 @@ trait HandlesTranslations
         app(TranslationManager::class)->saveTranslations(auth()->user(), $record, $input);
     }
 
+    protected function makeAiTranslateCreateAction(): Action
+    {
+        return Action::make('ai_translate')
+            ->label('AI Translate')->icon('heroicon-o-sparkles')
+            ->authorize(fn (): bool => static::getResource()::canCreate())
+            ->form([
+                Select::make('locale')->label('Target Language')
+                    ->options(['sn' => 'ChiShona', 'nd' => 'isiNdebele'])->default('sn')->required(),
+            ])
+            ->action(function (array $data): void {
+                $model = static::getResource()::getModel();
+                $fields = [];
+                foreach ($model::translatableFields() as $field) {
+                    $value = $this->data[$field] ?? null;
+                    if (is_array($value)) {
+                        $value = TranslationFields::englishToLines(array_values(array_map(
+                            fn (mixed $line): mixed => is_array($line) && array_key_exists('value', $line) ? $line['value'] : $line,
+                            $value,
+                        )));
+                    }
+                    if (is_string($value) && trim($value) !== '') {
+                        $fields[$field] = $value;
+                    }
+                }
+                if ($fields === []) {
+                    Notification::make()->title('No Content to Translate')
+                        ->body('Enter the English text first.')->warning()->send();
+
+                    return;
+                }
+                $result = app(GeminiStaffService::class)->translateFields(class_basename($model), $fields, $data['locale']);
+                if (! ($result['success'] ?? false)) {
+                    Notification::make()->title('AI Translation Failed')
+                        ->body($result['error'] ?? 'Unable to generate translations.')->danger()->send();
+
+                    return;
+                }
+                foreach (array_keys($fields) as $field) {
+                    $translation = $result['translations'][$field] ?? null;
+                    if (is_string($translation) && trim($translation) !== '') {
+                        $this->data["content_translations_{$data['locale']}_{$field}"] = $translation;
+                    }
+                }
+                Notification::make()->title('Translations ready')
+                    ->body('Review the translations below, then press Create to save.')
+                    ->success()->send();
+            });
+    }
+
     /**
      * Create a standard Filament Action for AI translation of any translatable record.
      */
@@ -87,8 +136,9 @@ trait HandlesTranslations
                 foreach ($fields as $field) {
                     $val = $record->getAttribute($field);
                     if (is_array($val)) {
-                        $fieldsWithValues[$field] = TranslationFields::englishToLines($val);
-                    } elseif (is_string($val) && trim($val) !== '') {
+                        $val = TranslationFields::englishToLines($val);
+                    }
+                    if (is_string($val) && trim($val) !== '') {
                         $fieldsWithValues[$field] = $val;
                     }
                 }

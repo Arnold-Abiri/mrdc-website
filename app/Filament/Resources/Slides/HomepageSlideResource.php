@@ -58,7 +58,10 @@ class HomepageSlideResource extends Resource
                 TextInput::make('headline')->required()->maxLength(120)->helperText('Keep under ~70 characters so the hero never wraps past 3 lines.'),
                 Textarea::make('supporting_text')->maxLength(220)->rows(3)->helperText('Keep under ~160 characters so the hero never pushes content below the fold.'),
                 TextInput::make('cta_label')->maxLength(40)->helperText('Short label, e.g. “Our services”.'),
-                TextInput::make('cta_url')->maxLength(2048)->helperText('Internal path only, e.g. /services.'),
+                TextInput::make('cta_url')->label('Button link')->maxLength(2048)
+                    ->rules(['regex:~^/(?!/)[^[:space:]\\\\]*$~'])
+                    ->validationMessages(['regex' => 'Enter an internal page path starting with /, such as /services.'])
+                    ->placeholder('/services')->helperText('Use a page path such as /services, rather than a full web address. Leave empty if no link is needed.'),
             ])->columns(2),
             Section::make('Hero Artwork / Background')->description('Upload a slide background image directly, or select one from the media library.')->schema([
                 Placeholder::make('current_slide_image')->label('Current image')->content(fn (?HomepageSlide $record): HtmlString|string => $record?->media_id ? new HtmlString('<a href="'.e(route('admin.media.preview', $record->media_id)).'" target="_blank" rel="noopener"><img src="'.e(route('admin.media.file', $record->media_id)).'" alt="Current homepage slide image" style="max-height: 180px; max-width: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0;"></a>') : 'No image selected.')->html()->visible(fn (?HomepageSlide $record): bool => $record !== null),

@@ -17,7 +17,7 @@ class RatesController extends Controller
         $page = Page::query()->with('translations')->public()->where('slug', 'rates-information')->first();
         $schedules = Document::query()->with('translations')->public()->whereIn('category', ['bylaw', 'report', 'plan'])->orderByDesc('published_at')->limit(10)->get(['id', 'slug', 'title', 'category', 'reference_date'])->map(fn (Document $document): array => $document->toLocalizedArray(['slug', 'title', 'category', 'reference_date']));
 
-        $bankAccounts = BankAccount::query()
+        $bankAccounts = BankAccount::query()->with('translations')
             ->public()
             ->orderBy('display_order')
             ->orderBy('bank_name')
@@ -31,7 +31,10 @@ class RatesController extends Controller
                 'currency',
                 'category',
                 'purpose',
-            ]);
+            ])->map(fn (BankAccount $account): array => $account->toLocalizedArray([
+                'id', 'bank_name', 'account_name', 'account_number', 'branch_name',
+                'branch_code', 'currency', 'category', 'purpose',
+            ]));
 
         $billingFaqs = Faq::query()
             ->with('translations')

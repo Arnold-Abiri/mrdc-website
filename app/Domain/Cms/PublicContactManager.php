@@ -40,7 +40,7 @@ class PublicContactManager
             $contact->fill($data);
             $contact->is_public = false;
             $contact->status = 'draft';
-            $contact->verification_status = 'demo';
+            $contact->verification_status = 'verified';
             $contact->published_at = null;
             $contact->updated_by = $actor->id;
             $contact->save();

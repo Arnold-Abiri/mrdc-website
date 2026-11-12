@@ -455,9 +455,33 @@ a:focus-visible, button:focus-visible {
   margin: 0;
 }
 
+/* Page Copy Blocks in About Sections */
+.about-page-copy {
+  margin-top: 28px;
+  padding: 24px;
+  background: #F8FAFC;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.about-page-copy h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin: 0 0 12px;
+}
+.about-page-copy p {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+.about-page-copy p:last-child {
+  margin-bottom: 0;
+}
+
 /* Mandate Action Banner */
 .about-mandate-cta-wrap {
-  margin-top: 32px;
+  margin-top: 28px;
   padding: 20px 24px;
   background: #F8FAFC;
   border: 1px solid var(--color-border);
@@ -2363,7 +2387,11 @@ a:focus-visible, button:focus-visible {
   border-top: 1px solid var(--color-border);
 }
 .about-history-narrative .about-page-copy {
+  margin-top: 0;
   margin-bottom: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 .about-history-narrative h3 {
   font-size: 1.15rem;

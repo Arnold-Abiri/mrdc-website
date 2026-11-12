@@ -16,6 +16,11 @@ class CreateCouncilProject extends CreateRecord
 
     protected static string $resource = CouncilProjectResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         $data = $this->attachInlineFeaturedImage($data, $data['title'] ?? null);

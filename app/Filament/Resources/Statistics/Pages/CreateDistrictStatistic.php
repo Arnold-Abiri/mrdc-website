@@ -14,6 +14,11 @@ class CreateDistrictStatistic extends CreateRecord
 
     protected static string $resource = DistrictStatisticResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(DistrictStatisticManager::class)->create(auth()->user(), $data);
