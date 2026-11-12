@@ -14,6 +14,11 @@ class CreateProjectUpdate extends CreateRecord
 
     use HandlesTranslations;
 
+    protected function getHeaderActions(): array
+    {
+        return [$this->makeAiTranslateCreateAction()];
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return app(ProjectUpdateManager::class)->create(auth()->user(), $data);

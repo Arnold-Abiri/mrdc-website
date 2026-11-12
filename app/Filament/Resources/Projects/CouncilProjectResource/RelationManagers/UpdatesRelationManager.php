@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Projects\CouncilProjectResource\RelationManagers;
 
 use App\Domain\Cms\ProjectUpdateManager;
+use App\Domain\Content\TranslationManager;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Concerns\TranslationFields;
 use App\Models\CouncilProject;
 use App\Models\ProjectUpdate;
@@ -101,15 +103,22 @@ class UpdatesRelationManager extends RelationManager
                         $owner = $this->getOwnerRecord();
                         $data['council_project_id'] = $owner->getKey();
 
-                        return app(ProjectUpdateManager::class)->create(auth()->user(), $data);
+                        $record = app(ProjectUpdateManager::class)->create(auth()->user(), $data);
+                        $this->saveTranslationsFromData($record, $data);
+
+                        return $record;
                     }),
             ])
             ->recordActions([
+                HandlesTranslations::makeAiTranslateAction(),
                 EditAction::make()
                     ->using(function (ProjectUpdate $record, array $data): Model {
                         $data['council_project_id'] = $record->council_project_id;
 
-                        return app(ProjectUpdateManager::class)->update(auth()->user(), $record, $data);
+                        $updated = app(ProjectUpdateManager::class)->update(auth()->user(), $record, $data);
+                        $this->saveTranslationsFromData($updated, $data);
+
+                        return $updated;
                     }),
                 Action::make('publish')
                     ->label('Publish')
@@ -134,5 +143,26 @@ class UpdatesRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private function saveTranslationsFromData(Model $record, array $data): void
+    {
+        $input = ['sn' => [], 'nd' => []];
+        foreach ($data as $key => $value) {
+            if (! str_starts_with((string) $key, 'content_translations_')) {
+                continue;
+            }
+            $rest = substr((string) $key, strlen('content_translations_'));
+            $locale = str_starts_with($rest, 'sn_') ? 'sn' : (str_starts_with($rest, 'nd_') ? 'nd' : null);
+            if ($locale === null) {
+                continue;
+            }
+            $input[$locale][substr($rest, 3)] = is_string($value) ? $value : null;
+        }
+        $input = array_filter($input);
+        if ($input === []) {
+            return;
+        }
+        app(TranslationManager::class)->saveTranslations(auth()->user(), $record, $input);
     }
 }

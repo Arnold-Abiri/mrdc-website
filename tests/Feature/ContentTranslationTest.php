@@ -20,9 +20,12 @@ use App\Filament\Resources\Galleries\Pages\CreateGallery;
 use App\Filament\Resources\Galleries\Pages\EditGallery;
 use App\Filament\Resources\Media\Pages\CreateMedia;
 use App\Filament\Resources\Media\Pages\EditMedia;
+use App\Filament\Resources\ProjectUpdates\Pages\CreateProjectUpdate;
+use App\Filament\Resources\ProjectUpdates\Pages\EditProjectUpdate;
 use App\Filament\Resources\Slides\Pages\CreateHomepageSlide;
 use App\Filament\Resources\Slides\Pages\EditHomepageSlide;
 use App\Models\BankAccount;
+use App\Models\CouncilProject;
 use App\Models\Document;
 use App\Models\EditorialItem;
 use App\Models\Faq;
@@ -30,6 +33,7 @@ use App\Models\Gallery;
 use App\Models\HomepageSlide;
 use App\Models\Media;
 use App\Models\Page;
+use App\Models\ProjectUpdate;
 use App\Models\PublicContact;
 use App\Models\Service;
 use App\Models\User;
@@ -623,5 +627,80 @@ class ContentTranslationTest extends TestCase
             ->where('bankAccounts.0.account_number', '00000001'));
         $this->get('/en/rates')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->where('bankAccounts.0.purpose', 'Pay council rates'));
+    }
+
+    public function test_project_update_ai_translation_generates_translations(): void
+    {
+        $this->actingAs($this->administrator());
+
+        $project = CouncilProject::query()->create([
+            'title' => 'Community Borehole Drilling',
+            'slug' => 'community-borehole-drilling',
+            'project_type' => 'project',
+            'project_status' => 'ongoing',
+            'location' => 'Ward 5',
+            'summary' => 'Drilling boreholes for clean water.',
+            'description' => 'Comprehensive borehole drilling project for clean accessible water.',
+            'display_order' => 1,
+            'status' => 'draft',
+        ]);
+
+        $details = [
+            'council_project_id' => $project->id,
+            'update_date' => '2026-05-10',
+            'title' => 'Drilling Phase 1 Complete',
+            'summary' => 'Initial surveying and drilling of three boreholes has finished.',
+            'progress_percent' => 50,
+            'display_order' => 1,
+        ];
+
+        $this->mock(GeminiStaffService::class, function ($mock): void {
+            $mock->shouldReceive('translateFields')->once()
+                ->with('ProjectUpdate', [
+                    'title' => 'Drilling Phase 1 Complete',
+                    'summary' => 'Initial surveying and drilling of three boreholes has finished.',
+                ], 'sn')
+                ->andReturn([
+                    'success' => true,
+                    'translations' => [
+                        'title' => 'Chikamu Chekutanga Chekuchera Chapera',
+                        'summary' => 'Kuongorora nekuchera zvibhorani zvitatu kwapera.',
+                    ],
+                ]);
+
+            $mock->shouldReceive('translateFields')->once()
+                ->with('ProjectUpdate', [
+                    'title' => 'Drilling Phase 1 Complete',
+                    'summary' => 'Initial surveying and drilling of three boreholes has finished.',
+                ], 'nd')
+                ->andReturn([
+                    'success' => true,
+                    'translations' => [
+                        'title' => 'Isigaba Sokuqala Sokubhola Sesiphelile',
+                        'summary' => 'Ukuhlola lokubhobhoza izibholani ezintathu sekuphelile.',
+                    ],
+                ]);
+        });
+
+        $page = Livewire::test(CreateProjectUpdate::class)
+            ->fillForm($details)
+            ->assertActionVisible('ai_translate')
+            ->callAction('ai_translate', data: ['locale' => 'sn'])
+            ->assertHasNoActionErrors();
+
+        $this->assertDatabaseCount('project_updates', 0);
+        $page->call('create')->assertHasNoFormErrors();
+
+        $update = ProjectUpdate::query()->sole();
+        $this->assertSame('Chikamu Chekutanga Chekuchera Chapera', $update->translated('title', 'sn'));
+        $this->assertSame('Kuongorora nekuchera zvibhorani zvitatu kwapera.', $update->translated('summary', 'sn'));
+
+        Livewire::test(EditProjectUpdate::class, ['record' => $update->getRouteKey()])
+            ->assertActionVisible('ai_translate')
+            ->callAction('ai_translate', data: ['locale' => 'nd'])
+            ->assertHasNoActionErrors();
+
+        $this->assertSame('Isigaba Sokuqala Sokubhola Sesiphelile', $update->fresh()->translated('title', 'nd'));
+        $this->assertSame('Ukuhlola lokubhobhoza izibholani ezintathu sekuphelile.', $update->fresh()->translated('summary', 'nd'));
     }
 }

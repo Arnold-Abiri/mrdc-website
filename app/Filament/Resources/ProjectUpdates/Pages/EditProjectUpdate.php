@@ -32,6 +32,7 @@ class EditProjectUpdate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            self::makeAiTranslateAction(),
             ActionGroup::make([
                 Action::make('publish')
                     ->authorize(fn (): bool => Gate::allows('update', $this->record))

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ProjectUpdates;
 use App\Domain\Cms\ProjectUpdateManager;
 use App\Domain\Identity\DataScopeAuthorizer;
 use App\Filament\Clusters\Services\ServicesCluster;
+use App\Filament\Concerns\HandlesTranslations;
 use App\Filament\Concerns\TranslationFields;
 use App\Filament\Resources\ProjectUpdates\Pages\CreateProjectUpdate;
 use App\Filament\Resources\ProjectUpdates\Pages\EditProjectUpdate;
@@ -86,7 +87,9 @@ class ProjectUpdateResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('project.title')->label('Project')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('update_date')->date(), TextColumn::make('status')->badge()])->recordActions([DeleteAction::make(),
+        return $table->columns([TextColumn::make('project.title')->label('Project')->searchable(), TextColumn::make('title')->searchable(), TextColumn::make('update_date')->date(), TextColumn::make('status')->badge()])->recordActions([
+            HandlesTranslations::makeAiTranslateAction(),
+            DeleteAction::make(),
             EditAction::make(),
             Action::make('publish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->visible(fn (ProjectUpdate $record): bool => $record->status !== 'published')->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'published')),
             Action::make('unpublish')->authorize(fn (ProjectUpdate $record): bool => Gate::allows('update', $record))->visible(fn (ProjectUpdate $record): bool => $record->status === 'published')->requiresConfirmation()->action(fn (ProjectUpdate $record) => app(ProjectUpdateManager::class)->setStatus(auth()->user(), $record, 'unpublished')),
