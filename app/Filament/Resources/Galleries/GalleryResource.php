@@ -94,9 +94,12 @@ class GalleryResource extends Resource
                 ->schema([
                     Repeater::make('media')
                         ->hiddenLabel()
-                        ->helperText(fn (?Gallery $record): string => $record instanceof Gallery && $record->media->isNotEmpty()
-                            ? $record->media->map(fn (Media $media): string => '<a href="'.e(route('admin.media.preview', $media->id)).'" target="_blank" rel="noopener">'.e($media->title).'</a>')->implode(' · ')
-                            : 'No album images selected.')
+                        ->belowContent(fn (?Gallery $record): array => $record instanceof Gallery && $record->media->isNotEmpty()
+                            ? [Placeholder::make('album_media_links')
+                                ->hiddenLabel()
+                                ->content(new HtmlString($record->media->map(fn (Media $media): string => '<a href="'.e(route('admin.media.preview', $media->id)).'" target="_blank" rel="noopener noreferrer">'.e($media->title).'</a>')->implode(' · ')))
+                                ->html()]
+                            : [])
                         ->hintIcon('heroicon-o-arrow-top-right-on-square')
                         ->schema([
                             Select::make('media_id')
