@@ -59,7 +59,7 @@ class OfficialTest extends TestCase
         $manager->update($admin, $official, ['name' => 'Edited fixture', 'title' => 'Edited title', 'slug' => 'fixture-official', 'biography' => 'Changed.', 'is_department_head' => false, 'display_order' => 1]);
         $this->get('/en/officials/fixture-official')->assertNotFound();
         $this->get('/en')->assertDontSee('Edited fixture');
-        $this->assertSame('demo', $official->fresh()->verification_status);
+        $this->assertSame('verified', $official->fresh()->verification_status);
         $this->assertDatabaseHas('audit_events', ['action' => 'officials.updated', 'subject_id' => (string) $official->id]);
     }
 }

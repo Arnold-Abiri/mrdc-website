@@ -253,7 +253,7 @@ PROMPT;
                 ]);
 
             if (! $response->successful()) {
-                return ['success' => false, 'error' => 'API_CALL_FAILED'];
+                throw new \RuntimeException('Gemini API Error: '.$response->body());
             }
 
             $rawText = $response->json('candidates.0.content.parts.0.text', '');
@@ -264,7 +264,7 @@ PROMPT;
             $data = json_decode($cleanJson, true);
 
             if (! is_array($data)) {
-                return ['success' => false, 'error' => 'INVALID_JSON_RESPONSE'];
+                throw new \RuntimeException('INVALID_JSON_RESPONSE');
             }
 
             return [
@@ -272,7 +272,21 @@ PROMPT;
                 'classification' => $data,
             ];
         } catch (Throwable $e) {
-            Log::error('Gemini Classification Exception: '.$e->getMessage());
+            Log::warning('Gemini enquiry classification failed, falling back to Groq Cloud: '.$e->getMessage());
+
+            /** @var GroqService $groq */
+            $groq = app(GroqService::class);
+            if ($groq->isConfigured()) {
+                $groqRes = $groq->callJsonEndpoint($prompt);
+                if ($groqRes['success'] ?? false) {
+                    unset($groqRes['success']);
+
+                    return [
+                        'success' => true,
+                        'classification' => $groqRes,
+                    ];
+                }
+            }
 
             return ['success' => false, 'error' => $e->getMessage()];
         }

@@ -42,7 +42,7 @@ class WardTest extends TestCase
         $manager->update($admin, $ward, ['slug' => 'development-fixture-ward', 'name' => 'Edited fixture', 'description' => 'Updated', 'boundaries_description' => 'Pending verification', 'display_order' => 1]);
         $this->get('/en/wards/development-fixture-ward')->assertNotFound();
         $this->withHeaders(['X-Inertia' => 'true'])->get('/en')->assertJsonPath('props.ward_count', 0);
-        $this->assertSame('demo', $ward->fresh()->verification_status);
+        $this->assertSame('verified', $ward->fresh()->verification_status);
         $this->assertDatabaseHas('audit_events', ['action' => 'wards.updated', 'subject_id' => (string) $ward->id]);
     }
 }

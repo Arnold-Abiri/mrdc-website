@@ -11,8 +11,11 @@ use Throwable;
 class GeminiStaffService
 {
     public function __construct(
-        protected GeminiService $geminiService
-    ) {}
+        protected GeminiService $geminiService,
+        protected ?GroqService $groqService = null
+    ) {
+        $this->groqService = $this->groqService ?? app(GroqService::class);
+    }
 
     /**
      * Generate Shona or Ndebele translations for an official council notice or news item.
@@ -33,7 +36,7 @@ class GeminiStaffService
         ?string $metaDescription = null,
         string $targetLanguage = 'sn'
     ): array {
-        if (! $this->geminiService->isConfigured()) {
+        if (! $this->geminiService->isConfigured() && ! $this->groqService->isConfigured()) {
             return ['success' => false, 'error' => 'API_KEY_NOT_CONFIGURED'];
         }
 
@@ -78,7 +81,7 @@ PROMPT;
      */
     public function translateFields(string $entityName, array $fieldsWithValues, string $targetLanguage = 'sn'): array
     {
-        if (! $this->geminiService->isConfigured()) {
+        if (! $this->geminiService->isConfigured() && ! $this->groqService->isConfigured()) {
             return ['success' => false, 'error' => 'API_KEY_NOT_CONFIGURED'];
         }
 
@@ -168,7 +171,7 @@ PROMPT;
      */
     public function draftEnquiryResponse(array $enquiry, string $officerInstructions, string $language = 'en'): array
     {
-        if (! $this->geminiService->isConfigured()) {
+        if (! $this->geminiService->isConfigured() && ! $this->groqService->isConfigured()) {
             return ['success' => false, 'error' => 'API_KEY_NOT_CONFIGURED'];
         }
 
@@ -229,7 +232,7 @@ PROMPT;
                 ]);
 
             if (! $response->successful()) {
-                return ['success' => false, 'error' => 'API_CALL_FAILED'];
+                throw new \RuntimeException('Gemini API Error: '.$response->body());
             }
 
             $text = $response->json('candidates.0.content.parts.0.text', '');
@@ -239,7 +242,17 @@ PROMPT;
                 'response' => trim($text),
             ];
         } catch (Throwable $e) {
-            Log::error('Gemini Draft Response Exception: '.$e->getMessage());
+            Log::warning('Gemini draft response failed, falling back to Groq Cloud: '.$e->getMessage());
+
+            if ($this->groqService->isConfigured()) {
+                $groqRes = $this->groqService->askCitizenAssistant($prompt);
+                if ($groqRes['success'] ?? false) {
+                    return [
+                        'success' => true,
+                        'response' => $groqRes['text'] ?? '',
+                    ];
+                }
+            }
 
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -278,14 +291,7 @@ PROMPT;
                 ]);
 
             if (! $response->successful()) {
-                Log::error('Gemini API Error in callJsonEndpoint', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
-
-                $errorMessage = $response->json('error.message') ?? ('HTTP status '.$response->status());
-
-                return ['success' => false, 'error' => $errorMessage];
+                throw new \RuntimeException('Gemini API Error: '.$response->body());
             }
 
             $rawText = $response->json('candidates.0.content.parts.0.text', '');
@@ -296,12 +302,19 @@ PROMPT;
             $data = json_decode($cleanJson, true);
 
             if (! is_array($data)) {
-                return ['success' => false, 'error' => 'INVALID_JSON_RESPONSE'];
+                throw new \RuntimeException('INVALID_JSON_RESPONSE');
             }
 
             return array_merge(['success' => true], $data);
         } catch (Throwable $e) {
-            Log::error('Gemini JSON Endpoint Exception: '.$e->getMessage());
+            Log::warning('Gemini JSON Endpoint failed, falling back to Groq Cloud: '.$e->getMessage());
+
+            if ($this->groqService->isConfigured()) {
+                $groqResult = $this->groqService->callJsonEndpoint($prompt);
+                if ($groqResult['success'] ?? false) {
+                    return $groqResult;
+                }
+            }
 
             return ['success' => false, 'error' => $e->getMessage()];
         }

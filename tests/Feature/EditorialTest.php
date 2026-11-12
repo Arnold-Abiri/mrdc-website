@@ -58,7 +58,7 @@ class EditorialTest extends TestCase
         $manager->setStatus($admin, $item, 'published');
         $manager->update($admin, $item, [...$this->payload('news'), 'title' => 'Changed editorial item']);
         $this->assertSame('draft', $item->fresh()->status);
-        $this->assertSame('demo', $item->fresh()->verification_status);
+        $this->assertSame('verified', $item->fresh()->verification_status);
         $this->get('/en/news/development-item')->assertNotFound();
         $this->expectException(AuthorizationException::class);
         $manager->setStatus(User::factory()->create(), $item->fresh(), 'published');

@@ -23,6 +23,7 @@ test('it validates message input on citizen chat endpoint', function (): void {
 
 test('it responds gracefully when gemini is not configured', function (): void {
     Config::set('services.gemini.key', null);
+    Config::set('services.groq.key', null);
 
     $response = $this->postJson('/api/ai/chat', [
         'message' => 'How do I pay rates?',

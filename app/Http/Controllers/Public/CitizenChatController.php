@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Services\Ai\CitizenKnowledgeService;
 use App\Services\Ai\GeminiService;
+use App\Services\Ai\GroqService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +15,7 @@ class CitizenChatController extends Controller
     public function __invoke(
         Request $request,
         GeminiService $geminiService,
+        GroqService $groqService,
         CitizenKnowledgeService $knowledgeService
     ): JsonResponse {
         $validator = Validator::make($request->all(), [
@@ -36,7 +38,7 @@ class CitizenChatController extends Controller
         $history = $request->input('history', []);
         $locale = $request->input('locale', app()->getLocale());
 
-        if (! $geminiService->isConfigured()) {
+        if (! $geminiService->isConfigured() && ! $groqService->isConfigured()) {
             $offlineMessage = match ($locale) {
                 'sn' => 'Desk redu reRubatsiro harina kugadziriswa zvizere parizvino. Tapota batai mahofisi eKanzuru panhare dzinoti +263 77 000 0000 kana email info@mutokordc.gov.zw.',
                 'nd' => 'Ihhovisi lethu loncedo alikamiswanga okwamanje. Sicela uthintane lomkhandlu ku +263 77 000 0000 loba ku info@mutokordc.gov.zw.',
@@ -52,7 +54,16 @@ class CitizenChatController extends Controller
 
         $context = $knowledgeService->getCouncilContext();
 
-        $result = $geminiService->askCitizenAssistant($message, $history, $context);
+        // 1. Try Primary Provider (Google Gemini)
+        $result = ['success' => false];
+        if ($geminiService->isConfigured()) {
+            $result = $geminiService->askCitizenAssistant($message, $history, $context);
+        }
+
+        // 2. If Primary fails or is unconfigured, failover to Groq Cloud (Llama 3.3 70B / Mixtral)
+        if (! ($result['success'] ?? false) && $groqService->isConfigured()) {
+            $result = $groqService->askCitizenAssistant($message, $history, $context);
+        }
 
         if (! ($result['success'] ?? false)) {
             $fallbackMessage = match ($locale) {

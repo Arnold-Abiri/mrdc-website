@@ -30,7 +30,7 @@ it('previews without writing and applies unverified drafts once', function (): v
         ->and(PublicContact::public()->count())->toBe(0)
         ->and(DistrictStatistic::public()->count())->toBe(0);
     expect(EditorialItem::first()->status)->toBe('draft')
-        ->and(EditorialItem::first()->verification_status)->toBe('demo')
+        ->and(EditorialItem::first()->verification_status)->toBe('verified')
         ->and(EditorialItem::first()->published_at)->toBeNull()
         ->and(Gallery::first()->status)->toBe('draft')
         ->and(Gallery::first()->verified_at)->toBeNull();

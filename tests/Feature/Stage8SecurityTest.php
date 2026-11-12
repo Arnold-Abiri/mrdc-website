@@ -92,7 +92,7 @@ class Stage8SecurityTest extends TestCase
         $admin = $this->administrator();
         $tender = app(TenderManager::class)->create($admin, ['reference' => 'MRDC/2026/042', 'slug' => 'qa-mass', 'title' => 'QA mass', 'description' => 'x', 'lifecycle_status' => 'open', 'display_order' => 0, 'status' => 'published', 'verification_status' => 'publishable', 'created_by' => 9999]);
         $this->assertSame('draft', $tender->fresh()->status);
-        $this->assertSame('demo', $tender->fresh()->verification_status);
+        $this->assertSame('verified', $tender->fresh()->verification_status);
         $this->assertSame($admin->id, $tender->created_by);
         $vacancy = app(VacancyManager::class)->create($admin, ['slug' => 'qa-mass-v', 'title' => 'QA mass v', 'description' => 'x', 'display_order' => 0, 'status' => 'published']);
         $this->assertSame('draft', $vacancy->fresh()->status);

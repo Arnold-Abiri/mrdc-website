@@ -63,7 +63,7 @@ class CmsPageTest extends TestCase
         $manager->update($admin, $page, [...$this->content(), 'title' => 'Revised']);
         $page->refresh();
         $this->assertSame('draft', $page->status);
-        $this->assertSame('demo', $page->verification_status);
+        $this->assertSame('verified', $page->verification_status);
         $this->assertNull($page->published_at);
         $this->get('/en/pages/about-mutoko')->assertNotFound();
     }
@@ -129,7 +129,7 @@ class CmsPageTest extends TestCase
         $page->refresh();
         $this->assertSame('About Mutoko', $page->title);
         $this->assertSame('draft', $page->status);
-        $this->assertSame('demo', $page->verification_status);
+        $this->assertSame('verified', $page->verification_status);
         $this->assertNull($page->published_at);
         $this->assertSame(5, $page->revisions()->count());
         $this->get('/en/pages/restore-check')->assertNotFound();

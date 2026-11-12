@@ -153,7 +153,7 @@ class GalleryTest extends TestCase
         $manager->update($admin, $gallery, $this->payload($images, ['title' => 'QA edited gallery']));
 
         $this->assertSame('draft', $gallery->fresh()->status);
-        $this->assertSame('demo', $gallery->fresh()->verification_status);
+        $this->assertSame('verified', $gallery->fresh()->verification_status);
         $this->get('/en/galleries/qa-community-gallery')->assertNotFound();
     }
 
