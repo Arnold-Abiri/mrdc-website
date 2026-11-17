@@ -324,11 +324,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             className="header-portal-btn"
                             aria-label={t('residentPortalAria')}
                         >
-                            <svg className="header-portal-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            <span>{t('residentPortalMobile')}</span>
+                            {t('residentPortalMobile')}
                         </a>
 
                         <button
@@ -439,11 +435,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             className="nav-cta nav-portal-btn"
                             aria-label={t('residentPortalAria')}
                         >
-                            <svg className="nav-portal-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            <span>{t('residentPortal')}</span>
+                            {t('residentPortal')}
                         </a>
                     </nav>
                 </div>

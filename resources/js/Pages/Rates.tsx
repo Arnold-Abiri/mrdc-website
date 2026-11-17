@@ -166,17 +166,9 @@ export default function Rates({
                     </p>
 
                     <div className="rates-portal-callout" role="region" aria-label={t('residentPortal')}>
-                        <div className="rates-portal-callout-content">
-                            <span className="rates-portal-callout-badge" aria-hidden="true">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                            </span>
-                            <div className="rates-portal-callout-text">
-                                <strong>{t('residentPortal')}</strong>
-                                <p>{t('ratesPortalNotice')}</p>
-                            </div>
+                        <div className="rates-portal-callout-text">
+                            <strong>{t('residentPortal')}</strong>
+                            <p>{t('ratesPortalNotice')}</p>
                         </div>
                         <a
                             href={portalUrl}

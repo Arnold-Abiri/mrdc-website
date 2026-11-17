@@ -20,14 +20,14 @@ createInertiaApp({
         if (!el) throw new Error('Inertia root element is missing');
         createRoot(el).render(<App {...props} />);
 
-        const preloader = document.getElementById('mrdc-initial-preloader');
+        const preloader = document.getElementById('preloader');
         if (preloader) {
-            preloader.classList.add('mrdc-preloader--done');
+            preloader.classList.add('preloader--done');
             setTimeout(() => {
                 if (preloader.parentNode) {
                     preloader.parentNode.removeChild(preloader);
                 }
-            }, 400);
+            }, 350);
         }
     },
 });
