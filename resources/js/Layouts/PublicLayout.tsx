@@ -70,18 +70,25 @@ const navigation: NavEntry[] = [
 
 type TopbarNotice = { slug: string; title: string; is_urgent?: boolean };
 
-function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
+function TopbarTicker({ notices = [], portalUrl = 'https://mutokordc.co.zw/portal/' }: { notices?: TopbarNotice[]; portalUrl?: string }) {
     const locale = normalizeLocale(usePage().props.locale);
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
 
-    const items: TopbarNotice[] = notices.length > 0 ? notices : [
+    const items: (TopbarNotice & { url?: string; isExternal?: boolean })[] = notices.length > 0 ? notices : [
         {
             slug: 'welcome',
             title: t('welcomeTicker'),
             is_urgent: false,
+        },
+        {
+            slug: 'portal',
+            title: t('residentPortalNotice'),
+            is_urgent: false,
+            url: portalUrl,
+            isExternal: true,
         },
     ];
 
@@ -109,7 +116,12 @@ function TopbarTicker({ notices = [] }: { notices?: TopbarNotice[] }) {
                 {active.is_urgent ? t('urgentAlert') : t('noticeSingular')}
             </span>
             <div className="topbar-ticker-content" aria-live="polite" aria-atomic="true">
-                {active.slug !== 'welcome' ? (
+                {active.url ? (
+                    <a href={active.url} target={active.isExternal ? '_blank' : undefined} rel={active.isExternal ? 'noopener noreferrer' : undefined} className="topbar-ticker-link">
+                        <span className="topbar-ticker-title">{active.title}</span>
+                        <span className="topbar-ticker-arrow" aria-hidden="true">→</span>
+                    </a>
+                ) : active.slug !== 'welcome' ? (
                     <a href={L(`/notices/${active.slug}`)} className="topbar-ticker-link">
                         <span className="topbar-ticker-title">{active.title}</span>
                         <span className="topbar-ticker-arrow" aria-hidden="true">→</span>
@@ -152,6 +164,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
     const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
     const L = (path: string) => path.startsWith('/#') ? `/${locale}${path.slice(1)}` : path === '/' ? `/${locale}` : path.startsWith('/') && !path.startsWith('//') ? `/${locale}${path}` : path;
     const settings: SiteSettings = useSiteSettings();
+    const portalUrl = settings.resident_portal_url?.trim() || 'https://mutokordc.co.zw/portal/';
     const logoMediaId = settings.logo_media_id?.trim();
     const logoUrl = logoMediaId && /^\d+$/.test(logoMediaId)
         ? L(`/managed-media/${logoMediaId}`)
@@ -258,7 +271,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             {/* Top Utility Bar */}
             <div className="utility-bar">
                 <div className="container utility-inner">
-                    <TopbarTicker notices={topbarNotices} />
+                    <TopbarTicker notices={topbarNotices} portalUrl={portalUrl} />
 
                     <div className="utility-actions">
                         <a href={L('/contact')} className="utility-location" title={t('locationTitle')}>
@@ -304,6 +317,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </a>
 
                     <div className="header-actions">
+                        <a
+                            href={portalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="header-portal-btn"
+                            aria-label={t('residentPortalAria')}
+                        >
+                            <svg className="header-portal-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span>{t('residentPortalMobile')}</span>
+                        </a>
+
                         <button
                             ref={openSearchBtnRef}
                             type="button"
@@ -392,19 +419,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 );
                             }
 
-                            if (item.label === 'Contact') {
-                                return (
-                                    <a
-                                        key={item.label}
-                                        href={L(item.href)}
-                                        className={`nav-cta${active ? ' nav-cta-active' : ''}`}
-                                        aria-current={active ? 'page' : undefined}
-                                    >
-                                        {t('contact')}
-                                    </a>
-                                );
-                            }
-
                             return (
                                 <a
                                     key={item.label}
@@ -417,6 +431,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 </a>
                             );
                         })}
+
+                        <a
+                            href={portalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="nav-cta nav-portal-btn"
+                            aria-label={t('residentPortalAria')}
+                        >
+                            <svg className="nav-portal-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span>{t('residentPortal')}</span>
+                        </a>
                     </nav>
                 </div>
 
@@ -561,6 +589,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <li><a href={L("/about")}>{t('about')}</a></li>
                             <li><a href={L("/services")}>{t('ourServices')}</a></li>
                             <li><a href={L("/faqs")}>FAQs</a></li>
+                            <li><a href={portalUrl} target="_blank" rel="noopener noreferrer">{t('residentPortal')}</a></li>
                             <li><a href={L("/investment")}>{t('development')}</a></li>
                             <li><a href={L("/tourism")}>{t('tourism')}</a></li>
                             <li><a href={L("/news")}>{t('media')}</a></li>

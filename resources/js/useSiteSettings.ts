@@ -3,9 +3,13 @@ import { usePage } from '@inertiajs/react';
 export type SiteSettings = Record<string, string | null | undefined>;
 
 export function useSiteSettings(): SiteSettings {
-    const { site_settings } = usePage<{ site_settings?: SiteSettings }>().props;
+    try {
+        const page = usePage<{ site_settings?: SiteSettings }>();
 
-    return site_settings ?? {};
+        return page?.props?.site_settings ?? {};
+    } catch {
+        return {};
+    }
 }
 
 export function whatsappLinkFor(raw: string | null | undefined): string | null {

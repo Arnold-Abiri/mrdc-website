@@ -103,4 +103,66 @@ describe('public navigation', () => {
         expect(navigation.getByRole('link', { name: 'Peji rekutanga' })).toHaveAttribute('href', '/sn');
         expect(navigation.getByRole('link', { name: 'Madhipatimendi eKanzuru' })).toHaveAttribute('href', '/sn/departments');
     });
+
+    it('renders Contact as a standard nav-item and Resident Portal as the CTA button', () => {
+        mockPageState = { locale: 'en', localeCsrfToken: 'test-token', topbar_notices: [] };
+        mockPageUrl = '/en';
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        const navigation = within(screen.getByRole('navigation', { name: 'Primary navigation' }));
+
+        // Contact is a regular nav link matching Home/About styling
+        const contactLink = navigation.getByRole('link', { name: 'Contact' });
+        expect(contactLink).toBeInTheDocument();
+        expect(contactLink).toHaveClass('nav-item');
+        expect(contactLink).not.toHaveClass('nav-cta');
+        expect(contactLink).toHaveAttribute('href', '/en/contact');
+
+        // Resident Portal is the CTA button in the navigation
+        const portalCta = navigation.getByRole('link', { name: 'Mutoko Resident Portal (opens in a new tab)' });
+        expect(portalCta).toBeInTheDocument();
+        expect(portalCta).toHaveClass('nav-cta');
+        expect(portalCta).toHaveClass('nav-portal-btn');
+        expect(portalCta).toHaveAttribute('href', 'https://mutokordc.co.zw/portal/');
+        expect(portalCta).toHaveAttribute('target', '_blank');
+        expect(portalCta).toHaveAttribute('rel', 'noopener noreferrer');
+
+        // Mobile header quick access button
+        const mobilePortalBtn = screen.getAllByRole('link', { name: 'Mutoko Resident Portal (opens in a new tab)' })
+            .find(el => el.classList.contains('header-portal-btn'));
+        expect(mobilePortalBtn).toBeDefined();
+        expect(mobilePortalBtn).toHaveAttribute('href', 'https://mutokordc.co.zw/portal/');
+    });
+
+    it('respects configured resident_portal_url in site_settings', () => {
+        mockPageState = {
+            locale: 'en',
+            localeCsrfToken: 'test-token',
+            topbar_notices: [],
+            site_settings: { resident_portal_url: 'https://portal.mutokordc.gov.zw' },
+        };
+        mockPageUrl = '/en';
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        const portalLinks = screen.getAllByRole('link', { name: 'Mutoko Resident Portal (opens in a new tab)' });
+        portalLinks.forEach(link => {
+            expect(link).toHaveAttribute('href', 'https://portal.mutokordc.gov.zw');
+        });
+    });
+
+    it('translates Contact and Resident Portal in Shona navigation', () => {
+        mockPageState = { locale: 'sn', localeCsrfToken: 'test-token', topbar_notices: [] };
+        mockPageUrl = '/sn';
+        render(<PublicLayout><h1>Content</h1></PublicLayout>);
+        const navigation = within(screen.getByRole('navigation', { name: 'Menyu huru' }));
+
+        // Contact translated to 'Taura nesu' as standard nav-item
+        const contactLink = navigation.getByRole('link', { name: 'Taura nesu' });
+        expect(contactLink).toBeInTheDocument();
+        expect(contactLink).toHaveClass('nav-item');
+        expect(contactLink).not.toHaveClass('nav-cta');
+
+        // Portal translated to Shona
+        const portalCta = navigation.getByRole('link', { name: 'Pota yeVagari eMutoko (inovhurika mune rimwe hwindo)' });
+        expect(portalCta).toBeInTheDocument();
+        expect(portalCta).toHaveTextContent('Pota yeVagari');
+    });
 });

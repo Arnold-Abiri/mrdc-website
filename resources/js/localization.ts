@@ -1211,6 +1211,12 @@ const english = {
     chatErrorRetry: 'Connection error. Please try again.',
     chatOpenButton: 'Ask Mutoko Council',
     chatCloseButton: 'Close help desk',
+    residentPortal: 'Resident Portal',
+    residentPortalAria: 'Mutoko Resident Portal (opens in a new tab)',
+    residentPortalMobile: 'Portal',
+    residentPortalNotice: 'Access your council rates, billing and self-service online on the Mutoko Resident Portal',
+    ratesPortalNotice: 'Check your balance & view statements online on the Resident Portal',
+    openPortal: 'Sign In to Portal',
 } as const;
 
 type Key = keyof typeof english;
@@ -2441,6 +2447,12 @@ const shona: Record<Key, string> = {
     chatErrorRetry: 'Zvakanganisika. Tapota edzai zvakare.',
     chatOpenButton: 'Bvunzai Kanzuru yeMutoko',
     chatCloseButton: 'Vhara desk rerubatsiro',
+    residentPortal: 'Pota yeVagari',
+    residentPortalAria: 'Pota yeVagari eMutoko (inovhurika mune rimwe hwindo)',
+    residentPortalMobile: 'Pota',
+    residentPortalNotice: 'Onai mabhiri emutero wenyu nerubatsiro rweKanzuru paPota yeVagari eMutoko',
+    ratesPortalNotice: 'Tarisai chikwereti chenyu nekuona mabhiri paPota yeVagari',
+    openPortal: 'Pinda muPota',
 };
 const ndebele: Record<Key, string> = {
     home: 'Ikhaya', about: 'Mayelana lathi', council: 'Umkhandlu', officials: 'Izikhulu zoMkhandlu', wards: 'Amawadi',
@@ -3667,6 +3679,12 @@ const ndebele: Record<Key, string> = {
     chatErrorRetry: 'Kube lephutha lokuxhumana. Sicela uzame futhi.',
     chatOpenButton: 'Buza uMkhandlu weMutoko',
     chatCloseButton: 'Vala ihhovisi loncedo',
+    residentPortal: 'Iphothali Yezakhamizi',
+    residentPortalAria: 'Iphothali Yezakhamizi yeMutoko (ivuleka efasiteleni elitsha)',
+    residentPortalMobile: 'Iphothali',
+    residentPortalNotice: 'Bona amabhili emithero yenu loncedo loMkhandlu kuPhothali Yezakhamizi yeMutoko',
+    ratesPortalNotice: 'Khangela isikwelede sakho lemibhalo kuPhothali Yezakhamizi',
+    openPortal: 'Ngena kuPhothali',
 };
 
 export function translate(locale: PublicLocale, key: Key): string {

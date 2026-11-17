@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import PublicLayout from '../Layouts/PublicLayout';
 import { usePublicLocale, usePublicTranslation } from '../usePublicTranslation';
+import { useSiteSettings } from '../useSiteSettings';
 
 import { formatDate } from '../formatDate';
 
@@ -52,6 +53,8 @@ export default function Rates({
 }) {
     const locale = usePublicLocale();
     const t = usePublicTranslation();
+    const settings = useSiteSettings();
+    const portalUrl = settings.resident_portal_url?.trim() || 'https://mutokordc.co.zw/portal/';
     const [selectedCategory, setSelectedCategory] = useState<'all' | 'rates' | 'stands' | 'licenses'>('all');
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -161,6 +164,31 @@ export default function Rates({
                     <p className="about-page-section-intro">
                         {t('bankIntro')}
                     </p>
+
+                    <div className="rates-portal-callout" role="region" aria-label={t('residentPortal')}>
+                        <div className="rates-portal-callout-content">
+                            <span className="rates-portal-callout-badge" aria-hidden="true">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </span>
+                            <div className="rates-portal-callout-text">
+                                <strong>{t('residentPortal')}</strong>
+                                <p>{t('ratesPortalNotice')}</p>
+                            </div>
+                        </div>
+                        <a
+                            href={portalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-rates-portal"
+                            aria-label={t('residentPortalAria')}
+                        >
+                            <span>{t('openPortal')}</span>
+                            <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    </div>
 
                     {/* Filter Tabs */}
                     <div className="rates-filter-tabs" role="tablist" aria-label={t('bankTitle')}>

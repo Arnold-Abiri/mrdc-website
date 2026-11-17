@@ -100,6 +100,7 @@ class SiteSettingResource extends Resource
             'facebook_url' => 'Paste the full Facebook page address, starting with https://.',
             'x_url' => 'Paste the full X profile address, starting with https://.',
             'youtube_url' => 'Paste the full YouTube channel address, starting with https://.',
+            'resident_portal_url' => 'Enter the full web address for the Mutoko Resident Portal, e.g. https://mutokordc.co.zw/portal/.',
             default => null,
         };
     }
@@ -114,6 +115,7 @@ class SiteSettingResource extends Resource
             'facebook_url' => 'https://www.facebook.com/your-page',
             'x_url' => 'https://x.com/your-account',
             'youtube_url' => 'https://www.youtube.com/@your-channel',
+            'resident_portal_url' => 'https://mutokordc.co.zw/portal/',
             default => null,
         };
     }

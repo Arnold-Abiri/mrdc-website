@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('@inertiajs/react', () => ({
     Head: () => null,
     Link: ({ children, href }: { children: ReactNode; href: string }) => <a href={href}>{children}</a>,
+    usePage: () => ({ props: { site_settings: {} } }),
 }));
 vi.mock('./Layouts/PublicLayout', () => ({ default: ({ children }: { children: ReactNode }) => <main>{children}</main> }));
 vi.mock('./usePublicTranslation', () => ({
@@ -72,4 +73,12 @@ describe('rates bank accounts', () => {
         expect(screen.queryByText('rbzTitle')).not.toBeInTheDocument();
     });
 
+    it('renders the resident portal callout with link to the portal', () => {
+        render(<Rates page={null} schedules={[]} />);
+        const portalLink = screen.getByRole('link', { name: 'residentPortalAria' });
+        expect(portalLink).toBeInTheDocument();
+        expect(portalLink).toHaveAttribute('href', 'https://mutokordc.co.zw/portal/');
+        expect(portalLink).toHaveAttribute('target', '_blank');
+        expect(portalLink).toHaveAttribute('rel', 'noopener noreferrer');
+    });
 });

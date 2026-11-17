@@ -3458,6 +3458,7 @@ a.social-pill:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   background: var(--color-deep-green);
   color: #fff;
   font-weight: 700;
@@ -3467,8 +3468,10 @@ a.social-pill:hover {
   text-decoration: none;
   margin-top: 10px;
   min-height: 44px;
+  transition: background-color 0.2s ease, filter 0.2s ease, transform 0.15s ease;
 }
 .nav-cta:hover { color: #fff; filter: brightness(1.08); }
+.nav-portal-icon { flex-shrink: 0; }
 
 .header-search-pill {
   display: inline-flex;
@@ -6421,10 +6424,115 @@ h3 { margin: 0; }
   outline: 3px solid var(--color-deep-green);
   outline-offset: 2px;
 }
+.header-portal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: var(--color-deep-green);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 6px rgba(11, 143, 98, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.header-portal-btn:hover {
+  filter: brightness(1.1);
+  color: #ffffff;
+}
+.header-portal-btn:focus-visible {
+  outline: 3px solid var(--color-deep-green);
+  outline-offset: 2px;
+}
+.header-portal-icon {
+  flex-shrink: 0;
+}
 @media (min-width: 1280px) {
   .header-actions {
     margin-left: 0;
     order: 2;
+  }
+  .header-portal-btn {
+    display: none;
+  }
+}
+
+/* Rates Page: Resident Portal Callout Banner */
+.rates-portal-callout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #f0f7f3 0%, #e6f3ec 100%);
+  border: 1px solid #c2e2d0;
+  border-left: 4px solid var(--color-deep-green);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 18px 0 26px;
+  box-shadow: 0 4px 12px rgba(11, 143, 98, 0.06);
+}
+.rates-portal-callout-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.rates-portal-callout-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-deep-green);
+  color: #ffffff;
+  flex-shrink: 0;
+}
+.rates-portal-callout-text strong {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-civic-navy);
+  margin-bottom: 3px;
+}
+.rates-portal-callout-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-civic-muted);
+  line-height: 1.45;
+}
+.btn-rates-portal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  min-height: 44px;
+  border-radius: 9999px;
+  background: var(--color-deep-green);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(11, 143, 98, 0.25);
+}
+.btn-rates-portal:hover {
+  background: #086b49;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+@media (min-width: 640px) {
+  .rates-portal-callout {
+    flex-direction: row;
+    align-items: center;
   }
 }
 
