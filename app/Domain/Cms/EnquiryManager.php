@@ -40,7 +40,7 @@ class EnquiryManager
 
     public const CONTEXT_TYPES = ['service', 'investment', 'ward'];
 
-    public function submit(array $input): Enquiry
+    public function submit(array $input, ?string $trackingTokenHash = null): Enquiry
     {
         $data = Validator::make($input, [
             'name' => ['required', 'string', 'max:160'],
@@ -63,6 +63,7 @@ class EnquiryManager
         }
         $enquiry = new Enquiry($data);
         $enquiry->public_id = (string) Str::uuid();
+        $enquiry->tracking_token_hash = $trackingTokenHash;
         $enquiry->status = 'new';
         $enquiry->submitted_at = now();
         $enquiry->due_at = now()->addDays((int) config('cms.enquiries_sla_days', 5));

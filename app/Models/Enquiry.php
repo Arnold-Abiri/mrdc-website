@@ -14,6 +14,8 @@ class Enquiry extends Model
 
     protected $fillable = ['name', 'email', 'phone', 'category', 'department_id', 'subject', 'message', 'context_type', 'context_reference', 'organisation', 'consent_given'];
 
+    protected $hidden = ['tracking_token_hash'];
+
     protected function casts(): array
     {
         return ['submitted_at' => 'datetime', 'due_at' => 'datetime', 'last_escalated_at' => 'datetime', 'consent_given' => 'boolean'];
